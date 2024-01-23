@@ -1,0 +1,81 @@
+version: '3'
+
+services:
+  east1:
+    image: docker.io/nats:2.10.9
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    volumes:
+      - east1:/data
+    configs:
+      - source: east.conf
+        target: /config/east.conf
+      - source: west.conf
+        target: /config/west.conf
+      - source: central.conf
+        target: /config/central.conf
+      - source: sys.conf
+        target: /config/sys.conf
+    command:
+      - '-c'
+      - '/config/east.conf'
+
+  west1:
+    image: docker.io/nats:2.10.9
+    ports:
+      - "4224:4222"
+      - "8224:8222"
+    volumes:
+      - west1:/data
+    configs:
+      - source: east.conf
+        target: /config/east.conf
+      - source: west.conf
+        target: /config/west.conf
+      - source: central.conf
+        target: /config/central.conf
+      - source: sys.conf
+        target: /config/sys.conf
+    command:
+      - '-c'
+      - '/config/west.conf'
+  
+  central1:
+    image: docker.io/nats:2.10.9
+    ports:
+      - "4223:4222"
+      - "8223:8222"
+    volumes:
+      - central1:/data
+    configs:
+      - source: east.conf
+        target: /config/east.conf
+      - source: west.conf
+        target: /config/west.conf
+      - source: central.conf
+        target: /config/central.conf
+      - source: sys.conf
+        target: /config/sys.conf
+    command:
+      - '-c'
+      - '/config/central.conf'
+  
+
+configs:
+  east.conf:
+    file: './example/east.conf'
+  west.conf:
+    file: './example/west.conf'
+  central.conf:
+    file: './example/central.conf'
+  sys.conf:
+    file: './example/sys.conf'
+
+volumes:
+  east1:
+  west1:
+  central1:
+
+networks:
+  nats: {}
