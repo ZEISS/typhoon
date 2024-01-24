@@ -14,7 +14,8 @@
     "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
     "postCreateCommand": "bash scripts/postCreateCommand.sh",
     "features": {
-      "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+      "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+      "ghcr.io/devcontainers/features/go:1":{}
     },
     "forwardPorts": [
       3000,
@@ -25,7 +26,8 @@
         "extensions": [
           "GitHub.copilot",
           "GitHub.vscode-github-actions",
-          "golang.go"
+          "golang.go",
+          "ms-vscode.makefile-tools"
         ]
       }
     },
@@ -34,5 +36,5 @@
           "label": "Application",
           "onAutoForward": "openPreview"
       }
-    },
+    }
   }
