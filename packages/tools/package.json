@@ -1,0 +1,29 @@
+{
+    "name": "@typhoon/tools",
+    "version": "1.0.0",
+    "description": "Shared Tools",
+    "private": true,
+    "files": [
+        ".eslintrc.js",
+        ".lintstagedrc.js",
+        "jest.config.js",
+        "prettier.config.js"
+    ],
+    "scripts": {
+        "test": "./task test",
+        "precommit": "lint-staged",
+        "clean": "rm -rf node_modules"
+    },
+    "peerDependencies": {
+        "eslint-config-next": "^14.0.4",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-jest": "^27.6.1",
+        "eslint-plugin-prettier": "^5.1.2",
+        "eslint": "^8",
+        "prettier": "^3.1.1",
+        "sequelize-cli": "^6.6.2",
+        "typescript": "^5"
+    },
+    "dependencies": {},
+    "devDependencies": {}
+}

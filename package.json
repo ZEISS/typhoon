@@ -1,0 +1,13 @@
+{
+    "name": "root",
+    "private": true,
+    "engines": {
+        "npm": "10.2.3",
+        "node": "20.10.0"
+    },
+    "version": "0.0.1",
+    "workspaces": [
+        "./packages/*"
+    ],
+    "dependencies": {}
+}
