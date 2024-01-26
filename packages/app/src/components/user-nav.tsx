@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import {
@@ -15,7 +15,7 @@ import { type PropsWithChildren } from 'react'
 
 export interface UserNavProps extends PropsWithChildren { }
 
-export async function UserNav({ }: Readonly<UserNavProps>) {
+export async function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
