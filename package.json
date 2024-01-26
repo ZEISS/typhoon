@@ -9,5 +9,7 @@
     "workspaces": [
         "./packages/*"
     ],
-    "dependencies": {}
+    "dependencies": {
+        "class-variance-authority": "^0.7.0"
+    }
 }
