@@ -1,0 +1,77 @@
+openapi: 3.0.0
+
+info:
+  version: 1.0.0
+  title: Typhoon API
+  introduction: |
+    # Introduction
+
+    The Typhoon API allows you to NATS.io
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+
+servers:
+  - url: https://example.io/v1
+
+tags:
+  - name: Systems
+    description: |-
+      These are the NATS.io that are managed by Typhoon.
+
+paths:
+  /systems:
+    get:
+      summary: List all managed systems.
+      operationId: listSystems
+      tags:
+        - Systems
+      description: |-
+        Returns a list of managed systems.
+      responses:
+        '200':
+          description: A paginated response of all systems
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Systems"
+
+  /systems/{systemId}:
+    get:
+      summary: List all managed systems.
+      operationId: showSystem
+      tags:
+        - Systems
+      description: |-
+        Returns a list of managed systems.
+      parameters:
+        - name: systemId
+          in: path
+          required: true
+          description: The id of the system to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A paginated response of all systems
+
+components:
+  schemas:
+    System:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    Systems:
+      type: array
+      maxItems: 100
+      items:
+        $ref: "#/components/schemas/System"
+
+security:
+  - bearer_auth: []

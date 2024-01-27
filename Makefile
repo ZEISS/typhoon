@@ -13,6 +13,9 @@ build: ## Build the binary file.
 .PHONY: generate
 generate: ## Generate code.
 	$(GO) generate ./...
+	$(GO_RUN_TOOLS) github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen -config ./api/config.models.yml ./api/api.yml
+		$(GO_RUN_TOOLS) github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen -config ./api/config.client.yml ./api/api.yml
+			$(GO_RUN_TOOLS) github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen -config ./api/config.server.yml ./api/api.yml
 
 .PHONY: fmt
 fmt: ## Run go fmt against code.
