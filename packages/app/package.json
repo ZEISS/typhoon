@@ -6,10 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate:api": "openapi-generator-cli generate -i ../../api/api.yml --generator-name typescript-fetch -o gen/api"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
+    "@openapitools/openapi-generator-cli": "^2.9.0",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-collapsible": "^1.0.3",
     "@radix-ui/react-dialog": "^1.0.5",

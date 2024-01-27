@@ -3,7 +3,7 @@ openapi: 3.0.0
 info:
   version: 1.0.0
   title: Typhoon API
-  introduction: |
+  description: |
     # Introduction
 
     The Typhoon API allows you to NATS.io
