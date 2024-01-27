@@ -4,6 +4,7 @@
 package api
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
@@ -18,6 +19,9 @@ type ServerInterface interface {
 	// List all managed systems.
 	// (GET /systems/{systemId})
 	ShowSystem(c *fiber.Ctx, systemId string) error
+	// Returns the current version of the API.
+	// (GET /version)
+	Version(c *fiber.Ctx) error
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -53,6 +57,14 @@ func (siw *ServerInterfaceWrapper) ShowSystem(c *fiber.Ctx) error {
 	return siw.Handler.ShowSystem(c, systemId)
 }
 
+// Version operation middleware
+func (siw *ServerInterfaceWrapper) Version(c *fiber.Ctx) error {
+
+	c.Context().SetUserValue(Bearer_authScopes, []string{})
+
+	return siw.Handler.Version(c)
+}
+
 // FiberServerOptions provides options for the Fiber server.
 type FiberServerOptions struct {
 	BaseURL     string
@@ -78,4 +90,157 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Get(options.BaseURL+"/systems/:systemId", wrapper.ShowSystem)
 
+	router.Get(options.BaseURL+"/version", wrapper.Version)
+
+}
+
+type ListSystemsRequestObject struct {
+}
+
+type ListSystemsResponseObject interface {
+	VisitListSystemsResponse(ctx *fiber.Ctx) error
+}
+
+type ListSystems200JSONResponse Systems
+
+func (response ListSystems200JSONResponse) VisitListSystemsResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type ShowSystemRequestObject struct {
+	SystemId string `json:"systemId"`
+}
+
+type ShowSystemResponseObject interface {
+	VisitShowSystemResponse(ctx *fiber.Ctx) error
+}
+
+type ShowSystem200Response struct {
+}
+
+func (response ShowSystem200Response) VisitShowSystemResponse(ctx *fiber.Ctx) error {
+	ctx.Status(200)
+	return nil
+}
+
+type VersionRequestObject struct {
+}
+
+type VersionResponseObject interface {
+	VisitVersionResponse(ctx *fiber.Ctx) error
+}
+
+type Version200JSONResponse Version
+
+func (response Version200JSONResponse) VisitVersionResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+// StrictServerInterface represents all server handlers.
+type StrictServerInterface interface {
+	// List all managed systems.
+	// (GET /systems)
+	ListSystems(ctx context.Context, request ListSystemsRequestObject) (ListSystemsResponseObject, error)
+	// List all managed systems.
+	// (GET /systems/{systemId})
+	ShowSystem(ctx context.Context, request ShowSystemRequestObject) (ShowSystemResponseObject, error)
+	// Returns the current version of the API.
+	// (GET /version)
+	Version(ctx context.Context, request VersionRequestObject) (VersionResponseObject, error)
+}
+
+type StrictHandlerFunc func(ctx *fiber.Ctx, args interface{}) (interface{}, error)
+
+type StrictMiddlewareFunc func(f StrictHandlerFunc, operationID string) StrictHandlerFunc
+
+func NewStrictHandler(ssi StrictServerInterface, middlewares []StrictMiddlewareFunc) ServerInterface {
+	return &strictHandler{ssi: ssi, middlewares: middlewares}
+}
+
+type strictHandler struct {
+	ssi         StrictServerInterface
+	middlewares []StrictMiddlewareFunc
+}
+
+// ListSystems operation middleware
+func (sh *strictHandler) ListSystems(ctx *fiber.Ctx) error {
+	var request ListSystemsRequestObject
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.ListSystems(ctx.UserContext(), request.(ListSystemsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListSystems")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(ListSystemsResponseObject); ok {
+		if err := validResponse.VisitListSystemsResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// ShowSystem operation middleware
+func (sh *strictHandler) ShowSystem(ctx *fiber.Ctx, systemId string) error {
+	var request ShowSystemRequestObject
+
+	request.SystemId = systemId
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.ShowSystem(ctx.UserContext(), request.(ShowSystemRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ShowSystem")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(ShowSystemResponseObject); ok {
+		if err := validResponse.VisitShowSystemResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// Version operation middleware
+func (sh *strictHandler) Version(ctx *fiber.Ctx) error {
+	var request VersionRequestObject
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.Version(ctx.UserContext(), request.(VersionRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "Version")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(VersionResponseObject); ok {
+		if err := validResponse.VisitVersionResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
 }

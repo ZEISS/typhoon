@@ -93,6 +93,9 @@ type ClientInterface interface {
 
 	// ShowSystem request
 	ShowSystem(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// Version request
+	Version(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) ListSystems(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -109,6 +112,18 @@ func (c *Client) ListSystems(ctx context.Context, reqEditors ...RequestEditorFn)
 
 func (c *Client) ShowSystem(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewShowSystemRequest(c.Server, systemId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) Version(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewVersionRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -180,6 +195,33 @@ func NewShowSystemRequest(server string, systemId string) (*http.Request, error)
 	return req, nil
 }
 
+// NewVersionRequest generates requests for Version
+func NewVersionRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/version")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -228,6 +270,9 @@ type ClientWithResponsesInterface interface {
 
 	// ShowSystemWithResponse request
 	ShowSystemWithResponse(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*ShowSystemResponse, error)
+
+	// VersionWithResponse request
+	VersionWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*VersionResponse, error)
 }
 
 type ListSystemsResponse struct {
@@ -273,6 +318,28 @@ func (r ShowSystemResponse) StatusCode() int {
 	return 0
 }
 
+type VersionResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Version
+}
+
+// Status returns HTTPResponse.Status
+func (r VersionResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r VersionResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 // ListSystemsWithResponse request returning *ListSystemsResponse
 func (c *ClientWithResponses) ListSystemsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListSystemsResponse, error) {
 	rsp, err := c.ListSystems(ctx, reqEditors...)
@@ -289,6 +356,15 @@ func (c *ClientWithResponses) ShowSystemWithResponse(ctx context.Context, system
 		return nil, err
 	}
 	return ParseShowSystemResponse(rsp)
+}
+
+// VersionWithResponse request returning *VersionResponse
+func (c *ClientWithResponses) VersionWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*VersionResponse, error) {
+	rsp, err := c.Version(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseVersionResponse(rsp)
 }
 
 // ParseListSystemsResponse parses an HTTP response from a ListSystemsWithResponse call
@@ -328,6 +404,32 @@ func ParseShowSystemResponse(rsp *http.Response) (*ShowSystemResponse, error) {
 	response := &ShowSystemResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParseVersionResponse parses an HTTP response from a VersionWithResponse call
+func ParseVersionResponse(rsp *http.Response) (*VersionResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &VersionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Version
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
 	}
 
 	return response, nil
