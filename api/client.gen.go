@@ -95,6 +95,9 @@ type ClientInterface interface {
 	// ShowSystem request
 	ShowSystem(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListTeam request
+	ListTeam(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// CreateTeamWithBody request with any body
 	CreateTeamWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -118,6 +121,18 @@ func (c *Client) ListSystems(ctx context.Context, reqEditors ...RequestEditorFn)
 
 func (c *Client) ShowSystem(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewShowSystemRequest(c.Server, systemId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListTeam(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListTeamRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -208,6 +223,33 @@ func NewShowSystemRequest(server string, systemId string) (*http.Request, error)
 	}
 
 	operationPath := fmt.Sprintf("/systems/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListTeamRequest generates requests for ListTeam
+func NewListTeamRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/teams")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -341,6 +383,9 @@ type ClientWithResponsesInterface interface {
 	// ShowSystemWithResponse request
 	ShowSystemWithResponse(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*ShowSystemResponse, error)
 
+	// ListTeamWithResponse request
+	ListTeamWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListTeamResponse, error)
+
 	// CreateTeamWithBodyWithResponse request with any body
 	CreateTeamWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTeamResponse, error)
 
@@ -387,6 +432,28 @@ func (r ShowSystemResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r ShowSystemResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListTeamResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]Team
+}
+
+// Status returns HTTPResponse.Status
+func (r ListTeamResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListTeamResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -454,6 +521,15 @@ func (c *ClientWithResponses) ShowSystemWithResponse(ctx context.Context, system
 	return ParseShowSystemResponse(rsp)
 }
 
+// ListTeamWithResponse request returning *ListTeamResponse
+func (c *ClientWithResponses) ListTeamWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListTeamResponse, error) {
+	rsp, err := c.ListTeam(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListTeamResponse(rsp)
+}
+
 // CreateTeamWithBodyWithResponse request with arbitrary body returning *CreateTeamResponse
 func (c *ClientWithResponses) CreateTeamWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTeamResponse, error) {
 	rsp, err := c.CreateTeamWithBody(ctx, contentType, body, reqEditors...)
@@ -517,6 +593,32 @@ func ParseShowSystemResponse(rsp *http.Response) (*ShowSystemResponse, error) {
 	response := &ShowSystemResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParseListTeamResponse parses an HTTP response from a ListTeamWithResponse call
+func ParseListTeamResponse(rsp *http.Response) (*ListTeamResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListTeamResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Team
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
 	}
 
 	return response, nil

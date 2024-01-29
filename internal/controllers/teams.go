@@ -3,7 +3,7 @@ package controllers
 import (
 	"context"
 
-	"github.com/zeiss/typhoon/api"
+	openapi "github.com/zeiss/typhoon/api"
 	"github.com/zeiss/typhoon/internal/ports"
 )
 
@@ -20,6 +20,11 @@ func NewTeamsController(port ports.Teams) *Teams {
 }
 
 // CreateTeam ...
-func (t *Teams) CreateTeam(ctx context.Context, team *api.Team) error {
+func (t *Teams) CreateTeam(ctx context.Context, team *openapi.Team) error {
 	return t.port.CreateTeam(ctx, team)
+}
+
+// ListTeams ...
+func (t *Teams) ListTeams(ctx context.Context) ([]*openapi.Team, error) {
+	return t.port.ListTeams(ctx)
 }

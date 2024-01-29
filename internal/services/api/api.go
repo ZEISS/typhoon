@@ -4,8 +4,8 @@ import (
 	"context"
 
 	openapi "github.com/zeiss/typhoon/api"
+	"github.com/zeiss/typhoon/internal/adapter"
 	"github.com/zeiss/typhoon/internal/config"
-	"github.com/zeiss/typhoon/internal/controllers"
 
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/gofiber/fiber/v2"
@@ -22,13 +22,13 @@ var (
 
 // ApiSrv is the server that implements the Noop interface.
 type ApiSrv struct {
-	cfg   *config.Config
-	teams *controllers.Teams
+	cfg *config.Config
+	*adapter.Handlers
 }
 
 // New returns a new instance of NoopSrv.
-func New(cfg *config.Config, teams *controllers.Teams) *ApiSrv {
-	return &ApiSrv{cfg, teams}
+func New(cfg *config.Config, handlers *adapter.Handlers) *ApiSrv {
+	return &ApiSrv{cfg, handlers}
 }
 
 // Start starts the server.
@@ -62,30 +62,3 @@ func (a *ApiSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		return nil
 	}
 }
-
-// CreateTeam ...
-func (a *ApiSrv) CreateTeam(ctx context.Context, request openapi.CreateTeamRequestObject) (openapi.CreateTeamResponseObject, error) {
-	err := a.teams.CreateTeam(ctx, &openapi.Team{Name: request.Body.Name})
-	if err != nil {
-		return nil, err
-	}
-
-	return &openapi.CreateTeam200Response{}, nil
-}
-
-// ListSystems ...
-func (a *ApiSrv) ListSystems(ctx context.Context, request openapi.ListSystemsRequestObject) (openapi.ListSystemsResponseObject, error) {
-	return nil, nil
-}
-
-// GetSystem ...
-func (a *ApiSrv) ShowSystem(ctx context.Context, request openapi.ShowSystemRequestObject) (openapi.ShowSystemResponseObject, error) {
-	return nil, nil
-}
-
-// Version ...
-func (a *ApiSrv) Version(ctx context.Context, request openapi.VersionRequestObject) (openapi.VersionResponseObject, error) {
-	return nil, nil
-}
-
-// PostTeams

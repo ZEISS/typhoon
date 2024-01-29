@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/zeiss/typhoon/internal/adapter"
+	"github.com/zeiss/typhoon/internal/adapter/handlers"
 	"github.com/zeiss/typhoon/internal/config"
 	"github.com/zeiss/typhoon/internal/controllers"
 	"github.com/zeiss/typhoon/internal/services/api"
@@ -66,8 +67,15 @@ func run(ctx context.Context) error {
 	db := adapter.NewDB(conn)
 	srv, _ := server.WithContext(ctx)
 
-	ct := controllers.NewTeamsController(db)
-	service := api.New(cfg, ct)
+	teamsCtrl := controllers.NewTeamsController(db)
+
+	h := adapter.NewHandlers(
+		handlers.NewTeamsHandler(teamsCtrl),
+		handlers.NewSystemsHandler(),
+		handlers.NewVersionHandler(),
+	)
+
+	service := api.New(cfg, h)
 
 	srv.Listen(service, true)
 	if err := srv.Wait(); err != nil {

@@ -12,7 +12,7 @@ info:
     url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
 
 servers:
-  - url: https://example.io/v1
+  - url: http://localhost:3000/v1
 
 tags:
   - name: System
@@ -44,10 +44,27 @@ paths:
                 $ref: "#/components/schemas/Version"
 
   /teams:
+    get:
+      summary: List all teams
+      operationId: listTeam
+      tags:
+        - Team
+      produces:
+        - "application/json"
+      responses:
+        '200':
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Team'
+                type: array
+
     post:
       summary: Creates a new team
       operationId: createTeam
-      tag:
+      tags:
         - Team
       produces:
         - "application/json"
@@ -132,7 +149,7 @@ components:
         id:
           type: string
           format: uuid
-          x-oapi-codegen-extra-tags: 
+          x-oapi-codegen-extra-tags:
             gorm: "type:uuid;default:gen_random_uuid()"
         name:
           type: string

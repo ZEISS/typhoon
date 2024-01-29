@@ -3,10 +3,11 @@ package ports
 import (
 	"context"
 
-	"github.com/zeiss/typhoon/api"
+	openapi "github.com/zeiss/typhoon/api"
 )
 
 // Teams ...
 type Teams interface {
-	CreateTeam(ctx context.Context, team *api.Team) error
+	CreateTeam(ctx context.Context, team *openapi.Team) error
+	ListTeams(ctx context.Context) ([]*openapi.Team, error)
 }
