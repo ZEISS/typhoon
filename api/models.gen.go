@@ -13,9 +13,11 @@ import (
 	"strings"
 
 	"github.com/getkin/kin-openapi/openapi3"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 const (
+	Api_keyScopes     = "api_key.Scopes"
 	Bearer_authScopes = "bearer_auth.Scopes"
 )
 
@@ -28,26 +30,43 @@ type System struct {
 // Systems defines model for Systems.
 type Systems = []System
 
+// Team defines model for Team.
+type Team struct {
+	Id   *openapi_types.UUID `gorm:"type:uuid;default:gen_random_uuid()" json:"id,omitempty"`
+	Name string              `json:"name"`
+}
+
 // Version defines model for Version.
 type Version struct {
 	Date    string `json:"date"`
 	Version string `json:"version"`
 }
 
+// CreateTeam defines model for CreateTeam.
+type CreateTeam = Team
+
+// CreateTeamJSONRequestBody defines body for CreateTeam for application/json ContentType.
+type CreateTeamJSONRequestBody = Team
+
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
+	"cZfEQjx+RzzG7fhXAAAA///FGweRnQoAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

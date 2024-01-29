@@ -15,10 +15,19 @@ servers:
   - url: https://example.io/v1
 
 tags:
-  - name: Systems
+  - name: System
     description: |-
       These are the NATS.io that are managed by Typhoon.
+  - name: Team
   - name: Server
+
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+schemes:
+#- "https"
+- "http"
 
 paths:
   /version:
@@ -34,12 +43,29 @@ paths:
               schema:
                 $ref: "#/components/schemas/Version"
 
+  /teams:
+    post:
+      summary: Creates a new team
+      operationId: createTeam
+      tag:
+        - Team
+      produces:
+        - "application/json"
+      requestBody:
+        $ref: '#/components/requestBodies/CreateTeam'
+      responses:
+        '200':
+          description: Returns the created team
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Team"
+
   /systems:
     get:
       summary: List all managed systems.
       operationId: listSystems
       tags:
-        - Systems
+        - System
       description: |-
         Returns a list of managed systems.
       responses:
@@ -69,8 +95,47 @@ paths:
         '200':
           description: A paginated response of all systems
 
-components:
+definitions:
   schemas:
+    createTeamResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+
+components:
+  requestBodies:
+    CreateTeam:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Team'
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    api_key:
+      in: header
+      name: api_key
+      type: apiKey
+
+  schemas:
+    Team:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          x-oapi-codegen-extra-tags: 
+            gorm: "type:uuid;default:gen_random_uuid()"
+        name:
+          type: string
     Version:
       type: object
       required:
@@ -99,3 +164,4 @@ components:
 
 security:
   - bearer_auth: []
+  - api_key: []

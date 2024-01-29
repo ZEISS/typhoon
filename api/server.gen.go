@@ -19,6 +19,9 @@ type ServerInterface interface {
 	// List all managed systems.
 	// (GET /systems/{systemId})
 	ShowSystem(c *fiber.Ctx, systemId string) error
+	// Creates a new team
+	// (POST /teams)
+	CreateTeam(c *fiber.Ctx) error
 	// Returns the current version of the API.
 	// (GET /version)
 	Version(c *fiber.Ctx) error
@@ -35,6 +38,8 @@ type MiddlewareFunc fiber.Handler
 func (siw *ServerInterfaceWrapper) ListSystems(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(Bearer_authScopes, []string{})
+
+	c.Context().SetUserValue(Api_keyScopes, []string{})
 
 	return siw.Handler.ListSystems(c)
 }
@@ -54,13 +59,27 @@ func (siw *ServerInterfaceWrapper) ShowSystem(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(Bearer_authScopes, []string{})
 
+	c.Context().SetUserValue(Api_keyScopes, []string{})
+
 	return siw.Handler.ShowSystem(c, systemId)
+}
+
+// CreateTeam operation middleware
+func (siw *ServerInterfaceWrapper) CreateTeam(c *fiber.Ctx) error {
+
+	c.Context().SetUserValue(Bearer_authScopes, []string{})
+
+	c.Context().SetUserValue(Api_keyScopes, []string{})
+
+	return siw.Handler.CreateTeam(c)
 }
 
 // Version operation middleware
 func (siw *ServerInterfaceWrapper) Version(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(Bearer_authScopes, []string{})
+
+	c.Context().SetUserValue(Api_keyScopes, []string{})
 
 	return siw.Handler.Version(c)
 }
@@ -89,6 +108,8 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 	router.Get(options.BaseURL+"/systems", wrapper.ListSystems)
 
 	router.Get(options.BaseURL+"/systems/:systemId", wrapper.ShowSystem)
+
+	router.Post(options.BaseURL+"/teams", wrapper.CreateTeam)
 
 	router.Get(options.BaseURL+"/version", wrapper.Version)
 
@@ -126,6 +147,22 @@ func (response ShowSystem200Response) VisitShowSystemResponse(ctx *fiber.Ctx) er
 	return nil
 }
 
+type CreateTeamRequestObject struct {
+	Body *CreateTeamJSONRequestBody
+}
+
+type CreateTeamResponseObject interface {
+	VisitCreateTeamResponse(ctx *fiber.Ctx) error
+}
+
+type CreateTeam200Response struct {
+}
+
+func (response CreateTeam200Response) VisitCreateTeamResponse(ctx *fiber.Ctx) error {
+	ctx.Status(200)
+	return nil
+}
+
 type VersionRequestObject struct {
 }
 
@@ -150,6 +187,9 @@ type StrictServerInterface interface {
 	// List all managed systems.
 	// (GET /systems/{systemId})
 	ShowSystem(ctx context.Context, request ShowSystemRequestObject) (ShowSystemResponseObject, error)
+	// Creates a new team
+	// (POST /teams)
+	CreateTeam(ctx context.Context, request CreateTeamRequestObject) (CreateTeamResponseObject, error)
 	// Returns the current version of the API.
 	// (GET /version)
 	Version(ctx context.Context, request VersionRequestObject) (VersionResponseObject, error)
@@ -212,6 +252,37 @@ func (sh *strictHandler) ShowSystem(ctx *fiber.Ctx, systemId string) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	} else if validResponse, ok := response.(ShowSystemResponseObject); ok {
 		if err := validResponse.VisitShowSystemResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// CreateTeam operation middleware
+func (sh *strictHandler) CreateTeam(ctx *fiber.Ctx) error {
+	var request CreateTeamRequestObject
+
+	var body CreateTeamJSONRequestBody
+	if err := ctx.BodyParser(&body); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	request.Body = &body
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateTeam(ctx.UserContext(), request.(CreateTeamRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateTeam")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(CreateTeamResponseObject); ok {
+		if err := validResponse.VisitCreateTeamResponse(ctx); err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 	} else if response != nil {

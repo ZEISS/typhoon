@@ -40,7 +40,7 @@ services:
     command:
       - '-c'
       - '/config/west.conf'
-  
+
   central1:
     image: docker.io/nats:2.10.9
     ports:
@@ -60,7 +60,16 @@ services:
     command:
       - '-c'
       - '/config/central.conf'
-  
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: example
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: example
+    ports:
+      - "5432:5432"
 
 configs:
   east.conf:
@@ -76,6 +85,7 @@ volumes:
   east1:
   west1:
   central1:
+
 
 networks:
   nats: {}
