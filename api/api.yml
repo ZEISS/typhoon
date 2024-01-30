@@ -12,7 +12,7 @@ info:
     url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
 
 servers:
-  - url: http://localhost:3000/v1
+  - url: http://localhost:8080
 
 tags:
   - name: System
@@ -71,12 +71,36 @@ paths:
       requestBody:
         $ref: '#/components/requestBodies/CreateTeam'
       responses:
-        '200':
-          description: Returns the created team
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Team"
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Team"
+      links:
+        GetTeamById:
+          operationId: getTeam
+          parameters:
+            teamId: '$response.body#/id'
 
+  /team/{teamId}:
+    get:
+      summary: Gets a team by ID
+      operation: getTeam
+      parameters:
+        - in: path
+          name: teamId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Team"
   /systems:
     get:
       summary: List all managed systems.
@@ -149,10 +173,32 @@ components:
         id:
           type: string
           format: uuid
+          readOnly: true
           x-oapi-codegen-extra-tags:
             gorm: "type:uuid;default:gen_random_uuid()"
         name:
           type: string
+        description:
+          type: string
+        contactEmail:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        deletedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+
+
     Version:
       type: object
       required:

@@ -5,6 +5,8 @@ import (
 
 	openapi "github.com/zeiss/typhoon/api"
 	"github.com/zeiss/typhoon/internal/ports"
+
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 var _ ports.Teams = (*Teams)(nil)
@@ -20,11 +22,16 @@ func NewTeamsController(port ports.Teams) *Teams {
 }
 
 // CreateTeam ...
-func (t *Teams) CreateTeam(ctx context.Context, team *openapi.Team) error {
+func (t *Teams) CreateTeam(ctx context.Context, team *openapi.Team) (openapi.Team, error) {
 	return t.port.CreateTeam(ctx, team)
 }
 
 // ListTeams ...
-func (t *Teams) ListTeams(ctx context.Context) ([]*openapi.Team, error) {
+func (t *Teams) ListTeams(ctx context.Context) ([]openapi.Team, error) {
 	return t.port.ListTeams(ctx)
+}
+
+// GetTeam ...
+func (t *Teams) GetTeamByID(ctx context.Context, id openapi_types.UUID) (openapi.Team, error) {
+	return t.port.GetTeamByID(ctx, id)
 }

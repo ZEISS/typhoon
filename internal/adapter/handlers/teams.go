@@ -17,6 +17,16 @@ func NewTeamsHandler(ctrl ports.Teams) *TeamsHandler {
 	return &TeamsHandler{ctrl}
 }
 
+// Create Team
+func (h *TeamsHandler) CreateTeam(ctx context.Context, request openapi.CreateTeamRequestObject) (openapi.CreateTeamResponseObject, error) {
+	team, err := h.ctrl.CreateTeam(ctx, request.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return openapi.CreateTeam201JSONResponse(team), nil
+}
+
 // ListTeams ...
 func (h *TeamsHandler) ListTeam(ctx context.Context, request openapi.ListTeamRequestObject) (openapi.ListTeamResponseObject, error) {
 	teams, err := h.ctrl.ListTeams(ctx)
@@ -24,14 +34,15 @@ func (h *TeamsHandler) ListTeam(ctx context.Context, request openapi.ListTeamReq
 		return nil, err
 	}
 
-	tt := make([]openapi.Team, 0, 0)
-	for _, t := range teams {
-		tt = append(tt, *t)
-	}
-
-	return openapi.ListTeam200JSONResponse(tt), nil
+	return openapi.ListTeam200JSONResponse(teams), nil
 }
 
-func (h *TeamsHandler) CreateTeam(ctx context.Context, request openapi.CreateTeamRequestObject) (openapi.CreateTeamResponseObject, error) {
-	return nil, nil
+// GetTeamTeamId ...
+func (h *TeamsHandler) GetTeamTeamId(ctx context.Context, request openapi.GetTeamTeamIdRequestObject) (openapi.GetTeamTeamIdResponseObject, error) {
+	team, err := h.ctrl.GetTeamByID(ctx, request.TeamId)
+	if err != nil {
+		return nil, err
+	}
+
+	return openapi.GetTeamTeamId200JSONResponse(team), err
 }

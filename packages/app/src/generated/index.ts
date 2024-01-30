@@ -15,6 +15,7 @@ export type { Systems } from './models/Systems';
 export type { Team } from './models/Team';
 export type { Version } from './models/Version';
 
+export { DefaultService } from './services/DefaultService';
 export { ServerService } from './services/ServerService';
 export { SystemService } from './services/SystemService';
 export { SystemsService } from './services/SystemsService';

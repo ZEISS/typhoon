@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/oapi-codegen/runtime"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
@@ -95,6 +96,9 @@ type ClientInterface interface {
 	// ShowSystem request
 	ShowSystem(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetTeamTeamId request
+	GetTeamTeamId(ctx context.Context, teamId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListTeam request
 	ListTeam(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -121,6 +125,18 @@ func (c *Client) ListSystems(ctx context.Context, reqEditors ...RequestEditorFn)
 
 func (c *Client) ShowSystem(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewShowSystemRequest(c.Server, systemId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetTeamTeamId(ctx context.Context, teamId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTeamTeamIdRequest(c.Server, teamId)
 	if err != nil {
 		return nil, err
 	}
@@ -223,6 +239,40 @@ func NewShowSystemRequest(server string, systemId string) (*http.Request, error)
 	}
 
 	operationPath := fmt.Sprintf("/systems/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetTeamTeamIdRequest generates requests for GetTeamTeamId
+func NewGetTeamTeamIdRequest(server string, teamId openapi_types.UUID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/team/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -383,6 +433,9 @@ type ClientWithResponsesInterface interface {
 	// ShowSystemWithResponse request
 	ShowSystemWithResponse(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*ShowSystemResponse, error)
 
+	// GetTeamTeamIdWithResponse request
+	GetTeamTeamIdWithResponse(ctx context.Context, teamId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetTeamTeamIdResponse, error)
+
 	// ListTeamWithResponse request
 	ListTeamWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListTeamResponse, error)
 
@@ -438,6 +491,28 @@ func (r ShowSystemResponse) StatusCode() int {
 	return 0
 }
 
+type GetTeamTeamIdResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Team
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTeamTeamIdResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTeamTeamIdResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type ListTeamResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -463,6 +538,7 @@ func (r ListTeamResponse) StatusCode() int {
 type CreateTeamResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSON201      *Team
 }
 
 // Status returns HTTPResponse.Status
@@ -519,6 +595,15 @@ func (c *ClientWithResponses) ShowSystemWithResponse(ctx context.Context, system
 		return nil, err
 	}
 	return ParseShowSystemResponse(rsp)
+}
+
+// GetTeamTeamIdWithResponse request returning *GetTeamTeamIdResponse
+func (c *ClientWithResponses) GetTeamTeamIdWithResponse(ctx context.Context, teamId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetTeamTeamIdResponse, error) {
+	rsp, err := c.GetTeamTeamId(ctx, teamId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTeamTeamIdResponse(rsp)
 }
 
 // ListTeamWithResponse request returning *ListTeamResponse
@@ -598,6 +683,32 @@ func ParseShowSystemResponse(rsp *http.Response) (*ShowSystemResponse, error) {
 	return response, nil
 }
 
+// ParseGetTeamTeamIdResponse parses an HTTP response from a GetTeamTeamIdWithResponse call
+func ParseGetTeamTeamIdResponse(rsp *http.Response) (*GetTeamTeamIdResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTeamTeamIdResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Team
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseListTeamResponse parses an HTTP response from a ListTeamWithResponse call
 func ParseListTeamResponse(rsp *http.Response) (*ListTeamResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -635,6 +746,16 @@ func ParseCreateTeamResponse(rsp *http.Response) (*CreateTeamResponse, error) {
 	response := &CreateTeamResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Team
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
 	}
 
 	return response, nil

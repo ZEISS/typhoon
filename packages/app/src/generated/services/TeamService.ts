@@ -9,10 +9,10 @@ export class TeamService {
     constructor(public readonly httpRequest: BaseHttpRequest) {}
     /**
      * List all teams
-     * @returns any Returns the created team
+     * @returns Team Successfull response
      * @throws ApiError
      */
-    public listTeam(): CancelablePromise<any> {
+    public listTeam(): CancelablePromise<Array<Team>> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/teams',
@@ -21,7 +21,7 @@ export class TeamService {
     /**
      * Creates a new team
      * @param requestBody
-     * @returns any Returns the created team
+     * @returns any Created
      * @throws ApiError
      */
     public createTeam(

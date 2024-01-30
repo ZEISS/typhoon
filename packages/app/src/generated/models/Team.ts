@@ -3,7 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Team = {
-    id?: string;
+    readonly id?: string;
     name: string;
+    description?: string;
+    contactEmail?: string;
 };
 
