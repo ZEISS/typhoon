@@ -4,6 +4,7 @@ import (
 	"context"
 
 	openapi "github.com/zeiss/typhoon/api"
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/ports"
 
 	openapi_types "github.com/oapi-codegen/runtime/types"
@@ -27,8 +28,8 @@ func (t *Teams) CreateTeam(ctx context.Context, team *openapi.Team) (openapi.Tea
 }
 
 // ListTeams ...
-func (t *Teams) ListTeams(ctx context.Context) ([]openapi.Team, error) {
-	return t.port.ListTeams(ctx)
+func (t *Teams) ListTeams(ctx context.Context, params openapi.ListTeamParams) (models.PaginatedListTeams, error) {
+	return t.port.ListTeams(ctx, params)
 }
 
 // GetTeam ...

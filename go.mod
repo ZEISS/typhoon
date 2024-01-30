@@ -3,6 +3,7 @@ module github.com/zeiss/typhoon
 go 1.21.6
 
 require (
+	github.com/aws/smithy-go v1.19.0
 	github.com/getkin/kin-openapi v0.123.0
 	github.com/gofiber/fiber/v2 v2.52.0
 	github.com/golang/mock v1.7.0-rc.1

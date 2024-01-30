@@ -6,6 +6,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"net/url"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/oapi-codegen/runtime"
@@ -25,7 +26,7 @@ type ServerInterface interface {
 	GetTeamTeamId(c *fiber.Ctx, teamId openapi_types.UUID) error
 	// List all teams
 	// (GET /teams)
-	ListTeam(c *fiber.Ctx) error
+	ListTeam(c *fiber.Ctx, params ListTeamParams) error
 	// Creates a new team
 	// (POST /teams)
 	CreateTeam(c *fiber.Ctx) error
@@ -94,11 +95,36 @@ func (siw *ServerInterfaceWrapper) GetTeamTeamId(c *fiber.Ctx) error {
 // ListTeam operation middleware
 func (siw *ServerInterfaceWrapper) ListTeam(c *fiber.Ctx) error {
 
+	var err error
+
 	c.Context().SetUserValue(Bearer_authScopes, []string{})
 
 	c.Context().SetUserValue(Api_keyScopes, []string{})
 
-	return siw.Handler.ListTeam(c)
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListTeamParams
+
+	var query url.Values
+	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
+	}
+
+	// ------------- Optional query parameter "offset" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "offset", query, &params.Offset)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter offset: %w", err).Error())
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", query, &params.Limit)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter limit: %w", err).Error())
+	}
+
+	return siw.Handler.ListTeam(c, params)
 }
 
 // CreateTeam operation middleware
@@ -206,13 +232,19 @@ func (response GetTeamTeamId200JSONResponse) VisitGetTeamTeamIdResponse(ctx *fib
 }
 
 type ListTeamRequestObject struct {
+	Params ListTeamParams
 }
 
 type ListTeamResponseObject interface {
 	VisitListTeamResponse(ctx *fiber.Ctx) error
 }
 
-type ListTeam200JSONResponse []Team
+type ListTeam200JSONResponse struct {
+	Limit   *float32 `json:"limit,omitempty"`
+	Offset  *float32 `json:"offset,omitempty"`
+	Results *[]Team  `json:"results,omitempty"`
+	Total   *float32 `json:"total,omitempty"`
+}
 
 func (response ListTeam200JSONResponse) VisitListTeamResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
@@ -369,8 +401,10 @@ func (sh *strictHandler) GetTeamTeamId(ctx *fiber.Ctx, teamId openapi_types.UUID
 }
 
 // ListTeam operation middleware
-func (sh *strictHandler) ListTeam(ctx *fiber.Ctx) error {
+func (sh *strictHandler) ListTeam(ctx *fiber.Ctx, params ListTeamParams) error {
 	var request ListTeamRequestObject
+
+	request.Params = params
 
 	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
 		return sh.ssi.ListTeam(ctx.UserContext(), request.(ListTeamRequestObject))

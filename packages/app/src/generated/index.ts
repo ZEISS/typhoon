@@ -10,6 +10,9 @@ export { CancelablePromise, CancelError } from './core/CancelablePromise';
 export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
+export type { limitParam } from './models/limitParam';
+export type { offsetParam } from './models/offsetParam';
+export type { PaginatedResult } from './models/PaginatedResult';
 export type { System } from './models/System';
 export type { Systems } from './models/Systems';
 export type { Team } from './models/Team';

@@ -29,7 +29,7 @@ func (h *TeamsHandler) CreateTeam(ctx context.Context, request openapi.CreateTea
 
 // ListTeams ...
 func (h *TeamsHandler) ListTeam(ctx context.Context, request openapi.ListTeamRequestObject) (openapi.ListTeamResponseObject, error) {
-	teams, err := h.ctrl.ListTeams(ctx)
+	teams, err := h.ctrl.ListTeams(ctx, request.Params)
 	if err != nil {
 		return nil, err
 	}

@@ -7,5 +7,17 @@ export type Team = {
     name: string;
     description?: string;
     contactEmail?: string;
+    /**
+     * Creation date and time
+     */
+    createdAt?: string;
+    /**
+     * Creation date and time
+     */
+    updatedAt?: string;
+    /**
+     * Creation date and time
+     */
+    deletedAt?: string;
 };
 

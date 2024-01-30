@@ -100,7 +100,7 @@ type ClientInterface interface {
 	GetTeamTeamId(ctx context.Context, teamId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ListTeam request
-	ListTeam(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ListTeam(ctx context.Context, params *ListTeamParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateTeamWithBody request with any body
 	CreateTeamWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -147,8 +147,8 @@ func (c *Client) GetTeamTeamId(ctx context.Context, teamId openapi_types.UUID, r
 	return c.Client.Do(req)
 }
 
-func (c *Client) ListTeam(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListTeamRequest(c.Server)
+func (c *Client) ListTeam(ctx context.Context, params *ListTeamParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListTeamRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -291,7 +291,7 @@ func NewGetTeamTeamIdRequest(server string, teamId openapi_types.UUID) (*http.Re
 }
 
 // NewListTeamRequest generates requests for ListTeam
-func NewListTeamRequest(server string) (*http.Request, error) {
+func NewListTeamRequest(server string, params *ListTeamParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -307,6 +307,44 @@ func NewListTeamRequest(server string) (*http.Request, error) {
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Offset != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
@@ -437,7 +475,7 @@ type ClientWithResponsesInterface interface {
 	GetTeamTeamIdWithResponse(ctx context.Context, teamId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetTeamTeamIdResponse, error)
 
 	// ListTeamWithResponse request
-	ListTeamWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListTeamResponse, error)
+	ListTeamWithResponse(ctx context.Context, params *ListTeamParams, reqEditors ...RequestEditorFn) (*ListTeamResponse, error)
 
 	// CreateTeamWithBodyWithResponse request with any body
 	CreateTeamWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTeamResponse, error)
@@ -516,7 +554,12 @@ func (r GetTeamTeamIdResponse) StatusCode() int {
 type ListTeamResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]Team
+	JSON200      *struct {
+		Limit   *float32 `json:"limit,omitempty"`
+		Offset  *float32 `json:"offset,omitempty"`
+		Results *[]Team  `json:"results,omitempty"`
+		Total   *float32 `json:"total,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -607,8 +650,8 @@ func (c *ClientWithResponses) GetTeamTeamIdWithResponse(ctx context.Context, tea
 }
 
 // ListTeamWithResponse request returning *ListTeamResponse
-func (c *ClientWithResponses) ListTeamWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListTeamResponse, error) {
-	rsp, err := c.ListTeam(ctx, reqEditors...)
+func (c *ClientWithResponses) ListTeamWithResponse(ctx context.Context, params *ListTeamParams, reqEditors ...RequestEditorFn) (*ListTeamResponse, error) {
+	rsp, err := c.ListTeam(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -724,7 +767,12 @@ func ParseListTeamResponse(rsp *http.Response) (*ListTeamResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []Team
+		var dest struct {
+			Limit   *float32 `json:"limit,omitempty"`
+			Offset  *float32 `json:"offset,omitempty"`
+			Results *[]Team  `json:"results,omitempty"`
+			Total   *float32 `json:"total,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
