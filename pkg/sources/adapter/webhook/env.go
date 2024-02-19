@@ -20,6 +20,7 @@ type env struct {
 	EventType                    string                   `envconfig:"WEBHOOK_EVENT_TYPE" required:"true"`
 }
 
+// ExtensionAttributesFrom ...
 type ExtensionAttributesFrom struct {
 	method  bool
 	path    bool

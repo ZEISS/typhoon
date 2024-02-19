@@ -97,9 +97,7 @@ func (siw *ServerInterfaceWrapper) ListTeam(c *fiber.Ctx) error {
 
 	var err error
 
-	c.Context().SetUserValue(Bearer_authScopes, []string{})
-
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(BearerAuthScopes, []string{"read:teams"})
 
 	// Parameter object where we will unmarshal all parameters from the context
 	var params ListTeamParams

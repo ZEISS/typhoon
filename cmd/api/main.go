@@ -13,7 +13,6 @@ import (
 
 	"github.com/katallaxie/pkg/logger"
 	"github.com/katallaxie/pkg/server"
-	models "github.com/zeiss/typhoon/api"
 
 	"github.com/spf13/cobra"
 	"gorm.io/driver/postgres"
@@ -62,7 +61,10 @@ func run(ctx context.Context) error {
 		return err
 	}
 
-	conn.AutoMigrate(&models.Team{})
+	err = config.RunMigrations(conn)
+	if err != nil {
+		return err
+	}
 
 	db := adapter.NewDB(conn)
 	srv, _ := server.WithContext(ctx)

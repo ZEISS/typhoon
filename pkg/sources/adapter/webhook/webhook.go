@@ -3,8 +3,10 @@ package webhook
 import (
 	"context"
 
-	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/zeiss/typhoon/api/sources"
+
+	cloudevents "github.com/cloudevents/sdk-go/v2"
+	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 	kadapter "knative.dev/eventing/pkg/adapter/v2"
 	logging "knative.dev/pkg/logging"
@@ -16,6 +18,9 @@ type webhookAdapter struct {
 	logger    *zap.SugaredLogger
 	client    cloudevents.Client
 	metricTag *kadapter.MetricTag
+
+	eventType   string
+	eventSource string
 }
 
 // NewAdapter ...
@@ -37,16 +42,47 @@ func NewAdapter(ctx context.Context, env kadapter.EnvConfigAccessor, client clou
 }
 
 // Start ...
-func (a *webhookAdapter) Start(ctx context.Context) error {
-	ctx = kadapter.ContextWithMetricTag(ctx, a.metricTag)
+func (h *webhookAdapter) Start(ctx context.Context) error {
+	ctx = kadapter.ContextWithMetricTag(ctx, h.metricTag)
 
-	// m := http.NewServeMux()
-	// m.HandleFunc("/", h.handleAll(ctx))
+	app := fiber.New()
+	app.Post("/", h.HandleAll)
+	app.Get("/healthz", h.HandleHealthz)
 
-	// s := &http.Server{
-	// 	Addr:    fmt.Sprintf(":%d", serverPort),
-	// 	Handler: m,
-	// }
+	err := app.Listen(":3000")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// HandleHealthz ...
+func (h *webhookAdapter) HandleHealthz(c *fiber.Ctx) error {
+	return c.SendStatus(fiber.StatusOK)
+}
+
+// HandleAll ...
+func (h *webhookAdapter) HandleAll(c *fiber.Ctx) error {
+	logging.FromContext(c.Context()).Info("Received request")
+
+	event := cloudevents.NewEvent(cloudevents.VersionV1)
+	event.SetType(h.eventType)
+	event.SetSource(h.eventSource)
+
+	err := event.SetData(c.Get("Content-Type"), c.Body())
+	if err != nil {
+		return err
+	}
+
+	e, err := h.client.Request(c.Context(), event)
+	if err != nil && !cloudevents.IsACK(err) {
+		return err
+	}
+
+	if e == nil || e.Data() == nil {
+		return c.SendStatus(fiber.StatusNoContent)
+	}
 
 	return nil
 }

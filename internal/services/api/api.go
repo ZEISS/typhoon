@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 
 	openapi "github.com/zeiss/typhoon/api"
 	"github.com/zeiss/typhoon/internal/adapter"
@@ -46,6 +47,8 @@ func (a *ApiSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 
 		validatorOptions := &middleware.Options{}
 		validatorOptions.Options.AuthenticationFunc = func(ctx context.Context, filter *openapi3filter.AuthenticationInput) error {
+			fmt.Println(filter)
+
 			return nil
 		}
 

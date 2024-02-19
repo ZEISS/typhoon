@@ -32,7 +32,7 @@ type natsAdapter struct {
 	mt     *kadapter.MetricTag
 }
 
-// NewSink ...
+// NewSink returns a new NATS.io adapter
 func NewSink(ctx context.Context, envAcc kadapter.EnvConfigAccessor, client cloudevents.Client) kadapter.Adapter {
 	logger := logging.FromContext(ctx)
 
@@ -49,7 +49,7 @@ func NewSink(ctx context.Context, envAcc kadapter.EnvConfigAccessor, client clou
 	}
 }
 
-// Start ...
+// Start is called to start the NATS.io adapter.
 func (a *natsAdapter) Start(ctx context.Context) error {
 	a.logger.Info("starting NATS.io adapter")
 

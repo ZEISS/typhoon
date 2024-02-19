@@ -10,3 +10,9 @@ var WebhookResource = schema.GroupResource{
 	Group:    GroupName,
 	Resource: "webhook",
 }
+
+// HTTPResource ...
+var HTTPResource = schema.GroupResource{
+	Group:    GroupName,
+	Resource: "http",
+}

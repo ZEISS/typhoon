@@ -2,6 +2,6 @@ package: api
 generate:
   models: true
   embedded-spec: true
-output: api/models.gen.go
+output: examples/api/models.gen.go
 output-options:
   skip-prune: true
