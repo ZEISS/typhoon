@@ -3,7 +3,7 @@ package natssink
 import (
 	"context"
 
-	"github.com/zeiss/typhoon/api/sinks"
+	"github.com/zeiss/typhoon/pkg/apis/sinks"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	kadapter "knative.dev/eventing/pkg/adapter/v2"
