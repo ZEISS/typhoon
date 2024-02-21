@@ -44,8 +44,8 @@ const (
 // and returns the state of the first observed Pod in a "waiting" state, or nil
 // if no Pod is found in that state.
 func DeploymentPodsWaitingState(d *appsv1.Deployment,
-	pl corelistersv1.PodNamespaceLister) (*corev1.ContainerStateWaiting, error) {
-
+	pl corelistersv1.PodNamespaceLister,
+) (*corev1.ContainerStateWaiting, error) {
 	sel, err := metav1.LabelSelectorAsSelector(d.Spec.Selector)
 	if err != nil {
 		return nil, err
