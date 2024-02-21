@@ -1,19 +1,3 @@
-/*
-Copyright 2023 TriggerMesh Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package mongodbsource
 
 import (
@@ -22,10 +6,10 @@ import (
 	"knative.dev/eventing/pkg/reconciler/source"
 	"knative.dev/pkg/apis"
 
-	commonv1alpha1 "github.com/triggermesh/triggermesh/pkg/apis/common/v1alpha1"
-	"github.com/triggermesh/triggermesh/pkg/apis/sources/v1alpha1"
-	common "github.com/triggermesh/triggermesh/pkg/reconciler"
-	"github.com/triggermesh/triggermesh/pkg/reconciler/resource"
+	commonv1alpha1 "github.com/zeiss/typhoon/pkg/apis/common/v1alpha1"
+	"github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
+	common "github.com/zeiss/typhoon/pkg/reconciler"
+	"github.com/zeiss/typhoon/pkg/reconciler/resource"
 
 	corev1 "k8s.io/api/core/v1"
 )
@@ -42,7 +26,7 @@ type adapterConfig struct {
 	// Configuration accessor for logging/metrics/tracing
 	configs source.ConfigAccessor
 	// Container image
-	Image string `default:"gcr.io/triggermesh/mongodbsource-adapter"`
+	Image string `default:"ghcr.io/zeiss/typhoon/mongodbsource-adapter"`
 }
 
 // Verify that Reconciler implements common.AdapterBuilder.

@@ -1,18 +1,4 @@
-/*
-Copyright 2022 TriggerMesh Inc.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
 
 package splunktarget
 
@@ -33,8 +19,8 @@ import (
 
 	"github.com/ZachtimusPrime/Go-Splunk-HTTP/splunk/v2"
 
-	"github.com/triggermesh/triggermesh/pkg/apis/targets"
-	"github.com/triggermesh/triggermesh/pkg/metrics"
+	"github.com/zeiss/typhoon/pkg/apis/targets"
+	"github.com/zeiss/typhoon/pkg/metrics"
 )
 
 // SplunkClient is the interface that must be implemented by Splunk HEC
@@ -48,7 +34,7 @@ type SplunkClient interface {
 type adapter struct {
 	logger *zap.SugaredLogger
 
-	ceClient cloudevents.Client
+	cgithub.com/zeiss/typhoon
 	spClient SplunkClient
 
 	defaultIndex string
@@ -142,7 +128,7 @@ func newClient(hecURL url.URL, hecToken, index, hostname string, skipTLSVerify b
 
 // hostname returns the host name to be included in Splunk events' metadata.
 func hostname(env pkgadapter.EnvConfigAccessor) string {
-	return "io.triggermesh.splunktarget." + env.GetNamespace() + "." + env.GetName()
+	return "com.zeiss.splunktarget." + env.GetNamespace() + "." + env.GetName()
 }
 
 // Start implements adapter.Adapter.

@@ -1,18 +1,4 @@
-/*
-Copyright 2022 TriggerMesh Inc.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
 
 package filter
 
@@ -36,12 +22,12 @@ import (
 	"knative.dev/pkg/injection"
 	"knative.dev/pkg/logging"
 
-	commonv1alpha1 "github.com/triggermesh/triggermesh/pkg/apis/common/v1alpha1"
-	informerv1alpha1 "github.com/triggermesh/triggermesh/pkg/client/generated/injection/informers/routing/v1alpha1/filter"
-	routinglisters "github.com/triggermesh/triggermesh/pkg/client/generated/listers/routing/v1alpha1"
-	"github.com/triggermesh/triggermesh/pkg/routing/adapter/common/env"
-	"github.com/triggermesh/triggermesh/pkg/routing/eventfilter"
-	"github.com/triggermesh/triggermesh/pkg/routing/eventfilter/cel"
+	commonv1alpha1 "github.com/zeiss/typhoon/pkg/apis/common/v1alpha1"
+	informerv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/injection/informers/routing/v1alpha1/filter"
+	routinglisters "github.com/zeiss/typhoon/pkg/client/generated/listers/routing/v1alpha1"
+	"github.com/zeiss/typhoon/pkg/routing/adapter/common/env"
+	"github.com/zeiss/typhoon/pkg/routing/eventfilter"
+	"github.com/zeiss/typhoon/pkg/routing/eventfilter/cel"
 )
 
 const serverPort int = 8080
@@ -51,11 +37,11 @@ type Handler struct {
 	// receiver receives incoming HTTP requests
 	receiver *kncloudevents.HTTPMessageReceiver
 	// sender sends requests to downstream services
-	sender *kncloudevents.HTTPMessageSender
-
-	filterLister routinglisters.FilterNamespaceLister
-	logger       *zap.SugaredLogger
-
+	sender *kncloudevegithub.com/zeiss/typhoon
+github.com/zeiss/typhoon
+	fgithub.com/zeiss/typhoonamespaceLister
+	lgithub.com/zeiss/typhoon
+github.com/zeiss/typhoon
 	// expressions is the map of trigger refs with precompiled CEL expressions
 	// TODO (tzununbekov): Add cleanup
 	expressions *expressionStorage

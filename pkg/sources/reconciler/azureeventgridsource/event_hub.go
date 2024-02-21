@@ -1,18 +1,4 @@
-/*
-Copyright 2022 TriggerMesh Inc.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
 
 package azureeventgridsource
 
@@ -30,11 +16,11 @@ import (
 	"github.com/Azure/azure-sdk-for-go/profiles/latest/eventhub/mgmt/eventhub"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/to"
 
-	commonv1alpha1 "github.com/triggermesh/triggermesh/pkg/apis/common/v1alpha1"
-	"github.com/triggermesh/triggermesh/pkg/apis/sources/v1alpha1"
-	"github.com/triggermesh/triggermesh/pkg/reconciler/event"
-	"github.com/triggermesh/triggermesh/pkg/reconciler/skip"
-	"github.com/triggermesh/triggermesh/pkg/sources/client/azure/eventgrid"
+	commonv1alpha1 "github.com/zeiss/typhoon/pkg/apis/common/v1alpha1"
+	"github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
+	"github.com/zeiss/typhoon/pkg/reconciler/event"
+	"github.com/zeiss/typhoon/pkg/reconciler/skip"
+	"github.com/zeiss/typhoon/pkg/sources/client/azure/eventgrid"
 )
 
 // We don't know the pricing tier of the Event Hubs namespace, so we default to
@@ -45,10 +31,10 @@ const (
 )
 
 const resourceTypeEventHubs = "eventhubs"
-
-// EnsureEventHub ensures the existence of an Event Hub for sending events.
-// Required permissions:
-//   - Microsoft.EventHub/namespaces/eventhubs/read
+github.com/zeiss/typhoon
+//github.com/zeiss/typhoonnce of an Event Hub for sending events.
+//github.com/zeiss/typhoon
+//github.com/zeiss/typhoon/eventhubs/read
 //   - Microsoft.EventHub/namespaces/eventhubs/write
 func EnsureEventHub(ctx context.Context, cli eventgrid.EventHubsClient) (string /*resource ID*/, error) {
 	if skip.Skip(ctx) {
@@ -180,7 +166,7 @@ func EnsureNoEventHub(ctx context.Context, cli eventgrid.EventHubsClient) error 
 // name/namespace (8 characters) and make it part of the name.
 func makeEventHubName(src *v1alpha1.AzureEventGridSource) string {
 	nsNameChecksum := crc32.ChecksumIEEE([]byte(src.Namespace + "/" + src.Name))
-	return "io.triggermesh.azureeventgridsources-" + strconv.FormatUint(uint64(nsNameChecksum), 10)
+	return "com.zeiss.azureeventgridsources-" + strconv.FormatUint(uint64(nsNameChecksum), 10)
 }
 
 // failGetEventHubEvent returns a reconciler event which indicates that an

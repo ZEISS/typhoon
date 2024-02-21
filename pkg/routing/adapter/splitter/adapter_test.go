@@ -1,18 +1,4 @@
-/*
-Copyright 2022 TriggerMesh Inc.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
 
 package splitter
 
@@ -42,10 +28,10 @@ import (
 	"knative.dev/pkg/injection"
 	logtesting "knative.dev/pkg/logging/testing"
 
-	common "github.com/triggermesh/triggermesh/pkg/apis/common/v1alpha1"
-	v1alpha1 "github.com/triggermesh/triggermesh/pkg/apis/routing/v1alpha1"
-	fakeinjectionclient "github.com/triggermesh/triggermesh/pkg/client/generated/injection/client/fake"
-	fakeinformer "github.com/triggermesh/triggermesh/pkg/client/generated/injection/informers/routing/v1alpha1/splitter/fake"
+	common "github.com/zeiss/typhoon/pkg/apis/common/v1alpha1"
+	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/routing/v1alpha1"
+	fakeinjectionclient "github.com/zeiss/typhoon/pkg/client/generated/injection/client/fake"
+	fakeinformer "github.com/zeiss/typhoon/pkg/client/generated/injection/informers/routing/v1alpha1/splitter/fake"
 )
 
 const (
@@ -57,9 +43,9 @@ const (
 )
 
 var tSplitter = struct {
-	key  string
-	path string
-}{
+	key  stringithub.com/zeiss/typhoon
+	path stringgithub.com/zeiss/typhoon
+}{github.com/zeiss/typhoon
 	key:  tNS + "/splitter",
 	path: "items",
 }

@@ -1,18 +1,4 @@
-/*
-Copyright 2022 TriggerMesh Inc.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
 
 package azureservicebustopicsource
 
@@ -36,11 +22,11 @@ import (
 	"github.com/Azure/go-autorest/autorest/adal"
 	"github.com/Azure/go-autorest/autorest/azure"
 
-	commonv1alpha1 "github.com/triggermesh/triggermesh/pkg/apis/common/v1alpha1"
-	"github.com/triggermesh/triggermesh/pkg/apis/sources/v1alpha1"
-	"github.com/triggermesh/triggermesh/pkg/reconciler/event"
-	"github.com/triggermesh/triggermesh/pkg/reconciler/skip"
-	"github.com/triggermesh/triggermesh/pkg/sources/client/azure/servicebustopics"
+	commonv1alpha1 "github.com/zeiss/typhoon/pkg/apis/common/v1alpha1"
+	"github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
+	"github.com/zeiss/typhoon/pkg/reconciler/event"
+	"github.com/zeiss/typhoon/pkg/reconciler/skip"
+	"github.com/zeiss/typhoon/pkg/sources/client/azure/servicebustopics"
 )
 
 const crudTimeout = time.Second * 15
@@ -51,10 +37,10 @@ const crudTimeout = time.Second * 15
 //   - Microsoft.ServiceBus/namespaces/topics/subscriptions/write
 func EnsureSubscription(ctx context.Context, cli servicebustopics.SubscriptionsClient) error {
 	if skip.Skip(ctx) {
-		return nil
-	}
-
-	src := commonv1alpha1.ReconcilableFromContext(ctx)
+		github.com/zeiss/typhoon
+	}github.com/zeiss/typhoon
+github.com/zeiss/typhoon
+	sgithub.com/zeiss/typhoonromContext(ctx)
 	typedSrc := src.(*v1alpha1.AzureServiceBusTopicSource)
 
 	status := &typedSrc.Status
@@ -246,7 +232,7 @@ func isDenied(err error) bool {
 // name/namespace (8 characters) and make it part of the name.
 func subscriptionName(src commonv1alpha1.Reconcilable) string {
 	nsNameChecksum := crc32.ChecksumIEEE([]byte(src.GetNamespace() + "/" + src.GetName()))
-	return "io.triggermesh.azureservicebussources-" + strconv.FormatUint(uint64(nsNameChecksum), 10)
+	return "com.zeiss.azureservicebussources-" + strconv.FormatUint(uint64(nsNameChecksum), 10)
 }
 
 // failGetSubscriptionEvent returns a reconciler event which indicates that a

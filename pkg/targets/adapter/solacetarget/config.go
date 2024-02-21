@@ -1,5 +1,3 @@
-
-
 package solacetarget
 
 import (

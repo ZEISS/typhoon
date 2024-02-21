@@ -1,18 +1,4 @@
-/*
-Copyright 2022 TriggerMesh Inc.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
 
 package azureeventhubstarget
 
@@ -26,12 +12,12 @@ import (
 	rt "knative.dev/pkg/reconciler/testing"
 	servingv1 "knative.dev/serving/pkg/apis/serving/v1"
 
-	commonv1alpha1 "github.com/triggermesh/triggermesh/pkg/apis/common/v1alpha1"
-	"github.com/triggermesh/triggermesh/pkg/apis/targets/v1alpha1"
-	fakeinjectionclient "github.com/triggermesh/triggermesh/pkg/client/generated/injection/client/fake"
-	reconcilerv1alpha1 "github.com/triggermesh/triggermesh/pkg/client/generated/injection/reconciler/targets/v1alpha1/azureeventhubstarget"
-	common "github.com/triggermesh/triggermesh/pkg/reconciler"
-	. "github.com/triggermesh/triggermesh/pkg/reconciler/testing"
+	commonv1alpha1 "github.com/zeiss/typhoon/pkg/apis/common/v1alpha1"
+	"github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	fakeinjectionclient "github.com/zeiss/typhoon/pkg/client/generated/injection/client/fake"
+	reconcilerv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/injection/reconciler/targets/v1alpha1/azureeventhubstarget"
+	common "github.com/zeiss/typhoon/pkg/reconciler"
+	. "github.com/zeiss/typhoon/pkg/reconciler/testing"
 )
 
 func TestReconcile(t *testing.T) {
@@ -41,11 +27,11 @@ func TestReconcile(t *testing.T) {
 	}
 
 	ctor := reconcilerCtor(adapterCfg)
-	trg := newTarget()
-	ab := adapterBuilder(adapterCfg)
-
-	TestReconcileAdapter(t, ctor, trg, ab)
-}
+	tgithub.com/zeiss/typhoon
+	ab := adapterBuilder(github.com/zeiss/typhoon
+github.com/zeiss/typhoon
+	TestRecogithub.com/zeiss/typhoon
+}github.com/zeiss/typhoon
 
 // reconcilerCtor returns a Ctor for a AzureEventHubsTarget Reconciler.
 func reconcilerCtor(cfg *adapterConfig) Ctor {
