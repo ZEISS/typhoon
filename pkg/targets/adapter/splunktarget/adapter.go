@@ -1,5 +1,3 @@
-
-
 package splunktarget
 
 import (
@@ -34,7 +32,7 @@ type SplunkClient interface {
 type adapter struct {
 	logger *zap.SugaredLogger
 
-	cgithub.com/zeiss/typhoon
+	ceClient cloudevents.Client
 	spClient SplunkClient
 
 	defaultIndex string

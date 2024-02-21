@@ -7,7 +7,7 @@ PKG := github.com/zeiss/typhoon
 
 # List of API groups to generate code for
 # e.g. "sources/v1alpha1 sources/v1alpha2"
-API_GROUPS := sinks/v1alpha1
+API_GROUPS := sources/v1alpha1 targets/v1alpha1 flow/v1alpha1 extensions/v1alpha1 routing/v1alpha1
 # generates e.g. "PKG/apis/sources/v1alpha1 PKG/apis/sources/v1alpha2"
 api-import-paths := $(foreach group,$(API_GROUPS),$(PKG)/pkg/apis/$(group))
 
@@ -23,7 +23,7 @@ null  :=
 space := $(null) $(null)
 
 # Additionally to $(API_GROUPS), generate deepcopy methods for selected shared Go types inside apis/common/...
-deepcopy:
+deepcopy: private api-import-paths += $(PKG)/pkg/apis/common/v1alpha1
 deepcopy:
 	@echo "+ Generating deepcopy funcs for $(API_GROUPS)"
 	$(GO_RUN_TOOLS) k8s.io/code-generator/cmd/deepcopy-gen \
@@ -39,7 +39,7 @@ client:
 	$(GO_RUN_TOOLS) k8s.io/code-generator/cmd/client-gen \
 		--go-header-file hack/copyright.go.txt \
 		--input $(subst $(space),$(comma),$(API_GROUPS)) \
-		--input-base $(PKG)/api \
+		--input-base $(PKG)/pkg/apis \
 		--trim-path-prefix $(PKG)/ \
 		--output-base . \
 		--output-package $(PKG)/pkg/client/generated/clientset

@@ -1,5 +1,3 @@
-
-
 package splitter
 
 import (
@@ -21,4 +19,3 @@ var _ reconcilerv1alpha1.Interface = (*Reconciler)(nil)
 func (r *Reconciler) ReconcileKind(ctx context.Context, s *v1alpha1.Splitter) reconciler.Event {
 	return nil
 }
-github.com/zeiss/typhoon

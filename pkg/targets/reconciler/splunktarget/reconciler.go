@@ -1,5 +1,3 @@
-
-
 package splunktarget
 
 import (
@@ -22,10 +20,10 @@ type Reconciler struct {
 
 // Check that our Reconciler implements Interface
 var _ reconcilerv1alpha1.Interface = (*Reconciler)(nil)
-github.com/zeiss/typhoon
-// ReconcileKind implgithub.com/zeiss/typhoon
-func (r *Reconcilegithub.com/zeiss/typhoonxt, trg *v1alpha1.SplunkTarget) reconciler.Event {
-	// injecgithub.com/zeiss/typhoon reconciliation logic
+
+// ReconcileKind implements Interface.ReconcileKind.
+func (r *Reconciler) ReconcileKind(ctx context.Context, trg *v1alpha1.SplunkTarget) reconciler.Event {
+	// inject target into context for usage in reconciliation logic
 	ctx = commonv1alpha1.WithReconcilable(ctx, trg)
 
 	return r.base.ReconcileAdapter(ctx, r)

@@ -1,19 +1,3 @@
-/*
-Copyright 2022 TriggerMesh Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package reconciler
 
 import (
@@ -39,11 +23,11 @@ import (
 	"knative.dev/serving/pkg/apis/serving"
 	servingv1 "knative.dev/serving/pkg/apis/serving/v1"
 
-	"github.com/triggermesh/triggermesh/pkg/apis/common/v1alpha1"
-	"github.com/triggermesh/triggermesh/pkg/mturl"
-	"github.com/triggermesh/triggermesh/pkg/reconciler/event"
-	"github.com/triggermesh/triggermesh/pkg/reconciler/resource"
-	"github.com/triggermesh/triggermesh/pkg/reconciler/semantic"
+	"github.com/zeiss/typhoon/pkg/apis/common/v1alpha1"
+	"github.com/zeiss/typhoon/pkg/mturl"
+	"github.com/zeiss/typhoon/pkg/reconciler/event"
+	"github.com/zeiss/typhoon/pkg/reconciler/resource"
+	"github.com/zeiss/typhoon/pkg/reconciler/semantic"
 )
 
 // List of annotations set on Knative Serving objects by the Knative Serving
@@ -140,9 +124,6 @@ func (r *GenericDeploymentReconciler[T, L]) reconcileAdapter(ctx context.Context
 func (r *GenericDeploymentReconciler[T, L]) syncAdapterDeployment(ctx context.Context,
 	currentAdapter, desiredAdapter *appsv1.Deployment, gvk schema.GroupVersionKind,
 ) (*appsv1.Deployment, error) {
-	// We may have found an existing adapter object that is owned by the
-	// component instance, but under a different name, e.g. created by an
-	// older version of TriggerMesh.
 	desiredAdapter.Name = currentAdapter.Name
 
 	if semantic.Semantic.DeepEqual(desiredAdapter, currentAdapter) {
@@ -246,9 +227,6 @@ func (r *GenericServiceReconciler[T, L]) reconcileAdapter(ctx context.Context,
 func (r *GenericServiceReconciler[T, L]) syncAdapterService(ctx context.Context,
 	currentAdapter, desiredAdapter *servingv1.Service, gvk schema.GroupVersionKind,
 ) (*servingv1.Service, error) {
-	// We may have found an existing adapter object that is owned by the
-	// component instance, but under a different name, e.g. created by an
-	// older version of TriggerMesh.
 	desiredAdapter.Name = currentAdapter.Name
 
 	if semantic.Semantic.DeepEqual(desiredAdapter, currentAdapter) {
@@ -307,7 +285,7 @@ func (r *GenericRBACReconciler[T, L]) reconcileRBAC(ctx context.Context,
 		return nil, fmt.Errorf("synchronizing adapter ServiceAccount: %w", err)
 	}
 
-	// Bind serviceAccount to shared "triggermesh-config-watcher" clusterRole.
+	// Bind serviceAccount to shared "typhoon-config-watcher" clusterRole.
 	// All adapters require permissions to read configMaps.
 	desiredRB := newConfigWatchRoleBinding(rcl, currentSA)
 	currentRB, err := r.getOrCreateAdapterRoleBinding(ctx, desiredRB)
@@ -372,8 +350,6 @@ func (r *GenericRBACReconciler[T, L]) syncAdapterServiceAccount(ctx context.Cont
 		return currentSA, nil
 	}
 
-	// If the service account is not managed by the triggermesh controller,
-	// then it can be externally created and we should not reconcile it.
 	if manager, set := currentSA.GetLabels()[appManagedByLabel]; !set || manager != managedBy {
 		return currentSA, nil
 	}

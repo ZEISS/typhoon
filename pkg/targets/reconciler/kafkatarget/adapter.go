@@ -1,5 +1,3 @@
-
-
 package kafkatarget
 
 import (
@@ -28,9 +26,9 @@ const (
 	envCA                 = "CA"
 	envClientCert         = "CLIENT_CERT"
 	envClientKey          = "CLIENT_KEY"
-	egithub.com/zeiss/typhoonY"
-github.com/zeiss/typhoon
-	egithub.com/zeiss/typhoon
+	envSkipVerify         = "SKIP_VERIFY"
+
+	envSaslEnable = "SASL_ENABLE"
 	envTLSEnable  = "TLS_ENABLE"
 
 	envKerberosConfigPath  = "KERBEROS_CONFIG_PATH"

@@ -6,7 +6,6 @@ import (
 	openapi "github.com/zeiss/typhoon/api"
 	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/ports"
-	"github.com/zeiss/typhoon/pkg/utils"
 
 	openapi_types "github.com/oapi-codegen/runtime/types"
 	"gorm.io/gorm"
@@ -52,7 +51,7 @@ func (db *DB) ListTeams(ctx context.Context, params openapi.ListTeamParams) (mod
 		return models.PaginatedListTeams{}, result.Error
 	}
 
-	return models.PaginatedListTeams{Results: &users, Total: utils.Float32(float32(totalRows))}, nil
+	return models.PaginatedListTeams{Results: &users}, nil
 }
 
 // GetTeam

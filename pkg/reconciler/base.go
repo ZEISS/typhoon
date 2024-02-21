@@ -1,19 +1,3 @@
-/*
-Copyright 2022 TriggerMesh Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package reconciler
 
 import (
@@ -313,9 +297,7 @@ func outermostAncestorControllerRef(ctx context.Context, obj metav1.Object) *met
 	return resolveOutermostAncestorControllerRef(ctx, obj, schema.GroupVersionKind{})
 }
 
-// resolveOutermostAncestorControllerRef returns a reference to the controller
-// of an API object, recursing up the hierarchy of controllers.
-// eg. pod -> replicaset -> deployment -> TriggerMesh component
+// resolveOutermostAncestorControllerRef returns the outermost ancestor controller
 func resolveOutermostAncestorControllerRef(ctx context.Context, obj metav1.Object, gvk schema.GroupVersionKind) *metav1.OwnerReference {
 	controllerRef := metav1.GetControllerOf(obj)
 	if controllerRef == nil {

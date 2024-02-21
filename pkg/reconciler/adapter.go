@@ -1,19 +1,3 @@
-/*
-Copyright 2022 TriggerMesh Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package reconciler
 
 import (
@@ -33,25 +17,16 @@ import (
 	"knative.dev/pkg/system"
 	servingv1 "knative.dev/serving/pkg/apis/serving/v1"
 
-	"github.com/triggermesh/triggermesh/pkg/apis/common/v1alpha1"
-	"github.com/triggermesh/triggermesh/pkg/reconciler/resource"
+	"github.com/zeiss/typhoon/pkg/apis/common/v1alpha1"
+	"github.com/zeiss/typhoon/pkg/reconciler/resource"
 )
 
 const (
-	metricsPrometheusPortName = "metrics"
-
-	// TCP port used to expose metrics via the Prometheus metrics exporter
-	// in TriggerMesh components.
-	//
-	// It is necessary to override Knative's default value of "9090"
-	// because this port is already reserved by the "queue-proxy" container
-	// in Knative Services.
-	// For consistency, we use the same port in components that aren't
-	// backed by a Knative Service.
-	metricsPrometheusPort uint16 = 9092
+	metricsPrometheusPortName        = "metrics"
+	metricsPrometheusPort     uint16 = 9092
 )
 
-const roleNameConfigWatcher = "triggermesh-config-watcher"
+const roleNameConfigWatcher = "typhoon-config-watcher"
 
 const defaultSinkTimeout = 30 * time.Second
 
@@ -120,9 +95,7 @@ func NewMTAdapterDeployment(rcl v1alpha1.Reconcilable, opts ...resource.ObjectOp
 
 	return resource.NewDeployment(rclNs, MTAdapterObjectName(rcl),
 		append(commonAdapterDeploymentOptions(rcl), append([]resource.ObjectOption{
-			// makes Informers namespace-scoped in TriggerMesh's adapter shared Main
 			resource.EnvVar(EnvNamespace, rclNs),
-			// required to enable Knative's HA
 			resource.EnvVar(system.NamespaceEnvKey, rclNs),
 		}, opts...)...)...,
 	)
@@ -208,9 +181,7 @@ func NewMTAdapterKnService(rcl v1alpha1.Reconcilable, opts ...resource.ObjectOpt
 
 	return resource.NewKnService(rclNs, MTAdapterObjectName(rcl),
 		append(commonAdapterKnServiceOptions(rcl), append([]resource.ObjectOption{
-			// makes Informers namespace-scoped in TriggerMesh's adapter shared Main
 			resource.EnvVar(EnvNamespace, rclNs),
-			// required to enable Knative's HA
 			resource.EnvVar(system.NamespaceEnvKey, rclNs),
 		}, opts...)...)...,
 	)
@@ -330,8 +301,7 @@ func OwnByServiceAccount(obj metav1.Object, owner *corev1.ServiceAccount) {
 	})
 }
 
-// TMCommonObjectLabels returns a set of labels which are always applied to
-// TriggerMesh objects reconciled for the given component type.
+// TMCommonObjectLabels ...
 func TMCommonObjectLabels(o kmeta.OwnerRefable) labels.Set {
 	return labels.Set{
 		appNameLabel:      ComponentName(o),

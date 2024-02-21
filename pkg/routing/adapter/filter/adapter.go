@@ -1,5 +1,3 @@
-
-
 package filter
 
 import (
@@ -37,14 +35,11 @@ type Handler struct {
 	// receiver receives incoming HTTP requests
 	receiver *kncloudevents.HTTPMessageReceiver
 	// sender sends requests to downstream services
-	sender *kncloudevegithub.com/zeiss/typhoon
-github.com/zeiss/typhoon
-	fgithub.com/zeiss/typhoonamespaceLister
-	lgithub.com/zeiss/typhoon
-github.com/zeiss/typhoon
-	// expressions is the map of trigger refs with precompiled CEL expressions
-	// TODO (tzununbekov): Add cleanup
-	expressions *expressionStorage
+	sender *kncloudevents.HTTPMessageSender
+
+	filterLister routinglisters.FilterNamespaceLister
+	logger       *zap.SugaredLogger
+	expressions  *expressionStorage
 }
 
 // NewEnvConfig satisfies env.ConfigConstructor.
