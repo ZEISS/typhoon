@@ -9,7 +9,7 @@ require (
 	github.com/cloudevents/sdk-go/v2 v2.13.0
 	github.com/fsnotify/fsnotify v1.7.0
 	github.com/getkin/kin-openapi v0.123.0
-	github.com/gofiber/fiber/v2 v2.52.0
+	github.com/gofiber/fiber/v2 v2.52.1
 	github.com/golang/mock v1.7.0-rc.1
 	github.com/golangci/golangci-lint v1.55.2
 	github.com/google/cel-go v0.17.7
