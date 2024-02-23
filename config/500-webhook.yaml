@@ -24,7 +24,7 @@ spec:
       containers:
       - name: webhook
         terminationMessagePolicy: FallbackToLogsOnError
-        image: ko://github.com/typhoon/typhoon/cmd/typhoon-webhook
+        image: ko://github.com/zeiss/typhoon/cmd/webhook
         env:
         - name: SYSTEM_NAMESPACE
           valueFrom:

@@ -23,7 +23,7 @@ spec:
       containers:
       - name: controller
         terminationMessagePolicy: FallbackToLogsOnError
-        image: ko://github.com/typhoon/typhoon/cmd/typhoon-controller
+        image: ko://github.com/zeiss/typhoon/cmd/controller
 
         resources:
           requests:
@@ -46,37 +46,35 @@ spec:
         - name: METRICS_DOMAIN
           value: typhoon.zeiss.com
         - name: HTTPPOLLERSOURCE_IMAGE
-          value: ko://github.com/typhoon/typhoon/cmd/httppollersource-adapter
-        - name: OCIMETRICSSOURCE_IMAGE
-          value: ko://github.com/typhoon/typhoon/cmd/ocimetricssource-adapter
+          value: ko://github.com/zeiss/typhoon/cmd/httppollersource-adapter
         - name: KAFKASOURCE_IMAGE
-          value: ko://github.com/typhoon/typhoon/cmd/kafkasource-adapter
+          value: ko://github.com/zeiss/typhoon/cmd/kafkasource-adapter
         - name: WEBHOOKSOURCE_IMAGE
-          value: ko://github.com/typhoon/typhoon/cmd/webhooksource-adapter
+          value: ko://github.com/zeiss/typhoon/cmd/webhooksource-adapter
         - name: CLOUDEVENTSTARGET_IMAGE
-          value: ko://github.com/typhoon/typhoon/cmd/cloudeventstarget-adapter
+          value: ko://github.com/zeiss/typhoon/cmd/cloudeventstarget-adapter
         - name: HTTPTARGET_IMAGE
-          value: ko://github.com/typhoon/typhoon/cmd/httptarget-adapter
+          value: ko://github.com/zeiss/typhoon/cmd/httptarget-adapter
         - name: KAFKATARGET_IMAGE
-          value: ko://github.com/typhoon/typhoon/cmd/kafkatarget-adapter
+          value: ko://github.com/zeiss/typhoon/cmd/kafkatarget-adapter
         - name: LOGZTARGET_IMAGE
-          value: ko://github.com/typhoon/typhoon/cmd/logztarget-adapter
+          value: ko://github.com/zeiss/typhoon/cmd/logztarget-adapter
         - name: OPENTELEMETRYTARGET_IMAGE
-          value: ko://github.com/typhoon/typhoon/cmd/opentelemetrytarget-adapter
+          value: ko://github.com/zeiss/typhoon/cmd/opentelemetrytarget-adapter
         # Flow adapters
         - name: JQTRANSFORMATION_IMAGE
-          value: ko://github.com/typhoon/typhoon/cmd/jqtransformation-adapter
+          value: ko://github.com/zeiss/typhoon/cmd/jqtransformation-adapter
         - name: SYNCHRONIZER_IMAGE
-          value: ko://github.com/typhoon/typhoon/cmd/synchronizer-adapter
+          value: ko://github.com/zeiss/typhoon/cmd/synchronizer-adapter
         - name: TRANSFORMATION_IMAGE
-          value: ko://github.com/typhoon/typhoon/cmd/transformation-adapter
+          value: ko://github.com/zeiss/typhoon/cmd/transformation-adapter
         - name: XMLTOJSONTRANSFORMATION_IMAGE
-          value: ko://github.com/typhoon/typhoon/cmd/xmltojsontransformation-adapter
+          value: ko://github.com/zeiss/typhoon/cmd/xmltojsontransformation-adapter
         # Routing adapters
         - name: FILTER_IMAGE
-          value: ko://github.com/typhoon/typhoon/cmd/filter-adapter
+          value: ko://github.com/zeiss/typhoon/cmd/filter-adapter
         - name: SPLITTER_IMAGE
-          value: ko://github.com/typhoon/typhoon/cmd/splitter-adapter
+          value: ko://github.com/zeiss/typhoon/cmd/splitter-adapter
         # Function Runtimes
         - name: RUNTIME_KLR_PYTHON
           value: gcr.io/typhoon/knative-lambda-python310:v1.26.0

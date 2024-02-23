@@ -12,7 +12,7 @@ metadata:
       [
         {
           "type": "com.oracle.cloud.monitoring",
-          "schema": "https://raw.githubusercontent.com/typhoon/typhoon/main/schemas/com.oracle.cloud.monitoring.json",
+          "schema": "https://raw.githubusercontent.com/zeiss/typhoon/main/schemas/com.oracle.cloud.monitoring.json",
           "description": ""
         }
       ]

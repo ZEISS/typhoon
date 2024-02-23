@@ -1,10 +1,12 @@
 .DEFAULT_GOAL := build
 
 GO ?= go
-GO_RUN_TOOLS ?= $(GO) run -modfile ./tools/go.mod
-GO_TEST = $(GO_RUN_TOOLS) gotest.tools/gotestsum --format pkgname
-GO_RELEASER ?= $(GO_RUN_TOOLS) github.com/goreleaser/goreleaser
-GO_MOD ?= $(shell ${GO} list -m)
+GO_RUN_TOOLS 			?= $(GO) run -modfile ./tools/go.mod
+GO_TEST 					?= $(GO_RUN_TOOLS) gotest.tools/gotestsum --format pkgname
+GO_RELEASER 			?= $(GO_RUN_TOOLS) github.com/goreleaser/goreleaser
+GO_KO 						?= $(GO_RUN_TOOLS) github.com/google/ko
+GO_MOD 						?= $(shell ${GO} list -m)
+BASE_DIR          ?= $(CURDIR)
 
 .PHONY: build
 build: ## Build the binary file.
@@ -39,6 +41,10 @@ clean: ## Remove previous build.
 	rm -rf .test .dist
 	find . -type f -name '*.gen.go' -exec rm {} +
 	git checkout go.mod
+
+.PHONY: deploy
+deploy: ## Deploy the application.
+	$(GO_KO) resolve -f $(BASE_DIR)/config > $(BASE_DIR)/typhoon.yaml
 
 .PHONY: help
 help: ## Display this help screen.

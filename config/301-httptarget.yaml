@@ -11,7 +11,7 @@ metadata:
       [
         {
           "type": "io.typhoon.http.request",
-          "schema": "https://raw.githubusercontent.com/typhoon/typhoon/main/schemas/io.typhoon.http.request.json"
+          "schema": "https://raw.githubusercontent.com/zeiss/typhoon/main/schemas/io.typhoon.http.request.json"
         },
         { "type": "*" }
       ]
