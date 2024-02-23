@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-logging
+  namespace: typhoon
+data:
+  # Global logger configuration, applied by default to all typhoon components.
+  zap-logger-config: |
+    {
+      "level": "info",
+      "development": false,
+      "outputPaths": ["stdout"],
+      "errorOutputPaths": ["stderr"],
+      "encoding": "json",
+      "encoderConfig": {
+        "timeKey": "timestamp",
+        "levelKey": "severity",
+        "nameKey": "logger",
+        "callerKey": "caller",
+        "messageKey": "message",
+        "stacktraceKey": "stacktrace",
+        "lineEnding": "",
+        "levelEncoder": "",
+        "timeEncoder": "iso8601",
+        "durationEncoder": "",
+        "callerEncoder": ""
+      }
+    }
+
+  # Logging level overrides for the typhoon control plane.
+  loglevel.typhoon-controller: info
+  loglevel.typhoon-webhook: info
+
+  # Logging level overrides for typhoon components.
+  # The name of the logger is the Kubernetes kind of the component.
+  loglevel.awss3target: info
+  loglevel.ibmmqsource: info
+  loglevel.transformation: info

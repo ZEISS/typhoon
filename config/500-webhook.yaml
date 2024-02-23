@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: typhoon-webhook
+  namespace: typhoon
+  labels:
+    app.kubernetes.io/part-of: typhoon
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: typhoon-webhook
+
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: 'false'
+      labels:
+        app: typhoon-webhook
+
+    spec:
+      serviceAccountName: typhoon-webhook
+      containers:
+      - name: webhook
+        terminationMessagePolicy: FallbackToLogsOnError
+        image: ko://github.com/typhoon/typhoon/cmd/typhoon-webhook
+        env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: METRICS_DOMAIN
+          value: typhoon.zeiss.com/sources
+        - name: WEBHOOK_NAME
+          value: typhoon-webhook
+        ports:
+        - containerPort: 9090
+          name: metrics
+
+        # TODO set proper resource limits.
+
+        readinessProbe:
+          periodSeconds: 1
+          httpGet:
+            scheme: HTTPS
+            port: 8443
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: webhook
+        livenessProbe:
+          periodSeconds: 1
+          httpGet:
+            scheme: HTTPS
+            port: 8443
+            httpHeaders:
+            - name: k-kubelet-probe
+              value: webhook
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: typhoon-webhook
+  namespace: typhoon
+  labels:
+    app.kubernetes.io/part-of: typhoon
+spec:
+  ports:
+  - name: https-webhook
+    port: 443
+    targetPort: 8443
+  selector:
+    app: typhoon-webhook

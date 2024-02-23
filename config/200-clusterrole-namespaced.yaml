@@ -1,0 +1,54 @@
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: typhoon-namespaced-admin
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    app.kubernetes.io/part-of: typhoon
+rules:
+- apiGroups:
+  - flow.typhoon.zeiss.com
+  - routing.typhoon.zeiss.com
+  - sources.typhoon.zeiss.com
+  - targets.typhoon.zeiss.com
+  resources: ["*"]
+  verbs: ["*"]
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: typhoon-namespaced-edit
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    app.kubernetes.io/part-of: typhoon
+rules:
+- apiGroups:
+  - flow.typhoon.zeiss.com
+  - routing.typhoon.zeiss.com
+  - sources.typhoon.zeiss.com
+  - targets.typhoon.zeiss.com
+  resources: ["*"]
+  verbs:
+  - create
+  - update
+  - patch
+  - delete
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: typhoon-namespaced-view
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+    app.kubernetes.io/part-of: typhoon
+rules:
+- apiGroups:
+  - flow.typhoon.zeiss.com
+  - routing.typhoon.zeiss.com
+  - sources.typhoon.zeiss.com
+  - targets.typhoon.zeiss.com
+  resources: ["*"]
+  verbs:
+  - get
+  - list
+  - watch

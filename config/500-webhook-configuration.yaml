@@ -1,0 +1,46 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: defaulting.webhook.typhoon.zeiss.com
+  labels:
+    app.kubernetes.io/part-of: typhoon
+webhooks:
+- admissionReviewVersions:
+  - v1beta1
+  clientConfig:
+    service:
+      name: typhoon-webhook
+      namespace: typhoon
+  sideEffects: None
+  failurePolicy: Fail
+  name: defaulting.webhook.typhoon.zeiss.com
+
+---
+
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: validation.webhook.typhoon.zeiss.com
+  labels:
+    app.kubernetes.io/part-of: typhoon
+webhooks:
+- admissionReviewVersions:
+  - v1beta1
+  clientConfig:
+    service:
+      name: typhoon-webhook
+      namespace: typhoon
+  sideEffects: None
+  failurePolicy: Fail
+  name: validation.webhook.typhoon.zeiss.com
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: typhoon-webhook-certs
+  namespace: typhoon
+  labels:
+    app.kubernetes.io/part-of: typhoon
+# The data is populated at install time.

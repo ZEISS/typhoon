@@ -36,16 +36,15 @@ func main() {
 
 	sharedmain.MainWithContext(ctx, "typhoon-controller",
 		cloudeventssource.NewController,
-		httppollersource.NewController,
-		kafkasource.NewController,
-		webhooksource.NewController,
-
 		cloudeventstarget.NewController,
+		httppollersource.NewController,
 		httptarget.NewController,
+		kafkasource.NewController,
 		kafkatarget.NewController,
-		logztarget.NewController,
 		logzmetricstarget.NewController,
+		logztarget.NewController,
 		splunktarget.NewController,
+		webhooksource.NewController,
 		// flow
 		jqtransformation.NewController,
 		synchronizer.NewController,

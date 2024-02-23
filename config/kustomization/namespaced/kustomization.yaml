@@ -1,0 +1,41 @@
+# We cannot reference resources if they are located outside the current
+# directory, so we use the Github project as a remote base.
+resources:
+- https://github.com/zeiss/typhoon/releases/latest/download/typhoon.yaml
+- controller-rbac.yaml
+- webhook-rbac.yaml
+
+namespace: typhoon
+
+patches:
+- target:
+    kind: ClusterRoleBinding
+    labelSelector: "app.kubernetes.io/part-of=typhoon, app.kubernetes.io/scope!=cluster"
+  patch: |-
+
+    - op: replace
+      path: /kind
+      value: RoleBinding
+
+    - op: add
+      path: /metadata/namespace
+      value: typhoon
+
+- target:
+    kind: ClusterRole
+    name: typhoon-webhook
+  patch: |-
+
+    - op: remove
+      path: /rules/7
+
+- target:
+    kind: Deployment
+    labelSelector: "app.kubernetes.io/part-of=typhoon"
+  patch: |-
+
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: WORKING_NAMESPACE
+        value: typhoon
