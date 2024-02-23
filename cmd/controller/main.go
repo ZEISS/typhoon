@@ -21,7 +21,6 @@ import (
 	"github.com/zeiss/typhoon/pkg/sources/reconciler/webhooksource"
 	"github.com/zeiss/typhoon/pkg/targets/reconciler/cloudeventstarget"
 	"github.com/zeiss/typhoon/pkg/targets/reconciler/httptarget"
-	"github.com/zeiss/typhoon/pkg/targets/reconciler/kafkatarget"
 	"github.com/zeiss/typhoon/pkg/targets/reconciler/logzmetricstarget"
 	"github.com/zeiss/typhoon/pkg/targets/reconciler/logztarget"
 	"github.com/zeiss/typhoon/pkg/targets/reconciler/splunktarget"
@@ -40,7 +39,6 @@ func main() {
 		httppollersource.NewController,
 		httptarget.NewController,
 		kafkasource.NewController,
-		kafkatarget.NewController,
 		logzmetricstarget.NewController,
 		logztarget.NewController,
 		splunktarget.NewController,
