@@ -24,7 +24,7 @@ spec:
       containers:
       - name: webhook
         terminationMessagePolicy: FallbackToLogsOnError
-        image: ko://github.com/zeiss/typhoon/cmd/webhook
+        image: ko://github.com/zeiss/typhoon/cmd/typhoon-webhook
         env:
         - name: SYSTEM_NAMESPACE
           valueFrom:
@@ -39,7 +39,7 @@ spec:
         ports:
         - containerPort: 9090
           name: metrics
-
+  
         # TODO set proper resource limits.
 
         readinessProbe:

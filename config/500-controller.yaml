@@ -55,12 +55,8 @@ spec:
           value: ko://github.com/zeiss/typhoon/cmd/cloudeventstarget-adapter
         - name: HTTPTARGET_IMAGE
           value: ko://github.com/zeiss/typhoon/cmd/httptarget-adapter
-        - name: KAFKATARGET_IMAGE
-          value: ko://github.com/zeiss/typhoon/cmd/kafkatarget-adapter
         - name: LOGZTARGET_IMAGE
           value: ko://github.com/zeiss/typhoon/cmd/logztarget-adapter
-        - name: OPENTELEMETRYTARGET_IMAGE
-          value: ko://github.com/zeiss/typhoon/cmd/opentelemetrytarget-adapter
         # Flow adapters
         - name: JQTRANSFORMATION_IMAGE
           value: ko://github.com/zeiss/typhoon/cmd/jqtransformation-adapter
@@ -75,20 +71,9 @@ spec:
           value: ko://github.com/zeiss/typhoon/cmd/filter-adapter
         - name: SPLITTER_IMAGE
           value: ko://github.com/zeiss/typhoon/cmd/splitter-adapter
-        # Function Runtimes
-        - name: RUNTIME_KLR_PYTHON
-          value: gcr.io/typhoon/knative-lambda-python310:v1.26.0
-        - name: RUNTIME_KLR_NODE
-          value: gcr.io/typhoon/knative-lambda-node18:v1.26.0
-        - name: RUNTIME_KLR_RUBY
-          value: gcr.io/typhoon/knative-lambda-ruby32:v1.26.0
         # Custom build adapters
-        - name: IBMMQSOURCE_IMAGE
-          value: gcr.io/typhoon/ibmmqsource-adapter:latest
-        - name: IBMMQTARGET_IMAGE
-          value: gcr.io/typhoon/ibmmqtarget-adapter:latest
         - name: XSLTTRANSFORMATION_IMAGE
-          value: gcr.io/typhoon/xslttransformation-adapter:latest
+          value: ko://github.com/zeiss/typhoon/cmd/xslttransformation-adapter
 
         securityContext:
           runAsNonRoot: true

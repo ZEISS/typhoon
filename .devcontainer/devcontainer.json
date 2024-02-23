@@ -31,6 +31,15 @@
         "golang.go",
         "ms-vscode.makefile-tools"
       ]
+    },
+    "codespaces": {
+      "repositories": {
+        "zeiss/typhoon": {
+          "permissions": {
+            "contents": "write"
+          }
+        }
+      }
     }
   },
   "portsAttributes": {
