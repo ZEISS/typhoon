@@ -57,6 +57,8 @@ spec:
           value: ko://github.com/zeiss/typhoon/cmd/httptarget-adapter
         - name: LOGZTARGET_IMAGE
           value: ko://github.com/zeiss/typhoon/cmd/logztarget-adapter
+        - name: NATSTARGET_IMAGE
+          value: ko://github.com/zeiss/typhoon/cmd/nastarget-adapter
         # Flow adapters
         - name: JQTRANSFORMATION_IMAGE
           value: ko://github.com/zeiss/typhoon/cmd/jqtransformation-adapter
@@ -73,7 +75,7 @@ spec:
           value: ko://github.com/zeiss/typhoon/cmd/splitter-adapter
         # Custom build adapters
         - name: XSLTTRANSFORMATION_IMAGE
-          value: ko://github.com/zeiss/typhoon/cmd/xslttransformation-adapter
+          value: ghcr.io/zeiss/typhoon/xslttransformation-adapter:latest
 
         securityContext:
           runAsNonRoot: true
