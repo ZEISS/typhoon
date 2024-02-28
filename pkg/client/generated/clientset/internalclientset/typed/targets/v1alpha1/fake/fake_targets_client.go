@@ -36,6 +36,10 @@ func (c *FakeTargetsV1alpha1) LogzTargets(namespace string) v1alpha1.LogzTargetI
 	return &FakeLogzTargets{c, namespace}
 }
 
+func (c *FakeTargetsV1alpha1) NatsTargets(namespace string) v1alpha1.NatsTargetInterface {
+	return &FakeNatsTargets{c, namespace}
+}
+
 func (c *FakeTargetsV1alpha1) OracleTargets(namespace string) v1alpha1.OracleTargetInterface {
 	return &FakeOracleTargets{c, namespace}
 }

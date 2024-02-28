@@ -14,6 +14,8 @@ type LogzMetricsTargetExpansion interface{}
 
 type LogzTargetExpansion interface{}
 
+type NatsTargetExpansion interface{}
+
 type OracleTargetExpansion interface{}
 
 type SplunkTargetExpansion interface{}

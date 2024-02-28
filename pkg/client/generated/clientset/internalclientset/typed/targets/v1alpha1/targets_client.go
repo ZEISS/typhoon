@@ -18,6 +18,7 @@ type TargetsV1alpha1Interface interface {
 	KafkaTargetsGetter
 	LogzMetricsTargetsGetter
 	LogzTargetsGetter
+	NatsTargetsGetter
 	OracleTargetsGetter
 	SplunkTargetsGetter
 }
@@ -49,6 +50,10 @@ func (c *TargetsV1alpha1Client) LogzMetricsTargets(namespace string) LogzMetrics
 
 func (c *TargetsV1alpha1Client) LogzTargets(namespace string) LogzTargetInterface {
 	return newLogzTargets(c, namespace)
+}
+
+func (c *TargetsV1alpha1Client) NatsTargets(namespace string) NatsTargetInterface {
+	return newNatsTargets(c, namespace)
 }
 
 func (c *TargetsV1alpha1Client) OracleTargets(namespace string) OracleTargetInterface {

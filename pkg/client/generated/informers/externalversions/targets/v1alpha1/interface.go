@@ -20,6 +20,8 @@ type Interface interface {
 	LogzMetricsTargets() LogzMetricsTargetInformer
 	// LogzTargets returns a LogzTargetInformer.
 	LogzTargets() LogzTargetInformer
+	// NatsTargets returns a NatsTargetInformer.
+	NatsTargets() NatsTargetInformer
 	// OracleTargets returns a OracleTargetInformer.
 	OracleTargets() OracleTargetInformer
 	// SplunkTargets returns a SplunkTargetInformer.
@@ -65,6 +67,11 @@ func (v *version) LogzMetricsTargets() LogzMetricsTargetInformer {
 // LogzTargets returns a LogzTargetInformer.
 func (v *version) LogzTargets() LogzTargetInformer {
 	return &logzTargetInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+}
+
+// NatsTargets returns a NatsTargetInformer.
+func (v *version) NatsTargets() NatsTargetInformer {
+	return &natsTargetInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
 
 // OracleTargets returns a OracleTargetInformer.

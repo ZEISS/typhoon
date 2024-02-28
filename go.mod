@@ -18,6 +18,7 @@ require (
 	github.com/katallaxie/pkg v0.5.12
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/logzio/logzio-go v1.0.6
+	github.com/nats-io/nats.go v1.33.1
 	github.com/oapi-codegen/fiber-middleware v1.0.1
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/sethvargo/go-limiter v0.7.2
@@ -206,6 +207,8 @@ require (
 	github.com/moricho/tparallel v0.3.1 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/nakabonne/nestif v0.3.1 // indirect
+	github.com/nats-io/nkeys v0.4.7 // indirect
+	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/nishanths/exhaustive v0.11.0 // indirect
 	github.com/nishanths/predeclared v0.2.2 // indirect
 	github.com/nunnatsa/ginkgolinter v0.14.1 // indirect

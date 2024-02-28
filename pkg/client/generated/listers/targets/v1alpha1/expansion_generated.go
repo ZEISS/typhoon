@@ -50,6 +50,14 @@ type LogzTargetListerExpansion interface{}
 // LogzTargetNamespaceLister.
 type LogzTargetNamespaceListerExpansion interface{}
 
+// NatsTargetListerExpansion allows custom methods to be added to
+// NatsTargetLister.
+type NatsTargetListerExpansion interface{}
+
+// NatsTargetNamespaceListerExpansion allows custom methods to be added to
+// NatsTargetNamespaceLister.
+type NatsTargetNamespaceListerExpansion interface{}
+
 // OracleTargetListerExpansion allows custom methods to be added to
 // OracleTargetLister.
 type OracleTargetListerExpansion interface{}

@@ -7,7 +7,7 @@ RUN set -eux; \
   apt-get install -y --no-install-recommends libxml2-dev libxslt1-dev liblzma-dev zlib1g-dev
 
 
-WORKDIR /go/triggermesh
+WORKDIR /go/typhoon
 
 COPY . .
 RUN go build -o /xslttransformation-adapter ./cmd/xslttransformation-adapter
@@ -36,7 +36,7 @@ FROM gcr.io/distroless/base-debian11:nonroot
 
 # Ensure the /kodata entries used by Knative to augment the logger with the
 # current VCS revision are present.
-COPY --from=builder /go/triggermesh/.git/HEAD /go/triggermesh/.git/refs/ /kodata/
+COPY --from=builder /go/typhoon/.git/HEAD /go/typhoon/.git/refs/ /kodata/
 ENV KO_DATA_PATH=/kodata
 
 # (!) COPY follows symlinks

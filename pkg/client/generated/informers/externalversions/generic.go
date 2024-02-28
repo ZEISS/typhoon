@@ -87,6 +87,8 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Targets().V1alpha1().LogzMetricsTargets().Informer()}, nil
 	case targetsv1alpha1.SchemeGroupVersion.WithResource("logztargets"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Targets().V1alpha1().LogzTargets().Informer()}, nil
+	case targetsv1alpha1.SchemeGroupVersion.WithResource("natstargets"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Targets().V1alpha1().NatsTargets().Informer()}, nil
 	case targetsv1alpha1.SchemeGroupVersion.WithResource("oracletargets"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Targets().V1alpha1().OracleTargets().Informer()}, nil
 	case targetsv1alpha1.SchemeGroupVersion.WithResource("splunktargets"):
