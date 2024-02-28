@@ -58,7 +58,7 @@ spec:
         - name: LOGZTARGET_IMAGE
           value: ko://github.com/zeiss/typhoon/cmd/logztarget-adapter
         - name: NATSTARGET_IMAGE
-          value: ko://github.com/zeiss/typhoon/cmd/nastarget-adapter
+          value: ko://github.com/zeiss/typhoon/cmd/natstarget-adapter
         # Flow adapters
         - name: JQTRANSFORMATION_IMAGE
           value: ko://github.com/zeiss/typhoon/cmd/jqtransformation-adapter
