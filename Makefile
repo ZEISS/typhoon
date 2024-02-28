@@ -1,16 +1,20 @@
 .DEFAULT_GOAL := build
 
-GO ?= go
-GO_RUN_TOOLS 			?= $(GO) run -modfile ./tools/go.mod
-GO_TEST 				?= $(GO_RUN_TOOLS) gotest.tools/gotestsum --format pkgname
-GO_RELEASER 			?= $(GO_RUN_TOOLS) github.com/goreleaser/goreleaser
-GO_KO 					?= $(GO_RUN_TOOLS) github.com/google/ko
-GO_MOD 					?= $(shell ${GO} list -m)
-BASE_DIR          		?= $(CURDIR)
+GO 				?= go
+GO_RUN_TOOLS	?= $(GO) run -modfile ./tools/go.mod
+GO_TEST 		?= $(GO_RUN_TOOLS) gotest.tools/gotestsum --format pkgname
+GO_RELEASER 	?= $(GO_RUN_TOOLS) github.com/goreleaser/goreleaser
+GO_KO 			?= $(GO_RUN_TOOLS) github.com/google/ko
+GO_MOD 			?= $(shell ${GO} list -m)
+BASE_DIR		?= $(CURDIR)
+
+COMMANDS		:= $(notdir $(wildcard cmd/*))
 
 .PHONY: build
-build: ## Build the binary file.
-	$(GO_RELEASER) build --snapshot --clean
+build: $(COMMANDS) ## Build the application.
+
+$(filter-out $(CUSTOM_BUILD_BINARIES), $(COMMANDS)): ## Build artifact
+	$(GO) build -ldflags "$(LDFLAGS_STATIC)" -o $(BIN_OUTPUT_DIR)/$@ ./cmd/$@	
 
 .PHONY: generate
 generate: ## Generate code.

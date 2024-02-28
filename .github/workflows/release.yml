@@ -12,8 +12,8 @@ on:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  REGISTRY: ghcr.io
 
 jobs:
   test:
@@ -44,5 +44,7 @@ jobs:
           restore-keys: |
             ${{ github.job }}-${{ runner.os }}-go-
       - run: sudo apt-get update && sudo apt install -y libxml2-dev libxslt1-dev liblzma-dev zlib1g-dev
-      - run: make release
+      - run: make deploy
+        env:
+          KO_DOCKER_REPO: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         if: success()
