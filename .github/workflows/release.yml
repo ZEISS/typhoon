@@ -12,7 +12,7 @@ on:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: zeiss/typhoon
   REGISTRY: ghcr.io
 
 jobs:
