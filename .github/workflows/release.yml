@@ -16,6 +16,11 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  test:
+    permissions:
+      checks: write
+    uses: ./.github/workflows/main.yml
+
   release:
     runs-on: ubuntu-latest
     permissions:

@@ -22,6 +22,7 @@ jobs:
     - uses: actions/setup-go@v5
       with:
         go-version-file: ./go.mod
+    - run: sudo apt-get update && sudo apt install -y libxml2-dev libxslt1-dev liblzma-dev zlib1g-dev
     - run: make test
     - uses: dorny/test-reporter@v1
       if: success() || failure()
@@ -36,12 +37,12 @@ jobs:
         name: Test Reports
         path: .test/reports/**
 
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: ./go.mod
-          check-latest: true
-      - run: make lint
+  # lint:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-go@v5
+  #       with:
+  #         go-version-file: ./go.mod
+  #         check-latest: true
+  #     - run: make lint

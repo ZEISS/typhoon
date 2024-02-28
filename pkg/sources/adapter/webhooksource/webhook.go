@@ -47,8 +47,9 @@ func (h *webhookHandler) Start(ctx context.Context) error {
 	m.HandleFunc("/health", healthCheckHandler)
 
 	s := &http.Server{
-		Addr:    fmt.Sprintf(":%d", serverPort),
-		Handler: m,
+		Addr:        fmt.Sprintf(":%d", serverPort),
+		Handler:     m,
+		ReadTimeout: 5 * time.Second,
 	}
 
 	return runHandler(ctx, s)
@@ -90,6 +91,7 @@ func runHandler(ctx context.Context, s *http.Server) error {
 
 // handleAll receives all webhook events at a single resource, it
 // is up to this function to parse event wrapper and dispatch.
+// nolint:gocyclo
 func (h *webhookHandler) handleAll(ctx context.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if h.corsAllowOrigin != "" {
@@ -198,7 +200,7 @@ func (h *webhookHandler) handleAll(ctx context.Context) http.HandlerFunc {
 }
 
 func (h *webhookHandler) handleError(err error, code int, w http.ResponseWriter) {
-	h.logger.Errorw("An error ocurred", zap.Error(err))
+	h.logger.Errorw("An error occurred", zap.Error(err))
 	http.Error(w, err.Error(), code)
 }
 
@@ -207,6 +209,7 @@ func healthCheckHandler(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// nolint:gocyclo
 func sanitizeCloudEventAttributeName(name string) string {
 	// only lowercase accepted
 	name = strings.ToLower(name)

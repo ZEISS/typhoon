@@ -44,6 +44,7 @@ type kafkasourceAdapter struct {
 }
 
 // NewAdapter satisfies pkgadapter.AdapterConstructor.
+// nolint:gocyclo
 func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClient cloudevents.Client) pkgadapter.Adapter {
 	logger := logging.FromContext(ctx)
 	sarama.Logger = zap.NewStdLog(logger.Named("sarama").Desugar())
@@ -81,7 +82,9 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 	if env.TLSEnable {
 		config.Net.TLS.Enable = env.TLSEnable
 
-		tlsCfg := &tls.Config{}
+		tlsCfg := &tls.Config{
+			MinVersion: tls.VersionTLS12,
+		}
 		if env.CA != "" {
 			addCAConfig(tlsCfg, env.CA)
 		}

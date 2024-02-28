@@ -102,7 +102,7 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 // newClient returns a Splunk HEC client.
 func newClient(hecURL url.URL, hecToken, index, hostname string, skipTLSVerify bool) *splunk.Client {
 	httpTransport := &http.Transport{
-		TLSClientConfig: &tls.Config{
+		TLSClientConfig: &tls.Config{ // #nosec G402
 			InsecureSkipVerify: skipTLSVerify,
 		},
 	}

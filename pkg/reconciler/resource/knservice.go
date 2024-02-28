@@ -3,7 +3,7 @@ package resource
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	network "knative.dev/networking/pkg"
+	"knative.dev/networking/pkg/apis/networking"
 	"knative.dev/serving/pkg/apis/serving"
 	servingv1 "knative.dev/serving/pkg/apis/serving/v1"
 )
@@ -34,11 +34,11 @@ func NewKnService(ns, name string, opts ...ObjectOption) *servingv1.Service {
 // cluster's local network.
 func VisibilityClusterLocal(object interface{}) {
 	ks := object.(*servingv1.Service)
-	Label(network.VisibilityLabelKey, serving.VisibilityClusterLocal)(ks)
+	Label(networking.VisibilityLabelKey, serving.VisibilityClusterLocal)(ks)
 }
 
 // VisibilityPublic makes the Knative Service available on the public internet.
 func VisibilityPublic(object interface{}) {
 	ks := object.(*servingv1.Service)
-	delete(ks.Labels, network.VisibilityLabelKey)
+	delete(ks.Labels, networking.VisibilityLabelKey)
 }

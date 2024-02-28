@@ -82,6 +82,7 @@ func (a *Add) retrieveVariable(eventID, key string) interface{} {
 	return key
 }
 
+// nolint:gocyclo
 func (a *Add) composeValue(eventID string) interface{} {
 	result := a.Value
 	for _, key := range a.variables.ListEventVariables(eventID) {

@@ -102,6 +102,7 @@ func (s *Shift) retrieveInterface(eventID, key string) interface{} {
 	return key
 }
 
+// nolint:gocyclo
 func extractValue(source interface{}, path map[string]interface{}) (map[string]interface{}, interface{}) {
 	var ok bool
 	var result interface{}

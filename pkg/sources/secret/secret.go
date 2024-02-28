@@ -40,7 +40,7 @@ var _ Getter = (*GetterWithClientset)(nil)
 
 // Get implements Getter.
 func (g *GetterWithClientset) Get(refs ...v1alpha1.ValueFromField) (Secrets, error) {
-	var s Secrets
+	s := make(Secrets, 0)
 
 	// cache Secret objects by name between iterations to avoid multiple
 	// round trips to the Kubernetes API for the same Secret object.

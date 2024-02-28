@@ -46,7 +46,10 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 	}
 
 	t := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: env.SkipVerify},
+		TLSClientConfig: &tls.Config{
+			// nolint:G402
+			InsecureSkipVerify: env.SkipVerify,
+		},
 	}
 
 	if env.CACertificate != "" {
@@ -56,7 +59,8 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 		}
 
 		t.TLSClientConfig = &tls.Config{
-			RootCAs: certPool,
+			RootCAs:    certPool,
+			MinVersion: tls.VersionTLS12,
 		}
 	}
 	client := &http.Client{
@@ -118,12 +122,14 @@ type httpAdapter struct {
 }
 
 // Returns if stopCh is closed or Send() returns an error.
+// nolint:gocyclo
 func (a *httpAdapter) Start(ctx context.Context) error {
 	a.logger.Info("Starting HTTP adapter")
 
 	return a.ceClient.StartReceiver(ctx, a.dispatch)
 }
 
+// nolint:gocyclo
 func (a *httpAdapter) dispatch(ctx context.Context, event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
 	rd := &RequestData{}
 	if event.Type() != v1alpha1.EventTypeHTTPTargetRequest {

@@ -29,9 +29,9 @@ func ResponseWithSubject(subject string) EventResponseOption {
 }
 
 // ResponseWithID is an option for modifying returned event ID.
-func ResponseWithID(ID string) EventResponseOption {
+func ResponseWithID(id string) EventResponseOption {
 	return func(in, out *cloudevents.Event) error {
-		return out.Context.SetID(ID)
+		return out.Context.SetID(id)
 	}
 }
 

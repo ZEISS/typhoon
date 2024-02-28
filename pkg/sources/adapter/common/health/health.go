@@ -55,8 +55,9 @@ func Start(ctx context.Context) {
 	mux.Handle(healthPath, &defaultHandler)
 
 	server := &http.Server{
-		Addr:    fmt.Sprintf(":%d", healthPort),
-		Handler: mux,
+		Addr:        fmt.Sprintf(":%d", healthPort),
+		Handler:     mux,
+		ReadTimeout: 5 * time.Second,
 	}
 
 	errCh := make(chan error)

@@ -19,7 +19,7 @@ type EventOptions struct {
 	// PayloadPolicy indicates if replies from the target should include
 	// a payload if available. Possible values are:
 	//
-	// - always: will return a with the reply payload if avaliable.
+	// - always: will return a with the reply payload if available.
 	// - errors: will only reply with payload in case of an error.
 	// - never: will not reply with payload.
 	//

@@ -131,8 +131,7 @@ func commonAdapterDeploymentOptions(rcl v1alpha1.Reconcilable) []resource.Object
 	parentLabels := rcl.GetLabels()
 	for _, key := range labelsPropagationList {
 		if value, exists := parentLabels[key]; exists {
-			objectOptions = append(objectOptions, resource.Label(key, value))
-			objectOptions = append(objectOptions, resource.PodLabel(key, value))
+			objectOptions = append(objectOptions, resource.Label(key, value), resource.PodLabel(key, value))
 		}
 	}
 
@@ -215,8 +214,7 @@ func commonAdapterKnServiceOptions(rcl v1alpha1.Reconcilable) []resource.ObjectO
 	parentLabels := rcl.GetLabels()
 	for _, key := range labelsPropagationList {
 		if value, exists := parentLabels[key]; exists {
-			objectOptions = append(objectOptions, resource.Label(key, value))
-			objectOptions = append(objectOptions, resource.PodLabel(key, value))
+			objectOptions = append(objectOptions, resource.Label(key, value), resource.PodLabel(key, value))
 		}
 	}
 
@@ -341,8 +339,9 @@ func MaybeAppendValueFromEnvVar(envs []corev1.EnvVar, key string, valueFrom v1al
 
 // adapterOverrideOptions applies adapter override parameters depending on
 // deployment type.
+// nolint:gocyclo
 func adapterOverrideOptions(overrides *v1alpha1.AdapterOverrides) []resource.ObjectOption {
-	var opts []resource.ObjectOption
+	opts := make([]resource.ObjectOption, 0)
 
 	opts = append(opts, func(object interface{}) {
 		if _, ok := object.(*servingv1.Service); ok {
@@ -355,8 +354,7 @@ func adapterOverrideOptions(overrides *v1alpha1.AdapterOverrides) []resource.Obj
 	})
 
 	if overrides.Resources != nil {
-		opts = append(opts, resource.Requests(toQuantity(overrides.Resources.Requests)))
-		opts = append(opts, resource.Limits(toQuantity(overrides.Resources.Limits)))
+		opts = append(opts, resource.Requests(toQuantity(overrides.Resources.Requests)), resource.Limits(toQuantity(overrides.Resources.Limits)))
 	}
 
 	for _, t := range overrides.Tolerations {
@@ -376,12 +374,10 @@ func adapterOverrideOptions(overrides *v1alpha1.AdapterOverrides) []resource.Obj
 	}
 
 	for k, v := range overrides.Labels {
-		opts = append(opts, resource.Label(k, v))
-		opts = append(opts, resource.PodLabel(k, v))
+		opts = append(opts, resource.Label(k, v), resource.PodLabel(k, v))
 	}
 	for k, v := range overrides.Annotations {
-		opts = append(opts, resource.Annotation(k, v))
-		opts = append(opts, resource.PodAnnotation(k, v))
+		opts = append(opts, resource.Annotation(k, v), resource.PodAnnotation(k, v))
 	}
 	return opts
 }

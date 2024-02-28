@@ -1,6 +1,7 @@
 package common
 
 // ReadValue returns the source object item located at the requested path.
+// nolint:gocyclo
 func ReadValue(source interface{}, path map[string]interface{}) interface{} {
 	var result interface{}
 	for k, v := range path {

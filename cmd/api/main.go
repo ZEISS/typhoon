@@ -21,12 +21,6 @@ import (
 
 var cfg = config.New()
 
-var (
-	version = "dev"
-	commit  = "none"
-	date    = "unknown"
-)
-
 var rootCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return run(cmd.Context())

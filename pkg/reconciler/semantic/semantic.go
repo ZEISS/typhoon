@@ -7,7 +7,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/conversion"
 
-	network "knative.dev/networking/pkg"
+	"knative.dev/networking/pkg/apis/networking"
 	servingv1 "knative.dev/serving/pkg/apis/serving/v1"
 )
 
@@ -85,7 +85,7 @@ var eq = conversion.EqualitiesOrDie(
 	},
 
 	func(a, b map[string]string) bool {
-		removableLabels := []string{network.VisibilityLabelKey}
+		removableLabels := []string{networking.VisibilityLabelKey}
 		for _, l := range removableLabels {
 			if a[l] != b[l] {
 				return false

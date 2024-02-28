@@ -28,7 +28,9 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 	env := envAcc.(*envAccessor)
 
 	t := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: env.SkipVerify},
+		TLSClientConfig: &tls.Config{ // #nosec G402
+			InsecureSkipVerify: env.SkipVerify,
+		},
 	}
 
 	if env.CACertificate != "" {
@@ -38,7 +40,8 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 		}
 
 		t.TLSClientConfig = &tls.Config{
-			RootCAs: certPool,
+			RootCAs:    certPool,
+			MinVersion: tls.VersionTLS12,
 		}
 	}
 

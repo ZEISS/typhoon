@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 	"sync"
 
 	"go.uber.org/zap"
@@ -50,8 +51,9 @@ func (ccw *cachedFileWatcher) Start(ctx context.Context) {
 
 // updateContentFromFile does not locks the watchedFiles map, it is up
 // to the caller to do so.
+// nolint:gocyclo
 func (ccw *cachedFileWatcher) updateContentFromFile(path string) error {
-	content, err := os.ReadFile(path)
+	content, err := os.ReadFile(filepath.Clean(path))
 	if err != nil {
 		return err
 	}

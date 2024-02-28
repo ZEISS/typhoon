@@ -367,7 +367,7 @@ func (r *GenericRBACReconciler[T, L]) syncAdapterServiceAccount(ctx context.Cont
 	// added by some other controller, we are updatin this function to remove the
 	// check that only keeps the "-token-" secrets.
 	// This will also override any secret that we might add at the desired structure
-	// during reconciliation, which at the time of writting this are none, and
+	// during reconciliation, which at the time of writing this are none, and
 	// we don't expect to manage these secrets anytime soon.
 	desiredSA.Secrets = currentSA.Secrets
 

@@ -132,7 +132,8 @@ func (h *Handler) split(path string, e *event.Event) []*event.Event {
 		val = gjson.Parse("[" + val.Raw + "]")
 	}
 
-	var result []*event.Event
+	result := make([]*event.Event, 0)
+
 	for _, v := range val.Array() {
 		newCE := cloudevents.NewEvent()
 		if err := newCE.SetData(cloudevents.ApplicationJSON, []byte(v.Raw)); err != nil {

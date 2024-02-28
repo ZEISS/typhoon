@@ -93,7 +93,7 @@ const (
 
 // Reasons for status conditions
 const (
-	// FunctionReasonFailedSync encompasses any type of error occuring while synchronizing a Kubernetes API object.
+	// FunctionReasonFailedSync encompasses any type of error occurring while synchronizing a Kubernetes API object.
 	// It is meant to be set on the ConfigMapReady condition.
 	FunctionReasonFailedSync = "FailedSync"
 )

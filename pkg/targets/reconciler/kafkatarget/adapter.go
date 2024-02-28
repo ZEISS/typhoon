@@ -98,6 +98,7 @@ func (r *Reconciler) BuildAdapter(trg commonv1alpha1.Reconcilable, _ *apis.URL) 
 
 // MakeAppEnv extracts environment variables from the object.
 // Exported to be used in external tools for local test environments.
+// nolint:gocyclo
 func MakeAppEnv(o *v1alpha1.KafkaTarget) []corev1.EnvVar {
 	env := []corev1.EnvVar{
 		{

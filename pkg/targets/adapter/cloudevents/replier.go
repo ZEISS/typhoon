@@ -101,6 +101,7 @@ func (r *Replier) ErrorKnativeManaged(event *cloudevents.Event, err error) (*clo
 }
 
 // Ok when returning a payload upon success.
+// nolint:gocyclo
 func (r *Replier) Ok(in *cloudevents.Event, payload interface{}, opts ...EventResponseOption) (*cloudevents.Event, cloudevents.Result) {
 	// Skip responses if not configured to send
 	// them on success.
@@ -172,6 +173,7 @@ type EventError struct {
 // (retries and dead letter queues). This should be used when retrying would result in the
 // same outcome, and when we want users to explicitly manage this error instead of relying on
 // dead letter queue channel.
+// nolint:gocyclo
 func (r *Replier) Error(in *cloudevents.Event, code string, reportedErr error, details interface{}, opts ...EventResponseOption) (*cloudevents.Event, cloudevents.Result) {
 	r.logger.Errorw("Processing error",
 		zap.Error(reportedErr),

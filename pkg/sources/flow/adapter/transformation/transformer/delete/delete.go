@@ -84,6 +84,7 @@ func (d *Delete) retrieveString(eventID, key string) string {
 	return key
 }
 
+// nolint:gocyclo
 func (d *Delete) parse(data interface{}, key, path string) (interface{}, error) {
 	output := make(map[string]interface{})
 	// TODO: keep only one filter call
@@ -94,11 +95,11 @@ func (d *Delete) parse(data interface{}, key, path string) (interface{}, error) 
 	case []byte:
 		var m interface{}
 		if err := json.Unmarshal(value, &m); err != nil {
-			return nil, fmt.Errorf("unmarshal err: %v", err)
+			return nil, fmt.Errorf("unmarshal err: %w", err)
 		}
 		o, err := d.parse(m, key, path)
 		if err != nil {
-			return nil, fmt.Errorf("recursive call in []bytes case: %v", err)
+			return nil, fmt.Errorf("recursive call in []bytes case: %w", err)
 		}
 		return o, nil
 	case float64, bool, string, nil:
@@ -108,7 +109,7 @@ func (d *Delete) parse(data interface{}, key, path string) (interface{}, error) 
 		for i, v := range value {
 			o, err := d.parse(v, key, fmt.Sprintf("%s[%d]", path, i))
 			if err != nil {
-				return nil, fmt.Errorf("recursive call in []interface case: %v", err)
+				return nil, fmt.Errorf("recursive call in []interface case: %w", err)
 			}
 			slice = append(slice, o)
 		}
@@ -121,7 +122,7 @@ func (d *Delete) parse(data interface{}, key, path string) (interface{}, error) 
 			}
 			o, err := d.parse(v, k, subPath)
 			if err != nil {
-				return nil, fmt.Errorf("recursive call in map[]interface case: %v", err)
+				return nil, fmt.Errorf("recursive call in map[]interface case: %w", err)
 			}
 			output[k] = o
 		}

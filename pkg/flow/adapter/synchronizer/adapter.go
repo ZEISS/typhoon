@@ -127,7 +127,7 @@ func (a *adapter) serveRequest(ctx context.Context, correlationID string, event 
 }
 
 // serveResponse matches event's correlation key and writes response back to the session's communication channel.
-func (a *adapter) serveResponse(ctx context.Context, correlationID string, event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
+func (a *adapter) serveResponse(_ context.Context, correlationID string, event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
 	a.logger.Debugf("Handling response %q", correlationID)
 
 	responseChan, exists := a.sessions.get(correlationID)

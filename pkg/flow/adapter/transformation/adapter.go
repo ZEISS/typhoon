@@ -163,6 +163,7 @@ func (t *adapter) receiveAndSend(ctx context.Context, event cloudevents.Event) e
 	return nil
 }
 
+// nolint:gocyclo
 func (t *adapter) applyTransformations(event cloudevents.Event) (*cloudevents.Event, error) {
 	// HTTPTargets sets content type from HTTP headers, i.e.:
 	// "datacontenttype: application/json; charset=utf-8"

@@ -40,7 +40,7 @@ Knative Managed Functions
 	Ack() (*cloudevents.Event, cloudevents.Result)
 
 Is the function to use when we want Knative to acknoledge that the message was delivered
-and no reponse payload is being returned.
+and no response payload is being returned.
 
 	ErrorKnativeManaged(event *cloudevents.Event, err error) (*cloudevents.Event, cloudevents.Result)
 

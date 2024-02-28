@@ -123,8 +123,8 @@ func (r *Reconciler) BuildAdapter(src commonv1alpha1.Reconcilable, sinkURI *apis
 }
 
 type KeyMountedValue struct {
-	Key              string
-	MountedValueFile string
+	Key              string `json:"key"`
+	MountedValueFile string `json:"mountedValueFile"`
 }
 
 func (kmv *KeyMountedValue) Decode(value string) error {

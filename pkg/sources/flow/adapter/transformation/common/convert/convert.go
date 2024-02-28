@@ -50,6 +50,7 @@ func SliceToMap(path []string, value interface{}) map[string]interface{} {
 
 // MergeJSONWithMap accepts interface (effectively, JSON) and a map and merges them together.
 // Source map keys are being overwritten by appendix keys if they overlap.
+// nolint:gocyclo
 func MergeJSONWithMap(source, appendix interface{}) interface{} {
 	switch appendixValue := appendix.(type) {
 	case nil:
