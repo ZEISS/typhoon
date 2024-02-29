@@ -55,8 +55,8 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Create the name of the service account to use
 */}}
 {{- define "typhoon.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "typhoon.fullname" .) .Values.serviceAccount.name }}
+{{- if .Values.controller.serviceAccount.create }}
+{{- default (include "typhoon.fullname" .) .Values.controller.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
@@ -92,4 +92,36 @@ Controller Selector labels
 {{- define "typhoon.controller.selectorLabels" -}}
 {{ include "typhoon.selectorLabels" . }}
 app: typhoon
+{{- end }}
+
+{{/*
+Webhook Service Account Name
+*/}}
+{{- define "typhoon.webhook.serviceAccountName" -}}
+{{- $name := include "typhoon.serviceAccountName" . }}
+{{- printf "%s-%s" $name "webhook" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Webhook FQDN
+*/}}
+{{- define "typhoon.webhook.fullname" -}}
+{{- $name := include "typhoon.fullname" . }}
+{{- printf "%s-%s" $name "webhook" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Webhook labels
+*/}}
+{{- define "typhoon.webhook.labels" -}}
+{{ include "typhoon.labels" . }}
+app: typhoon-webhook
+{{- end }}
+
+{{/*
+Webhook Selector labels
+*/}}
+{{- define "typhoon.webhook.selectorLabels" -}}
+{{ include "typhoon.selectorLabels" . }}
+app: typhoon-webhook
 {{- end }}

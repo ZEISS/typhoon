@@ -20,8 +20,6 @@ klr:
   image:
     tag: "v1.26.0"
 
-imagePullSecrets: []
-
 # list of name/value pairs to inject as additional environment variables to deployment
 extraEnv: []
 

@@ -99,7 +99,7 @@ metadata:
     {{- include "typhoon.controller.labels" . | nindent 4 }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "typhoon.controller.serviceAccount.name" . }}
+    name: {{ include "typhoon.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -114,7 +114,7 @@ metadata:
     {{- include "typhoon.controller.labels" . | nindent 4 }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "typhoon.controller.serviceAccount.name" . }}
+    name: {{ include "typhoon.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -129,7 +129,7 @@ metadata:
     {{- include "typhoon.controller.labels" . | nindent 4 }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "typhoon.controller.serviceAccount.name" . }}
+    name: {{ include "typhoon.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -144,7 +144,7 @@ metadata:
     {{- include "typhoon.controller.labels" . | nindent 4 }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "typhoon.controller.serviceAccount.name" . }}
+    name: {{ include "typhoon.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -160,7 +160,7 @@ metadata:
     {{- include "typhoon.controller.labels" . | nindent 4 }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "typhoon.controller.serviceAccount.name" . }}
+    name: {{ include "typhoon.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -178,7 +178,7 @@ metadata:
     {{- include "typhoon.controller.labels" . | nindent 4 }}
 subjects:
 - kind: ServiceAccount
-  name: {{ include "typhoon.controller.serviceAccount.name" . }}
+  name: {{ include "typhoon.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
