@@ -55,7 +55,7 @@ deploy: ## Deploy the application.
 .PHONY: release
 release: ## Release the application.
 	@mkdir -p $(DIST_DIR)
-	$(GO_KO) resolve -f $(BASE_DIR)/config/ -l 'typhoon.zeissß.com/crd-install' > $(DIST_DIR)/typhoon-crds.yaml
+	$(GO_KO) resolve -f $(BASE_DIR)/config/ -l 'typhoon.zeiss.com/crd-install' > $(DIST_DIR)/typhoon-crds.yaml
 	@cp config/namespace/100-namespace.yaml $(DIST_DIR)/typhoon.yaml
 	@cp $(DIST_DIR)/*.yaml $(BASE_DIR)/charts/typhoon/crds
 
