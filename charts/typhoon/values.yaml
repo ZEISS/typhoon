@@ -1,8 +1,8 @@
 # Default values
 
-# -- Provide a name in place of `octopinger`
-nameOverride: octopinger
-# -- String to fully override `"octopinger.fullname"`
+# -- Provide a name in place of `typhoon`
+nameOverride: typhoon
+# -- String to fully override `"typhoon.fullname"`
 fullnameOverride: ""
 # -- Override the Kubernetes version, which is used to evaluate certain manifests
 kubeVersionOverride: ""
@@ -16,9 +16,9 @@ crds:
   # -- Annotations to be added to all CRDs
   annotations: {}
 
-klr:
-  image:
-    tag: "v1.26.0"
+# klr:
+#   image:
+#     tag: "v1.26.0"
 
 # list of name/value pairs to inject as additional environment variables to deployment
 extraEnv: []
@@ -30,15 +30,15 @@ rbac:
 global:
   # -- Common labels for the all resources
   additionalLabels: {}
-    # app: octopinger
+    # app: typhoon
 
   # Default image used by all components
   image:
-    # -- If defined, a repository applied to all Octopinger deployments
+    # -- If defined, a repository applied to all Typhoon deployments
     repository: ghcr.io/zeiss/typhoon
-    # -- Overrides the global Octopinger image tag whose default is the chart appVersion
+    # -- Overrides the global Typhoon image tag whose default is the chart appVersion
     tag: ""
-    # -- If defined, a imagePullPolicy applied to all Octopinger deployments
+    # -- If defined, a imagePullPolicy applied to all Typhoon deployments
     imagePullPolicy: IfNotPresent
 
   # -- Secrets with credentials to pull images from a private registry
@@ -47,15 +47,15 @@ global:
 ## Typhoon Controller
 controller:
 
-  # -- The number of octopinger controller pods to run.
+  # -- The number of typhoon controller pods to run.
   # Additional replicas will cause sharding of managed clusters across number of replicas.
   replicas: 1
 
-  # -- Annotations to be added to octopinger controller pods
+  # -- Annotations to be added to typhoon controller pods
   podAnnotations: {}
 
   serviceAccount:
-    # -- Create a service account for the octopinger controller
+    # -- Create a service account for the typhoon controller
     create: true
     # -- Service account name
     name: ""
@@ -69,7 +69,7 @@ controller:
   podSecurityContext: {}
     # fsGroup: 2000
 
-  # -- Resource limits and requests for the octopinger controller pods
+  # -- Resource limits and requests for the Typhoon controller pods
   resources:
     requests:
       cpu: 50m
