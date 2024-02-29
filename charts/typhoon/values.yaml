@@ -35,7 +35,7 @@ global:
   # Default image used by all components
   image:
     # -- If defined, a repository applied to all Typhoon deployments
-    repository: ghcr.io/zeiss/typhoon
+    : ghcr.io/zeiss/typhoon
     # -- Overrides the global Typhoon image tag whose default is the chart appVersion
     tag: ""
     # -- If defined, a imagePullPolicy applied to all Typhoon deployments
@@ -46,7 +46,6 @@ global:
 
 ## Typhoon Controller
 controller:
-
   # -- The number of typhoon controller pods to run.
   # Additional replicas will cause sharding of managed clusters across number of replicas.
   replicas: 1

@@ -1,12 +1,14 @@
 .DEFAULT_GOAL := build
 
+BASE_DIR		?= $(CURDIR)
+OUTPUT_DIR      ?= $(BASE_DIR)/dist
+
 GO 				?= go
 GO_RUN_TOOLS	?= $(GO) run -modfile ./tools/go.mod
 GO_TEST 		?= $(GO_RUN_TOOLS) gotest.tools/gotestsum --format pkgname
 GO_RELEASER 	?= $(GO_RUN_TOOLS) github.com/goreleaser/goreleaser
 GO_KO 			?= $(GO_RUN_TOOLS) github.com/google/ko
 GO_MOD 			?= $(shell ${GO} list -m)
-BASE_DIR		?= $(CURDIR)
 
 COMMANDS		:= $(notdir $(wildcard cmd/*))
 
@@ -52,7 +54,10 @@ deploy: ## Deploy the application.
 
 .PHONY: release
 release: ## Release the application.
-	$(GO_RELEASER) release --rm-dist
+	@mkdir -p $(DIST_DIR)
+	$(GO_KO) resolve -f $(BASE_DIR)/config/ -l 'typhoon.zeissß.com/crd-install' > $(DIST_DIR)/typhoon-crds.yaml
+	@cp config/namespace/100-namespace.yaml $(DIST_DIR)/typhoon.yaml
+	@cp $(DIST_DIR)/*.yaml $(BASE_DIR)/charts/typhoon/crds
 
 .PHONY: help
 help: ## Display this help screen.
@@ -60,3 +65,4 @@ help: ## Display this help screen.
 
 # codegen
 include hack/inc.codegen.mk
+8888

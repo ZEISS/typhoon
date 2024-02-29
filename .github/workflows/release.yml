@@ -47,15 +47,22 @@ jobs:
           restore-keys: |
             ${{ github.job }}-${{ runner.os }}-go-
       - run: sudo apt-get update && sudo apt install -y libxml2-dev libxslt1-dev liblzma-dev zlib1g-dev
-      - run: make deploy
+      - run: make release
         env:
           KO_DOCKER_REPO: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          DIST_DIR: /tmp/dist
         if: success()
       - run: |
-          go run tools/updater/main.go --file charts/typhoon/Chart.yaml --version ${{ env.RELEASE_VERSION }}
+          go run internal/tools/updater/main.go --file charts/typhoon/Chart.yaml --version ${{ env.RELEASE_VERSION }}
       - uses: helm/chart-releaser-action@v1.6.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
           charts_dir: charts
           config: ${{ github.workspace }}/.cr.yml
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: manifests
+          path: /tmp/dist
+          retention-days: 14
