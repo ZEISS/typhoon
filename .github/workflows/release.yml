@@ -52,7 +52,7 @@ jobs:
           KO_DOCKER_REPO: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         if: success()
       - run: |
-          go run tools/updater/main.go --file charts/octopinger/Chart.yaml --version ${{ env.RELEASE_VERSION }}
+          go run tools/updater/main.go --file charts/typhoon/Chart.yaml --version ${{ env.RELEASE_VERSION }}
       - uses: helm/chart-releaser-action@v1.6.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
