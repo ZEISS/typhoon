@@ -47,8 +47,14 @@ jobs:
           key: ${{ github.job }}-${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ github.job }}-${{ runner.os }}-go-
+      - id: image-tag
+        run: |
+          IMAGE_TAG=${GITHUB_SHA}
+          [[ ${GITHUB_REF_TYPE} == "tag" ]] && IMAGE_TAG=${GITHUB_REF_NAME}
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_OUTPUT
       - run: sudo apt-get update && sudo apt install -y libxml2-dev libxslt1-dev liblzma-dev zlib1g-dev
-      - run: make release
+      - run: |
+          IMAGE_TAG=${{ steps.image-tag.outputs.IMAGE_TAG }} make release
         env:
           KO_DOCKER_REPO: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           DIST_DIR: /tmp/dist
