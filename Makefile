@@ -12,6 +12,10 @@ GO_MOD 			?= $(shell ${GO} list -m)
 
 COMMANDS		:= $(notdir $(wildcard cmd/*))
 
+IMAGE_TAG       ?= $(shell git rev-parse HEAD)
+TAG_REGEX       := ^v([0-9]{1,}\.){2}[0-9]{1,}$
+KOFLAGS         ?=
+
 .PHONY: build
 build: $(COMMANDS) ## Build the application.
 
@@ -54,10 +58,15 @@ deploy: ## Deploy the application.
 
 .PHONY: release
 release: ## Release the application.
-	@mkdir -p $(DIST_DIR)
-	$(GO_KO) resolve -f $(BASE_DIR)/config/ -l 'typhoon.zeiss.com/crd-install' > $(DIST_DIR)/typhoon-crds.yaml
-	@cp config/namespace/100-namespace.yaml $(DIST_DIR)/typhoon.yaml
-	@cp $(DIST_DIR)/*.yaml $(BASE_DIR)/charts/typhoon/crds
+	@mkdir -p $(OUTPUT_DIR)
+	$(GO_KO) resolve -f $(BASE_DIR)/config/ -l 'typhoon.zeiss.com/crd-install' > $(OUTPUT_DIR)/typhoon-crds.yaml
+	@cp config/namespace/100-namespace.yaml $(OUTPUT_DIR)/typhoon.yaml
+	@cp $(OUTPUT_DIR)/*.yaml $(BASE_DIR)/charts/typhoon/crds
+
+ifeq ($(shell echo ${IMAGE_TAG} | egrep "${TAG_REGEX}"),${IMAGE_TAG})
+	$(GO_KO) resolve $(KOFLAGS) -B -t latest -f config/ -l '!typhoon.zeiss.com/crd-install' > /dev/null
+endif
+	$(GO_KO) resolve $(KOFLAGS) -B -t $(IMAGE_TAG) --tag-only -f config/ -l '!typhoon.zeiss.com/crd-install' >> $(OUTPUT_DIR)/typhoon-crds.yaml
 
 .PHONY: help
 help: ## Display this help screen.
