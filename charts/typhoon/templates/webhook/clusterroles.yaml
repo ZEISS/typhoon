@@ -1,0 +1,112 @@
+{{- if .Values.rbac.create }}
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: typhoon-webhook
+  labels:
+    {{- include "typhoon.webhook.labels" . | nindent 4 }}
+rules:
+  # Routing admin
+  - apiGroups:
+      - routing.typhoon.io
+    resources:
+      - filters
+      - splitters
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  # Routing statuses update
+  - apiGroups:
+      - routing.typhoon.io
+    resources:
+      - splitters/status
+      - filters/status
+    verbs:
+      - update
+  - apiGroups:
+      - flow.typhoon.io
+    resources:
+      - xslttransformations
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - flow.typhoon.io
+    resources:
+      - xslttransformations/status
+    verbs:
+      - update
+  # Events admin
+  - apiGroups:
+      - ''
+    resources:
+      - events
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  # For manipulating certs into secrets.
+  - apiGroups:
+      - ''
+    resources:
+      - secrets
+    verbs:
+      - get
+      - create
+      - update
+      - list
+      - watch
+  # Validation webhook gets system namespace to use it as an owner.
+  - apiGroups:
+      - ''
+    resources:
+      - namespaces
+    verbs:
+      - get
+  - apiGroups:
+      - ''
+    resources:
+      - namespaces/finalizers
+    verbs:
+      - update
+  # For actually registering our webhook.
+  - apiGroups:
+      - admissionregistration.k8s.io
+    resources:
+      - mutatingwebhookconfigurations
+      - validatingwebhookconfigurations
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  # Acquire leases for leader election
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - get
+      - create
+      - update
+
+{{- end }}

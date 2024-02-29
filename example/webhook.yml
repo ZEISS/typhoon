@@ -1,0 +1,22 @@
+apiVersion: sources.typhoon.zeiss.com/v1alpha1
+kind: WebhookSource
+metadata:
+  name: sample
+spec:
+  eventType: com.zeiss.example.event
+  eventSource: instance-abc123
+
+  eventExtensionAttributes:
+    from:
+    - path
+    - queries
+
+  basicAuthUsername: webhook
+  basicAuthPassword:
+    value: supersecret
+
+  sink:
+    ref:
+      apiVersion: eventing.typhoon.zeiss.com/v1alpha1
+      kind: RedisBroker
+      name: typhoon

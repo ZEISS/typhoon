@@ -1,0 +1,103 @@
+# Default values
+
+# -- Provide a name in place of `octopinger`
+nameOverride: octopinger
+# -- String to fully override `"octopinger.fullname"`
+fullnameOverride: ""
+# -- Override the Kubernetes version, which is used to evaluate certain manifests
+kubeVersionOverride: ""
+
+## Custom resource configuration
+crds:
+  # -- Install and upgrade CRDs
+  install: true
+  # -- Keep CRDs on chart uninstall
+  keep: true
+  # -- Annotations to be added to all CRDs
+  annotations: {}
+
+klr:
+  image:
+    tag: "v1.26.0"
+
+imagePullSecrets: []
+
+# list of name/value pairs to inject as additional environment variables to deployment
+extraEnv: []
+
+rbac:
+  create: true
+
+## Globally shared configuration
+global:
+  # -- Common labels for the all resources
+  additionalLabels: {}
+    # app: octopinger
+
+  # Default image used by all components
+  image:
+    # -- If defined, a repository applied to all Octopinger deployments
+    repository: ghcr.io/zeiss/typhoon
+    # -- Overrides the global Octopinger image tag whose default is the chart appVersion
+    tag: ""
+    # -- If defined, a imagePullPolicy applied to all Octopinger deployments
+    imagePullPolicy: IfNotPresent
+
+  # -- Secrets with credentials to pull images from a private registry
+  imagePullSecrets: []
+
+## Typhoon Controller
+controller:
+
+  # -- The number of octopinger controller pods to run.
+  # Additional replicas will cause sharding of managed clusters across number of replicas.
+  replicas: 1
+
+  # -- Annotations to be added to octopinger controller pods
+  podAnnotations: {}
+
+  serviceAccount:
+    # -- Create a service account for the octopinger controller
+    create: true
+    # -- Service account name
+    name: ""
+    # -- Annotations applied to created service account
+    annotations: {}
+    # -- Labels applied to created service account
+    labels: {}
+    # -- Automount API credentials for the Service Account
+    automountServiceAccountToken: true
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+  # -- Resource limits and requests for the octopinger controller pods
+  resources:
+    requests:
+      cpu: 50m
+      memory: 150Mi
+    limits:
+      cpu: 200m
+      memory: 500Mi
+
+securityContext:
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+webhook:
+  podAnnotations:
+    sidecar.istio.io/inject: 'false'
+  podSecurityContext: {}
+  securityContext: {}
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}

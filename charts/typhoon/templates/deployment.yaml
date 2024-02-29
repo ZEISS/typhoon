@@ -1,0 +1,183 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "typhoon.fullname" . }}
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "typhoon.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "typhoon.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "typhoon.controller.serviceAccount.name" . }}
+      enableServiceLinks: false
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: controller
+          terminationMessagePolicy: FallbackToLogsOnError
+          image: "{{ .Values.image.registry }}/core-controller:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: SYSTEM_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            # Logging/observability configuration
+            - name: CONFIG_LOGGING_NAME
+              value: config-logging
+            - name: CONFIG_OBSERVABILITY_NAME
+              value: config-observability
+            - name: METRICS_DOMAIN
+              value: typhoon.zeiss.com
+            # Deployment images
+            - name: REDISBROKER_REDIS_IMAGE
+              value: "redis/redis-stack-server:latest"
+            - name: MEMORYBROKER_BROKER_IMAGE
+              value: "{{ .Values.image.registry }}/memory-broker:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            - name: REDISBROKER_BROKER_IMAGE
+              value: "{{ .Values.image.registry }}/redis-broker:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            # Pull policy for broker, REMOVE for production environments
+            - name: REDISBROKER_BROKER_IMAGE_PULL_POLICY
+              value: Always
+            {{- with .Values.extraEnv -}}
+            {{ . | toYaml | nindent 12 }}
+            {{- end }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          ports:
+            - name: metrics
+              containerPort: 9090
+            - name: profiling
+              containerPort: 8008
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "typhoon.controller.fullname" . }}
+  labels:
+    {{- include "typhoon.controller.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "typhoon.controller.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "typhoon.controller.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "typhoon.controller.serviceAccount.name" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: controller
+          terminationMessagePolicy: FallbackToLogsOnError
+          image: "{{ .Values.global.image.repository }}/controller:{{ .Values.global.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: SYSTEM_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            # Logging/observability configuration
+            - name: CONFIG_LOGGING_NAME
+              value: config-logging
+            - name: CONFIG_OBSERVABILITY_NAME
+              value: config-observability
+            - name: METRICS_DOMAIN
+              value: typhoon.zeiss.com
+            # Source adapters
+            - name: HTTPPOLLERSOURCE_IMAGE
+              value: "{{ .Values.global.image.repository }}/httppollersource-adapter:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            - name: KAFKASOURCE_IMAGE
+              value: "{{ .Values.global.image.repository }}/kafkasource-adapter:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            - name: WEBHOOKSOURCE_IMAGE
+              value: "{{ .Values.global.image.repository }}/webhooksource-adapter:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            # Target adapters
+            - name: CLOUDEVENTSTARGET_IMAGE
+              value: "{{ .Values.global.image.repository }}/cloudeventstarget-adapter:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            - name: DATADOGTARGET_IMAGE
+              value: "{{ .Values.global.image.repository }}/datadogtarget-adapter:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            - name: HTTPTARGET_IMAGE
+              value: "{{ .Values.global.image.repository }}/httptarget-adapter:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            - name: SPLUNKTARGET_IMAGE
+              value: "{{ .Values.global.image.repository }}/splunktarget-adapter:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            # Flow adapters
+            - name: JQTRANSFORMATION_IMAGE
+              value: "{{ .Values.global.image.repository }}/jqtransformation-adapter:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            - name: SYNCHRONIZER_IMAGE
+              value: "{{ .Values.global.image.repository }}/synchronizer-adapter:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            - name: TRANSFORMATION_IMAGE
+              value: "{{ .Values.global.image.repository }}/transformation-adapter:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            - name: XMLTOJSONTRANSFORMATION_IMAGE
+              value: "{{ .Values.global.image.repository }}/xmltojsontransformation-adapter:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            # Routing adapters
+            - name: FILTER_IMAGE
+              value: "{{ .Values.global.image.repository }}/filter-adapter:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            - name: SPLITTER_IMAGE
+              value: "{{ .Values.global.image.repository }}/splitter-adapter:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            # Custom build adapters
+            - name: XSLTTRANSFORMATION_IMAGE
+              value: "{{ .Values.global.image.repository }}/xslttransformation-adapter:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            {{- with .Values.extraEnv -}}
+            {{ . | toYaml | nindent 12 }}
+            {{- end }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          ports:
+            - name: metrics
+              containerPort: 9090
+            - name: profiling
+              containerPort: 8008
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

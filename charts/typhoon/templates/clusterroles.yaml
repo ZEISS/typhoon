@@ -1,0 +1,956 @@
+{{- if .Values.rbac.create }}
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: typhoon-namespaced-admin
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+rules:
+  - apiGroups:
+      - eventing.typhoon.zeiss.com
+    resources: ["*"]
+    verbs: ["*"]
+
+---
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: typhoon-namespaced-edit
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+rules:
+  - apiGroups:
+      - eventing.typhoon.zeiss.com
+    resources: ["*"]
+    verbs:
+      - create
+      - update
+      - patch
+      - delete
+---
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: typhoon-namespaced-view
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+rules:
+  - apiGroups:
+      - eventing.typhoon.zeiss.com
+    resources: ["*"]
+    verbs:
+      - get
+      - list
+      - watch
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: typhoon-addressable-resolver
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+    duck.knative.dev/addressable: 'true'
+rules:
+  - apiGroups:
+      - eventing.typhoon.zeiss.com
+    resources:
+      - memorybrokers
+      - redisbrokers
+    verbs:
+      - get
+      - list
+      - watch
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: typhoon-controller
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+
+rules:
+
+  # Record Kubernetes events
+  - apiGroups:
+      - ''
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+      - update
+
+  # Manage broker deployments
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+      - patch
+
+  # Manage broker services, endpoints and secrets (for configuration)
+  - apiGroups:
+      - ''
+    resources:
+      - services
+      - endpoints
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+      - patch
+
+  # Read reconciled typhoon core resources and update their statuses
+  - apiGroups:
+      - eventing.typhoon.zeiss.com
+    resources:
+      - memorybrokers
+      - redisbrokers
+      - triggers
+    verbs:
+      - list
+      - watch
+      - get
+  - apiGroups:
+      - eventing.typhoon.zeiss.com
+    resources:
+      - memorybrokers/status
+      - redisbrokers/status
+      - triggers/status
+    verbs:
+      - update
+
+  # Ensure compatibility with the OwnerReferencesPermissionEnforcement Admission Controller
+  # https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#ownerreferencespermissionenforcement
+  - apiGroups:
+      - eventing.typhoon.zeiss.com
+    resources:
+      - memorybrokers/finalizers
+      - redisbrokers/finalizers
+      - triggers/finalizers
+    verbs:
+      - update
+
+  # Set finalizers
+  - apiGroups:
+      - eventing.typhoon.zeiss.com
+    resources:
+      - memorybrokers
+      - redisbrokers
+      - triggers
+    verbs:
+      - patch
+
+  # Manage resource-specific ServiceAccounts and RoleBindings
+  - apiGroups:
+      - ''
+    resources:
+      - serviceaccounts
+      - serviceaccounts/finalizers
+    verbs:
+      - list
+      - watch
+      - create
+      - update
+      - delete
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - rolebindings
+    verbs:
+      - list
+      - watch
+      - create
+
+  # Read configuration/credentials
+  - apiGroups:
+      - ''
+    resources:
+      - secrets
+    verbs:
+      - get
+
+  # Read controller configurations
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+    resourceNames:
+      - config-logging
+      - config-observability
+      - config-leader-election
+    verbs:
+      - get
+
+  # Acquire leases for leader election
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - get
+      - create
+      - update
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: typhoon-broker
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+rules:
+
+  # Read broker configuration, including credentials.
+  - apiGroups:
+      - ''
+    resources:
+      - secrets
+    verbs:
+      - list
+      - watch
+      - get
+
+  # Read observability configuration.
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+    verbs:
+      - list
+      - watch
+      - get
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  # There might be an addressable-resolver ClusterRole if Knative Eventing is installed.
+  # This would be a duplicate for typhoon's brokers that would add support for scenarios
+  # where Knative Eventing is not installed but Knative Serving is.
+  name: addressable-resolver-typhoon
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        duck.knative.dev/addressable: "true"
+rules: [] # Rules are automatically filled in by the controller manager.
+
+---
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: service-addressable-resolver-typhoon
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+    duck.knative.dev/addressable: "true"
+# Do not use this role directly. These rules will be added to the "addressable-resolver" role.
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+
+---
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: serving-addressable-resolver-typhoon
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+    duck.knative.dev/addressable: "true"
+# Do not use this role directly. These rules will be added to the "addressable-resolver" role.
+rules:
+  - apiGroups:
+      - serving.knative.dev
+    resources:
+      - routes
+      - routes/status
+      - services
+      - services/status
+    verbs:
+      - get
+      - list
+      - watch
+
+---
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: channel-addressable-resolver-typhoon
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+    duck.knative.dev/addressable: "true"
+# Do not use this role directly. These rules will be added to the "addressable-resolver" role.
+rules:
+  - apiGroups:
+      - messaging.knative.dev
+    resources:
+      - channels
+      - channels/status
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - messaging.knative.dev
+    resources:
+      - channels/finalizers
+    verbs:
+      - update
+
+---
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: broker-addressable-resolver-typhoon
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+    duck.knative.dev/addressable: "true"
+# Do not use this role directly. These rules will be added to the "addressable-resolver" role.
+rules:
+  - apiGroups:
+      - eventing.knative.dev
+    resources:
+      - brokers
+      - brokers/status
+    verbs:
+      - get
+      - list
+      - watch
+
+---
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: flows-addressable-resolver-typhoon
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+    duck.knative.dev/addressable: "true"
+# Do not use this role directly. These rules will be added to the "addressable-resolver" role.
+rules:
+  - apiGroups:
+      - flows.knative.dev
+    resources:
+      - sequences
+      - sequences/status
+      - parallels
+      - parallels/status
+    verbs:
+      - get
+      - list
+      - watch
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: typhoon-namespaced-admin
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    {{- include "typhoon.controller.labels" . | nindent 4 }}
+rules:
+  - apiGroups:
+      - flow.typhoon.zeiss.com
+      - routing.typhoon.zeiss.com
+      - sources.typhoon.zeiss.com
+      - targets.typhoon.zeiss.com
+    resources: ["*"]
+    verbs: ["*"]
+
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: typhoon-namespaced-edit
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    {{- include "typhoon.controller.labels" . | nindent 4 }}
+rules:
+  - apiGroups:
+      - flow.typhoon.zeiss.com
+      - routing.typhoon.zeiss.com
+      - sources.typhoon.zeiss.com
+      - targets.typhoon.zeiss.com
+    resources: ["*"]
+    verbs:
+      - create
+      - update
+      - patch
+      - delete
+
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: typhoon-namespaced-view
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+    {{- include "typhoon.controller.labels" . | nindent 4 }}
+rules:
+  - apiGroups:
+      - flow.typhoon.zeiss.com
+      - routing.typhoon.zeiss.com
+      - sources.typhoon.zeiss.com
+      - targets.typhoon.zeiss.com
+    resources: ["*"]
+    verbs:
+      - get
+      - list
+      - watch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: typhoon-controller
+  labels:
+    {{- include "typhoon.controller.labels" . | nindent 4 }}
+
+rules:
+  # Record Kubernetes events
+  - apiGroups:
+      - ''
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+      - update
+  # Manage receive-adapters
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+      - patch
+  - apiGroups:
+      - serving.knative.dev
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+      - patch
+  # Read reconciled typhoon resources and update their statuses
+  - apiGroups:
+      - sources.typhoon.zeiss.com
+    resources:
+      - cloudeventssources
+      - httppollersources
+      - kafkasources
+      - ocimetricssources
+      - webhooksources
+    verbs:
+      - list
+      - watch
+      - get
+  - apiGroups:
+      - sources.typhoon.zeiss.com
+    resources:
+      - cloudeventssources/status
+      - httppollersources/status
+      - kafkasources/status
+      - webhooksources/status
+    verbs:
+      - update
+  - apiGroups:
+      - targets.typhoon.zeiss.com
+    resources:
+      - cloudeventstargets
+      - datadogtargets
+      - httptargets
+      - logzmetricstargets
+      - logztargets
+      - splunktargets
+    verbs:
+      - list
+      - watch
+      - get
+  - apiGroups:
+      - targets.typhoon.zeiss.com
+    resources:
+      - datadogtargets/status
+      - httptargets/status
+      - logzmetricstargets/status
+      - logztargets/status
+      - splunktargets/status
+    verbs:
+      - update
+  - apiGroups:
+      - flow.typhoon.zeiss.com
+    resources:
+      - jqtransformations
+      - synchronizers
+      - transformations
+      - xmltojsontransformations
+      - xslttransformations
+    verbs:
+      - list
+      - watch
+      - get
+  - apiGroups:
+      - flow.typhoon.zeiss.com
+    resources:
+      - jqtransformations/status
+      - synchronizers/status
+      - transformations/status
+      - xmltojsontransformations/status
+      - xslttransformations/status
+    verbs:
+      - update
+  - apiGroups:
+      - extensions.typhoon.zeiss.com
+    resources:
+      - functions
+    verbs:
+      - list
+      - watch
+      - get
+  - apiGroups:
+      - extensions.typhoon.zeiss.com
+    resources:
+      - functions/status
+    verbs:
+      - update
+  - apiGroups:
+      - routing.typhoon.zeiss.com
+    resources:
+      - filters
+      - splitters
+    verbs:
+      - list
+      - watch
+      - get
+  - apiGroups:
+      - routing.typhoon.zeiss.com
+    resources:
+      - filters/status
+      - splitters/status
+    verbs:
+      - update
+  # Ensure compatibility with the OwnerReferencesPermissionEnforcement Admission Controller
+  # https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#ownerreferencespermissionenforcement
+  - apiGroups:
+      - sources.typhoon.zeiss.com
+    resources:
+      - cloudeventssources/finalizers
+      - httppollersources/finalizers
+      - kafkasources/finalizers
+      - webhooksources/finalizers
+    verbs:
+      - update
+  - apiGroups:
+      - targets.typhoon.zeiss.com
+    resources:
+      - cloudeventstargets/finalizers
+      - datadogtargets/finalizers
+      - httptargets/finalizers
+      - logzmetricstargets/finalizers
+      - logztargets/finalizers
+    verbs:
+      - update
+  - apiGroups:
+      - flow.typhoon.zeiss.com
+    resources:
+      - jqtransformations/finalizers
+      - synchronizers/finalizers
+      - transformations/finalizers
+      - xmltojsontransformations/finalizers
+      - xslttransformations/finalizers
+    verbs:
+      - update
+  - apiGroups:
+      - extensions.typhoon.zeiss.com
+    resources:
+      - functions/finalizers
+    verbs:
+      - update
+  - apiGroups:
+      - routing.typhoon.zeiss.com
+    resources:
+      - filters/finalizers
+      - splitters/finalizers
+    verbs:
+      - update
+  # # Set finalizers
+  # - apiGroups:
+  #     - sources.typhoon.zeiss.com
+  #   resources:
+  #   verbs:
+  #     - patch
+  # Manage resource-specific ServiceAccounts and RoleBindings
+  - apiGroups:
+      - ''
+    resources:
+      - serviceaccounts
+      - serviceaccounts/finalizers
+    verbs:
+      - list
+      - watch
+      - create
+      - update
+      - delete
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - rolebindings
+    verbs:
+      - list
+      - watch
+      - create
+  # - apiGroups:
+  #     - rbac.authorization.k8s.io
+  #   resources:
+  #     - rolebindings
+  #   # Only multi-tenant components receive permissions via RoleBindings to
+  #   # interact with the Kubernetes API.
+  #   resourceNames:
+  #     - awssnssource-adapter
+  #     - zendesksource-adapter
+  #     - filter-adapter
+  #     - splitter-adapter
+  #   verbs:
+  #     - update
+  # Read credentials
+  - apiGroups:
+      - ''
+    resources:
+      - secrets
+    verbs:
+      - get
+  # Required by Function controller to store, and mount user's code
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - patch
+      - watch
+  # Read controller configurations
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+    resourceNames:
+      - config-logging
+      - config-observability
+      - config-leader-election
+    verbs:
+      - get
+  # Acquire leases for leader election
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - get
+      - create
+      - update
+  # Observe status of Pods and their ancestors
+  - apiGroups:
+      - ''
+    resources:
+      - pods
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - apps
+    resources:
+      - replicasets
+    verbs:
+      - list
+      - watch
+
+---
+
+# This role is used to grant receive adapters read-only access to per-component
+# configurations such as logging, observability and tracing.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: typhoon-config-watcher
+  labels:
+    app.kubernetes.io/part-of: typhoon
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+    verbs:
+      - list
+      - watch
+      - get
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: filter-adapter
+  labels:
+    {{- include "typhoon.controller.labels" . | nindent 4 }}
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+      - update
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - routing.typhoon.zeiss.com
+    resources:
+      - filters
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - get
+      - create
+      - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: splitter-adapter
+  labels:
+    {{- include "typhoon.controller.labels" . | nindent 4 }}
+rules:
+  - apiGroups:
+      - ''
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+      - update
+  - apiGroups:
+      - ''
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - routing.typhoon.zeiss.com
+    resources:
+      - splitters
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - get
+      - create
+      - update
+
+---
+
+# This role provides readonly access to "Source" duck types.
+# All the rules it contains get aggregated into the "source-observer" ClusterRole provided by Knative Eventing.
+# see https://github.com/knative/eventing/blob/release-0.26/docs/spec/sources.md#source-rbac
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: typhoon-source-observer
+  labels:
+    {{- include "typhoon.controller.labels" . | nindent 4 }}
+    duck.knative.dev/source: 'true'
+rules:
+  - apiGroups:
+      - sources.typhoon.zeiss.com
+    resources:
+      - cloudeventssources
+      - httppollersources
+      - kafkasources
+      - webhooksources
+    verbs:
+      - get
+      - list
+      - watch
+  # - apiGroups:
+  #     - sources.typhoon.zeiss.com
+  #   resources:
+  #     - awscloudwatchlogssources/finalizers
+  #     - awscloudwatchsources/finalizers
+  #     - awscodecommitsources/finalizers
+  #     - awscognitoidentitysources/finalizers
+  #     - awscognitouserpoolsources/finalizers
+  #     - awsdynamodbsources/finalizers
+  #     - awskinesissources/finalizers
+  #     - awsperformanceinsightssources/finalizers
+  #     - awss3sources/finalizers
+  #     - awssnssources/finalizers
+  #     - awssqssources/finalizers
+  #     - azureactivitylogssources/finalizers
+  #     - azureblobstoragesources/finalizers
+  #     - azureeventgridsources/finalizers
+  #     - azureeventhubssources/finalizers
+  #     - azureiothubsources/finalizers
+  #     - azurequeuestoragesources/finalizers
+  #     - azureservicebusqueuesources/finalizers
+  #     - azureservicebussources/finalizers
+  #     - azureservicebustopicsources/finalizers
+  #     - googlecloudauditlogssources/finalizers
+  #     - googlecloudbillingsources/finalizers
+  #     - googlecloudpubsubsources/finalizers
+  #     - googlecloudsourcerepositoriessources/finalizers
+  #     - googlecloudstoragesources/finalizers
+  #   verbs:
+  #     - update
+---
+
+# This role provides readonly access to "Addressable" duck types.
+# All the rules it contains get aggregated into the "addressable-resolver" ClusterRole.
+# https://github.com/knative/eventing/blob/release-0.26/config/core/roles/addressable-resolvers-clusterrole.yaml#L15-L28
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: typhoon-addressable-resolver
+  labels:
+    {{- include "typhoon.controller.labels" . | nindent 4 }}
+    duck.knative.dev/addressable: 'true'
+rules:
+  - apiGroups:
+      - targets.typhoon.zeiss.com
+    resources:
+      - cloudeventstargets
+      - datadogtargets
+      - httptargets
+      - kafkatargets
+      - logzmetricstargets
+      - logztargets
+      - splunktargets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - flow.typhoon.zeiss.com
+    resources:
+      - jqtransformations
+      - synchronizers
+      - transformations
+      - xmltojsontransformations
+      - xslttransformations
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions.typhoon.zeiss.com
+    resources:
+      - functions
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - routing.typhoon.zeiss.com
+    resources:
+      - filters
+      - splitters
+    verbs:
+      - get
+      - list
+      - watch
+  # Allow resolving URLs of a few additional common types which are not supplied by typhoon.
+  - apiGroups:
+      - ''
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - serving.knative.dev
+    resources:
+      - routes
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+
+{{- end }}

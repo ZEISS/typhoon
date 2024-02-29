@@ -1,0 +1,16 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: defaulting.webhook.typhoon.zeiss.com
+  labels:
+    {{- include "typhoon.webhook.labels" . | nindent 4 }}
+webhooks:
+  - admissionReviewVersions:
+      - v1beta1
+    clientConfig:
+      service:
+        name: {{ include "typhoon.webhook.fullname" . }}
+        namespace: {{ .Release.Namespace }}
+    sideEffects: None
+    failurePolicy: Fail
+    name: defaulting.webhook.typhoon.zeiss.com

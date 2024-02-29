@@ -1,0 +1,11 @@
+apiVersion: v2
+name: typhoon
+description: A Helm chart deploying Typhoon on Kubernetes
+
+type: application
+
+version: 0.1.0
+
+appVersion: "v1.26.0"
+
+dependencies:

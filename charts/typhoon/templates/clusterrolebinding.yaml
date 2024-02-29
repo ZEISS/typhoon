@@ -1,0 +1,188 @@
+{{- if .Values.controller.serviceAccount.create }}
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "typhoon.fullname" . }}
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "typhoon.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: typhoon-controller
+
+---
+
+# Controller must be granted the same permissions it assigns
+# to the broker deployment.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "typhoon.fullname" . }}-for-brokers
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "typhoon.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: typhoon-broker
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "typhoon.fullname" . }}-resolver
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "typhoon.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: addressable-resolver-typhoon
+
+---
+
+# If Knative Eventing is installed, use also the addressable-resolver.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "typhoon.fullname" . }}-resolver-knative
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "typhoon.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: addressable-resolver
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "typhoon.controller.fullname" . }}
+  labels:
+    {{- include "typhoon.controller.labels" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "typhoon.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: typhoon-controller
+
+---
+# Permissions not required by controllers directly, but granted to
+# receive-adapters via RoleBindings.
+#
+# Without them, the following error is thrown:
+#   "attempting to grant RBAC permissions not currently held"
+#
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: awssnssource-adapter
+  labels:
+    {{- include "typhoon.controller.labels" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "typhoon.controller.serviceAccount.name" . }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: awssnssource-adapter
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: zendesksource-adapter
+  labels:
+    {{- include "typhoon.controller.labels" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "typhoon.controller.serviceAccount.name" . }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: zendesksource-adapter
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: filter-adapter
+  labels:
+    {{- include "typhoon.controller.labels" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "typhoon.controller.serviceAccount.name" . }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: filter-adapter
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: splitter-adapter
+  labels:
+    {{- include "typhoon.controller.labels" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "typhoon.controller.serviceAccount.name" . }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: splitter-adapter
+---
+# Resolve sink URIs when Knative is installed
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "typhoon.controller.fullname" . }}-addressable-resolver-from-knative
+  labels:
+    {{- include "typhoon.controller.labels" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "typhoon.controller.serviceAccount.name" . }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: addressable-resolver
+
+---
+
+# Resolve sink URIs when typhoon Core is installed
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "typhoon.controller.fullname" . }}-addressable-resolver-from-typhoon
+  labels:
+    {{- include "typhoon.controller.labels" . | nindent 4 }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "typhoon.controller.serviceAccount.name" . }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: addressable-resolver-typhoon
+
+{{- end }}
