@@ -8,6 +8,7 @@ import (
 	time "time"
 
 	internalclientset "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset"
+	eventing "github.com/zeiss/typhoon/pkg/client/generated/informers/externalversions/eventing"
 	extensions "github.com/zeiss/typhoon/pkg/client/generated/informers/externalversions/extensions"
 	flow "github.com/zeiss/typhoon/pkg/client/generated/informers/externalversions/flow"
 	internalinterfaces "github.com/zeiss/typhoon/pkg/client/generated/informers/externalversions/internalinterfaces"
@@ -241,11 +242,16 @@ type SharedInformerFactory interface {
 	// client.
 	InformerFor(obj runtime.Object, newFunc internalinterfaces.NewInformerFunc) cache.SharedIndexInformer
 
+	Eventing() eventing.Interface
 	Extensions() extensions.Interface
 	Flow() flow.Interface
 	Routing() routing.Interface
 	Sources() sources.Interface
 	Targets() targets.Interface
+}
+
+func (f *sharedInformerFactory) Eventing() eventing.Interface {
+	return eventing.New(f, f.namespace, f.tweakListOptions)
 }
 
 func (f *sharedInformerFactory) Extensions() extensions.Interface {

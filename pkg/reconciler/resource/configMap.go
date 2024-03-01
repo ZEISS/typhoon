@@ -5,6 +5,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+type ConfigMapOption func(*corev1.ConfigMap)
+
 // NewConfigMap creates a ConfigMap object.
 func NewConfigMap(ns, name string, opts ...ObjectOption) *corev1.ConfigMap {
 	cmap := &corev1.ConfigMap{
@@ -33,5 +35,15 @@ func Data(key, value string) ObjectOption {
 		}
 
 		(*bdata)[key] = value
+	}
+}
+
+func ConfigMapWithMetaOptions(opts ...MetaOption) ObjectOption {
+	return func(obj interface{}) {
+		cm := obj.(*corev1.ConfigMap)
+
+		for _, opt := range opts {
+			opt(&cm.ObjectMeta)
+		}
 	}
 }

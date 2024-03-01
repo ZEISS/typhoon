@@ -1,6 +1,8 @@
 package resource
 
 import (
+	"strings"
+
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -11,8 +13,10 @@ import (
 
 const defaultContainerName = "adapter"
 
+type ContainerOption func(*corev1.Container)
+
 // NewContainer creates a Container object.
-func NewContainer(name string, opts ...ObjectOption) *corev1.Container {
+func NewContainer(name string, image string, opts ...ObjectOption) *corev1.Container {
 	c := &corev1.Container{
 		Name: name,
 	}
@@ -181,6 +185,93 @@ func StartupProbe(path, port string) ObjectOption {
 			PeriodSeconds:    1,
 			FailureThreshold: 60,
 		}
+	}
+}
+
+func ContainerAddEnvFromValue(name, value string) ObjectOption {
+	return func(obj interface{}) {
+		c := obj.(*corev1.Container)
+
+		if c.Env == nil {
+			c.Env = make([]corev1.EnvVar, 0, 1)
+		}
+		c.Env = append(c.Env, corev1.EnvVar{
+			Name:  name,
+			Value: value,
+		})
+	}
+}
+
+func ContainerAddEnvFromFieldRef(name, path string) ObjectOption {
+	return func(obj interface{}) {
+		c := obj.(*corev1.Container)
+
+		if c.Env == nil {
+			c.Env = make([]corev1.EnvVar, 0, 1)
+		}
+		c.Env = append(c.Env, corev1.EnvVar{
+			Name: name,
+			ValueFrom: &corev1.EnvVarSource{
+				FieldRef: &corev1.ObjectFieldSelector{
+					FieldPath: path,
+				},
+			},
+		})
+	}
+}
+
+func ContainerAddEnvVarFromSecret(name, secretName, secretKey string) ObjectOption {
+	return func(obj interface{}) {
+		c := obj.(*corev1.Container)
+
+		if c.Env == nil {
+			c.Env = make([]corev1.EnvVar, 0, 1)
+		}
+		c.Env = append(c.Env, corev1.EnvVar{
+			Name: name,
+			ValueFrom: &corev1.EnvVarSource{
+				SecretKeyRef: &corev1.SecretKeySelector{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: secretName,
+					},
+					Key: secretKey,
+				},
+			},
+		})
+	}
+}
+
+func ContainerAddArgs(s string) ObjectOption {
+	return func(obj interface{}) {
+		c := obj.(*corev1.Container)
+
+		args := strings.Split(s, " ")
+		if c.Args == nil {
+			c.Args = make([]string, 0, len(args))
+		}
+
+		c.Args = append(c.Args, args...)
+	}
+}
+
+func ContainerWithImagePullPolicy(policy corev1.PullPolicy) ObjectOption {
+	return func(obj interface{}) {
+		c := obj.(*corev1.Container)
+		c.ImagePullPolicy = policy
+	}
+}
+
+func ContainerAddPort(name string, containerPort int32) ObjectOption {
+	return func(obj interface{}) {
+		c := obj.(*corev1.Container)
+
+		if c.Ports == nil {
+			c.Ports = make([]corev1.ContainerPort, 0, 1)
+		}
+		c.Ports = append(c.Ports, corev1.ContainerPort{
+			Name:          name,
+			ContainerPort: containerPort,
+		})
 	}
 }
 

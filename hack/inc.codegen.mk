@@ -7,7 +7,7 @@ PKG := github.com/zeiss/typhoon
 
 # List of API groups to generate code for
 # e.g. "sources/v1alpha1 sources/v1alpha2"
-API_GROUPS := sources/v1alpha1 targets/v1alpha1 flow/v1alpha1 extensions/v1alpha1 routing/v1alpha1
+API_GROUPS := sources/v1alpha1 targets/v1alpha1 flow/v1alpha1 extensions/v1alpha1 routing/v1alpha1 eventing/v1alpha1
 # generates e.g. "PKG/apis/sources/v1alpha1 PKG/apis/sources/v1alpha2"
 api-import-paths := $(foreach group,$(API_GROUPS),$(PKG)/pkg/apis/$(group))
 

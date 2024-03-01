@@ -23,3 +23,13 @@ func NewServiceAccount(ns, name string, opts ...ObjectOption) *corev1.ServiceAcc
 
 	return sa
 }
+
+func ServiceAccountWithMetaOptions(opts ...MetaOption) ObjectOption {
+	return func(obj interface{}) {
+		s := obj.(*corev1.ServiceAccount)
+
+		for _, opt := range opts {
+			opt(&s.ObjectMeta)
+		}
+	}
+}

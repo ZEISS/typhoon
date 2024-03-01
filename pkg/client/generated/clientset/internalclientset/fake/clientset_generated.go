@@ -4,6 +4,8 @@ package fake
 
 import (
 	clientset "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset"
+	eventingv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/eventing/v1alpha1"
+	fakeeventingv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/eventing/v1alpha1/fake"
 	extensionsv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/extensions/v1alpha1"
 	fakeextensionsv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/extensions/v1alpha1/fake"
 	flowv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/flow/v1alpha1"
@@ -70,6 +72,11 @@ var (
 	_ clientset.Interface = &Clientset{}
 	_ testing.FakeClient  = &Clientset{}
 )
+
+// EventingV1alpha1 retrieves the EventingV1alpha1Client
+func (c *Clientset) EventingV1alpha1() eventingv1alpha1.EventingV1alpha1Interface {
+	return &fakeeventingv1alpha1.FakeEventingV1alpha1{Fake: &c.Fake}
+}
 
 // ExtensionsV1alpha1 retrieves the ExtensionsV1alpha1Client
 func (c *Clientset) ExtensionsV1alpha1() extensionsv1alpha1.ExtensionsV1alpha1Interface {
