@@ -1,6 +1,36 @@
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
+  name: typhoon-core-namespaced-admin
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    app.kubernetes.io/part-of: typhoon
+rules:
+- apiGroups:
+  - eventing.typhoon.zeiss.com
+  resources: ["*"]
+  verbs: ["*"]
+
+---
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: typhoon-core-namespaced-edit
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    app.kubernetes.io/part-of: typhoon
+rules:
+- apiGroups:
+  - eventing.typhoon.zeiss.com
+  resources: ["*"]
+  verbs:
+  - create
+  - update
+
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
   name: typhoon-namespaced-admin
   labels:
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
@@ -13,7 +43,9 @@ rules:
   - targets.typhoon.zeiss.com
   resources: ["*"]
   verbs: ["*"]
+
 ---
+
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -33,7 +65,9 @@ rules:
   - update
   - patch
   - delete
+
 ---
+
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:

@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: typhoon-core-controller
+  namespace: typhoon
+  labels:
+    app.kubernetes.io/part-of: typhoon
+    app.kubernetes.io/version: devel
+    app.kubernetes.io/component: core-controller
+    app.kubernetes.io/name: typhoon-eventing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: typhoon-core-controller
+  template:
+    metadata:
+      labels:
+        app: typhoon-core-controller
+        app.kubernetes.io/part-of: typhoon
+        app.kubernetes.io/version: devel
+        app.kubernetes.io/component: core-controller
+        app.kubernetes.io/name: typhoon-eventing
+
+    spec:
+
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: eventing-controller
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+
+      serviceAccountName: typhoon-core-controller
+      enableServiceLinks: false
+
+      containers:
+      - name: controller
+        terminationMessagePolicy: FallbackToLogsOnError
+        image: ko://github.com/typhoon/typhoon-core/cmd/core-controller
+
+        resources:
+          requests:
+            cpu: 50m
+            memory: 50Mi
+          limits:
+            cpu: 50m
+            memory: 200Mi
+
+        env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        # Logging/observability configuration
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - name: METRICS_DOMAIN
+          value: typhoon.zeiss.com
+        # Deployment images
+        - name: REDISBROKER_REDIS_IMAGE
+          value: redis/redis-stack-server:latest
+        - name: REDISBROKER_BROKER_IMAGE
+          value: ko://github.com/zeiss/typhoon/cmd/redis-broker
+        # Pull policy for broker, REMOVE for production environments
+        - name: REDISBROKER_BROKER_IMAGE_PULL_POLICY
+          value: Always
+
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: [all]
+
+        ports:
+        - name: metrics
+          containerPort: 9090
+        - name: profiling
+          containerPort: 8008
