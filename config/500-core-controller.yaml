@@ -40,7 +40,7 @@ spec:
       containers:
       - name: controller
         terminationMessagePolicy: FallbackToLogsOnError
-        image: ko://github.com/typhoon/typhoon-core/cmd/core-controller
+        image: ko://github.com/zeiss/typhoon/cmd/core-controller
 
         resources:
           requests:
