@@ -2,6 +2,18 @@ apiVersion: v1
 entries:
   typhoon:
   - apiVersion: v2
+    appVersion: v0.1.10
+    created: "2024-03-03T19:22:01.932984655Z"
+    description: A Helm chart deploying Typhoon on Kubernetes
+    digest: 4abab93584e0e5aa5127238b0804be95aeaa294b3b0b8eccd33897c29d595699
+    name: typhoon
+    sources:
+    - https://github.com/zeiss/typhoon/tree/main/charts/octopinger
+    - https://github.com/zeiss/typhoon/octopinger
+    urls:
+    - https://github.com/ZEISS/typhoon/releases/download/typhoon-chart-0.1.10/typhoon-0.1.10.tgz
+    version: 0.1.10
+  - apiVersion: v2
     appVersion: v0.1.9
     created: "2024-03-01T18:31:08.168486883Z"
     description: A Helm chart deploying Typhoon on Kubernetes
@@ -28,4 +40,4 @@ entries:
     urls:
     - https://github.com/ZEISS/typhoon/releases/download/typhoon-chart-0.1.5/typhoon-0.1.5.tgz
     version: 0.1.5
-generated: "2024-03-01T18:31:08.168504656Z"
+generated: "2024-03-03T19:22:01.933002799Z"
