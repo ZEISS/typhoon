@@ -17,6 +17,6 @@ spec:
 
   sink:
     ref:
-      apiVersion: eventing.typhoon.zeiss.com/v1alpha1
-      kind: RedisBroker
-      name: typhoon
+      apiVersion: eventing.knative.dev/v1
+      kind: Broker
+      name: imc-broker:
