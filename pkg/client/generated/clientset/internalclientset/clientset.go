@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 
-	eventingv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/eventing/v1alpha1"
 	extensionsv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/extensions/v1alpha1"
 	flowv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/flow/v1alpha1"
 	routingv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/routing/v1alpha1"
@@ -19,7 +18,6 @@ import (
 
 type Interface interface {
 	Discovery() discovery.DiscoveryInterface
-	EventingV1alpha1() eventingv1alpha1.EventingV1alpha1Interface
 	ExtensionsV1alpha1() extensionsv1alpha1.ExtensionsV1alpha1Interface
 	FlowV1alpha1() flowv1alpha1.FlowV1alpha1Interface
 	RoutingV1alpha1() routingv1alpha1.RoutingV1alpha1Interface
@@ -30,17 +28,11 @@ type Interface interface {
 // Clientset contains the clients for groups.
 type Clientset struct {
 	*discovery.DiscoveryClient
-	eventingV1alpha1   *eventingv1alpha1.EventingV1alpha1Client
 	extensionsV1alpha1 *extensionsv1alpha1.ExtensionsV1alpha1Client
 	flowV1alpha1       *flowv1alpha1.FlowV1alpha1Client
 	routingV1alpha1    *routingv1alpha1.RoutingV1alpha1Client
 	sourcesV1alpha1    *sourcesv1alpha1.SourcesV1alpha1Client
 	targetsV1alpha1    *targetsv1alpha1.TargetsV1alpha1Client
-}
-
-// EventingV1alpha1 retrieves the EventingV1alpha1Client
-func (c *Clientset) EventingV1alpha1() eventingv1alpha1.EventingV1alpha1Interface {
-	return c.eventingV1alpha1
 }
 
 // ExtensionsV1alpha1 retrieves the ExtensionsV1alpha1Client
@@ -112,10 +104,6 @@ func NewForConfigAndClient(c *rest.Config, httpClient *http.Client) (*Clientset,
 
 	var cs Clientset
 	var err error
-	cs.eventingV1alpha1, err = eventingv1alpha1.NewForConfigAndClient(&configShallowCopy, httpClient)
-	if err != nil {
-		return nil, err
-	}
 	cs.extensionsV1alpha1, err = extensionsv1alpha1.NewForConfigAndClient(&configShallowCopy, httpClient)
 	if err != nil {
 		return nil, err
@@ -157,7 +145,6 @@ func NewForConfigOrDie(c *rest.Config) *Clientset {
 // New creates a new Clientset for the given RESTClient.
 func New(c rest.Interface) *Clientset {
 	var cs Clientset
-	cs.eventingV1alpha1 = eventingv1alpha1.New(c)
 	cs.extensionsV1alpha1 = extensionsv1alpha1.New(c)
 	cs.flowV1alpha1 = flowv1alpha1.New(c)
 	cs.routingV1alpha1 = routingv1alpha1.New(c)

@@ -3,7 +3,6 @@
 package scheme
 
 import (
-	eventingv1alpha1 "github.com/zeiss/typhoon/pkg/apis/eventing/v1alpha1"
 	extensionsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/extensions/v1alpha1"
 	flowv1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
 	routingv1alpha1 "github.com/zeiss/typhoon/pkg/apis/routing/v1alpha1"
@@ -20,7 +19,6 @@ var Scheme = runtime.NewScheme()
 var Codecs = serializer.NewCodecFactory(Scheme)
 var ParameterCodec = runtime.NewParameterCodec(Scheme)
 var localSchemeBuilder = runtime.SchemeBuilder{
-	eventingv1alpha1.AddToScheme,
 	extensionsv1alpha1.AddToScheme,
 	flowv1alpha1.AddToScheme,
 	routingv1alpha1.AddToScheme,

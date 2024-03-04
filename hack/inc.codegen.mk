@@ -3,18 +3,17 @@
 # see https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api_changes.md#generate-code
 
 # Name of the Go package for this repository
-PKG := github.com/zeiss/typhoon
+PKG 		:= github.com/zeiss/typhoon
 
 # List of API groups to generate code for
 # e.g. "sources/v1alpha1 sources/v1alpha2"
-API_GROUPS := sources/v1alpha1 targets/v1alpha1 flow/v1alpha1 extensions/v1alpha1 routing/v1alpha1 eventing/v1alpha1
+API_GROUPS 	:= sources/v1alpha1 targets/v1alpha1 flow/v1alpha1 extensions/v1alpha1 routing/v1alpha1
 # generates e.g. "PKG/apis/sources/v1alpha1 PKG/apis/sources/v1alpha2"
 api-import-paths := $(foreach group,$(API_GROUPS),$(PKG)/pkg/apis/$(group))
 
-generators := deepcopy client lister informer injection
+generators 	:= deepcopy client lister informer injection
 
 .PHONY: codegen $(generators)
-
 codegen: $(generators)
 
 # http://blog.jgc.org/2007/06/escaping-comma-and-space-in-gnu-make.html
@@ -79,10 +78,8 @@ injection:
 		--listers-package $(PKG)/pkg/client/generated/listers \
 		--external-versions-informers-package $(PKG)/pkg/client/generated/informers/externalversions
 
-# In environments where the project is located outside the GOPATH,
-# codegen creates a nested $(PKG) directory right in the project's root.
-# Until the codegen configuration gets fixed,
-# this target can be used to move generated files where they belong.
+# Cleanup codegen
+.PHONY: codegen-cleanup
 codegen-cleanup:
 	@if [ -d "./$(PKG)" ]; then \
 		cp -a ./$(PKG)/pkg/client/generated/ pkg/client/generated/ ;\

@@ -5,8 +5,7 @@ package externalversions
 import (
 	"fmt"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/eventing/v1alpha1"
-	extensionsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/extensions/v1alpha1"
+	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/extensions/v1alpha1"
 	flowv1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
 	routingv1alpha1 "github.com/zeiss/typhoon/pkg/apis/routing/v1alpha1"
 	sourcesv1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
@@ -41,14 +40,8 @@ func (f *genericInformer) Lister() cache.GenericLister {
 // TODO extend this to unknown resources with a client pool
 func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource) (GenericInformer, error) {
 	switch resource {
-	// Group=eventing.typhoon.zeiss.com, Version=v1alpha1
-	case v1alpha1.SchemeGroupVersion.WithResource("redisbrokers"):
-		return &genericInformer{resource: resource.GroupResource(), informer: f.Eventing().V1alpha1().RedisBrokers().Informer()}, nil
-	case v1alpha1.SchemeGroupVersion.WithResource("triggers"):
-		return &genericInformer{resource: resource.GroupResource(), informer: f.Eventing().V1alpha1().Triggers().Informer()}, nil
-
-		// Group=extensions.typhoon.zeiss.com, Version=v1alpha1
-	case extensionsv1alpha1.SchemeGroupVersion.WithResource("functions"):
+	// Group=extensions.typhoon.zeiss.com, Version=v1alpha1
+	case v1alpha1.SchemeGroupVersion.WithResource("functions"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Extensions().V1alpha1().Functions().Informer()}, nil
 
 		// Group=flow.typhoon.zeiss.com, Version=v1alpha1
