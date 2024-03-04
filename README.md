@@ -9,6 +9,21 @@
 
 An event bridge for applications and services.
 
+## Helm
+
+[Helm](https://helm.sh/) can be used to install Typhoon to your Kubernetes cluster.
+
+```shell
+helm repo add typhoon https://zeiss.github.io/typhoon
+helm repo update
+```
+
+Install Typhoon to your cluster in a `typhoon` namespace.
+
+```shell
+helm install typhoon typhoon/typhoon --create-namespace --namespace typhoon
+```
+
 ## License
 
 [Apache 2.0](/LICENSE)
