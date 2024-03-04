@@ -1,0 +1,27 @@
+apiVersion: flow.typhoon.zeiss.com/v1alpha1
+kind: XMLToJSONTransformation
+metadata:
+  name: demo
+spec:
+  sink:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: event-success-capture
+      namespace: default
+
+---
+
+apiVersion: sources.knative.dev/v1
+kind: PingSource
+metadata:
+  name: pingxml
+spec:
+  schedule: "*/1 * * * *"
+  contentType: application/xml
+  data: '<locations><location><name>Dallas</name><id>11111</id></location><location><name>Frisco</name><id>22222</id></location><location><name>Rockwall</name><id>33333</id></location></locations>'
+  sink:
+    ref:
+      apiVersion: flow.typhoon.zeiss.com/v1alpha1
+      kind: XMLToJSONTransformation
+      name: demo
