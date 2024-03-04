@@ -1,0 +1,16 @@
+apiVersion: v1
+entries:
+  typhoon:
+  - apiVersion: v2
+    appVersion: v0.1.12
+    created: "2024-03-04T10:32:52.300280352Z"
+    description: A Helm chart deploying Typhoon on Kubernetes
+    digest: 2d1276392c8a94ff6f7b484a5eecc3ff240c988dc4d97c5dc0ffa3537002f53e
+    name: typhoon
+    sources:
+    - https://github.com/zeiss/typhoon/tree/main/charts/typhoon
+    - https://github.com/zeiss/typhoon
+    urls:
+    - https://github.com/ZEISS/typhoon/releases/download/typhoon-chart-0.1.12/typhoon-0.1.12.tgz
+    version: 0.1.12
+generated: "2024-03-04T10:32:52.300289088Z"
