@@ -2,6 +2,8 @@
 
 package v1alpha1
 
+type BridgeExpansion interface{}
+
 type JQTransformationExpansion interface{}
 
 type SynchronizerExpansion interface{}

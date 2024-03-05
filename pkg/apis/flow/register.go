@@ -37,4 +37,10 @@ var (
 		Group:    GroupName,
 		Resource: "xslttransformations",
 	}
+
+	// BridgeResource respresents a bundled application flow.
+	BridgeResource = schema.GroupResource{
+		Group:    GroupName,
+		Resource: "bridges",
+	}
 )

@@ -34,11 +34,11 @@ spec:
       status: {}
     schema:
       openAPIV3Schema:
-        description: typhoon CloudEvents XSLT transformation.
+        description: Typhoon CloudEvents XSLT transformation.
         type: object
         properties:
           spec:
-            description: Desired state of the typhoon component.
+            description: Desired state of the Typhoon component.
             type: object
             properties:
               xslt:

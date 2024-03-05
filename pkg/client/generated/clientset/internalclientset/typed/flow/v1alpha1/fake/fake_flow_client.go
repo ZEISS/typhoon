@@ -12,6 +12,10 @@ type FakeFlowV1alpha1 struct {
 	*testing.Fake
 }
 
+func (c *FakeFlowV1alpha1) Bridges(namespace string) v1alpha1.BridgeInterface {
+	return &FakeBridges{c, namespace}
+}
+
 func (c *FakeFlowV1alpha1) JQTransformations(namespace string) v1alpha1.JQTransformationInterface {
 	return &FakeJQTransformations{c, namespace}
 }

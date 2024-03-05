@@ -2,6 +2,14 @@
 
 package v1alpha1
 
+// BridgeListerExpansion allows custom methods to be added to
+// BridgeLister.
+type BridgeListerExpansion interface{}
+
+// BridgeNamespaceListerExpansion allows custom methods to be added to
+// BridgeNamespaceLister.
+type BridgeNamespaceListerExpansion interface{}
+
 // JQTransformationListerExpansion allows custom methods to be added to
 // JQTransformationLister.
 type JQTransformationListerExpansion interface{}

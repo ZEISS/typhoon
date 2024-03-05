@@ -45,6 +45,8 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Extensions().V1alpha1().Functions().Informer()}, nil
 
 		// Group=flow.typhoon.zeiss.com, Version=v1alpha1
+	case flowv1alpha1.SchemeGroupVersion.WithResource("bridges"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Flow().V1alpha1().Bridges().Informer()}, nil
 	case flowv1alpha1.SchemeGroupVersion.WithResource("jqtransformations"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Flow().V1alpha1().JQTransformations().Informer()}, nil
 	case flowv1alpha1.SchemeGroupVersion.WithResource("synchronizers"):
