@@ -12,7 +12,7 @@ metadata:
       ]
     registry.knative.dev/eventTypes: |
       [
-        { "type": "io.typhoon.jqtransformation.error" },
+        { "type": "com.zeiss.typhoon.jqtransformation.error" },
         { "type": "*" }
       ]
 spec:

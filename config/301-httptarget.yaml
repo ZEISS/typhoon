@@ -10,8 +10,8 @@ metadata:
     registry.typhoon.zeiss.com/acceptedEventTypes: |
       [
         {
-          "type": "io.typhoon.http.request",
-          "schema": "https://raw.githubusercontent.com/zeiss/typhoon/main/schemas/io.typhoon.http.request.json"
+          "type": "com.zeiss.typhoon.http.request",
+          "schema": "https://raw.githubusercontent.com/zeiss/typhoon/main/schemas/com.zeiss.typhoon.http.request.json"
         },
         { "type": "*" }
       ]

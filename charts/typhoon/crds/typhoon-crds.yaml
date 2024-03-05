@@ -563,7 +563,7 @@ metadata:
   annotations:
     registry.knative.dev/eventTypes: |
       [
-        { "type": "io.typhoon.kafka.event" }
+        { "type": "com.zeiss.typhoon.kafka.event" }
       ]
 spec:
   group: sources.typhoon.zeiss.com
@@ -1447,8 +1447,8 @@ metadata:
     registry.typhoon.zeiss.com/acceptedEventTypes: |
       [
         {
-          "type": "io.typhoon.http.request",
-          "schema": "https://raw.githubusercontent.com/zeiss/typhoon/main/schemas/io.typhoon.http.request.json"
+          "type": "com.zeiss.typhoon.http.request",
+          "schema": "https://raw.githubusercontent.com/zeiss/typhoon/main/schemas/com.zeiss.typhoon.http.request.json"
         },
         { "type": "*" }
       ]
@@ -1710,7 +1710,7 @@ metadata:
   annotations:
     registry.typhoon.zeiss.com/acceptedEventTypes: |
       [
-        { "type" : "io.typhoon.opentelemetry.metrics.push" }
+        { "type" : "com.zeiss.typhoon.opentelemetry.metrics.push" }
       ]
 spec:
   group: targets.typhoon.zeiss.com
@@ -1954,7 +1954,7 @@ metadata:
       ]
     registry.knative.dev/eventTypes: |
       [
-        { "type": "io.typhoon.logz.ship.response" }
+        { "type": "com.zeiss.typhoon.logz.ship.response" }
       ]
 spec:
   group: targets.typhoon.zeiss.com
@@ -3414,7 +3414,7 @@ metadata:
       ]
     registry.knative.dev/eventTypes: |
       [
-        { "type": "io.typhoon.jqtransformation.error" },
+        { "type": "com.zeiss.typhoon.jqtransformation.error" },
         { "type": "*" }
       ]
 spec:
@@ -4134,7 +4134,7 @@ metadata:
       ]
     registry.knative.dev/eventTypes: |
       [
-        { "type": "io.typhoon.xmltojsontransformation.error" },
+        { "type": "com.zeiss.typhoon.xmltojsontransformation.error" },
         { "type": "*" }
       ]
 spec:
@@ -4348,7 +4348,7 @@ metadata:
       ]
     registry.knative.dev/eventTypes: |
       [
-        { "type": "io.typhoon.xslttransformation.error" },
+        { "type": "com.zeiss.typhoon.xslttransformation.error" },
         { "type": "*" }
       ]
 spec:

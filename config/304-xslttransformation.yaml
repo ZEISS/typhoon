@@ -11,7 +11,7 @@ metadata:
       ]
     registry.knative.dev/eventTypes: |
       [
-        { "type": "io.typhoon.xslttransformation.error" },
+        { "type": "com.zeiss.typhoon.xslttransformation.error" },
         { "type": "*" }
       ]
 spec:

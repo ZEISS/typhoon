@@ -10,7 +10,7 @@ metadata:
   annotations:
     registry.knative.dev/eventTypes: |
       [
-        { "type": "io.typhoon.kafka.event" }
+        { "type": "com.zeiss.typhoon.kafka.event" }
       ]
 spec:
   group: sources.typhoon.zeiss.com

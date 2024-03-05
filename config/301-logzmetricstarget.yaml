@@ -9,7 +9,7 @@ metadata:
   annotations:
     registry.typhoon.zeiss.com/acceptedEventTypes: |
       [
-        { "type" : "io.typhoon.opentelemetry.metrics.push" }
+        { "type" : "com.zeiss.typhoon.opentelemetry.metrics.push" }
       ]
 spec:
   group: targets.typhoon.zeiss.com
