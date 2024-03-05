@@ -85,6 +85,7 @@ volumes:
   east1:
   west1:
   central1:
+  db:
 
 
 networks:

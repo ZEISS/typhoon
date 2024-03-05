@@ -5,11 +5,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/zeiss/typhoon/internal/adapter"
-	"github.com/zeiss/typhoon/internal/adapter/handlers"
-	"github.com/zeiss/typhoon/internal/config"
-	"github.com/zeiss/typhoon/internal/controllers"
-	"github.com/zeiss/typhoon/internal/services/api"
+	"github.com/zeiss/typhoon/internal/api/adapter"
+	"github.com/zeiss/typhoon/internal/api/config"
+	"github.com/zeiss/typhoon/internal/api/services"
 
 	"github.com/katallaxie/pkg/logger"
 	"github.com/katallaxie/pkg/server"
@@ -60,18 +58,11 @@ func run(ctx context.Context) error {
 		return err
 	}
 
-	db := adapter.NewDB(conn)
+	// db := adapter.NewDB(conn)
 	srv, _ := server.WithContext(ctx)
 
-	teamsCtrl := controllers.NewTeamsController(db)
-
-	h := adapter.NewHandlers(
-		handlers.NewTeamsHandler(teamsCtrl),
-		handlers.NewSystemsHandler(),
-		handlers.NewVersionHandler(),
-	)
-
-	service := api.New(cfg, h)
+	h := adapter.NewHandlers()
+	service := services.NewWebSrv(cfg, h)
 
 	srv.Listen(service, true)
 	if err := srv.Wait(); err != nil {

@@ -6,20 +6,24 @@ info:
   description: |
     # Introduction
 
-    The Typhoon API allows you to NATS.io
+    Typhoon is an event bridge for applications and services.
   license:
     name: Apache 2.0
     url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
 
 servers:
-  - url: http://localhost:8080
+  - url: /v1
 
 tags:
   - name: System
     description: |-
-      These are the NATS.io that are managed by Typhoon.
+      These are the system managed by Typhoon.
   - name: Team
-  - name: Server
+    description: |-
+      These are the teams that are using Typhoon.
+  - name: Triggers
+    description: |-
+      These are the triggers that are used to send events to Typhoon.
 
 consumes:
   - "application/json"

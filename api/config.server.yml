@@ -1,8 +1,8 @@
-package: api
+package: apis
 generate:
   fiber-server: true
   strict-server: true
-output: api/server.gen.go
+output: pkg/apis/server.gen.go
 output-options:
   skip-prune: true
 
