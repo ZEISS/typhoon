@@ -6,7 +6,7 @@ require (
 	github.com/Shopify/sarama v1.30.0
 	github.com/ZachtimusPrime/Go-Splunk-HTTP/splunk/v2 v2.0.2
 	github.com/basgys/goxml2json v1.1.0
-	github.com/cloudevents/sdk-go/v2 v2.13.0
+	github.com/cloudevents/sdk-go/v2 v2.15.2
 	github.com/fsnotify/fsnotify v1.7.0
 	github.com/getkin/kin-openapi v0.123.0
 	github.com/gofiber/fiber/v2 v2.52.1
