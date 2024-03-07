@@ -2,6 +2,7 @@ package v1alpha1
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 
 	"github.com/zeiss/typhoon/pkg/apis/common/v1alpha1"
 )
@@ -30,46 +31,13 @@ type BridgeSpec struct {
 }
 
 // Component holds a component of a bridge.
-// +k8s:deepcopy-gen=false
 type Component struct {
-	Object isBridgeObject_BridgeObject `json:"object"`
-}
-
-// GetObject return the object of the component.
-func (c *Component) GetObject() isBridgeObject_BridgeObject {
-	if c != nil {
-		return c.Object
-	}
-
-	return nil
-}
-
-// GetTransformation returns the transformation of the component.
-func (c *Component) GetTransformation() *BridgeObject_Transformation {
-	if x, ok := c.GetObject().(*BridgeObject_Transformation); ok {
-		return x
-	}
-
-	return nil
-}
-
-// DeepCopy is a helper function for deepcopy-gen.
-func (in *Component) DeepCopy() *Component {
-	if in == nil {
-		return nil
-	}
-	out := new(Component)
-	in.DeepCopyInto(out)
-
-	return out
-}
-
-// DeepCopyInto is a helper function for deepcopy-gen.
-func (in *Component) DeepCopyInto(out *Component) {
-	*out = *in
-	if in.GetTransformation() != nil {
-		in.GetTransformation().DeepCopyInto(out.GetTransformation())
-	}
+	// Object is the component object.
+	// +optional
+	// +nullable
+	// +kubebuilder:pruning:PreserveUnknownFields
+	// x-kubernetes-embedded-resource: false
+	Object runtime.RawExtension `json:"object,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

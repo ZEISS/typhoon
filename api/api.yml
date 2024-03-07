@@ -12,7 +12,8 @@ info:
     url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
 
 servers:
-  - url: /v1
+  - url: http://localhost:8080/api/v1
+    description: Development server
 
 tags:
   - name: System
