@@ -1,3 +1,23 @@
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: event-display
+  namespace: default
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/min-scale: "1"
+    spec:
+      containers:
+        - name: display
+          image: gcr.io/knative-releases/knative.dev/eventing/cmd/event_display
+          ports:
+            - containerPort: 8080
+
+---
+
 apiVersion: sources.knative.dev/v1
 kind: PingSource
 metadata:
@@ -43,7 +63,7 @@ spec:
     ref:
       apiVersion: serving.knative.dev/v1
       kind: Service
-      name: event-success-capture
+      name: event-display
       namespace: default
 
   context:
