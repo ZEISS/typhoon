@@ -25,6 +25,14 @@ kubectl apply -f https://github.com/knative/eventing/releases/download/knative-v
 # Install NATS JetStream
 kubectl apply -f example/knative-eventing-jetstream-crds.yaml
 kubectl apply -f https://github.com/knative-extensions/eventing-natss/releases/latest/download/eventing-jsm.yaml
-kubectl apply -f example/knative-nats.yaml
+# kubectl apply -f example/knative-nats.yaml
+kubectl apply -f https://github.com/nats-io/nack/releases/latest/download/crds.yml
+helm install nats nats/nats -f example/values-nats.yaml 
+helm install nack-jsc nats/nack --set jetstream.nats.url=nats://nats:4222
+
+# Configure eventing
 kubectl apply -f example/knative-eventing-config-nats.yaml
 kubectl apply -f example/knative-eventing-default-channel.yaml
+
+# Install Typhoon
+helm install typhoon typhoon/typhoon --create-namespace --namespace typhoon 

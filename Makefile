@@ -74,3 +74,6 @@ help: ## Display this help screen.
 
 # codegen
 include hack/inc.codegen.mk
+
+# dev
+include hack/inc.dev.mk
