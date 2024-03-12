@@ -9,6 +9,12 @@
 
 An event bridge for applications and services.
 
+## Overview
+
+Typhoon is a cloud native event bridge that connects applications and services. It is built on top of [Knative Eventing](https://knative.dev/docs/eventing/) and [Knative Serving](https://knative.dev/docs/serving/).
+
+![Architecture](docs/architecture.png)
+
 ## Helm
 
 [Helm](https://helm.sh/) can be used to install Typhoon to your Kubernetes cluster.
