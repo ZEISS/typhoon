@@ -34,7 +34,7 @@ require (
 	golang.org/x/mod v0.15.0
 	golang.org/x/oauth2 v0.17.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20240205150955-31a09d347014
-	google.golang.org/protobuf v1.32.0
+	google.golang.org/protobuf v1.33.0
 	gorm.io/driver/postgres v1.5.4
 	gorm.io/gorm v1.25.6
 	helm.sh/helm v2.17.0+incompatible
