@@ -5,7 +5,7 @@ metadata:
   namespace: knative-eventing
 data:
   eventing-nats: |
-    url: nats://nats.default.svc.cluster.local
+    url: nats://typhoon-nats.nats-io.svc.cluster.local
     connOpts:
       retryOnFailedConnect: true
       maxReconnects: 5

@@ -1,0 +1,30 @@
+config:
+  cluster:
+    enabled: true
+    replicas: 3
+  jetstream:
+    enabled: true
+    fileStore:
+      pvc:
+        size: 10Gi
+
+podTemplate:
+  topologySpreadConstraints:
+    kubernetes.io/hostname:
+      maxSkew: 1
+      whenUnsatisfiable: DoNotSchedule
+
+container:
+  env:
+    # different from k8s units, suffix must be B, KiB, MiB, GiB, or TiB
+    # should be ~90% of memory limit
+    GOMEMLIMIT: 7GiB
+  merge:
+    # recommended limit is at least 2 CPU cores and 8Gi Memory for production JetStream clusters
+    resources:
+      requests:
+        cpu: "2"
+        memory: 8Gi
+      limits:
+        cpu: "2"
+        memory: 8Gi
