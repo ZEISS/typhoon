@@ -10,4 +10,6 @@ type KafkaSourceExpansion interface{}
 
 type OCIMetricsSourceExpansion interface{}
 
+type SalesforceSourceExpansion interface{}
+
 type WebhookSourceExpansion interface{}

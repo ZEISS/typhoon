@@ -25,6 +25,7 @@ var AllTypes = []v1alpha1.GroupObject{
 	{Single: &HTTPPollerSource{}, List: &HTTPPollerSourceList{}},
 	{Single: &OCIMetricsSource{}, List: &OCIMetricsSourceList{}},
 	{Single: &WebhookSource{}, List: &WebhookSourceList{}},
+	{Single: &SalesforceSource{}, List: &SalesforceSourceList{}},
 }
 
 // addKnownTypes adds all this custom API's types to Scheme.

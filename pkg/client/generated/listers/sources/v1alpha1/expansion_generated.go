@@ -34,6 +34,14 @@ type OCIMetricsSourceListerExpansion interface{}
 // OCIMetricsSourceNamespaceLister.
 type OCIMetricsSourceNamespaceListerExpansion interface{}
 
+// SalesforceSourceListerExpansion allows custom methods to be added to
+// SalesforceSourceLister.
+type SalesforceSourceListerExpansion interface{}
+
+// SalesforceSourceNamespaceListerExpansion allows custom methods to be added to
+// SalesforceSourceNamespaceLister.
+type SalesforceSourceNamespaceListerExpansion interface{}
+
 // WebhookSourceListerExpansion allows custom methods to be added to
 // WebhookSourceLister.
 type WebhookSourceListerExpansion interface{}

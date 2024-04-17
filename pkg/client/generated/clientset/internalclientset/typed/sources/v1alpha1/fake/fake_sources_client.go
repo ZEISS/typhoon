@@ -28,6 +28,10 @@ func (c *FakeSourcesV1alpha1) OCIMetricsSources(namespace string) v1alpha1.OCIMe
 	return &FakeOCIMetricsSources{c, namespace}
 }
 
+func (c *FakeSourcesV1alpha1) SalesforceSources(namespace string) v1alpha1.SalesforceSourceInterface {
+	return &FakeSalesforceSources{c, namespace}
+}
+
 func (c *FakeSourcesV1alpha1) WebhookSources(namespace string) v1alpha1.WebhookSourceInterface {
 	return &FakeWebhookSources{c, namespace}
 }

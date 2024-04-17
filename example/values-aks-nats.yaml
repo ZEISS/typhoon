@@ -8,11 +8,51 @@ config:
       pvc:
         size: 10Gi
 
+  gateway:
+    enabled: true
+    merge:
+      gateways:
+        - name: typhoon-gw-west-nats
+          urls:
+            - nats://gwp:gwp@10.210.95.239:7222
+        - name: typhoon-gw-central-nats
+          urls:
+            - nats://gwp:gwp@10.27.57.135:7222
+      authorization:
+        user: gwp
+        password: gwp
+
+  merge:
+    accounts:
+      $SYS:
+        jetstream: true
+        users:
+          - user: sys
+            password: pass
+
+natsBox:
+  contexts:
+    sys:
+      merge: { user: sys, password: pass }
+  defaultContextName: sys
+
 podTemplate:
   topologySpreadConstraints:
     kubernetes.io/hostname:
       maxSkew: 1
       whenUnsatisfiable: DoNotSchedule
+
+service:
+  ports:
+    gateway:
+      enabled: true
+  merge:
+    metadata:
+      annotations:
+        service.beta.kubernetes.io/azure-load-balancer-ipv4: ""
+        service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    spec:
+      type: LoadBalancer
 
 container:
   env:
