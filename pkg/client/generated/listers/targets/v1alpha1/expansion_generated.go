@@ -58,13 +58,13 @@ type NatsTargetListerExpansion interface{}
 // NatsTargetNamespaceLister.
 type NatsTargetNamespaceListerExpansion interface{}
 
-// OracleTargetListerExpansion allows custom methods to be added to
-// OracleTargetLister.
-type OracleTargetListerExpansion interface{}
+// SalesforceTargetListerExpansion allows custom methods to be added to
+// SalesforceTargetLister.
+type SalesforceTargetListerExpansion interface{}
 
-// OracleTargetNamespaceListerExpansion allows custom methods to be added to
-// OracleTargetNamespaceLister.
-type OracleTargetNamespaceListerExpansion interface{}
+// SalesforceTargetNamespaceListerExpansion allows custom methods to be added to
+// SalesforceTargetNamespaceLister.
+type SalesforceTargetNamespaceListerExpansion interface{}
 
 // SplunkTargetListerExpansion allows custom methods to be added to
 // SplunkTargetLister.

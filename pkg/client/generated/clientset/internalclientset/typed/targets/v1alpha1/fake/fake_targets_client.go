@@ -40,8 +40,8 @@ func (c *FakeTargetsV1alpha1) NatsTargets(namespace string) v1alpha1.NatsTargetI
 	return &FakeNatsTargets{c, namespace}
 }
 
-func (c *FakeTargetsV1alpha1) OracleTargets(namespace string) v1alpha1.OracleTargetInterface {
-	return &FakeOracleTargets{c, namespace}
+func (c *FakeTargetsV1alpha1) SalesforceTargets(namespace string) v1alpha1.SalesforceTargetInterface {
+	return &FakeSalesforceTargets{c, namespace}
 }
 
 func (c *FakeTargetsV1alpha1) SplunkTargets(namespace string) v1alpha1.SplunkTargetInterface {

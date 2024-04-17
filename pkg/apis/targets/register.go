@@ -41,4 +41,9 @@ var (
 		Group:    GroupName,
 		Resource: "splunktargets",
 	}
+	// SalesforceTargetResource respresents an event target for Salesforce.
+	SalesforceTargetResource = schema.GroupResource{
+		Group:    GroupName,
+		Resource: "salesforcetargets",
+	}
 )

@@ -31,7 +31,7 @@ func withInformer(ctx context.Context) (context.Context, []controller.Informer) 
 	infs := []controller.Informer{}
 	for _, selector := range labelSelectors {
 		f := filtered.Get(ctx, selector)
-		inf := f.Targets().V1alpha1().OracleTargets()
+		inf := f.Targets().V1alpha1().SalesforceTargets()
 		ctx = context.WithValue(ctx, Key{Selector: selector}, inf)
 		infs = append(infs, inf.Informer())
 	}
@@ -39,11 +39,11 @@ func withInformer(ctx context.Context) (context.Context, []controller.Informer) 
 }
 
 // Get extracts the typed informer from the context.
-func Get(ctx context.Context, selector string) v1alpha1.OracleTargetInformer {
+func Get(ctx context.Context, selector string) v1alpha1.SalesforceTargetInformer {
 	untyped := ctx.Value(Key{Selector: selector})
 	if untyped == nil {
 		logging.FromContext(ctx).Panicf(
-			"Unable to fetch github.com/zeiss/typhoon/pkg/client/generated/informers/externalversions/targets/v1alpha1.OracleTargetInformer with selector %s from context.", selector)
+			"Unable to fetch github.com/zeiss/typhoon/pkg/client/generated/informers/externalversions/targets/v1alpha1.SalesforceTargetInformer with selector %s from context.", selector)
 	}
-	return untyped.(v1alpha1.OracleTargetInformer)
+	return untyped.(v1alpha1.SalesforceTargetInformer)
 }

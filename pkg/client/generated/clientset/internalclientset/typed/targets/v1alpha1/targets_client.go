@@ -19,7 +19,7 @@ type TargetsV1alpha1Interface interface {
 	LogzMetricsTargetsGetter
 	LogzTargetsGetter
 	NatsTargetsGetter
-	OracleTargetsGetter
+	SalesforceTargetsGetter
 	SplunkTargetsGetter
 }
 
@@ -56,8 +56,8 @@ func (c *TargetsV1alpha1Client) NatsTargets(namespace string) NatsTargetInterfac
 	return newNatsTargets(c, namespace)
 }
 
-func (c *TargetsV1alpha1Client) OracleTargets(namespace string) OracleTargetInterface {
-	return newOracleTargets(c, namespace)
+func (c *TargetsV1alpha1Client) SalesforceTargets(namespace string) SalesforceTargetInterface {
+	return newSalesforceTargets(c, namespace)
 }
 
 func (c *TargetsV1alpha1Client) SplunkTargets(namespace string) SplunkTargetInterface {

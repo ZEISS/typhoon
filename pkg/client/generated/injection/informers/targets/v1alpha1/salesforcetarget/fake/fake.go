@@ -6,12 +6,12 @@ import (
 	context "context"
 
 	fake "github.com/zeiss/typhoon/pkg/client/generated/injection/informers/factory/fake"
-	oracletarget "github.com/zeiss/typhoon/pkg/client/generated/injection/informers/targets/v1alpha1/oracletarget"
+	salesforcetarget "github.com/zeiss/typhoon/pkg/client/generated/injection/informers/targets/v1alpha1/salesforcetarget"
 	controller "knative.dev/pkg/controller"
 	injection "knative.dev/pkg/injection"
 )
 
-var Get = oracletarget.Get
+var Get = salesforcetarget.Get
 
 func init() {
 	injection.Fake.RegisterInformer(withInformer)
@@ -19,6 +19,6 @@ func init() {
 
 func withInformer(ctx context.Context) (context.Context, controller.Informer) {
 	f := fake.Get(ctx)
-	inf := f.Targets().V1alpha1().OracleTargets()
-	return context.WithValue(ctx, oracletarget.Key{}, inf), inf.Informer()
+	inf := f.Targets().V1alpha1().SalesforceTargets()
+	return context.WithValue(ctx, salesforcetarget.Key{}, inf), inf.Informer()
 }

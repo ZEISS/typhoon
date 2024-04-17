@@ -25,6 +25,7 @@ var AllTypes = []v1alpha1.GroupObject{
 	{Single: &KafkaTarget{}, List: &KafkaTargetList{}},
 	{Single: &LogzMetricsTarget{}, List: &LogzMetricsTargetList{}},
 	{Single: &LogzTarget{}, List: &LogzTargetList{}},
+	{Single: &SalesforceTarget{}, List: &SalesforceTargetList{}},
 }
 
 // addKnownTypes adds all this custom API's types to Scheme.
