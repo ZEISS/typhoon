@@ -24,7 +24,7 @@ import (
 )
 
 func init() {
-	Root.PersistentFlags().StringVar(&cfg.Flags.Addr, "addr", ":8080", "addr")
+	Root.PersistentFlags().StringVar(&cfg.Flags.Addr, "addr", ":3000", "addr")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Database, "db-database", cfg.Flags.DB.Database, "Database name")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Username, "db-username", cfg.Flags.DB.Username, "Database user")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Password, "db-password", cfg.Flags.DB.Password, "Database password")
