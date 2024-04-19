@@ -1,9 +1,13 @@
 package controllers
 
-// Systems is the controller that uses the Systems interface.
-type Systems struct{}
+import "github.com/zeiss/typhoon/internal/api/ports"
 
-// New returns a new instance of Systems.
-func NewSystemsContoller() *Systems {
-	return &Systems{}
+// SystemsController ...
+type SystemsController struct {
+	db ports.Systems
+}
+
+// NewSystemsController ...
+func NewSystemsController(db ports.Teams) *SystemsController {
+	return &SystemsController{db}
 }

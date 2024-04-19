@@ -96,16 +96,22 @@ type ClientInterface interface {
 	// ShowSystem request
 	ShowSystem(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetTeamTeamId request
-	GetTeamTeamId(ctx context.Context, teamId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// ListTeam request
-	ListTeam(ctx context.Context, params *ListTeamParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListTeams request
+	ListTeams(ctx context.Context, params *ListTeamsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateTeamWithBody request with any body
 	CreateTeamWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	CreateTeam(ctx context.Context, body CreateTeamJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetTeam request
+	GetTeam(ctx context.Context, teamId TeamId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListAccounts request
+	ListAccounts(ctx context.Context, teamId TeamId, params *ListAccountsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetAccount request
+	GetAccount(ctx context.Context, teamId openapi_types.UUID, accountId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// Version request
 	Version(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -135,20 +141,8 @@ func (c *Client) ShowSystem(ctx context.Context, systemId string, reqEditors ...
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetTeamTeamId(ctx context.Context, teamId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetTeamTeamIdRequest(c.Server, teamId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) ListTeam(ctx context.Context, params *ListTeamParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListTeamRequest(c.Server, params)
+func (c *Client) ListTeams(ctx context.Context, params *ListTeamsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListTeamsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -173,6 +167,42 @@ func (c *Client) CreateTeamWithBody(ctx context.Context, contentType string, bod
 
 func (c *Client) CreateTeam(ctx context.Context, body CreateTeamJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateTeamRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetTeam(ctx context.Context, teamId TeamId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTeamRequest(c.Server, teamId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListAccounts(ctx context.Context, teamId TeamId, params *ListAccountsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListAccountsRequest(c.Server, teamId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetAccount(ctx context.Context, teamId openapi_types.UUID, accountId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAccountRequest(c.Server, teamId, accountId)
 	if err != nil {
 		return nil, err
 	}
@@ -256,42 +286,8 @@ func NewShowSystemRequest(server string, systemId string) (*http.Request, error)
 	return req, nil
 }
 
-// NewGetTeamTeamIdRequest generates requests for GetTeamTeamId
-func NewGetTeamTeamIdRequest(server string, teamId openapi_types.UUID) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/team/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewListTeamRequest generates requests for ListTeam
-func NewListTeamRequest(server string, params *ListTeamParams) (*http.Request, error) {
+// NewListTeamsRequest generates requests for ListTeams
+func NewListTeamsRequest(server string, params *ListTeamsParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -395,6 +391,153 @@ func NewCreateTeamRequestWithBody(server string, contentType string, body io.Rea
 	return req, nil
 }
 
+// NewGetTeamRequest generates requests for GetTeam
+func NewGetTeamRequest(server string, teamId TeamId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/teams/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListAccountsRequest generates requests for ListAccounts
+func NewListAccountsRequest(server string, teamId TeamId, params *ListAccountsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/teams/%s/accounts", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Offset != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetAccountRequest generates requests for GetAccount
+func NewGetAccountRequest(server string, teamId openapi_types.UUID, accountId openapi_types.UUID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/teams/%s/accounts/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewVersionRequest generates requests for Version
 func NewVersionRequest(server string) (*http.Request, error) {
 	var err error
@@ -471,16 +614,22 @@ type ClientWithResponsesInterface interface {
 	// ShowSystemWithResponse request
 	ShowSystemWithResponse(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*ShowSystemResponse, error)
 
-	// GetTeamTeamIdWithResponse request
-	GetTeamTeamIdWithResponse(ctx context.Context, teamId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetTeamTeamIdResponse, error)
-
-	// ListTeamWithResponse request
-	ListTeamWithResponse(ctx context.Context, params *ListTeamParams, reqEditors ...RequestEditorFn) (*ListTeamResponse, error)
+	// ListTeamsWithResponse request
+	ListTeamsWithResponse(ctx context.Context, params *ListTeamsParams, reqEditors ...RequestEditorFn) (*ListTeamsResponse, error)
 
 	// CreateTeamWithBodyWithResponse request with any body
 	CreateTeamWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTeamResponse, error)
 
 	CreateTeamWithResponse(ctx context.Context, body CreateTeamJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTeamResponse, error)
+
+	// GetTeamWithResponse request
+	GetTeamWithResponse(ctx context.Context, teamId TeamId, reqEditors ...RequestEditorFn) (*GetTeamResponse, error)
+
+	// ListAccountsWithResponse request
+	ListAccountsWithResponse(ctx context.Context, teamId TeamId, params *ListAccountsParams, reqEditors ...RequestEditorFn) (*ListAccountsResponse, error)
+
+	// GetAccountWithResponse request
+	GetAccountWithResponse(ctx context.Context, teamId openapi_types.UUID, accountId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetAccountResponse, error)
 
 	// VersionWithResponse request
 	VersionWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*VersionResponse, error)
@@ -529,29 +678,7 @@ func (r ShowSystemResponse) StatusCode() int {
 	return 0
 }
 
-type GetTeamTeamIdResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Team
-}
-
-// Status returns HTTPResponse.Status
-func (r GetTeamTeamIdResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetTeamTeamIdResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ListTeamResponse struct {
+type ListTeamsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
@@ -563,7 +690,7 @@ type ListTeamResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r ListTeamResponse) Status() string {
+func (r ListTeamsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -571,7 +698,7 @@ func (r ListTeamResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ListTeamResponse) StatusCode() int {
+func (r ListTeamsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -594,6 +721,77 @@ func (r CreateTeamResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r CreateTeamResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetTeamResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Team
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTeamResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTeamResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListAccountsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Limit   *float32   `json:"limit,omitempty"`
+		Offset  *float32   `json:"offset,omitempty"`
+		Results *[]Account `json:"results,omitempty"`
+		Total   *float32   `json:"total,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r ListAccountsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListAccountsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetAccountResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Account
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAccountResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAccountResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -640,22 +838,13 @@ func (c *ClientWithResponses) ShowSystemWithResponse(ctx context.Context, system
 	return ParseShowSystemResponse(rsp)
 }
 
-// GetTeamTeamIdWithResponse request returning *GetTeamTeamIdResponse
-func (c *ClientWithResponses) GetTeamTeamIdWithResponse(ctx context.Context, teamId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetTeamTeamIdResponse, error) {
-	rsp, err := c.GetTeamTeamId(ctx, teamId, reqEditors...)
+// ListTeamsWithResponse request returning *ListTeamsResponse
+func (c *ClientWithResponses) ListTeamsWithResponse(ctx context.Context, params *ListTeamsParams, reqEditors ...RequestEditorFn) (*ListTeamsResponse, error) {
+	rsp, err := c.ListTeams(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetTeamTeamIdResponse(rsp)
-}
-
-// ListTeamWithResponse request returning *ListTeamResponse
-func (c *ClientWithResponses) ListTeamWithResponse(ctx context.Context, params *ListTeamParams, reqEditors ...RequestEditorFn) (*ListTeamResponse, error) {
-	rsp, err := c.ListTeam(ctx, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseListTeamResponse(rsp)
+	return ParseListTeamsResponse(rsp)
 }
 
 // CreateTeamWithBodyWithResponse request with arbitrary body returning *CreateTeamResponse
@@ -673,6 +862,33 @@ func (c *ClientWithResponses) CreateTeamWithResponse(ctx context.Context, body C
 		return nil, err
 	}
 	return ParseCreateTeamResponse(rsp)
+}
+
+// GetTeamWithResponse request returning *GetTeamResponse
+func (c *ClientWithResponses) GetTeamWithResponse(ctx context.Context, teamId TeamId, reqEditors ...RequestEditorFn) (*GetTeamResponse, error) {
+	rsp, err := c.GetTeam(ctx, teamId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTeamResponse(rsp)
+}
+
+// ListAccountsWithResponse request returning *ListAccountsResponse
+func (c *ClientWithResponses) ListAccountsWithResponse(ctx context.Context, teamId TeamId, params *ListAccountsParams, reqEditors ...RequestEditorFn) (*ListAccountsResponse, error) {
+	rsp, err := c.ListAccounts(ctx, teamId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListAccountsResponse(rsp)
+}
+
+// GetAccountWithResponse request returning *GetAccountResponse
+func (c *ClientWithResponses) GetAccountWithResponse(ctx context.Context, teamId openapi_types.UUID, accountId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetAccountResponse, error) {
+	rsp, err := c.GetAccount(ctx, teamId, accountId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetAccountResponse(rsp)
 }
 
 // VersionWithResponse request returning *VersionResponse
@@ -726,41 +942,15 @@ func ParseShowSystemResponse(rsp *http.Response) (*ShowSystemResponse, error) {
 	return response, nil
 }
 
-// ParseGetTeamTeamIdResponse parses an HTTP response from a GetTeamTeamIdWithResponse call
-func ParseGetTeamTeamIdResponse(rsp *http.Response) (*GetTeamTeamIdResponse, error) {
+// ParseListTeamsResponse parses an HTTP response from a ListTeamsWithResponse call
+func ParseListTeamsResponse(rsp *http.Response) (*ListTeamsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetTeamTeamIdResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Team
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseListTeamResponse parses an HTTP response from a ListTeamWithResponse call
-func ParseListTeamResponse(rsp *http.Response) (*ListTeamResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ListTeamResponse{
+	response := &ListTeamsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -803,6 +993,89 @@ func ParseCreateTeamResponse(rsp *http.Response) (*CreateTeamResponse, error) {
 			return nil, err
 		}
 		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetTeamResponse parses an HTTP response from a GetTeamWithResponse call
+func ParseGetTeamResponse(rsp *http.Response) (*GetTeamResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTeamResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Team
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListAccountsResponse parses an HTTP response from a ListAccountsWithResponse call
+func ParseListAccountsResponse(rsp *http.Response) (*ListAccountsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListAccountsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Limit   *float32   `json:"limit,omitempty"`
+			Offset  *float32   `json:"offset,omitempty"`
+			Results *[]Account `json:"results,omitempty"`
+			Total   *float32   `json:"total,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetAccountResponse parses an HTTP response from a GetAccountWithResponse call
+func ParseGetAccountResponse(rsp *http.Response) (*GetAccountResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetAccountResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Account
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
 
 	}
 
