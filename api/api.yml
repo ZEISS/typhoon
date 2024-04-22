@@ -399,16 +399,47 @@ paths:
         Returns a list of managed systems.
       responses:
         "200":
-          description: A paginated response of all systems
+          description: Successfull response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Systems"
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/System"
+    post:
+      summary: Creates a new system
+      operationId: createSystem
+      tags:
+        - System
+      produces:
+        - "application/json"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/System"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/System"
+      links:
+        GetSystemById:
+          operationId: getSystem
+          parameters:
+            systemId: "$response.body#/id"
 
   /systems/{systemId}:
     get:
       summary: List all managed systems.
-      operationId: showSystem
+      operationId: getSystem
       tags:
         - Systems
       description: |-
@@ -423,6 +454,41 @@ paths:
       responses:
         "200":
           description: A paginated response of all systems
+    put:
+      summary: Updates a system by ID
+      operationId: updateSystem
+      parameters:
+        - name: systemId
+          in: path
+          required: true
+          description: The id of the system to update
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/System"
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/System"
+    deleted:
+      summary: Deletes a system by ID
+      operationId: deleteSystem
+      parameters:
+        - name: systemId
+          in: path
+          required: true
+          description: The id of the system to delete
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Successful
 
 definitions:
   schemas:
@@ -519,13 +585,12 @@ components:
       type: object
       required:
         - name
+        - cluster
       properties:
         id:
           type: string
           format: uuid
           readOnly: true
-          x-oapi-codegen-extra-tags:
-            gorm: "type:uuid;default:gen_random_uuid()"
         name:
           type: string
           description: Name of the system
@@ -533,6 +598,8 @@ components:
         description:
           type: string
           description: A description of the system.
+        cluster:
+          $ref: "#/components/schemas/Cluster"
         createdAt:
           type: string
           format: date-time
@@ -558,8 +625,6 @@ components:
           type: string
           format: uuid
           readOnly: true
-          x-oapi-codegen-extra-tags:
-            gorm: "type:uuid;default:gen_random_uuid()"
         name:
           type: string
         description:
@@ -582,6 +647,28 @@ components:
           description: Creation date and time
           example: "2021-01-30T08:30:00Z"
 
+    Cluster:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        url:
+          type: string
+        user:
+          type: string
+        password:
+          type: string
+        operatorSignKey:
+          $ref: "#/components/schemas/OperatorSignKey"
+
+    OperatorSignKey:
+      type: string
+      format: base64
+
     Account:
       type: object
       required:
@@ -591,8 +678,6 @@ components:
           type: string
           format: uuid
           readOnly: true
-          x-oapi-codegen-extra-tags:
-            gorm: "type:uuid;default:gen_random_uuid()"
         name:
           type: string
         description:
@@ -624,8 +709,6 @@ components:
           type: string
           format: uuid
           readOnly: true
-          x-oapi-codegen-extra-tags:
-            gorm: "type:uuid;default:gen_random_uuid()"
         name:
           type: string
         description:
@@ -704,8 +787,6 @@ components:
           type: string
           format: uuid
           readOnly: true
-          x-oapi-codegen-extra-tags:
-            gorm: "type:uuid;default:gen_random_uuid()"
         name:
           type: string
         email:

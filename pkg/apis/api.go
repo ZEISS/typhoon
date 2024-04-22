@@ -15,8 +15,18 @@ func (u *Unimplemented) ListSystems(ctx context.Context, request ListSystemsRequ
 	return nil, errors.New("not implemented")
 }
 
-// ShowSystem ...
-func (u *Unimplemented) ShowSystem(ctx context.Context, request ShowSystemRequestObject) (ShowSystemResponseObject, error) {
+// CreateSystem ...
+func (u *Unimplemented) CreateSystem(ctx context.Context, request CreateSystemRequestObject) (CreateSystemResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// GetSystem ...
+func (u *Unimplemented) GetSystem(ctx context.Context, request GetSystemRequestObject) (GetSystemResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// UpdateSystem ...
+func (u *Unimplemented) UpdateSystem(ctx context.Context, request UpdateSystemRequestObject) (UpdateSystemResponseObject, error) {
 	return nil, errors.New("not implemented")
 }
 

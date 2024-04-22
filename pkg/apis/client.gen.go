@@ -93,8 +93,18 @@ type ClientInterface interface {
 	// ListSystems request
 	ListSystems(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ShowSystem request
-	ShowSystem(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateSystemWithBody request with any body
+	CreateSystemWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateSystem(ctx context.Context, body CreateSystemJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetSystem request
+	GetSystem(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateSystemWithBody request with any body
+	UpdateSystemWithBody(ctx context.Context, systemId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateSystem(ctx context.Context, systemId string, body UpdateSystemJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ListTeams request
 	ListTeams(ctx context.Context, params *ListTeamsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -161,8 +171,56 @@ func (c *Client) ListSystems(ctx context.Context, reqEditors ...RequestEditorFn)
 	return c.Client.Do(req)
 }
 
-func (c *Client) ShowSystem(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewShowSystemRequest(c.Server, systemId)
+func (c *Client) CreateSystemWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateSystemRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateSystem(ctx context.Context, body CreateSystemJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateSystemRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetSystem(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetSystemRequest(c.Server, systemId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateSystemWithBody(ctx context.Context, systemId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateSystemRequestWithBody(c.Server, systemId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateSystem(ctx context.Context, systemId string, body UpdateSystemJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateSystemRequest(c.Server, systemId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -428,8 +486,48 @@ func NewListSystemsRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
-// NewShowSystemRequest generates requests for ShowSystem
-func NewShowSystemRequest(server string, systemId string) (*http.Request, error) {
+// NewCreateSystemRequest calls the generic CreateSystem builder with application/json body
+func NewCreateSystemRequest(server string, body CreateSystemJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateSystemRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateSystemRequestWithBody generates requests for CreateSystem with any type of body
+func NewCreateSystemRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/systems")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetSystemRequest generates requests for GetSystem
+func NewGetSystemRequest(server string, systemId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -458,6 +556,53 @@ func NewShowSystemRequest(server string, systemId string) (*http.Request, error)
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewUpdateSystemRequest calls the generic UpdateSystem builder with application/json body
+func NewUpdateSystemRequest(server string, systemId string, body UpdateSystemJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateSystemRequestWithBody(server, systemId, "application/json", bodyReader)
+}
+
+// NewUpdateSystemRequestWithBody generates requests for UpdateSystem with any type of body
+func NewUpdateSystemRequestWithBody(server string, systemId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "systemId", runtime.ParamLocationPath, systemId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/systems/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -1271,8 +1416,18 @@ type ClientWithResponsesInterface interface {
 	// ListSystemsWithResponse request
 	ListSystemsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListSystemsResponse, error)
 
-	// ShowSystemWithResponse request
-	ShowSystemWithResponse(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*ShowSystemResponse, error)
+	// CreateSystemWithBodyWithResponse request with any body
+	CreateSystemWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSystemResponse, error)
+
+	CreateSystemWithResponse(ctx context.Context, body CreateSystemJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSystemResponse, error)
+
+	// GetSystemWithResponse request
+	GetSystemWithResponse(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*GetSystemResponse, error)
+
+	// UpdateSystemWithBodyWithResponse request with any body
+	UpdateSystemWithBodyWithResponse(ctx context.Context, systemId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateSystemResponse, error)
+
+	UpdateSystemWithResponse(ctx context.Context, systemId string, body UpdateSystemJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateSystemResponse, error)
 
 	// ListTeamsWithResponse request
 	ListTeamsWithResponse(ctx context.Context, params *ListTeamsParams, reqEditors ...RequestEditorFn) (*ListTeamsResponse, error)
@@ -1330,7 +1485,12 @@ type ClientWithResponsesInterface interface {
 type ListSystemsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Systems
+	JSON200      *struct {
+		Limit   *float32  `json:"limit,omitempty"`
+		Offset  *float32  `json:"offset,omitempty"`
+		Results *[]System `json:"results,omitempty"`
+		Total   *float32  `json:"total,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -1349,13 +1509,14 @@ func (r ListSystemsResponse) StatusCode() int {
 	return 0
 }
 
-type ShowSystemResponse struct {
+type CreateSystemResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSON201      *System
 }
 
 // Status returns HTTPResponse.Status
-func (r ShowSystemResponse) Status() string {
+func (r CreateSystemResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1363,7 +1524,50 @@ func (r ShowSystemResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ShowSystemResponse) StatusCode() int {
+func (r CreateSystemResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetSystemResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r GetSystemResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetSystemResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateSystemResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *System
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateSystemResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateSystemResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1707,13 +1911,47 @@ func (c *ClientWithResponses) ListSystemsWithResponse(ctx context.Context, reqEd
 	return ParseListSystemsResponse(rsp)
 }
 
-// ShowSystemWithResponse request returning *ShowSystemResponse
-func (c *ClientWithResponses) ShowSystemWithResponse(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*ShowSystemResponse, error) {
-	rsp, err := c.ShowSystem(ctx, systemId, reqEditors...)
+// CreateSystemWithBodyWithResponse request with arbitrary body returning *CreateSystemResponse
+func (c *ClientWithResponses) CreateSystemWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSystemResponse, error) {
+	rsp, err := c.CreateSystemWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseShowSystemResponse(rsp)
+	return ParseCreateSystemResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateSystemWithResponse(ctx context.Context, body CreateSystemJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSystemResponse, error) {
+	rsp, err := c.CreateSystem(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateSystemResponse(rsp)
+}
+
+// GetSystemWithResponse request returning *GetSystemResponse
+func (c *ClientWithResponses) GetSystemWithResponse(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*GetSystemResponse, error) {
+	rsp, err := c.GetSystem(ctx, systemId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetSystemResponse(rsp)
+}
+
+// UpdateSystemWithBodyWithResponse request with arbitrary body returning *UpdateSystemResponse
+func (c *ClientWithResponses) UpdateSystemWithBodyWithResponse(ctx context.Context, systemId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateSystemResponse, error) {
+	rsp, err := c.UpdateSystemWithBody(ctx, systemId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateSystemResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateSystemWithResponse(ctx context.Context, systemId string, body UpdateSystemJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateSystemResponse, error) {
+	rsp, err := c.UpdateSystem(ctx, systemId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateSystemResponse(rsp)
 }
 
 // ListTeamsWithResponse request returning *ListTeamsResponse
@@ -1897,7 +2135,12 @@ func ParseListSystemsResponse(rsp *http.Response) (*ListSystemsResponse, error) 
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Systems
+		var dest struct {
+			Limit   *float32  `json:"limit,omitempty"`
+			Offset  *float32  `json:"offset,omitempty"`
+			Results *[]System `json:"results,omitempty"`
+			Total   *float32  `json:"total,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1908,17 +2151,69 @@ func ParseListSystemsResponse(rsp *http.Response) (*ListSystemsResponse, error) 
 	return response, nil
 }
 
-// ParseShowSystemResponse parses an HTTP response from a ShowSystemWithResponse call
-func ParseShowSystemResponse(rsp *http.Response) (*ShowSystemResponse, error) {
+// ParseCreateSystemResponse parses an HTTP response from a CreateSystemWithResponse call
+func ParseCreateSystemResponse(rsp *http.Response) (*CreateSystemResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ShowSystemResponse{
+	response := &CreateSystemResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest System
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetSystemResponse parses an HTTP response from a GetSystemWithResponse call
+func ParseGetSystemResponse(rsp *http.Response) (*GetSystemResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetSystemResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParseUpdateSystemResponse parses an HTTP response from a UpdateSystemWithResponse call
+func ParseUpdateSystemResponse(rsp *http.Response) (*UpdateSystemResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateSystemResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest System
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
 	}
 
 	return response, nil

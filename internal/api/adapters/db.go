@@ -1,6 +1,7 @@
 package adapters
 
 import (
+	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/api/ports"
 
 	"gorm.io/gorm"
@@ -23,5 +24,11 @@ func NewDB(conn *gorm.DB) *DB {
 
 // RunMigrations ...
 func (db *DB) RunMigrations() error {
-	return db.conn.AutoMigrate()
+	return db.conn.AutoMigrate(
+		&models.System{},
+		&models.Cluster{},
+		&models.Account{},
+		&models.Operator{},
+		&models.Key{},
+	)
 }
