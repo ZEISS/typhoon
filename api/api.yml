@@ -166,6 +166,229 @@ paths:
               schema:
                 $ref: "#/components/schemas/Account"
 
+  /teams/{teamId}/accounts/{accountId}/groups:
+    get:
+      summary: List all signing key groups for an account
+      operationId: listGroups
+      tags:
+        - Team
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: ["read:groups"]
+      responses:
+        "200":
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/SigningKeyGroup"
+    post:
+      summary: Creates a new signing key group
+      operationId: createGroup
+      tags:
+        - Team
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SigningKeyGroup"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SigningKeyGroup"
+      links:
+        GetGroupById:
+          operationId: getGroup
+          parameters:
+            teamId: "$response.body#/teamId"
+            accountId: "$response.body#/accountId"
+            groupId: "$response.body#/id"
+
+  /teams/{teamId}/accounts/{accountId}/groups/{groupId}:
+    get:
+      summary: Gets a signing key group by ID
+      operationId: getGroup
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/groupId"
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SigningKeyGroup"
+    put:
+      summary: Updates a signing key group by ID
+      operationId: updateGroup
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/groupId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SigningKeyGroup"
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SigningKeyGroup"
+    deleted:
+      summary: Deletes a signing key group by ID
+      operationId: deleteGroup
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/groupId"
+      responses:
+        "204":
+          description: Successful
+
+  /teams/{teamId}/accounts/{accountId}/users:
+    get:
+      summary: List all users for an account
+      operationId: listUsers
+      tags:
+        - Team
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: ["read:users"]
+      responses:
+        "200":
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/User"
+    post:
+      summary: Creates a new user
+      operationId: createUser
+      tags:
+        - Team
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+      links:
+        GetUserById:
+          operationId: getUser
+          parameters:
+            teamId: "$response.body#/teamId"
+            accountId: "$response.body#/accountId"
+            userId: "$response.body#/id"
+
+  /teams/{teamId}/accounts/{accountId}/users/{userId}:
+    get:
+      summary: Gets a user by ID
+      operationId: getUser
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    put:
+      summary: Updates a user by ID
+      operationId: updateUser
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    deleted:
+      summary: Deletes a user by ID
+      operationId: deleteUser
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Successful
+
   /systems:
     get:
       summary: List all managed systems.
@@ -221,6 +444,22 @@ components:
         type: string
         format: uuid
       description: The id of the team to retrieve.
+    groupId:
+      in: path
+      name: groupId
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The id of the group to retrieve.
+    accountId:
+      in: path
+      name: accountId
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The id of the account to retrieve.
     offsetParam:
       in: query
       name: offset
@@ -359,6 +598,121 @@ components:
         description:
           type: string
         contactEmail:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        deletedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+
+    SigningKeyGroup:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          x-oapi-codegen-extra-tags:
+            gorm: "type:uuid;default:gen_random_uuid()"
+        name:
+          type: string
+        description:
+          type: string
+        scope:
+          $ref: "#/components/schemas/SigningKeyGroupScope"
+        is_scoped:
+          type: boolean
+          default: false
+        disabled:
+          type: boolean
+          default: false
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        deletedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+
+    SigningKeyGroupScope:
+      type: object
+      properties:
+        publish:
+          $ref: "#/components/schemas/SigningKeyGroupScopePublish"
+        subscribe:
+          $ref: "#/components/schemas/SigningKeyGroupScopeSubscribe"
+        subscriptions:
+          type: integer
+          default: 0
+        payload:
+          type: integer
+          default: 0
+        data:
+          type: integer
+          default: 0
+
+    SigningKeyGroupScopePublish:
+      type: object
+      properties:
+        allow:
+          type: array
+          items:
+            type: string
+        deny:
+          type: array
+          items:
+            type: string
+
+    SigningKeyGroupScopeSubscribe:
+      type: object
+      properties:
+        allow:
+          type: array
+          items:
+            type: string
+        deny:
+          type: array
+          items:
+            type: string
+
+    User:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          x-oapi-codegen-extra-tags:
+            gorm: "type:uuid;default:gen_random_uuid()"
+        name:
+          type: string
+        email:
+          type: string
+        jwt:
+          type: string
+        key:
           type: string
         createdAt:
           type: string

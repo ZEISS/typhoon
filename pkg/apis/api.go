@@ -45,6 +45,46 @@ func (u *Unimplemented) GetAccount(ctx context.Context, request GetAccountReques
 	return nil, errors.New("not implemented")
 }
 
+// CreateGroup ...
+func (u *Unimplemented) CreateGroup(ctx context.Context, request CreateGroupRequestObject) (CreateGroupResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// GetGroup ...
+func (u *Unimplemented) GetGroup(ctx context.Context, request GetGroupRequestObject) (GetGroupResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// UpdateGroup ...
+func (u *Unimplemented) UpdateGroup(ctx context.Context, request UpdateGroupRequestObject) (UpdateGroupResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// ListGroups ...
+func (u *Unimplemented) ListGroups(ctx context.Context, request ListGroupsRequestObject) (ListGroupsResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// ListUsers ...
+func (u *Unimplemented) ListUsers(ctx context.Context, request ListUsersRequestObject) (ListUsersResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// GetUser ...
+func (u *Unimplemented) GetUser(ctx context.Context, request GetUserRequestObject) (GetUserResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// CreateUser ...
+func (u *Unimplemented) CreateUser(ctx context.Context, request CreateUserRequestObject) (CreateUserResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// UpdateUser ...
+func (u *Unimplemented) UpdateUser(ctx context.Context, request UpdateUserRequestObject) (UpdateUserResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
 // Version ...
 func (u *Unimplemented) Version(ctx context.Context, request VersionRequestObject) (VersionResponseObject, error) {
 	return nil, errors.New("not implemented")

@@ -36,6 +36,30 @@ type ServerInterface interface {
 	// Gets an account by ID
 	// (GET /teams/{teamId}/accounts/{accountId})
 	GetAccount(c *fiber.Ctx, teamId openapi_types.UUID, accountId openapi_types.UUID) error
+	// List all signing key groups for an account
+	// (GET /teams/{teamId}/accounts/{accountId}/groups)
+	ListGroups(c *fiber.Ctx, teamId TeamId, accountId AccountId, params ListGroupsParams) error
+	// Creates a new signing key group
+	// (POST /teams/{teamId}/accounts/{accountId}/groups)
+	CreateGroup(c *fiber.Ctx, teamId TeamId, accountId AccountId) error
+	// Gets a signing key group by ID
+	// (GET /teams/{teamId}/accounts/{accountId}/groups/{groupId})
+	GetGroup(c *fiber.Ctx, teamId TeamId, accountId AccountId, groupId GroupId) error
+	// Updates a signing key group by ID
+	// (PUT /teams/{teamId}/accounts/{accountId}/groups/{groupId})
+	UpdateGroup(c *fiber.Ctx, teamId TeamId, accountId AccountId, groupId GroupId) error
+	// List all users for an account
+	// (GET /teams/{teamId}/accounts/{accountId}/users)
+	ListUsers(c *fiber.Ctx, teamId TeamId, accountId AccountId, params ListUsersParams) error
+	// Creates a new user
+	// (POST /teams/{teamId}/accounts/{accountId}/users)
+	CreateUser(c *fiber.Ctx, teamId TeamId, accountId AccountId) error
+	// Gets a user by ID
+	// (GET /teams/{teamId}/accounts/{accountId}/users/{userId})
+	GetUser(c *fiber.Ctx, teamId TeamId, accountId AccountId, userId openapi_types.UUID) error
+	// Updates a user by ID
+	// (PUT /teams/{teamId}/accounts/{accountId}/users/{userId})
+	UpdateUser(c *fiber.Ctx, teamId TeamId, accountId AccountId, userId openapi_types.UUID) error
 	// Returns the current version of the API.
 	// (GET /version)
 	Version(c *fiber.Ctx) error
@@ -220,6 +244,316 @@ func (siw *ServerInterfaceWrapper) GetAccount(c *fiber.Ctx) error {
 	return siw.Handler.GetAccount(c, teamId, accountId)
 }
 
+// ListGroups operation middleware
+func (siw *ServerInterfaceWrapper) ListGroups(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "teamId" -------------
+	var teamId TeamId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
+	}
+
+	// ------------- Path parameter "accountId" -------------
+	var accountId AccountId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{"read:groups"})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListGroupsParams
+
+	var query url.Values
+	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
+	}
+
+	// ------------- Optional query parameter "offset" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "offset", query, &params.Offset)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter offset: %w", err).Error())
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", query, &params.Limit)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter limit: %w", err).Error())
+	}
+
+	return siw.Handler.ListGroups(c, teamId, accountId, params)
+}
+
+// CreateGroup operation middleware
+func (siw *ServerInterfaceWrapper) CreateGroup(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "teamId" -------------
+	var teamId TeamId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
+	}
+
+	// ------------- Path parameter "accountId" -------------
+	var accountId AccountId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(Api_keyScopes, []string{})
+
+	return siw.Handler.CreateGroup(c, teamId, accountId)
+}
+
+// GetGroup operation middleware
+func (siw *ServerInterfaceWrapper) GetGroup(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "teamId" -------------
+	var teamId TeamId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
+	}
+
+	// ------------- Path parameter "accountId" -------------
+	var accountId AccountId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
+	}
+
+	// ------------- Path parameter "groupId" -------------
+	var groupId GroupId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "groupId", c.Params("groupId"), &groupId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter groupId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(Api_keyScopes, []string{})
+
+	return siw.Handler.GetGroup(c, teamId, accountId, groupId)
+}
+
+// UpdateGroup operation middleware
+func (siw *ServerInterfaceWrapper) UpdateGroup(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "teamId" -------------
+	var teamId TeamId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
+	}
+
+	// ------------- Path parameter "accountId" -------------
+	var accountId AccountId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
+	}
+
+	// ------------- Path parameter "groupId" -------------
+	var groupId GroupId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "groupId", c.Params("groupId"), &groupId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter groupId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(Api_keyScopes, []string{})
+
+	return siw.Handler.UpdateGroup(c, teamId, accountId, groupId)
+}
+
+// ListUsers operation middleware
+func (siw *ServerInterfaceWrapper) ListUsers(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "teamId" -------------
+	var teamId TeamId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
+	}
+
+	// ------------- Path parameter "accountId" -------------
+	var accountId AccountId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{"read:users"})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListUsersParams
+
+	var query url.Values
+	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
+	}
+
+	// ------------- Optional query parameter "offset" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "offset", query, &params.Offset)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter offset: %w", err).Error())
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", query, &params.Limit)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter limit: %w", err).Error())
+	}
+
+	return siw.Handler.ListUsers(c, teamId, accountId, params)
+}
+
+// CreateUser operation middleware
+func (siw *ServerInterfaceWrapper) CreateUser(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "teamId" -------------
+	var teamId TeamId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
+	}
+
+	// ------------- Path parameter "accountId" -------------
+	var accountId AccountId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(Api_keyScopes, []string{})
+
+	return siw.Handler.CreateUser(c, teamId, accountId)
+}
+
+// GetUser operation middleware
+func (siw *ServerInterfaceWrapper) GetUser(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "teamId" -------------
+	var teamId TeamId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
+	}
+
+	// ------------- Path parameter "accountId" -------------
+	var accountId AccountId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
+	}
+
+	// ------------- Path parameter "userId" -------------
+	var userId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "userId", c.Params("userId"), &userId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(Api_keyScopes, []string{})
+
+	return siw.Handler.GetUser(c, teamId, accountId, userId)
+}
+
+// UpdateUser operation middleware
+func (siw *ServerInterfaceWrapper) UpdateUser(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "teamId" -------------
+	var teamId TeamId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
+	}
+
+	// ------------- Path parameter "accountId" -------------
+	var accountId AccountId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
+	}
+
+	// ------------- Path parameter "userId" -------------
+	var userId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "userId", c.Params("userId"), &userId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(Api_keyScopes, []string{})
+
+	return siw.Handler.UpdateUser(c, teamId, accountId, userId)
+}
+
 // Version operation middleware
 func (siw *ServerInterfaceWrapper) Version(c *fiber.Ctx) error {
 
@@ -266,6 +600,22 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 	router.Get(options.BaseURL+"/teams/:teamId/accounts", wrapper.ListAccounts)
 
 	router.Get(options.BaseURL+"/teams/:teamId/accounts/:accountId", wrapper.GetAccount)
+
+	router.Get(options.BaseURL+"/teams/:teamId/accounts/:accountId/groups", wrapper.ListGroups)
+
+	router.Post(options.BaseURL+"/teams/:teamId/accounts/:accountId/groups", wrapper.CreateGroup)
+
+	router.Get(options.BaseURL+"/teams/:teamId/accounts/:accountId/groups/:groupId", wrapper.GetGroup)
+
+	router.Put(options.BaseURL+"/teams/:teamId/accounts/:accountId/groups/:groupId", wrapper.UpdateGroup)
+
+	router.Get(options.BaseURL+"/teams/:teamId/accounts/:accountId/users", wrapper.ListUsers)
+
+	router.Post(options.BaseURL+"/teams/:teamId/accounts/:accountId/users", wrapper.CreateUser)
+
+	router.Get(options.BaseURL+"/teams/:teamId/accounts/:accountId/users/:userId", wrapper.GetUser)
+
+	router.Put(options.BaseURL+"/teams/:teamId/accounts/:accountId/users/:userId", wrapper.UpdateUser)
 
 	router.Get(options.BaseURL+"/version", wrapper.Version)
 
@@ -400,6 +750,170 @@ func (response GetAccount200JSONResponse) VisitGetAccountResponse(ctx *fiber.Ctx
 	return ctx.JSON(&response)
 }
 
+type ListGroupsRequestObject struct {
+	TeamId    TeamId    `json:"teamId"`
+	AccountId AccountId `json:"accountId"`
+	Params    ListGroupsParams
+}
+
+type ListGroupsResponseObject interface {
+	VisitListGroupsResponse(ctx *fiber.Ctx) error
+}
+
+type ListGroups200JSONResponse struct {
+	Limit   *float32           `json:"limit,omitempty"`
+	Offset  *float32           `json:"offset,omitempty"`
+	Results *[]SigningKeyGroup `json:"results,omitempty"`
+	Total   *float32           `json:"total,omitempty"`
+}
+
+func (response ListGroups200JSONResponse) VisitListGroupsResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type CreateGroupRequestObject struct {
+	TeamId    TeamId    `json:"teamId"`
+	AccountId AccountId `json:"accountId"`
+	Body      *CreateGroupJSONRequestBody
+}
+
+type CreateGroupResponseObject interface {
+	VisitCreateGroupResponse(ctx *fiber.Ctx) error
+}
+
+type CreateGroup201JSONResponse SigningKeyGroup
+
+func (response CreateGroup201JSONResponse) VisitCreateGroupResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(201)
+
+	return ctx.JSON(&response)
+}
+
+type GetGroupRequestObject struct {
+	TeamId    TeamId    `json:"teamId"`
+	AccountId AccountId `json:"accountId"`
+	GroupId   GroupId   `json:"groupId"`
+}
+
+type GetGroupResponseObject interface {
+	VisitGetGroupResponse(ctx *fiber.Ctx) error
+}
+
+type GetGroup200JSONResponse SigningKeyGroup
+
+func (response GetGroup200JSONResponse) VisitGetGroupResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type UpdateGroupRequestObject struct {
+	TeamId    TeamId    `json:"teamId"`
+	AccountId AccountId `json:"accountId"`
+	GroupId   GroupId   `json:"groupId"`
+	Body      *UpdateGroupJSONRequestBody
+}
+
+type UpdateGroupResponseObject interface {
+	VisitUpdateGroupResponse(ctx *fiber.Ctx) error
+}
+
+type UpdateGroup200JSONResponse SigningKeyGroup
+
+func (response UpdateGroup200JSONResponse) VisitUpdateGroupResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type ListUsersRequestObject struct {
+	TeamId    TeamId    `json:"teamId"`
+	AccountId AccountId `json:"accountId"`
+	Params    ListUsersParams
+}
+
+type ListUsersResponseObject interface {
+	VisitListUsersResponse(ctx *fiber.Ctx) error
+}
+
+type ListUsers200JSONResponse struct {
+	Limit   *float32 `json:"limit,omitempty"`
+	Offset  *float32 `json:"offset,omitempty"`
+	Results *[]User  `json:"results,omitempty"`
+	Total   *float32 `json:"total,omitempty"`
+}
+
+func (response ListUsers200JSONResponse) VisitListUsersResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type CreateUserRequestObject struct {
+	TeamId    TeamId    `json:"teamId"`
+	AccountId AccountId `json:"accountId"`
+	Body      *CreateUserJSONRequestBody
+}
+
+type CreateUserResponseObject interface {
+	VisitCreateUserResponse(ctx *fiber.Ctx) error
+}
+
+type CreateUser201JSONResponse User
+
+func (response CreateUser201JSONResponse) VisitCreateUserResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(201)
+
+	return ctx.JSON(&response)
+}
+
+type GetUserRequestObject struct {
+	TeamId    TeamId             `json:"teamId"`
+	AccountId AccountId          `json:"accountId"`
+	UserId    openapi_types.UUID `json:"userId"`
+}
+
+type GetUserResponseObject interface {
+	VisitGetUserResponse(ctx *fiber.Ctx) error
+}
+
+type GetUser200JSONResponse User
+
+func (response GetUser200JSONResponse) VisitGetUserResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type UpdateUserRequestObject struct {
+	TeamId    TeamId             `json:"teamId"`
+	AccountId AccountId          `json:"accountId"`
+	UserId    openapi_types.UUID `json:"userId"`
+	Body      *UpdateUserJSONRequestBody
+}
+
+type UpdateUserResponseObject interface {
+	VisitUpdateUserResponse(ctx *fiber.Ctx) error
+}
+
+type UpdateUser200JSONResponse User
+
+func (response UpdateUser200JSONResponse) VisitUpdateUserResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
 type VersionRequestObject struct {
 }
 
@@ -439,6 +953,30 @@ type StrictServerInterface interface {
 	// Gets an account by ID
 	// (GET /teams/{teamId}/accounts/{accountId})
 	GetAccount(ctx context.Context, request GetAccountRequestObject) (GetAccountResponseObject, error)
+	// List all signing key groups for an account
+	// (GET /teams/{teamId}/accounts/{accountId}/groups)
+	ListGroups(ctx context.Context, request ListGroupsRequestObject) (ListGroupsResponseObject, error)
+	// Creates a new signing key group
+	// (POST /teams/{teamId}/accounts/{accountId}/groups)
+	CreateGroup(ctx context.Context, request CreateGroupRequestObject) (CreateGroupResponseObject, error)
+	// Gets a signing key group by ID
+	// (GET /teams/{teamId}/accounts/{accountId}/groups/{groupId})
+	GetGroup(ctx context.Context, request GetGroupRequestObject) (GetGroupResponseObject, error)
+	// Updates a signing key group by ID
+	// (PUT /teams/{teamId}/accounts/{accountId}/groups/{groupId})
+	UpdateGroup(ctx context.Context, request UpdateGroupRequestObject) (UpdateGroupResponseObject, error)
+	// List all users for an account
+	// (GET /teams/{teamId}/accounts/{accountId}/users)
+	ListUsers(ctx context.Context, request ListUsersRequestObject) (ListUsersResponseObject, error)
+	// Creates a new user
+	// (POST /teams/{teamId}/accounts/{accountId}/users)
+	CreateUser(ctx context.Context, request CreateUserRequestObject) (CreateUserResponseObject, error)
+	// Gets a user by ID
+	// (GET /teams/{teamId}/accounts/{accountId}/users/{userId})
+	GetUser(ctx context.Context, request GetUserRequestObject) (GetUserResponseObject, error)
+	// Updates a user by ID
+	// (PUT /teams/{teamId}/accounts/{accountId}/users/{userId})
+	UpdateUser(ctx context.Context, request UpdateUserRequestObject) (UpdateUserResponseObject, error)
 	// Returns the current version of the API.
 	// (GET /version)
 	Version(ctx context.Context, request VersionRequestObject) (VersionResponseObject, error)
@@ -642,6 +1180,260 @@ func (sh *strictHandler) GetAccount(ctx *fiber.Ctx, teamId openapi_types.UUID, a
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	} else if validResponse, ok := response.(GetAccountResponseObject); ok {
 		if err := validResponse.VisitGetAccountResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// ListGroups operation middleware
+func (sh *strictHandler) ListGroups(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, params ListGroupsParams) error {
+	var request ListGroupsRequestObject
+
+	request.TeamId = teamId
+	request.AccountId = accountId
+	request.Params = params
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.ListGroups(ctx.UserContext(), request.(ListGroupsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListGroups")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(ListGroupsResponseObject); ok {
+		if err := validResponse.VisitListGroupsResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// CreateGroup operation middleware
+func (sh *strictHandler) CreateGroup(ctx *fiber.Ctx, teamId TeamId, accountId AccountId) error {
+	var request CreateGroupRequestObject
+
+	request.TeamId = teamId
+	request.AccountId = accountId
+
+	var body CreateGroupJSONRequestBody
+	if err := ctx.BodyParser(&body); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	request.Body = &body
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateGroup(ctx.UserContext(), request.(CreateGroupRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateGroup")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(CreateGroupResponseObject); ok {
+		if err := validResponse.VisitCreateGroupResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// GetGroup operation middleware
+func (sh *strictHandler) GetGroup(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, groupId GroupId) error {
+	var request GetGroupRequestObject
+
+	request.TeamId = teamId
+	request.AccountId = accountId
+	request.GroupId = groupId
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.GetGroup(ctx.UserContext(), request.(GetGroupRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetGroup")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(GetGroupResponseObject); ok {
+		if err := validResponse.VisitGetGroupResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// UpdateGroup operation middleware
+func (sh *strictHandler) UpdateGroup(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, groupId GroupId) error {
+	var request UpdateGroupRequestObject
+
+	request.TeamId = teamId
+	request.AccountId = accountId
+	request.GroupId = groupId
+
+	var body UpdateGroupJSONRequestBody
+	if err := ctx.BodyParser(&body); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	request.Body = &body
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateGroup(ctx.UserContext(), request.(UpdateGroupRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateGroup")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(UpdateGroupResponseObject); ok {
+		if err := validResponse.VisitUpdateGroupResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// ListUsers operation middleware
+func (sh *strictHandler) ListUsers(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, params ListUsersParams) error {
+	var request ListUsersRequestObject
+
+	request.TeamId = teamId
+	request.AccountId = accountId
+	request.Params = params
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.ListUsers(ctx.UserContext(), request.(ListUsersRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListUsers")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(ListUsersResponseObject); ok {
+		if err := validResponse.VisitListUsersResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// CreateUser operation middleware
+func (sh *strictHandler) CreateUser(ctx *fiber.Ctx, teamId TeamId, accountId AccountId) error {
+	var request CreateUserRequestObject
+
+	request.TeamId = teamId
+	request.AccountId = accountId
+
+	var body CreateUserJSONRequestBody
+	if err := ctx.BodyParser(&body); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	request.Body = &body
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateUser(ctx.UserContext(), request.(CreateUserRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateUser")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(CreateUserResponseObject); ok {
+		if err := validResponse.VisitCreateUserResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// GetUser operation middleware
+func (sh *strictHandler) GetUser(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, userId openapi_types.UUID) error {
+	var request GetUserRequestObject
+
+	request.TeamId = teamId
+	request.AccountId = accountId
+	request.UserId = userId
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.GetUser(ctx.UserContext(), request.(GetUserRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetUser")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(GetUserResponseObject); ok {
+		if err := validResponse.VisitGetUserResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// UpdateUser operation middleware
+func (sh *strictHandler) UpdateUser(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, userId openapi_types.UUID) error {
+	var request UpdateUserRequestObject
+
+	request.TeamId = teamId
+	request.AccountId = accountId
+	request.UserId = userId
+
+	var body UpdateUserJSONRequestBody
+	if err := ctx.BodyParser(&body); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	request.Body = &body
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateUser(ctx.UserContext(), request.(UpdateUserRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateUser")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(UpdateUserResponseObject); ok {
+		if err := validResponse.VisitUpdateUserResponse(ctx); err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 	} else if response != nil {

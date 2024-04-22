@@ -2,39 +2,34 @@ config:
   cluster:
     enabled: true
     replicas: 3
+
   jetstream:
     enabled: true
     fileStore:
       pvc:
         size: 10Gi
 
+  resolver:
+    enabled: true
+    merge:
+      type: full
+      interval: "2m"
+      timeout: "1.9s"
+
   gateway:
     enabled: true
     merge:
       gateways:
-        - name: typhoon-gw-west-nats
-          urls:
-            - nats://gwp:gwp@10.210.95.239:7222
-        - name: typhoon-gw-central-nats
-          urls:
-            - nats://gwp:gwp@10.27.57.135:7222
+        - name: "nats"
+          port: 4222
+          authorization:
+            timeout: 3
+            user: gwp
+            password: gwp
       authorization:
+        timeout: 3
         user: gwp
         password: gwp
-
-  merge:
-    accounts:
-      $SYS:
-        jetstream: true
-        users:
-          - user: sys
-            password: pass
-
-natsBox:
-  contexts:
-    sys:
-      merge: { user: sys, password: pass }
-  defaultContextName: sys
 
 podTemplate:
   topologySpreadConstraints:
