@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"context"
+
 	"github.com/nats-io/nkeys"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/api/ports"
@@ -17,7 +19,7 @@ func NewOperatorsController(db ports.Operators) *OperatorsController {
 }
 
 // CreateOperator ...
-func (c *OperatorsController) CreateOperator(name string) (*models.Operator, error) {
+func (c *OperatorsController) CreateOperator(ctx context.Context, name string) (*models.Operator, error) {
 	key, err := nkeys.CreateOperator()
 	if err != nil {
 		return nil, err
@@ -41,10 +43,15 @@ func (c *OperatorsController) CreateOperator(name string) (*models.Operator, err
 		},
 	}
 
-	err = c.db.CreateOperator(op)
+	err = c.db.CreateOperator(ctx, op)
 	if err != nil {
 		return nil, err
 	}
 
 	return op, nil
+}
+
+// ListOperator ...
+func (c *OperatorsController) ListOperator(ctx context.Context, pagination models.Pagination[*models.Operator]) (*models.Pagination[*models.Operator], error) {
+	return c.db.ListOperator(ctx, pagination)
 }

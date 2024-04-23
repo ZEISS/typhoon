@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/zeiss/typhoon/internal/api/controllers"
+	"github.com/zeiss/typhoon/internal/api/models"
 	openapi "github.com/zeiss/typhoon/pkg/apis"
 )
 
@@ -25,12 +26,32 @@ func NewApiHandlers(systems *controllers.SystemsController, teams *controllers.T
 
 // CreateOperator ...
 func (a *ApiHandlers) CreateOperator(ctx context.Context, req openapi.CreateOperatorRequestObject) (openapi.CreateOperatorResponseObject, error) {
-	operator, err := a.operators.CreateOperator(req.Body.Name)
+	operator, err := a.operators.CreateOperator(ctx, req.Body.Name)
 	if err != nil {
 		return nil, err
 	}
 
 	return openapi.CreateOperator201JSONResponse(openapi.Operator{Id: &operator.ID, Name: operator.Name}), nil
+}
+
+// ListOperator ...
+func (a *ApiHandlers) ListOperator(ctx context.Context, req openapi.ListOperatorRequestObject) (openapi.ListOperatorResponseObject, error) {
+	pagination := models.Pagination[*models.Operator]{
+		Limit:  *req.Params.Limit,
+		Offset: *req.Params.Offset,
+	}
+
+	result, err := a.operators.ListOperator(ctx, pagination)
+	if err != nil {
+		return nil, err
+	}
+
+	operators := make([]openapi.Operator, 0, len(result.Rows))
+	for _, operator := range result.Rows {
+		operators = append(operators, openapi.Operator{Id: &operator.ID, Name: operator.Name})
+	}
+
+	return openapi.ListOperator200JSONResponse(openapi.ListOperator200JSONResponse{Results: &operators}), nil
 }
 
 // Version ...

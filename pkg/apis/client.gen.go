@@ -90,8 +90,8 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
-	// ListOperators request
-	ListOperators(ctx context.Context, params *ListOperatorsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListOperator request
+	ListOperator(ctx context.Context, params *ListOperatorParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateOperatorWithBody request with any body
 	CreateOperatorWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -167,8 +167,8 @@ type ClientInterface interface {
 	Version(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-func (c *Client) ListOperators(ctx context.Context, params *ListOperatorsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListOperatorsRequest(c.Server, params)
+func (c *Client) ListOperator(ctx context.Context, params *ListOperatorParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListOperatorRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -503,8 +503,8 @@ func (c *Client) Version(ctx context.Context, reqEditors ...RequestEditorFn) (*h
 	return c.Client.Do(req)
 }
 
-// NewListOperatorsRequest generates requests for ListOperators
-func NewListOperatorsRequest(server string, params *ListOperatorsParams) (*http.Request, error) {
+// NewListOperatorRequest generates requests for ListOperator
+func NewListOperatorRequest(server string, params *ListOperatorParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1562,8 +1562,8 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
-	// ListOperatorsWithResponse request
-	ListOperatorsWithResponse(ctx context.Context, params *ListOperatorsParams, reqEditors ...RequestEditorFn) (*ListOperatorsResponse, error)
+	// ListOperatorWithResponse request
+	ListOperatorWithResponse(ctx context.Context, params *ListOperatorParams, reqEditors ...RequestEditorFn) (*ListOperatorResponse, error)
 
 	// CreateOperatorWithBodyWithResponse request with any body
 	CreateOperatorWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOperatorResponse, error)
@@ -1639,7 +1639,7 @@ type ClientWithResponsesInterface interface {
 	VersionWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*VersionResponse, error)
 }
 
-type ListOperatorsResponse struct {
+type ListOperatorResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
@@ -1651,7 +1651,7 @@ type ListOperatorsResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r ListOperatorsResponse) Status() string {
+func (r ListOperatorResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1659,7 +1659,7 @@ func (r ListOperatorsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ListOperatorsResponse) StatusCode() int {
+func (r ListOperatorResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -2108,13 +2108,13 @@ func (r VersionResponse) StatusCode() int {
 	return 0
 }
 
-// ListOperatorsWithResponse request returning *ListOperatorsResponse
-func (c *ClientWithResponses) ListOperatorsWithResponse(ctx context.Context, params *ListOperatorsParams, reqEditors ...RequestEditorFn) (*ListOperatorsResponse, error) {
-	rsp, err := c.ListOperators(ctx, params, reqEditors...)
+// ListOperatorWithResponse request returning *ListOperatorResponse
+func (c *ClientWithResponses) ListOperatorWithResponse(ctx context.Context, params *ListOperatorParams, reqEditors ...RequestEditorFn) (*ListOperatorResponse, error) {
+	rsp, err := c.ListOperator(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseListOperatorsResponse(rsp)
+	return ParseListOperatorResponse(rsp)
 }
 
 // CreateOperatorWithBodyWithResponse request with arbitrary body returning *CreateOperatorResponse
@@ -2352,15 +2352,15 @@ func (c *ClientWithResponses) VersionWithResponse(ctx context.Context, reqEditor
 	return ParseVersionResponse(rsp)
 }
 
-// ParseListOperatorsResponse parses an HTTP response from a ListOperatorsWithResponse call
-func ParseListOperatorsResponse(rsp *http.Response) (*ListOperatorsResponse, error) {
+// ParseListOperatorResponse parses an HTTP response from a ListOperatorWithResponse call
+func ParseListOperatorResponse(rsp *http.Response) (*ListOperatorResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ListOperatorsResponse{
+	response := &ListOperatorResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

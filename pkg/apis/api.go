@@ -16,7 +16,7 @@ func (u *Unimplemented) CreateOperator(ctx context.Context, request CreateOperat
 }
 
 // ListOperators ...
-func (u *Unimplemented) ListOperators(ctx context.Context, request ListOperatorsRequestObject) (ListOperatorsResponseObject, error) {
+func (u *Unimplemented) ListOperator(ctx context.Context, request ListOperatorRequestObject) (ListOperatorResponseObject, error) {
 	return nil, errors.New("not implemented")
 }
 

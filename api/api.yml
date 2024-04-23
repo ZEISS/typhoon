@@ -51,7 +51,7 @@ paths:
   /operators:
     get:
       summary: List all operators
-      operationId: listOperators
+      operationId: listOperator
       tags:
         - Operator
       produces:

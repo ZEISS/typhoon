@@ -17,7 +17,7 @@ import (
 type ServerInterface interface {
 	// List all operators
 	// (GET /operators)
-	ListOperators(c *fiber.Ctx, params ListOperatorsParams) error
+	ListOperator(c *fiber.Ctx, params ListOperatorParams) error
 	// Creates a new operator
 	// (POST /operators)
 	CreateOperator(c *fiber.Ctx) error
@@ -84,15 +84,15 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc fiber.Handler
 
-// ListOperators operation middleware
-func (siw *ServerInterfaceWrapper) ListOperators(c *fiber.Ctx) error {
+// ListOperator operation middleware
+func (siw *ServerInterfaceWrapper) ListOperator(c *fiber.Ctx) error {
 
 	var err error
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{"read:operators"})
 
 	// Parameter object where we will unmarshal all parameters from the context
-	var params ListOperatorsParams
+	var params ListOperatorParams
 
 	var query url.Values
 	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
@@ -114,7 +114,7 @@ func (siw *ServerInterfaceWrapper) ListOperators(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter limit: %w", err).Error())
 	}
 
-	return siw.Handler.ListOperators(c, params)
+	return siw.Handler.ListOperator(c, params)
 }
 
 // CreateOperator operation middleware
@@ -678,7 +678,7 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 		router.Use(m)
 	}
 
-	router.Get(options.BaseURL+"/operators", wrapper.ListOperators)
+	router.Get(options.BaseURL+"/operators", wrapper.ListOperator)
 
 	router.Post(options.BaseURL+"/operators", wrapper.CreateOperator)
 
@@ -720,22 +720,22 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 }
 
-type ListOperatorsRequestObject struct {
-	Params ListOperatorsParams
+type ListOperatorRequestObject struct {
+	Params ListOperatorParams
 }
 
-type ListOperatorsResponseObject interface {
-	VisitListOperatorsResponse(ctx *fiber.Ctx) error
+type ListOperatorResponseObject interface {
+	VisitListOperatorResponse(ctx *fiber.Ctx) error
 }
 
-type ListOperators200JSONResponse struct {
+type ListOperator200JSONResponse struct {
 	Limit   *float32    `json:"limit,omitempty"`
 	Offset  *float32    `json:"offset,omitempty"`
 	Results *[]Operator `json:"results,omitempty"`
 	Total   *float32    `json:"total,omitempty"`
 }
 
-func (response ListOperators200JSONResponse) VisitListOperatorsResponse(ctx *fiber.Ctx) error {
+func (response ListOperator200JSONResponse) VisitListOperatorResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
 	ctx.Status(200)
 
@@ -1112,7 +1112,7 @@ func (response Version200JSONResponse) VisitVersionResponse(ctx *fiber.Ctx) erro
 type StrictServerInterface interface {
 	// List all operators
 	// (GET /operators)
-	ListOperators(ctx context.Context, request ListOperatorsRequestObject) (ListOperatorsResponseObject, error)
+	ListOperator(ctx context.Context, request ListOperatorRequestObject) (ListOperatorResponseObject, error)
 	// Creates a new operator
 	// (POST /operators)
 	CreateOperator(ctx context.Context, request CreateOperatorRequestObject) (CreateOperatorResponseObject, error)
@@ -1185,25 +1185,25 @@ type strictHandler struct {
 	middlewares []StrictMiddlewareFunc
 }
 
-// ListOperators operation middleware
-func (sh *strictHandler) ListOperators(ctx *fiber.Ctx, params ListOperatorsParams) error {
-	var request ListOperatorsRequestObject
+// ListOperator operation middleware
+func (sh *strictHandler) ListOperator(ctx *fiber.Ctx, params ListOperatorParams) error {
+	var request ListOperatorRequestObject
 
 	request.Params = params
 
 	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.ListOperators(ctx.UserContext(), request.(ListOperatorsRequestObject))
+		return sh.ssi.ListOperator(ctx.UserContext(), request.(ListOperatorRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "ListOperators")
+		handler = middleware(handler, "ListOperator")
 	}
 
 	response, err := handler(ctx, request)
 
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(ListOperatorsResponseObject); ok {
-		if err := validResponse.VisitListOperatorsResponse(ctx); err != nil {
+	} else if validResponse, ok := response.(ListOperatorResponseObject); ok {
+		if err := validResponse.VisitListOperatorResponse(ctx); err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 	} else if response != nil {

@@ -1,6 +1,8 @@
 package adapters
 
 import (
+	"context"
+
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/api/ports"
 
@@ -33,7 +35,7 @@ func (db *DB) RunMigrations() error {
 }
 
 // GetOperator ...
-func (db *DB) GetOperator(id string) (*models.Operator, error) {
+func (db *DB) GetOperator(ctx context.Context, id string) (*models.Operator, error) {
 	operator := &models.Operator{}
 	if err := db.conn.Where("id = ?", id).First(operator).Error; err != nil {
 		return nil, err
@@ -42,7 +44,20 @@ func (db *DB) GetOperator(id string) (*models.Operator, error) {
 	return operator, nil
 }
 
+// ListOperator ...
+func (db *DB) ListOperator(ctx context.Context, pagination models.Pagination[*models.Operator]) (*models.Pagination[*models.Operator], error) {
+	operators := []*models.Operator{}
+
+	err := db.conn.WithContext(ctx).Scopes(models.Paginate(&operators, &pagination, db.conn)).Limit(pagination.Limit).Offset(pagination.Offset).Find(&operators).Error
+	if err != nil {
+		return nil, err
+	}
+	pagination.Rows = operators
+
+	return &pagination, nil
+}
+
 // CreateOperator ...
-func (db *DB) CreateOperator(operator *models.Operator) error {
-	return db.conn.Create(operator).Error
+func (db *DB) CreateOperator(ctx context.Context, operator *models.Operator) error {
+	return db.conn.WithContext(ctx).Create(operator).Error
 }
