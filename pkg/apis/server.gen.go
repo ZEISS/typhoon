@@ -15,6 +15,18 @@ import (
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// List all NKeys
+	// (GET /keys)
+	ListKeys(c *fiber.Ctx, params ListKeysParams) error
+	// Creates a new NKey
+	// (POST /keys)
+	CreateKey(c *fiber.Ctx) error
+	// List all operators
+	// (GET /operators)
+	ListOperators(c *fiber.Ctx, params ListOperatorsParams) error
+	// Creates a new operator
+	// (POST /operators)
+	CreateOperator(c *fiber.Ctx) error
 	// List all managed systems.
 	// (GET /systems)
 	ListSystems(c *fiber.Ctx) error
@@ -77,6 +89,96 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc fiber.Handler
+
+// ListKeys operation middleware
+func (siw *ServerInterfaceWrapper) ListKeys(c *fiber.Ctx) error {
+
+	var err error
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{"read:keys"})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListKeysParams
+
+	var query url.Values
+	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
+	}
+
+	// ------------- Optional query parameter "offset" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "offset", query, &params.Offset)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter offset: %w", err).Error())
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", query, &params.Limit)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter limit: %w", err).Error())
+	}
+
+	return siw.Handler.ListKeys(c, params)
+}
+
+// CreateKey operation middleware
+func (siw *ServerInterfaceWrapper) CreateKey(c *fiber.Ctx) error {
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(Api_keyScopes, []string{})
+
+	return siw.Handler.CreateKey(c)
+}
+
+// ListOperators operation middleware
+func (siw *ServerInterfaceWrapper) ListOperators(c *fiber.Ctx) error {
+
+	var err error
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{"read:operators"})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListOperatorsParams
+
+	var query url.Values
+	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
+	}
+
+	// ------------- Optional query parameter "offset" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "offset", query, &params.Offset)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter offset: %w", err).Error())
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", query, &params.Limit)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter limit: %w", err).Error())
+	}
+
+	return siw.Handler.ListOperators(c, params)
+}
+
+// CreateOperator operation middleware
+func (siw *ServerInterfaceWrapper) CreateOperator(c *fiber.Ctx) error {
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(Api_keyScopes, []string{})
+
+	return siw.Handler.CreateOperator(c)
+}
 
 // ListSystems operation middleware
 func (siw *ServerInterfaceWrapper) ListSystems(c *fiber.Ctx) error {
@@ -627,6 +729,14 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 		router.Use(m)
 	}
 
+	router.Get(options.BaseURL+"/keys", wrapper.ListKeys)
+
+	router.Post(options.BaseURL+"/keys", wrapper.CreateKey)
+
+	router.Get(options.BaseURL+"/operators", wrapper.ListOperators)
+
+	router.Post(options.BaseURL+"/operators", wrapper.CreateOperator)
+
 	router.Get(options.BaseURL+"/systems", wrapper.ListSystems)
 
 	router.Post(options.BaseURL+"/systems", wrapper.CreateSystem)
@@ -663,6 +773,83 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Get(options.BaseURL+"/version", wrapper.Version)
 
+}
+
+type ListKeysRequestObject struct {
+	Params ListKeysParams
+}
+
+type ListKeysResponseObject interface {
+	VisitListKeysResponse(ctx *fiber.Ctx) error
+}
+
+type ListKeys200JSONResponse struct {
+	Limit   *float32   `json:"limit,omitempty"`
+	Offset  *float32   `json:"offset,omitempty"`
+	Results *[]KeyPair `json:"results,omitempty"`
+	Total   *float32   `json:"total,omitempty"`
+}
+
+func (response ListKeys200JSONResponse) VisitListKeysResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type CreateKeyRequestObject struct {
+}
+
+type CreateKeyResponseObject interface {
+	VisitCreateKeyResponse(ctx *fiber.Ctx) error
+}
+
+type CreateKey201JSONResponse KeyPair
+
+func (response CreateKey201JSONResponse) VisitCreateKeyResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(201)
+
+	return ctx.JSON(&response)
+}
+
+type ListOperatorsRequestObject struct {
+	Params ListOperatorsParams
+}
+
+type ListOperatorsResponseObject interface {
+	VisitListOperatorsResponse(ctx *fiber.Ctx) error
+}
+
+type ListOperators200JSONResponse struct {
+	Limit   *float32    `json:"limit,omitempty"`
+	Offset  *float32    `json:"offset,omitempty"`
+	Results *[]Operator `json:"results,omitempty"`
+	Total   *float32    `json:"total,omitempty"`
+}
+
+func (response ListOperators200JSONResponse) VisitListOperatorsResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type CreateOperatorRequestObject struct {
+	Body *CreateOperatorJSONRequestBody
+}
+
+type CreateOperatorResponseObject interface {
+	VisitCreateOperatorResponse(ctx *fiber.Ctx) error
+}
+
+type CreateOperator201JSONResponse Operator
+
+func (response CreateOperator201JSONResponse) VisitCreateOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(201)
+
+	return ctx.JSON(&response)
 }
 
 type ListSystemsRequestObject struct {
@@ -1016,6 +1203,18 @@ func (response Version200JSONResponse) VisitVersionResponse(ctx *fiber.Ctx) erro
 
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
+	// List all NKeys
+	// (GET /keys)
+	ListKeys(ctx context.Context, request ListKeysRequestObject) (ListKeysResponseObject, error)
+	// Creates a new NKey
+	// (POST /keys)
+	CreateKey(ctx context.Context, request CreateKeyRequestObject) (CreateKeyResponseObject, error)
+	// List all operators
+	// (GET /operators)
+	ListOperators(ctx context.Context, request ListOperatorsRequestObject) (ListOperatorsResponseObject, error)
+	// Creates a new operator
+	// (POST /operators)
+	CreateOperator(ctx context.Context, request CreateOperatorRequestObject) (CreateOperatorResponseObject, error)
 	// List all managed systems.
 	// (GET /systems)
 	ListSystems(ctx context.Context, request ListSystemsRequestObject) (ListSystemsResponseObject, error)
@@ -1083,6 +1282,116 @@ func NewStrictHandler(ssi StrictServerInterface, middlewares []StrictMiddlewareF
 type strictHandler struct {
 	ssi         StrictServerInterface
 	middlewares []StrictMiddlewareFunc
+}
+
+// ListKeys operation middleware
+func (sh *strictHandler) ListKeys(ctx *fiber.Ctx, params ListKeysParams) error {
+	var request ListKeysRequestObject
+
+	request.Params = params
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.ListKeys(ctx.UserContext(), request.(ListKeysRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListKeys")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(ListKeysResponseObject); ok {
+		if err := validResponse.VisitListKeysResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// CreateKey operation middleware
+func (sh *strictHandler) CreateKey(ctx *fiber.Ctx) error {
+	var request CreateKeyRequestObject
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateKey(ctx.UserContext(), request.(CreateKeyRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateKey")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(CreateKeyResponseObject); ok {
+		if err := validResponse.VisitCreateKeyResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// ListOperators operation middleware
+func (sh *strictHandler) ListOperators(ctx *fiber.Ctx, params ListOperatorsParams) error {
+	var request ListOperatorsRequestObject
+
+	request.Params = params
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.ListOperators(ctx.UserContext(), request.(ListOperatorsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListOperators")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(ListOperatorsResponseObject); ok {
+		if err := validResponse.VisitListOperatorsResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// CreateOperator operation middleware
+func (sh *strictHandler) CreateOperator(ctx *fiber.Ctx) error {
+	var request CreateOperatorRequestObject
+
+	var body CreateOperatorJSONRequestBody
+	if err := ctx.BodyParser(&body); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	request.Body = &body
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateOperator(ctx.UserContext(), request.(CreateOperatorRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateOperator")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(CreateOperatorResponseObject); ok {
+		if err := validResponse.VisitCreateOperatorResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
 }
 
 // ListSystems operation middleware

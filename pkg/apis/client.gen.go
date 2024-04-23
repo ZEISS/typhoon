@@ -90,6 +90,20 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
+	// ListKeys request
+	ListKeys(ctx context.Context, params *ListKeysParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateKey request
+	CreateKey(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListOperators request
+	ListOperators(ctx context.Context, params *ListOperatorsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateOperatorWithBody request with any body
+	CreateOperatorWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateOperator(ctx context.Context, body CreateOperatorJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListSystems request
 	ListSystems(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -157,6 +171,66 @@ type ClientInterface interface {
 
 	// Version request
 	Version(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+func (c *Client) ListKeys(ctx context.Context, params *ListKeysParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListKeysRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateKey(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateKeyRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListOperators(ctx context.Context, params *ListOperatorsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListOperatorsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateOperatorWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateOperatorRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateOperator(ctx context.Context, body CreateOperatorJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateOperatorRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
 }
 
 func (c *Client) ListSystems(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -457,6 +531,203 @@ func (c *Client) Version(ctx context.Context, reqEditors ...RequestEditorFn) (*h
 		return nil, err
 	}
 	return c.Client.Do(req)
+}
+
+// NewListKeysRequest generates requests for ListKeys
+func NewListKeysRequest(server string, params *ListKeysParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/keys")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Offset != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateKeyRequest generates requests for CreateKey
+func NewCreateKeyRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/keys")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListOperatorsRequest generates requests for ListOperators
+func NewListOperatorsRequest(server string, params *ListOperatorsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/operators")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Offset != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateOperatorRequest calls the generic CreateOperator builder with application/json body
+func NewCreateOperatorRequest(server string, body CreateOperatorJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateOperatorRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateOperatorRequestWithBody generates requests for CreateOperator with any type of body
+func NewCreateOperatorRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/operators")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
 }
 
 // NewListSystemsRequest generates requests for ListSystems
@@ -1413,6 +1684,20 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
+	// ListKeysWithResponse request
+	ListKeysWithResponse(ctx context.Context, params *ListKeysParams, reqEditors ...RequestEditorFn) (*ListKeysResponse, error)
+
+	// CreateKeyWithResponse request
+	CreateKeyWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*CreateKeyResponse, error)
+
+	// ListOperatorsWithResponse request
+	ListOperatorsWithResponse(ctx context.Context, params *ListOperatorsParams, reqEditors ...RequestEditorFn) (*ListOperatorsResponse, error)
+
+	// CreateOperatorWithBodyWithResponse request with any body
+	CreateOperatorWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOperatorResponse, error)
+
+	CreateOperatorWithResponse(ctx context.Context, body CreateOperatorJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOperatorResponse, error)
+
 	// ListSystemsWithResponse request
 	ListSystemsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListSystemsResponse, error)
 
@@ -1480,6 +1765,104 @@ type ClientWithResponsesInterface interface {
 
 	// VersionWithResponse request
 	VersionWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*VersionResponse, error)
+}
+
+type ListKeysResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Limit   *float32   `json:"limit,omitempty"`
+		Offset  *float32   `json:"offset,omitempty"`
+		Results *[]KeyPair `json:"results,omitempty"`
+		Total   *float32   `json:"total,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r ListKeysResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListKeysResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateKeyResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *KeyPair
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateKeyResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateKeyResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListOperatorsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Limit   *float32    `json:"limit,omitempty"`
+		Offset  *float32    `json:"offset,omitempty"`
+		Results *[]Operator `json:"results,omitempty"`
+		Total   *float32    `json:"total,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r ListOperatorsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListOperatorsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateOperatorResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *Operator
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateOperatorResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateOperatorResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
 }
 
 type ListSystemsResponse struct {
@@ -1902,6 +2285,50 @@ func (r VersionResponse) StatusCode() int {
 	return 0
 }
 
+// ListKeysWithResponse request returning *ListKeysResponse
+func (c *ClientWithResponses) ListKeysWithResponse(ctx context.Context, params *ListKeysParams, reqEditors ...RequestEditorFn) (*ListKeysResponse, error) {
+	rsp, err := c.ListKeys(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListKeysResponse(rsp)
+}
+
+// CreateKeyWithResponse request returning *CreateKeyResponse
+func (c *ClientWithResponses) CreateKeyWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*CreateKeyResponse, error) {
+	rsp, err := c.CreateKey(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateKeyResponse(rsp)
+}
+
+// ListOperatorsWithResponse request returning *ListOperatorsResponse
+func (c *ClientWithResponses) ListOperatorsWithResponse(ctx context.Context, params *ListOperatorsParams, reqEditors ...RequestEditorFn) (*ListOperatorsResponse, error) {
+	rsp, err := c.ListOperators(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListOperatorsResponse(rsp)
+}
+
+// CreateOperatorWithBodyWithResponse request with arbitrary body returning *CreateOperatorResponse
+func (c *ClientWithResponses) CreateOperatorWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOperatorResponse, error) {
+	rsp, err := c.CreateOperatorWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateOperatorResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateOperatorWithResponse(ctx context.Context, body CreateOperatorJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOperatorResponse, error) {
+	rsp, err := c.CreateOperator(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateOperatorResponse(rsp)
+}
+
 // ListSystemsWithResponse request returning *ListSystemsResponse
 func (c *ClientWithResponses) ListSystemsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListSystemsResponse, error) {
 	rsp, err := c.ListSystems(ctx, reqEditors...)
@@ -2118,6 +2545,120 @@ func (c *ClientWithResponses) VersionWithResponse(ctx context.Context, reqEditor
 		return nil, err
 	}
 	return ParseVersionResponse(rsp)
+}
+
+// ParseListKeysResponse parses an HTTP response from a ListKeysWithResponse call
+func ParseListKeysResponse(rsp *http.Response) (*ListKeysResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListKeysResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Limit   *float32   `json:"limit,omitempty"`
+			Offset  *float32   `json:"offset,omitempty"`
+			Results *[]KeyPair `json:"results,omitempty"`
+			Total   *float32   `json:"total,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateKeyResponse parses an HTTP response from a CreateKeyWithResponse call
+func ParseCreateKeyResponse(rsp *http.Response) (*CreateKeyResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateKeyResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest KeyPair
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListOperatorsResponse parses an HTTP response from a ListOperatorsWithResponse call
+func ParseListOperatorsResponse(rsp *http.Response) (*ListOperatorsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListOperatorsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Limit   *float32    `json:"limit,omitempty"`
+			Offset  *float32    `json:"offset,omitempty"`
+			Results *[]Operator `json:"results,omitempty"`
+			Total   *float32    `json:"total,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateOperatorResponse parses an HTTP response from a CreateOperatorWithResponse call
+func ParseCreateOperatorResponse(rsp *http.Response) (*CreateOperatorResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateOperatorResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Operator
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
 }
 
 // ParseListSystemsResponse parses an HTTP response from a ListSystemsWithResponse call

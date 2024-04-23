@@ -48,6 +48,105 @@ paths:
               schema:
                 $ref: "#/components/schemas/Version"
 
+  /keys:
+    get:
+      summary: List all NKeys
+      operationId: listKeys
+      tags:
+        - NKey
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: ["read:keys"]
+      responses:
+        "200":
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/KeyPair"
+    post:
+      summary: Creates a new NKey
+      operationId: createKey
+      tags:
+        - NKey
+      produces:
+        - "application/json"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KeyPair"
+      links:
+        GetKeyById:
+          operationId: getKey
+          parameters:
+            keyId: "$response.body#/id"
+
+  /operators:
+    get:
+      summary: List all operators
+      operationId: listOperators
+      tags:
+        - Operator
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: ["read:operators"]
+      responses:
+        "200":
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Operator"
+    post:
+      summary: Creates a new operator
+      operationId: createOperator
+      tags:
+        - Operator
+      produces:
+        - "application/json"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Operator"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Operator"
+      links:
+        GetOperatorById:
+          operationId: getOperator
+          parameters:
+            operatorId: "$response.body#/id"
+
   /teams:
     get:
       summary: List all teams
@@ -476,6 +575,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/System"
+
     deleted:
       summary: Deletes a system by ID
       operationId: deleteSystem
@@ -568,6 +668,26 @@ components:
       type: apiKey
 
   schemas:
+    NKey:
+      description: |
+        An NKey is the private key of a NATS account.
+      type: string
+      format: base32
+
+    KeyPair:
+      descriptio: |
+        A KeyPair is a public/private key pair.
+      required:
+        - publicKey
+      type: object
+      properties:
+        publicKey:
+          type: string
+          format: base32
+        privateKey:
+          type: string
+          format: base32
+
     PaginatedResult:
       type: object
       properties:
@@ -598,8 +718,41 @@ components:
         description:
           type: string
           description: A description of the system.
+        operator:
+          $ref: "#/components/schemas/Operator"
         cluster:
           $ref: "#/components/schemas/Cluster"
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        deletedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+
+    Operator:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+        description:
+          type: string
+        contactEmail:
+          type: string
         createdAt:
           type: string
           format: date-time
@@ -658,16 +811,6 @@ components:
           readOnly: true
         url:
           type: string
-        user:
-          type: string
-        password:
-          type: string
-        operatorSignKey:
-          $ref: "#/components/schemas/OperatorSignKey"
-
-    OperatorSignKey:
-      type: string
-      format: base64
 
     Account:
       type: object

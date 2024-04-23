@@ -25,10 +25,8 @@ func NewDB(conn *gorm.DB) *DB {
 // RunMigrations ...
 func (db *DB) RunMigrations() error {
 	return db.conn.AutoMigrate(
-		&models.System{},
-		&models.Cluster{},
-		&models.Account{},
+		&models.NKey{},
 		&models.Operator{},
-		&models.Key{},
+		&models.System{},
 	)
 }
