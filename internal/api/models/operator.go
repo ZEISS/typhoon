@@ -3,14 +3,13 @@ package models
 import (
 	"time"
 
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 // Operator ...
 type Operator struct {
-	ID   uuid.UUID `json:"id" gorm:"type:uuid;default:gen_random_uuid()"`
-	Name string    `json:"name"`
+	ID   string `json:"id" gorm:"primaryKey"`
+	Name string `json:"name"`
 
 	// Key is the issuer key identifier.
 	Key   NKey   `json:"key"`

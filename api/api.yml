@@ -48,53 +48,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/Version"
 
-  /keys:
-    get:
-      summary: List all NKeys
-      operationId: listKeys
-      tags:
-        - NKey
-      produces:
-        - "application/json"
-      parameters:
-        - $ref: "#/components/parameters/offsetParam"
-        - $ref: "#/components/parameters/limitParam"
-      security:
-        - bearerAuth: ["read:keys"]
-      responses:
-        "200":
-          description: Successfull response
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/PaginatedResult"
-                  - type: object
-                    properties:
-                      results:
-                        type: array
-                        items:
-                          $ref: "#/components/schemas/KeyPair"
-    post:
-      summary: Creates a new NKey
-      operationId: createKey
-      tags:
-        - NKey
-      produces:
-        - "application/json"
-      responses:
-        "201":
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/KeyPair"
-      links:
-        GetKeyById:
-          operationId: getKey
-          parameters:
-            keyId: "$response.body#/id"
-
   /operators:
     get:
       summary: List all operators
@@ -130,10 +83,7 @@ paths:
       produces:
         - "application/json"
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Operator"
+        $ref: "#/components/requestBodies/CreateOperator"
       responses:
         "201":
           description: Created
@@ -652,6 +602,20 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Team"
+    CreateOperator:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              contactEmail:
+                type: string
 
   securitySchemes:
     cookieAuth:
@@ -745,10 +709,16 @@ components:
       properties:
         id:
           type: string
-          format: uuid
+          format: base32
           readOnly: true
         name:
           type: string
+        key:
+          $ref: "#/components/schemas/KeyPair"
+        signingKeys:
+          type: array
+          items:
+            $ref: "#/components/schemas/KeyPair"
         description:
           type: string
         contactEmail:

@@ -10,16 +10,6 @@ type Unimplemented struct{}
 
 var _ StrictServerInterface = (*Unimplemented)(nil)
 
-// ListKeys ...
-func (u *Unimplemented) ListKeys(ctx context.Context, request ListKeysRequestObject) (ListKeysResponseObject, error) {
-	return nil, errors.New("not implemented")
-}
-
-// CreateKey ...
-func (u *Unimplemented) CreateKey(ctx context.Context, request CreateKeyRequestObject) (CreateKeyResponseObject, error) {
-	return nil, errors.New("not implemented")
-}
-
 // CreateOperator ...
 func (u *Unimplemented) CreateOperator(ctx context.Context, request CreateOperatorRequestObject) (CreateOperatorResponseObject, error) {
 	return nil, errors.New("not implemented")

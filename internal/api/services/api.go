@@ -11,15 +11,26 @@ var _ openapi.StrictServerInterface = (*ApiHandlers)(nil)
 
 // ApiHandlers ...
 type ApiHandlers struct {
-	systems *controllers.SystemsController
-	teams   *controllers.TeamsController
-	version *controllers.VersionController
+	systems   *controllers.SystemsController
+	teams     *controllers.TeamsController
+	version   *controllers.VersionController
+	operators *controllers.OperatorsController
 	openapi.Unimplemented
 }
 
 // NewApiHandlers ...
-func NewApiHandlers(systems *controllers.SystemsController, teams *controllers.TeamsController, version *controllers.VersionController) *ApiHandlers {
-	return &ApiHandlers{systems: systems, teams: teams, version: version}
+func NewApiHandlers(systems *controllers.SystemsController, teams *controllers.TeamsController, version *controllers.VersionController, operators *controllers.OperatorsController) *ApiHandlers {
+	return &ApiHandlers{systems: systems, teams: teams, version: version, operators: operators}
+}
+
+// CreateOperator ...
+func (a *ApiHandlers) CreateOperator(ctx context.Context, req openapi.CreateOperatorRequestObject) (openapi.CreateOperatorResponseObject, error) {
+	operator, err := a.operators.CreateOperator(req.Body.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	return openapi.CreateOperator201JSONResponse(openapi.Operator{Id: &operator.ID, Name: operator.Name}), nil
 }
 
 // Version ...

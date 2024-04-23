@@ -8,8 +8,9 @@ import (
 )
 
 var (
-	_ ports.Teams   = (*DB)(nil)
-	_ ports.Systems = (*DB)(nil)
+	_ ports.Teams     = (*DB)(nil)
+	_ ports.Systems   = (*DB)(nil)
+	_ ports.Operators = (*DB)(nil)
 )
 
 // DB ...
@@ -29,4 +30,19 @@ func (db *DB) RunMigrations() error {
 		&models.Operator{},
 		&models.System{},
 	)
+}
+
+// GetOperator ...
+func (db *DB) GetOperator(id string) (*models.Operator, error) {
+	operator := &models.Operator{}
+	if err := db.conn.Where("id = ?", id).First(operator).Error; err != nil {
+		return nil, err
+	}
+
+	return operator, nil
+}
+
+// CreateOperator ...
+func (db *DB) CreateOperator(operator *models.Operator) error {
+	return db.conn.Create(operator).Error
 }
