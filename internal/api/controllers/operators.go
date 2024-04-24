@@ -2,8 +2,10 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/nats-io/jwt"
 	"github.com/nats-io/nkeys"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/api/ports"
@@ -86,8 +88,120 @@ func (c *OperatorsController) CreateOperatorAccount(ctx context.Context, name st
 }
 
 // CreateOperatorSigningKey ...
-func (c *OperatorsController) CreateOperatorSigningKey(ctx context.Context, operatorID uuid.UUID) (*models.Operator, error) {
-	return nil, nil
+func (c *OperatorsController) CreateOperatorSigningKey(ctx context.Context, operatorID uuid.UUID) (*models.NKey, error) {
+	nkey, err := nkeys.CreateOperator()
+	if err != nil {
+		return nil, err
+	}
+
+	pk, err := nkey.PublicKey()
+	if err != nil {
+		return nil, err
+	}
+
+	seed, err := nkey.Seed()
+	if err != nil {
+		return nil, err
+	}
+
+	key := &models.NKey{
+		ID:   pk,
+		Seed: seed,
+	}
+
+	err = c.db.CreateOperatorSigningKey(ctx, operatorID, key)
+	if err != nil {
+		return nil, err
+	}
+
+	return key, nil
+}
+
+// CreateOperatorToken ...
+func (c *OperatorsController) CreateOperatorToken(ctx context.Context, operatorID uuid.UUID) (*models.Token, error) {
+	o, err := c.db.GetOperator(ctx, operatorID)
+	if err != nil {
+		return nil, err
+	}
+
+	okp, err := nkeys.FromSeed(o.Key.Seed)
+	if err != nil {
+		return nil, err
+	}
+
+	opk, err := okp.PublicKey()
+	if err != nil {
+		return nil, err
+	}
+
+	oc := jwt.NewOperatorClaims(opk)
+	oc.Name = o.Name
+
+	oc.SigningKeys = make([]string, len(o.SigningKeys))
+	for i, k := range o.SigningKeys {
+		oc.SigningKeys[i] = k.ID
+	}
+
+	token, err := oc.Encode(okp)
+	if err != nil {
+		return nil, err
+	}
+
+	t := &models.Token{
+		ID:    opk,
+		Token: token,
+	}
+
+	err = c.db.CreateOperatorToken(ctx, operatorID, t)
+	if err != nil {
+		return nil, err
+	}
+
+	return t, nil
+}
+
+// CreateOperatorAccountToken ...
+func (c *OperatorsController) CreateOperatorAccountToken(ctx context.Context, accountID uuid.UUID) (*models.Token, error) {
+	a, err := c.db.GetOperatorAccount(ctx, accountID)
+	if err != nil {
+		return nil, err
+	}
+
+	akp, err := nkeys.FromSeed(a.Key.Seed)
+	if err != nil {
+		return nil, err
+	}
+
+	apk, err := akp.PublicKey()
+	if err != nil {
+		return nil, err
+	}
+
+	ac := jwt.NewAccountClaims(apk)
+	ac.Name = a.Name
+
+	ac.SigningKeys = make([]string, len(a.SigningKeys))
+	for i, k := range a.SigningKeys {
+		ac.SigningKeys[i] = k.ID
+	}
+
+	token, err := ac.Encode(akp)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	t := &models.Token{
+		ID:    apk,
+		Token: token,
+	}
+
+	err = c.db.CreateOperatorAccountToken(ctx, accountID, t)
+	if err != nil {
+		return nil, err
+	}
+
+	return t, nil
 }
 
 // DeleteOperator ...
@@ -103,4 +217,34 @@ func (c *OperatorsController) GetOperator(ctx context.Context, id uuid.UUID) (*m
 // ListOperator ...
 func (c *OperatorsController) ListOperator(ctx context.Context, pagination models.Pagination[*models.Operator]) (*models.Pagination[*models.Operator], error) {
 	return c.db.ListOperator(ctx, pagination)
+}
+
+// CreateOperatorAccountSigningKey ...
+func (c *OperatorsController) CreateOperatorAccountSigningKey(ctx context.Context, accountID uuid.UUID) (*models.NKey, error) {
+	nkey, err := nkeys.CreateAccount()
+	if err != nil {
+		return nil, err
+	}
+
+	pk, err := nkey.PublicKey()
+	if err != nil {
+		return nil, err
+	}
+
+	seed, err := nkey.Seed()
+	if err != nil {
+		return nil, err
+	}
+
+	key := &models.NKey{
+		ID:   pk,
+		Seed: seed,
+	}
+
+	err = c.db.CreateOperatorAccountSigningKey(ctx, accountID, key)
+	if err != nil {
+		return nil, err
+	}
+
+	return key, nil
 }

@@ -20,6 +20,13 @@ type Account struct {
 	Key   NKey   `json:"key"`
 	KeyID string `json:"key_id" gorm:"foreignKey:ID"`
 
+	// Token is the JWT token used to authenticate the account.
+	Token   string `json:"token"`
+	TokenID string `json:"token_id" gorm:"foreignKey:ID"`
+
+	// Accounts is the list of accounts that the operator has.
+	SigningKeys []NKey `json:"signing_keys" gorm:"many2many:account_signing_keys;foreignKey:ID;joinForeignKey:AccountID;joinReferences:SigningKeyID"`
+
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`

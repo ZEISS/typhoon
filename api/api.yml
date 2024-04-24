@@ -136,6 +136,52 @@ paths:
         "204":
           description: Successful
 
+  /operators/{operatorId}/token:
+    get:
+      summary: Gets a token for an operator
+      operationId: getOperatorToken
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JWTToken"
+    post:
+      summary: Creates a new token for an operator
+      operationId: createOperatorToken
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JWTToken"
+    put:
+      summary: Updates a token for an operator
+      operationId: updateOperatorToken
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JWTToken"
+    delete:
+      summary: Deletes a token for an operator
+      operationId: deleteOperatorToken
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+      responses:
+        "204":
+          description: Successful
+
   /operators/{operatorId}/signing-keys:
     get:
       summary: List all signing keys for an operator
@@ -239,6 +285,121 @@ paths:
           parameters:
             operatorId: "$response.body#/operatorId"
             accountId: "$response.body#/id"
+
+  /operators/{operatorId}/accounts/{accountId}:
+    get:
+      summary: Gets an account by ID
+      operationId: getOperatorAccount
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+    delete:
+      summary: Deletes an account by ID
+      operationId: deleteOperatorAccount
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+      responses:
+        "204":
+          description: Successful
+
+  /operators/{operatorId}/accounts/{accountId}/signing-keys:
+    get:
+      summary: List all signing keys for an account
+      operationId: listOperatorAccountSigningKeys
+      tags:
+        - Operator
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: ["read:signing-keys"]
+      responses:
+        "200":
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/KeyPair"
+    post:
+      summary: Creates a new signing key
+      operationId: createOperatorAccountSigningKey
+      tags:
+        - Operator
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KeyPair"
+      links:
+        GetSigningKeyById:
+          operationId: getSigningKey
+          parameters:
+            operatorId: "$response.body#/operatorId"
+            accountId: "$response.body#/accountId"
+            signingKeyId: "$response#body#/id"
+
+  /operators/{operatorId}/accounts/{accountId}/token:
+    get:
+      summary: Gets a token for an account
+      operationId: getOperatorAccountToken
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JWTToken"
+    post:
+      summary: Creates a new token for an account
+      operationId: createOperatorAccountToken
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JWTToken"
+    delete:
+      summary: Deletes a token for an account
+      operationId: deleteOperatorAccountToken
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+      responses:
+        "204":
+          description: Successful
 
   /teams:
     get:
@@ -800,6 +961,12 @@ components:
         An NKey is the private key of a NATS account.
       type: string
       format: base32
+
+    JWTToken:
+      description: |
+        A JWT token is a JSON Web Token.
+      type: string
+      format: JWT
 
     KeyPair:
       descriptio: |

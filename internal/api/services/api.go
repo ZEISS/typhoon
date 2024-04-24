@@ -95,6 +95,46 @@ func (a *ApiHandlers) ListOperator(ctx context.Context, req openapi.ListOperator
 	return openapi.ListOperator200JSONResponse(openapi.ListOperator200JSONResponse{Results: &operators}), nil
 }
 
+// CreateOperatorToken ...
+func (a *ApiHandlers) CreateOperatorToken(ctx context.Context, req openapi.CreateOperatorTokenRequestObject) (openapi.CreateOperatorTokenResponseObject, error) {
+	token, err := a.operators.CreateOperatorToken(ctx, req.OperatorId)
+	if err != nil {
+		return nil, err
+	}
+
+	return openapi.CreateOperatorToken201JSONResponse(openapi.JWTToken(token.Token)), nil
+}
+
+// CreateOperatorSigningKey ...
+func (a *ApiHandlers) CreateOperatorSigningKey(ctx context.Context, req openapi.CreateOperatorSigningKeyRequestObject) (openapi.CreateOperatorSigningKeyResponseObject, error) {
+	key, err := a.operators.CreateOperatorSigningKey(ctx, req.OperatorId)
+	if err != nil {
+		return nil, err
+	}
+
+	return openapi.CreateOperatorSigningKey201JSONResponse(openapi.KeyPair{PublicKey: key.ID}), nil
+}
+
+// CreateOperatorAccountSigningKey ...
+func (a *ApiHandlers) CreateOperatorAccountSigningKey(ctx context.Context, req openapi.CreateOperatorAccountSigningKeyRequestObject) (openapi.CreateOperatorAccountSigningKeyResponseObject, error) {
+	key, err := a.operators.CreateOperatorAccountSigningKey(ctx, req.AccountId)
+	if err != nil {
+		return nil, err
+	}
+
+	return openapi.CreateOperatorAccountSigningKey201JSONResponse(openapi.KeyPair{PublicKey: key.ID}), nil
+}
+
+// CreateOperatorAccountToken ...
+func (a *ApiHandlers) CreateOperatorAccountToken(ctx context.Context, req openapi.CreateOperatorAccountTokenRequestObject) (openapi.CreateOperatorAccountTokenResponseObject, error) {
+	token, err := a.operators.CreateOperatorAccountToken(ctx, req.AccountId)
+	if err != nil {
+		return nil, err
+	}
+
+	return openapi.CreateOperatorAccountToken201JSONResponse(openapi.JWTToken(token.Token)), nil
+}
+
 // Version ...
 func (a *ApiHandlers) Version(ctx context.Context, req openapi.VersionRequestObject) (openapi.VersionResponseObject, error) {
 	version, err := a.version.Version()

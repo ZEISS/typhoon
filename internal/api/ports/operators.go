@@ -19,4 +19,17 @@ type Operators interface {
 	DeleteOperator(ctx context.Context, id uuid.UUID) error
 	// CreateOperatorSigningKey creates a new signing key for the operator.
 	CreateOperatorSigningKey(ctx context.Context, operatorID uuid.UUID, key *models.NKey) error
+	// CreateOperatorToken creates a new token for the operator.
+	CreateOperatorToken(ctx context.Context, operatorID uuid.UUID, token *models.Token) error
+	// CreateOperatorAccount creates a new account for the operator.
+	CreateOperatorAccount(ctx context.Context, account *models.Account) error
+	// GetOperatorAccount returns the account with the given ID.
+	GetOperatorAccount(ctx context.Context, id uuid.UUID) (*models.Account, error)
+	// CreateOperatorAccountToken creates a new token for the operator account.
+	CreateOperatorAccountToken(ctx context.Context, accountID uuid.UUID, token *models.Token) error
+	// CreateOperatorAccountSigningKey creates a new signing key for the operator account.
+	CreateOperatorAccountSigningKey(ctx context.Context, accountID uuid.UUID, key *models.NKey) error
+	// ListOperatorAccountsSigningKey returns a list of accounts for the operator.
+	ListOperatorAccountsSigningKey(ctx context.Context, operatorID uuid.UUID, pagination models.Pagination[*models.Account]) (*models.Pagination[*models.Account], error)
+	// CreateOperatorAccountToken creates a new token for the operator account.
 }
