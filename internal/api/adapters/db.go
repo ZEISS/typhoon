@@ -3,6 +3,7 @@ package adapters
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/api/ports"
 
@@ -30,18 +31,47 @@ func (db *DB) RunMigrations() error {
 	return db.conn.AutoMigrate(
 		&models.NKey{},
 		&models.Operator{},
+		&models.Account{},
 		&models.System{},
+		&models.Token{},
 	)
 }
 
 // GetOperator ...
-func (db *DB) GetOperator(ctx context.Context, id string) (*models.Operator, error) {
+func (db *DB) GetOperator(ctx context.Context, id uuid.UUID) (*models.Operator, error) {
 	operator := &models.Operator{}
 	if err := db.conn.Where("id = ?", id).First(operator).Error; err != nil {
 		return nil, err
 	}
 
 	return operator, nil
+}
+
+// DeleteOperator ...
+func (db *DB) DeleteOperator(ctx context.Context, id uuid.UUID) error {
+	return db.conn.WithContext(ctx).Where("id = ?", id).Delete(&models.Operator{}).Error
+}
+
+// CreateAccount ...
+func (db *DB) CreateAccount(ctx context.Context, account *models.Account) error {
+	return db.conn.WithContext(ctx).Create(account).Error
+}
+
+// CreateOperatorSigningKey ...
+func (db *DB) CreateOperatorSigningKey(ctx context.Context, operatorID uuid.UUID, key *models.NKey) error {
+	return db.conn.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		var operator models.Operator
+		if err := tx.Where("id = ?", operatorID).First(&operator).Error; err != nil {
+			return err
+		}
+
+		err := tx.Model(&operator).Association("SigningKeys").Append(key)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
 }
 
 // ListOperator ...

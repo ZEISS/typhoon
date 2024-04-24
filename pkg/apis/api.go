@@ -15,6 +15,46 @@ func (u *Unimplemented) CreateOperator(ctx context.Context, request CreateOperat
 	return nil, errors.New("not implemented")
 }
 
+// ListAccounts ...
+func (u *Unimplemented) ListOperatorAccounts(ctx context.Context, request ListOperatorAccountsRequestObject) (ListOperatorAccountsResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// CreateOperatorAccount ...
+func (u *Unimplemented) CreateOperatorAccount(ctx context.Context, request CreateOperatorAccountRequestObject) (CreateOperatorAccountResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// ListOperatorSignKeys ...
+func (u *Unimplemented) ListOperatorSignKeys(ctx context.Context, request ListOperatorSigningKeysRequestObject) (ListOperatorSigningKeysResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// CreateOperatorSignKey ...
+func (u *Unimplemented) CreateOperatorSigningKey(ctx context.Context, request CreateOperatorSigningKeyRequestObject) (CreateOperatorSigningKeyResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// ListOperatorSigningKeys ...
+func (u *Unimplemented) ListOperatorSigningKeys(ctx context.Context, request ListOperatorSigningKeysRequestObject) (ListOperatorSigningKeysResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// GetOperator ...
+func (u *Unimplemented) GetOperator(ctx context.Context, request GetOperatorRequestObject) (GetOperatorResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// DeleteOperator ...
+func (u *Unimplemented) DeleteOperator(ctx context.Context, request DeleteOperatorRequestObject) (DeleteOperatorResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// UpdateOperator ...
+func (u *Unimplemented) UpdateOperator(ctx context.Context, request UpdateOperatorRequestObject) (UpdateOperatorResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
 // ListOperators ...
 func (u *Unimplemented) ListOperator(ctx context.Context, request ListOperatorRequestObject) (ListOperatorResponseObject, error) {
 	return nil, errors.New("not implemented")
@@ -56,7 +96,7 @@ func (u *Unimplemented) GetTeam(ctx context.Context, request GetTeamRequestObjec
 }
 
 // ListAccounts ...
-func (u *Unimplemented) ListAccounts(ctx context.Context, request ListAccountsRequestObject) (ListAccountsResponseObject, error) {
+func (u *Unimplemented) ListTeamAccounts(ctx context.Context, request ListTeamAccountsRequestObject) (ListTeamAccountsResponseObject, error) {
 	return nil, errors.New("not implemented")
 }
 

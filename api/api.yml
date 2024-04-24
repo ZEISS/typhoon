@@ -97,6 +97,149 @@ paths:
           parameters:
             operatorId: "$response.body#/id"
 
+  /operators/{operatorId}:
+    get:
+      summary: Gets an operator by ID
+      operationId: getOperator
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Operator"
+    put:
+      summary: Updates an operator by ID
+      operationId: updateOperator
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Operator"
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Operator"
+    delete:
+      summary: Deletes an operator by ID
+      operationId: deleteOperator
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+      responses:
+        "204":
+          description: Successful
+
+  /operators/{operatorId}/signing-keys:
+    get:
+      summary: List all signing keys for an operator
+      operationId: listOperatorSigningKeys
+      tags:
+        - Operator
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: ["read:signing-keys"]
+      responses:
+        "200":
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/KeyPair"
+    post:
+      summary: Creates a new signing key
+      operationId: createOperatorSigningKey
+      tags:
+        - Operator
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KeyPair"
+      links:
+        GetSigningKeyById:
+          operationId: getSigningKey
+          parameters:
+            operatorId: "$response.body#/operatorId"
+            signingKeyId: "$response.body#/id"
+
+  /operators/{operatorId}/accounts:
+    get:
+      summary: List all accounts for an operator
+      operationId: listOperatorAccounts
+      tags:
+        - Operator
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: ["read:accounts"]
+      responses:
+        "200":
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Account"
+    post:
+      summary: Creates a new account
+      operationId: createOperatorAccount
+      tags:
+        - Operator
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+      requestBody:
+        $ref: "#/components/requestBodies/CreateAccount"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+      links:
+        GetAccountById:
+          operationId: getAccount
+          parameters:
+            operatorId: "$response.body#/operatorId"
+            accountId: "$response.body#/id"
+
   /teams:
     get:
       summary: List all teams
@@ -164,7 +307,7 @@ paths:
   /teams/{teamId}/accounts:
     get:
       summary: List all accounts for a team
-      operationId: listAccounts
+      operationId: listTeamAccounts
       tags:
         - Team
       produces:
@@ -595,6 +738,14 @@ components:
         maximum: 50
         default: 20
       description: The numbers of items to return.
+    operatorId:
+      in: path
+      name: operatorId
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The id of the operator to retrieve.
 
   requestBodies:
     CreateTeam:
@@ -615,6 +766,18 @@ components:
               description:
                 type: string
               contactEmail:
+                type: string
+    CreateAccount:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+              description:
                 type: string
 
   securitySchemes:
@@ -709,7 +872,7 @@ components:
       properties:
         id:
           type: string
-          format: base32
+          format: uuid
           readOnly: true
         name:
           type: string
@@ -797,6 +960,12 @@ components:
           type: string
         contactEmail:
           type: string
+        key:
+          $ref: "#/components/schemas/KeyPair"
+        signingKeys:
+          type: array
+          items:
+            $ref: "#/components/schemas/KeyPair"
         createdAt:
           type: string
           format: date-time

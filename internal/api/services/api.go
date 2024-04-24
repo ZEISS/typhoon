@@ -16,6 +16,7 @@ type ApiHandlers struct {
 	teams     *controllers.TeamsController
 	version   *controllers.VersionController
 	operators *controllers.OperatorsController
+
 	openapi.Unimplemented
 }
 
@@ -32,6 +33,46 @@ func (a *ApiHandlers) CreateOperator(ctx context.Context, req openapi.CreateOper
 	}
 
 	return openapi.CreateOperator201JSONResponse(openapi.Operator{Id: &operator.ID, Name: operator.Name}), nil
+}
+
+// GetOperator ...
+func (a *ApiHandlers) GetOperator(ctx context.Context, req openapi.GetOperatorRequestObject) (openapi.GetOperatorResponseObject, error) {
+	operator, err := a.operators.GetOperator(ctx, req.OperatorId)
+	if err != nil {
+		return nil, err
+	}
+
+	return openapi.GetOperator200JSONResponse(openapi.Operator{Id: &operator.ID, Name: operator.Name}), nil
+}
+
+// CreateAccount ...
+func (a *ApiHandlers) CreateOperatorAccount(ctx context.Context, req openapi.CreateOperatorAccountRequestObject) (openapi.CreateOperatorAccountResponseObject, error) {
+	account, err := a.operators.CreateOperatorAccount(ctx, req.Body.Name, req.OperatorId)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := openapi.CreateOperatorAccount201JSONResponse(
+		openapi.Account{
+			Id:        &account.ID,
+			Name:      account.Name,
+			CreatedAt: &account.CreatedAt,
+			UpdatedAt: &account.UpdatedAt,
+			DeletedAt: &account.DeletedAt.Time,
+		},
+	)
+
+	return openapi.CreateOperatorAccount201JSONResponse(resp), nil
+}
+
+// DeleteOperator ...
+func (a *ApiHandlers) DeleteOperator(ctx context.Context, req openapi.DeleteOperatorRequestObject) (openapi.DeleteOperatorResponseObject, error) {
+	err := a.operators.DeleteOperator(ctx, req.OperatorId)
+	if err != nil {
+		return nil, err
+	}
+
+	return openapi.DeleteOperator204Response(openapi.DeleteOperator204Response{}), nil
 }
 
 // ListOperator ...

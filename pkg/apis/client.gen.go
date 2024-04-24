@@ -98,6 +98,31 @@ type ClientInterface interface {
 
 	CreateOperator(ctx context.Context, body CreateOperatorJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// DeleteOperator request
+	DeleteOperator(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetOperator request
+	GetOperator(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateOperatorWithBody request with any body
+	UpdateOperatorWithBody(ctx context.Context, operatorId OperatorId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateOperator(ctx context.Context, operatorId OperatorId, body UpdateOperatorJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListOperatorAccounts request
+	ListOperatorAccounts(ctx context.Context, operatorId OperatorId, params *ListOperatorAccountsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateOperatorAccountWithBody request with any body
+	CreateOperatorAccountWithBody(ctx context.Context, operatorId OperatorId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateOperatorAccount(ctx context.Context, operatorId OperatorId, body CreateOperatorAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListOperatorSigningKeys request
+	ListOperatorSigningKeys(ctx context.Context, operatorId OperatorId, params *ListOperatorSigningKeysParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateOperatorSigningKey request
+	CreateOperatorSigningKey(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListSystems request
 	ListSystems(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -125,8 +150,8 @@ type ClientInterface interface {
 	// GetTeam request
 	GetTeam(ctx context.Context, teamId TeamId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ListAccounts request
-	ListAccounts(ctx context.Context, teamId TeamId, params *ListAccountsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListTeamAccounts request
+	ListTeamAccounts(ctx context.Context, teamId TeamId, params *ListTeamAccountsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetAccount request
 	GetAccount(ctx context.Context, teamId openapi_types.UUID, accountId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -193,6 +218,114 @@ func (c *Client) CreateOperatorWithBody(ctx context.Context, contentType string,
 
 func (c *Client) CreateOperator(ctx context.Context, body CreateOperatorJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateOperatorRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteOperator(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteOperatorRequest(c.Server, operatorId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetOperator(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetOperatorRequest(c.Server, operatorId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateOperatorWithBody(ctx context.Context, operatorId OperatorId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateOperatorRequestWithBody(c.Server, operatorId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateOperator(ctx context.Context, operatorId OperatorId, body UpdateOperatorJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateOperatorRequest(c.Server, operatorId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListOperatorAccounts(ctx context.Context, operatorId OperatorId, params *ListOperatorAccountsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListOperatorAccountsRequest(c.Server, operatorId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateOperatorAccountWithBody(ctx context.Context, operatorId OperatorId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateOperatorAccountRequestWithBody(c.Server, operatorId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateOperatorAccount(ctx context.Context, operatorId OperatorId, body CreateOperatorAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateOperatorAccountRequest(c.Server, operatorId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListOperatorSigningKeys(ctx context.Context, operatorId OperatorId, params *ListOperatorSigningKeysParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListOperatorSigningKeysRequest(c.Server, operatorId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateOperatorSigningKey(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateOperatorSigningKeyRequest(c.Server, operatorId)
 	if err != nil {
 		return nil, err
 	}
@@ -323,8 +456,8 @@ func (c *Client) GetTeam(ctx context.Context, teamId TeamId, reqEditors ...Reque
 	return c.Client.Do(req)
 }
 
-func (c *Client) ListAccounts(ctx context.Context, teamId TeamId, params *ListAccountsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListAccountsRequest(c.Server, teamId, params)
+func (c *Client) ListTeamAccounts(ctx context.Context, teamId TeamId, params *ListTeamAccountsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListTeamAccountsRequest(c.Server, teamId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -604,6 +737,346 @@ func NewCreateOperatorRequestWithBody(server string, contentType string, body io
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteOperatorRequest generates requests for DeleteOperator
+func NewDeleteOperatorRequest(server string, operatorId OperatorId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/operators/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetOperatorRequest generates requests for GetOperator
+func NewGetOperatorRequest(server string, operatorId OperatorId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/operators/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateOperatorRequest calls the generic UpdateOperator builder with application/json body
+func NewUpdateOperatorRequest(server string, operatorId OperatorId, body UpdateOperatorJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateOperatorRequestWithBody(server, operatorId, "application/json", bodyReader)
+}
+
+// NewUpdateOperatorRequestWithBody generates requests for UpdateOperator with any type of body
+func NewUpdateOperatorRequestWithBody(server string, operatorId OperatorId, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/operators/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewListOperatorAccountsRequest generates requests for ListOperatorAccounts
+func NewListOperatorAccountsRequest(server string, operatorId OperatorId, params *ListOperatorAccountsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/operators/%s/accounts", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Offset != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateOperatorAccountRequest calls the generic CreateOperatorAccount builder with application/json body
+func NewCreateOperatorAccountRequest(server string, operatorId OperatorId, body CreateOperatorAccountJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateOperatorAccountRequestWithBody(server, operatorId, "application/json", bodyReader)
+}
+
+// NewCreateOperatorAccountRequestWithBody generates requests for CreateOperatorAccount with any type of body
+func NewCreateOperatorAccountRequestWithBody(server string, operatorId OperatorId, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/operators/%s/accounts", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewListOperatorSigningKeysRequest generates requests for ListOperatorSigningKeys
+func NewListOperatorSigningKeysRequest(server string, operatorId OperatorId, params *ListOperatorSigningKeysParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/operators/%s/signing-keys", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Offset != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateOperatorSigningKeyRequest generates requests for CreateOperatorSigningKey
+func NewCreateOperatorSigningKeyRequest(server string, operatorId OperatorId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/operators/%s/signing-keys", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -895,8 +1368,8 @@ func NewGetTeamRequest(server string, teamId TeamId) (*http.Request, error) {
 	return req, nil
 }
 
-// NewListAccountsRequest generates requests for ListAccounts
-func NewListAccountsRequest(server string, teamId TeamId, params *ListAccountsParams) (*http.Request, error) {
+// NewListTeamAccountsRequest generates requests for ListTeamAccounts
+func NewListTeamAccountsRequest(server string, teamId TeamId, params *ListTeamAccountsParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1570,6 +2043,31 @@ type ClientWithResponsesInterface interface {
 
 	CreateOperatorWithResponse(ctx context.Context, body CreateOperatorJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOperatorResponse, error)
 
+	// DeleteOperatorWithResponse request
+	DeleteOperatorWithResponse(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*DeleteOperatorResponse, error)
+
+	// GetOperatorWithResponse request
+	GetOperatorWithResponse(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*GetOperatorResponse, error)
+
+	// UpdateOperatorWithBodyWithResponse request with any body
+	UpdateOperatorWithBodyWithResponse(ctx context.Context, operatorId OperatorId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateOperatorResponse, error)
+
+	UpdateOperatorWithResponse(ctx context.Context, operatorId OperatorId, body UpdateOperatorJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateOperatorResponse, error)
+
+	// ListOperatorAccountsWithResponse request
+	ListOperatorAccountsWithResponse(ctx context.Context, operatorId OperatorId, params *ListOperatorAccountsParams, reqEditors ...RequestEditorFn) (*ListOperatorAccountsResponse, error)
+
+	// CreateOperatorAccountWithBodyWithResponse request with any body
+	CreateOperatorAccountWithBodyWithResponse(ctx context.Context, operatorId OperatorId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOperatorAccountResponse, error)
+
+	CreateOperatorAccountWithResponse(ctx context.Context, operatorId OperatorId, body CreateOperatorAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOperatorAccountResponse, error)
+
+	// ListOperatorSigningKeysWithResponse request
+	ListOperatorSigningKeysWithResponse(ctx context.Context, operatorId OperatorId, params *ListOperatorSigningKeysParams, reqEditors ...RequestEditorFn) (*ListOperatorSigningKeysResponse, error)
+
+	// CreateOperatorSigningKeyWithResponse request
+	CreateOperatorSigningKeyWithResponse(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*CreateOperatorSigningKeyResponse, error)
+
 	// ListSystemsWithResponse request
 	ListSystemsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListSystemsResponse, error)
 
@@ -1597,8 +2095,8 @@ type ClientWithResponsesInterface interface {
 	// GetTeamWithResponse request
 	GetTeamWithResponse(ctx context.Context, teamId TeamId, reqEditors ...RequestEditorFn) (*GetTeamResponse, error)
 
-	// ListAccountsWithResponse request
-	ListAccountsWithResponse(ctx context.Context, teamId TeamId, params *ListAccountsParams, reqEditors ...RequestEditorFn) (*ListAccountsResponse, error)
+	// ListTeamAccountsWithResponse request
+	ListTeamAccountsWithResponse(ctx context.Context, teamId TeamId, params *ListTeamAccountsParams, reqEditors ...RequestEditorFn) (*ListTeamAccountsResponse, error)
 
 	// GetAccountWithResponse request
 	GetAccountWithResponse(ctx context.Context, teamId openapi_types.UUID, accountId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetAccountResponse, error)
@@ -1682,6 +2180,169 @@ func (r CreateOperatorResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r CreateOperatorResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteOperatorResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteOperatorResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteOperatorResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetOperatorResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Operator
+}
+
+// Status returns HTTPResponse.Status
+func (r GetOperatorResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetOperatorResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateOperatorResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Operator
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateOperatorResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateOperatorResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListOperatorAccountsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Limit   *float32   `json:"limit,omitempty"`
+		Offset  *float32   `json:"offset,omitempty"`
+		Results *[]Account `json:"results,omitempty"`
+		Total   *float32   `json:"total,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r ListOperatorAccountsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListOperatorAccountsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateOperatorAccountResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *Account
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateOperatorAccountResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateOperatorAccountResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListOperatorSigningKeysResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Limit   *float32   `json:"limit,omitempty"`
+		Offset  *float32   `json:"offset,omitempty"`
+		Results *[]KeyPair `json:"results,omitempty"`
+		Total   *float32   `json:"total,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r ListOperatorSigningKeysResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListOperatorSigningKeysResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateOperatorSigningKeyResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *KeyPair
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateOperatorSigningKeyResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateOperatorSigningKeyResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1851,7 +2512,7 @@ func (r GetTeamResponse) StatusCode() int {
 	return 0
 }
 
-type ListAccountsResponse struct {
+type ListTeamAccountsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
@@ -1863,7 +2524,7 @@ type ListAccountsResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r ListAccountsResponse) Status() string {
+func (r ListTeamAccountsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1871,7 +2532,7 @@ func (r ListAccountsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ListAccountsResponse) StatusCode() int {
+func (r ListTeamAccountsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -2134,6 +2795,85 @@ func (c *ClientWithResponses) CreateOperatorWithResponse(ctx context.Context, bo
 	return ParseCreateOperatorResponse(rsp)
 }
 
+// DeleteOperatorWithResponse request returning *DeleteOperatorResponse
+func (c *ClientWithResponses) DeleteOperatorWithResponse(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*DeleteOperatorResponse, error) {
+	rsp, err := c.DeleteOperator(ctx, operatorId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteOperatorResponse(rsp)
+}
+
+// GetOperatorWithResponse request returning *GetOperatorResponse
+func (c *ClientWithResponses) GetOperatorWithResponse(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*GetOperatorResponse, error) {
+	rsp, err := c.GetOperator(ctx, operatorId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetOperatorResponse(rsp)
+}
+
+// UpdateOperatorWithBodyWithResponse request with arbitrary body returning *UpdateOperatorResponse
+func (c *ClientWithResponses) UpdateOperatorWithBodyWithResponse(ctx context.Context, operatorId OperatorId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateOperatorResponse, error) {
+	rsp, err := c.UpdateOperatorWithBody(ctx, operatorId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateOperatorResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateOperatorWithResponse(ctx context.Context, operatorId OperatorId, body UpdateOperatorJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateOperatorResponse, error) {
+	rsp, err := c.UpdateOperator(ctx, operatorId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateOperatorResponse(rsp)
+}
+
+// ListOperatorAccountsWithResponse request returning *ListOperatorAccountsResponse
+func (c *ClientWithResponses) ListOperatorAccountsWithResponse(ctx context.Context, operatorId OperatorId, params *ListOperatorAccountsParams, reqEditors ...RequestEditorFn) (*ListOperatorAccountsResponse, error) {
+	rsp, err := c.ListOperatorAccounts(ctx, operatorId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListOperatorAccountsResponse(rsp)
+}
+
+// CreateOperatorAccountWithBodyWithResponse request with arbitrary body returning *CreateOperatorAccountResponse
+func (c *ClientWithResponses) CreateOperatorAccountWithBodyWithResponse(ctx context.Context, operatorId OperatorId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOperatorAccountResponse, error) {
+	rsp, err := c.CreateOperatorAccountWithBody(ctx, operatorId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateOperatorAccountResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateOperatorAccountWithResponse(ctx context.Context, operatorId OperatorId, body CreateOperatorAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOperatorAccountResponse, error) {
+	rsp, err := c.CreateOperatorAccount(ctx, operatorId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateOperatorAccountResponse(rsp)
+}
+
+// ListOperatorSigningKeysWithResponse request returning *ListOperatorSigningKeysResponse
+func (c *ClientWithResponses) ListOperatorSigningKeysWithResponse(ctx context.Context, operatorId OperatorId, params *ListOperatorSigningKeysParams, reqEditors ...RequestEditorFn) (*ListOperatorSigningKeysResponse, error) {
+	rsp, err := c.ListOperatorSigningKeys(ctx, operatorId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListOperatorSigningKeysResponse(rsp)
+}
+
+// CreateOperatorSigningKeyWithResponse request returning *CreateOperatorSigningKeyResponse
+func (c *ClientWithResponses) CreateOperatorSigningKeyWithResponse(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*CreateOperatorSigningKeyResponse, error) {
+	rsp, err := c.CreateOperatorSigningKey(ctx, operatorId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateOperatorSigningKeyResponse(rsp)
+}
+
 // ListSystemsWithResponse request returning *ListSystemsResponse
 func (c *ClientWithResponses) ListSystemsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListSystemsResponse, error) {
 	rsp, err := c.ListSystems(ctx, reqEditors...)
@@ -2221,13 +2961,13 @@ func (c *ClientWithResponses) GetTeamWithResponse(ctx context.Context, teamId Te
 	return ParseGetTeamResponse(rsp)
 }
 
-// ListAccountsWithResponse request returning *ListAccountsResponse
-func (c *ClientWithResponses) ListAccountsWithResponse(ctx context.Context, teamId TeamId, params *ListAccountsParams, reqEditors ...RequestEditorFn) (*ListAccountsResponse, error) {
-	rsp, err := c.ListAccounts(ctx, teamId, params, reqEditors...)
+// ListTeamAccountsWithResponse request returning *ListTeamAccountsResponse
+func (c *ClientWithResponses) ListTeamAccountsWithResponse(ctx context.Context, teamId TeamId, params *ListTeamAccountsParams, reqEditors ...RequestEditorFn) (*ListTeamAccountsResponse, error) {
+	rsp, err := c.ListTeamAccounts(ctx, teamId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseListAccountsResponse(rsp)
+	return ParseListTeamAccountsResponse(rsp)
 }
 
 // GetAccountWithResponse request returning *GetAccountResponse
@@ -2399,6 +3139,188 @@ func ParseCreateOperatorResponse(rsp *http.Response) (*CreateOperatorResponse, e
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
 		var dest Operator
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteOperatorResponse parses an HTTP response from a DeleteOperatorWithResponse call
+func ParseDeleteOperatorResponse(rsp *http.Response) (*DeleteOperatorResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteOperatorResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParseGetOperatorResponse parses an HTTP response from a GetOperatorWithResponse call
+func ParseGetOperatorResponse(rsp *http.Response) (*GetOperatorResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetOperatorResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Operator
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateOperatorResponse parses an HTTP response from a UpdateOperatorWithResponse call
+func ParseUpdateOperatorResponse(rsp *http.Response) (*UpdateOperatorResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateOperatorResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Operator
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListOperatorAccountsResponse parses an HTTP response from a ListOperatorAccountsWithResponse call
+func ParseListOperatorAccountsResponse(rsp *http.Response) (*ListOperatorAccountsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListOperatorAccountsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Limit   *float32   `json:"limit,omitempty"`
+			Offset  *float32   `json:"offset,omitempty"`
+			Results *[]Account `json:"results,omitempty"`
+			Total   *float32   `json:"total,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateOperatorAccountResponse parses an HTTP response from a CreateOperatorAccountWithResponse call
+func ParseCreateOperatorAccountResponse(rsp *http.Response) (*CreateOperatorAccountResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateOperatorAccountResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Account
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListOperatorSigningKeysResponse parses an HTTP response from a ListOperatorSigningKeysWithResponse call
+func ParseListOperatorSigningKeysResponse(rsp *http.Response) (*ListOperatorSigningKeysResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListOperatorSigningKeysResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Limit   *float32   `json:"limit,omitempty"`
+			Offset  *float32   `json:"offset,omitempty"`
+			Results *[]KeyPair `json:"results,omitempty"`
+			Total   *float32   `json:"total,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateOperatorSigningKeyResponse parses an HTTP response from a CreateOperatorSigningKeyWithResponse call
+func ParseCreateOperatorSigningKeyResponse(rsp *http.Response) (*CreateOperatorSigningKeyResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateOperatorSigningKeyResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest KeyPair
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -2591,15 +3513,15 @@ func ParseGetTeamResponse(rsp *http.Response) (*GetTeamResponse, error) {
 	return response, nil
 }
 
-// ParseListAccountsResponse parses an HTTP response from a ListAccountsWithResponse call
-func ParseListAccountsResponse(rsp *http.Response) (*ListAccountsResponse, error) {
+// ParseListTeamAccountsResponse parses an HTTP response from a ListTeamAccountsWithResponse call
+func ParseListTeamAccountsResponse(rsp *http.Response) (*ListTeamAccountsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ListAccountsResponse{
+	response := &ListTeamAccountsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
