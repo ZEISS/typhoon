@@ -401,6 +401,170 @@ paths:
         "204":
           description: Successful
 
+  /operators/{operatorId}/accounts/{accountId}/users:
+    get:
+      summary: List all users for an account
+      operationId: listOperatorAccountUsers
+      tags:
+        - Operator
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: ["read:users"]
+      responses:
+        "200":
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/User"
+      post:
+        summary: Creates a new user
+        operationId: createOperatorAccountUser
+        tags:
+          - Operator
+        produces:
+          - "application/json"
+        parameters:
+          - $ref: "#/components/parameters/operatorId"
+          - $ref: "#/components/parameters/accountId"
+        requestBody:
+          $ref: "#/components/requestBodies/CreateOperatorAccountUser"
+        responses:
+          "201":
+            description: Created
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/User"
+        links:
+          GetUserById:
+            operationId: getUser
+            parameters:
+              operatorId: "$response.body#/operatorId"
+              accountId: "$response.body#/accountId"
+              userId: "$response.body#/id"
+
+  /operators/{operatorId}/accounts/{accountId}/users/{userId}:
+    get:
+      summary: Gets a user by ID
+      operationId: getOperatorAccountUser
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /operators/{operatorId}/accounts/{accountId}/users/{userId}/token:
+    get:
+      summary: Gets a token for a user
+      operationId: getOperatorAccountUserToken
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/userId"
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JWTToken"
+    post:
+      summary: Creates a new token for a user
+      operationId: createOperatorAccountUserToken
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/userId"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JWTToken"
+
+  /operators/{operatorId}/accounts/{accountId}/users/{userId}/signing-keys:
+    get:
+      summary: List all signing keys for a user
+      operationId: listOperatorAccountUserSigningKeys
+      tags:
+        - Operator
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/userId"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: ["read:signing-keys"]
+      responses:
+        "200":
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/KeyPair"
+    post:
+      summary: Creates a new signing key
+      operationId: createOperatorAccountUserSigningKey
+      tags:
+        - Operator
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/userId"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KeyPair"
+      links:
+        GetSigningKeyById:
+          operationId: getSigningKey
+          parameters:
+            operatorId: "$response.body#/operatorId"
+            accountId: "$response.body#/accountId"
+            userId: "$response.body#/userId"
+            signingKeyId: "$response#body#/id"
+
   /teams:
     get:
       summary: List all teams
@@ -880,6 +1044,14 @@ components:
         type: string
         format: uuid
       description: The id of the account to retrieve.
+    userId:
+      in: path
+      name: userId
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The id of the user to retrieve.
     offsetParam:
       in: query
       name: offset
@@ -939,6 +1111,18 @@ components:
               name:
                 type: string
               description:
+                type: string
+    CreateOperatorAccountUser:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+              email:
                 type: string
 
   securitySchemes:
