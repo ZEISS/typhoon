@@ -204,6 +204,80 @@ func (c *OperatorsController) CreateOperatorAccountToken(ctx context.Context, ac
 	return t, nil
 }
 
+// CreateOperatorAccountUser ...
+func (c *OperatorsController) CreateOperatorAccountUser(ctx context.Context, accountID uuid.UUID, name string) (*models.User, error) {
+	key, err := nkeys.CreateUser()
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := key.PublicKey()
+	if err != nil {
+		return nil, err
+	}
+
+	seed, err := key.Seed()
+	if err != nil {
+		return nil, err
+	}
+
+	user := &models.User{
+		Name:      name,
+		AccountID: accountID,
+		Key: models.NKey{
+			ID:   id,
+			Seed: seed,
+		},
+	}
+
+	err = c.db.CreateOperatorAccountUser(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+// CreateOperatorAccountUserToken ...
+func (c *OperatorsController) CreateOperatorAccountUserToken(ctx context.Context, userID uuid.UUID) (*models.Token, error) {
+	u, err := c.db.GetOperatorAccountUser(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	ukp, err := nkeys.FromSeed(u.Key.Seed)
+	if err != nil {
+		return nil, err
+	}
+
+	upk, err := ukp.PublicKey()
+	if err != nil {
+		return nil, err
+	}
+
+	uc := jwt.NewUserClaims(upk)
+	uc.Name = u.Name
+
+	uc.IssuerAccount = u.AccountID.String()
+
+	token, err := uc.Encode(ukp)
+	if err != nil {
+		return nil, err
+	}
+
+	t := &models.Token{
+		ID:    upk,
+		Token: token,
+	}
+
+	err = c.db.CreateOperatorAccountUserToken(ctx, userID, t)
+	if err != nil {
+		return nil, err
+	}
+
+	return t, nil
+}
+
 // DeleteOperator ...
 func (c *OperatorsController) DeleteOperator(ctx context.Context, id uuid.UUID) error {
 	return c.db.DeleteOperator(ctx, id)

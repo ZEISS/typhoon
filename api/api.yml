@@ -430,32 +430,32 @@ paths:
                         type: array
                         items:
                           $ref: "#/components/schemas/User"
-      post:
-        summary: Creates a new user
-        operationId: createOperatorAccountUser
-        tags:
-          - Operator
-        produces:
-          - "application/json"
-        parameters:
-          - $ref: "#/components/parameters/operatorId"
-          - $ref: "#/components/parameters/accountId"
-        requestBody:
-          $ref: "#/components/requestBodies/CreateOperatorAccountUser"
-        responses:
-          "201":
-            description: Created
-            content:
-              application/json:
-                schema:
-                  $ref: "#/components/schemas/User"
-        links:
-          GetUserById:
-            operationId: getUser
-            parameters:
-              operatorId: "$response.body#/operatorId"
-              accountId: "$response.body#/accountId"
-              userId: "$response.body#/id"
+    post:
+      summary: Creates a new user
+      operationId: createOperatorAccountUser
+      tags:
+        - Operator
+      produces:
+        - "application/json"
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+      requestBody:
+        $ref: "#/components/requestBodies/CreateOperatorAccountUser"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+      links:
+        GetUserById:
+          operationId: getOperatorAccountUser
+          parameters:
+            operatorId: "$response.body#/operatorId"
+            accountId: "$response.body#/accountId"
+            userId: "$response.body#/id"
 
   /operators/{operatorId}/accounts/{accountId}/users/{userId}:
     get:
@@ -507,63 +507,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/JWTToken"
-
-  /operators/{operatorId}/accounts/{accountId}/users/{userId}/signing-keys:
-    get:
-      summary: List all signing keys for a user
-      operationId: listOperatorAccountUserSigningKeys
-      tags:
-        - Operator
-      produces:
-        - "application/json"
-      parameters:
-        - $ref: "#/components/parameters/operatorId"
-        - $ref: "#/components/parameters/accountId"
-        - $ref: "#/components/parameters/userId"
-        - $ref: "#/components/parameters/offsetParam"
-        - $ref: "#/components/parameters/limitParam"
-      security:
-        - bearerAuth: ["read:signing-keys"]
-      responses:
-        "200":
-          description: Successfull response
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/PaginatedResult"
-                  - type: object
-                    properties:
-                      results:
-                        type: array
-                        items:
-                          $ref: "#/components/schemas/KeyPair"
-    post:
-      summary: Creates a new signing key
-      operationId: createOperatorAccountUserSigningKey
-      tags:
-        - Operator
-      produces:
-        - "application/json"
-      parameters:
-        - $ref: "#/components/parameters/operatorId"
-        - $ref: "#/components/parameters/accountId"
-        - $ref: "#/components/parameters/userId"
-      responses:
-        "201":
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/KeyPair"
-      links:
-        GetSigningKeyById:
-          operationId: getSigningKey
-          parameters:
-            operatorId: "$response.body#/operatorId"
-            accountId: "$response.body#/accountId"
-            userId: "$response.body#/userId"
-            signingKeyId: "$response#body#/id"
 
   /teams:
     get:

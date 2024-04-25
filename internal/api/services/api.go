@@ -135,6 +135,26 @@ func (a *ApiHandlers) CreateOperatorAccountToken(ctx context.Context, req openap
 	return openapi.CreateOperatorAccountToken201JSONResponse(openapi.JWTToken(token.Token)), nil
 }
 
+// CreateOperatorAccountUser ...
+func (a *ApiHandlers) CreateOperatorAccountUser(ctx context.Context, req openapi.CreateOperatorAccountUserRequestObject) (openapi.CreateOperatorAccountUserResponseObject, error) {
+	user, err := a.operators.CreateOperatorAccountUser(ctx, req.AccountId, req.Body.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	return openapi.CreateOperatorAccountUser201JSONResponse(openapi.User{Id: &user.ID, Name: user.Name}), nil
+}
+
+// CreateOperatorAccountUserToken ...
+func (a *ApiHandlers) CreateOperatorAccountUserToken(ctx context.Context, req openapi.CreateOperatorAccountUserTokenRequestObject) (openapi.CreateOperatorAccountUserTokenResponseObject, error) {
+	token, err := a.operators.CreateOperatorAccountUserToken(ctx, req.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	return openapi.CreateOperatorAccountUserToken201JSONResponse(openapi.JWTToken(token.Token)), nil
+}
+
 // Version ...
 func (a *ApiHandlers) Version(ctx context.Context, req openapi.VersionRequestObject) (openapi.VersionResponseObject, error) {
 	version, err := a.version.Version()

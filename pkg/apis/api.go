@@ -115,18 +115,13 @@ func (u *Unimplemented) GetOperatorAccountUser(ctx context.Context, request GetO
 	return nil, errors.New("not implemented")
 }
 
+// CreateOperatorAccountUser ...
+func (u *Unimplemented) CreateOperatorAccountUser(ctx context.Context, request CreateOperatorAccountUserRequestObject) (CreateOperatorAccountUserResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
 // GetOperatorAccountUserToken ...
 func (u *Unimplemented) GetOperatorAccountUserToken(ctx context.Context, request GetOperatorAccountUserTokenRequestObject) (GetOperatorAccountUserTokenResponseObject, error) {
-	return nil, errors.New("not implemented")
-}
-
-// CreateOperatorAccountUserSigningKey ...
-func (u *Unimplemented) CreateOperatorAccountUserSigningKey(ctx context.Context, request CreateOperatorAccountUserSigningKeyRequestObject) (CreateOperatorAccountUserSigningKeyResponseObject, error) {
-	return nil, errors.New("not implemented")
-}
-
-// ListOperatorAccountUserSigningKeys ...
-func (u *Unimplemented) ListOperatorAccountUserSigningKeys(ctx context.Context, request ListOperatorAccountUserSigningKeysRequestObject) (ListOperatorAccountUserSigningKeysResponseObject, error) {
 	return nil, errors.New("not implemented")
 }
 

@@ -32,6 +32,7 @@ func (db *DB) RunMigrations() error {
 		&models.NKey{},
 		&models.Operator{},
 		&models.Account{},
+		&models.User{},
 		&models.System{},
 		&models.Token{},
 	)
@@ -145,6 +146,38 @@ func (db *DB) CreateOperatorToken(ctx context.Context, operatorID uuid.UUID, tok
 		}
 
 		err := tx.Model(&operator).Association("Token").Replace(token)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+}
+
+// CreateOperatorAccountUser ...
+func (db *DB) CreateOperatorAccountUser(ctx context.Context, user *models.User) error {
+	return db.conn.WithContext(ctx).Create(user).Error
+}
+
+// GetOperatorAccountUser ...
+func (db *DB) GetOperatorAccountUser(ctx context.Context, id uuid.UUID) (*models.User, error) {
+	user := &models.User{}
+	if err := db.conn.Where("id = ?", id).First(user).Error; err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+// CreateOperatorAccountUserToken ...
+func (db *DB) CreateOperatorAccountUserToken(ctx context.Context, userID uuid.UUID, token *models.Token) error {
+	return db.conn.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		var user models.User
+		if err := tx.Where("id = ?", userID).First(&user).Error; err != nil {
+			return err
+		}
+
+		err := tx.Model(&user).Association("Token").Replace(token)
 		if err != nil {
 			return err
 		}

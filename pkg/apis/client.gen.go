@@ -141,14 +141,13 @@ type ClientInterface interface {
 	// ListOperatorAccountUsers request
 	ListOperatorAccountUsers(ctx context.Context, operatorId OperatorId, accountId AccountId, params *ListOperatorAccountUsersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// CreateOperatorAccountUserWithBody request with any body
+	CreateOperatorAccountUserWithBody(ctx context.Context, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateOperatorAccountUser(ctx context.Context, operatorId OperatorId, accountId AccountId, body CreateOperatorAccountUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetOperatorAccountUser request
 	GetOperatorAccountUser(ctx context.Context, operatorId OperatorId, accountId AccountId, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// ListOperatorAccountUserSigningKeys request
-	ListOperatorAccountUserSigningKeys(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, params *ListOperatorAccountUserSigningKeysParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateOperatorAccountUserSigningKey request
-	CreateOperatorAccountUserSigningKey(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetOperatorAccountUserToken request
 	GetOperatorAccountUserToken(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -459,32 +458,32 @@ func (c *Client) ListOperatorAccountUsers(ctx context.Context, operatorId Operat
 	return c.Client.Do(req)
 }
 
+func (c *Client) CreateOperatorAccountUserWithBody(ctx context.Context, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateOperatorAccountUserRequestWithBody(c.Server, operatorId, accountId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateOperatorAccountUser(ctx context.Context, operatorId OperatorId, accountId AccountId, body CreateOperatorAccountUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateOperatorAccountUserRequest(c.Server, operatorId, accountId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetOperatorAccountUser(ctx context.Context, operatorId OperatorId, accountId AccountId, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetOperatorAccountUserRequest(c.Server, operatorId, accountId, userId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) ListOperatorAccountUserSigningKeys(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, params *ListOperatorAccountUserSigningKeysParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListOperatorAccountUserSigningKeysRequest(c.Server, operatorId, accountId, userId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateOperatorAccountUserSigningKey(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateOperatorAccountUserSigningKeyRequest(c.Server, operatorId, accountId, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -1634,6 +1633,60 @@ func NewListOperatorAccountUsersRequest(server string, operatorId OperatorId, ac
 	return req, nil
 }
 
+// NewCreateOperatorAccountUserRequest calls the generic CreateOperatorAccountUser builder with application/json body
+func NewCreateOperatorAccountUserRequest(server string, operatorId OperatorId, accountId AccountId, body CreateOperatorAccountUserJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateOperatorAccountUserRequestWithBody(server, operatorId, accountId, "application/json", bodyReader)
+}
+
+// NewCreateOperatorAccountUserRequestWithBody generates requests for CreateOperatorAccountUser with any type of body
+func NewCreateOperatorAccountUserRequestWithBody(server string, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/operators/%s/accounts/%s/users", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewGetOperatorAccountUserRequest generates requests for GetOperatorAccountUser
 func NewGetOperatorAccountUserRequest(server string, operatorId OperatorId, accountId AccountId, userId openapi_types.UUID) (*http.Request, error) {
 	var err error
@@ -1675,140 +1728,6 @@ func NewGetOperatorAccountUserRequest(server string, operatorId OperatorId, acco
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewListOperatorAccountUserSigningKeysRequest generates requests for ListOperatorAccountUserSigningKeys
-func NewListOperatorAccountUserSigningKeysRequest(server string, operatorId OperatorId, accountId AccountId, userId UserId, params *ListOperatorAccountUserSigningKeysParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "userId", runtime.ParamLocationPath, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/accounts/%s/users/%s/signing-keys", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := queryURL.Query()
-
-		if params.Offset != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.Limit != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		queryURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewCreateOperatorAccountUserSigningKeyRequest generates requests for CreateOperatorAccountUserSigningKey
-func NewCreateOperatorAccountUserSigningKeyRequest(server string, operatorId OperatorId, accountId AccountId, userId UserId) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "userId", runtime.ParamLocationPath, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/accounts/%s/users/%s/signing-keys", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -3159,14 +3078,13 @@ type ClientWithResponsesInterface interface {
 	// ListOperatorAccountUsersWithResponse request
 	ListOperatorAccountUsersWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, params *ListOperatorAccountUsersParams, reqEditors ...RequestEditorFn) (*ListOperatorAccountUsersResponse, error)
 
+	// CreateOperatorAccountUserWithBodyWithResponse request with any body
+	CreateOperatorAccountUserWithBodyWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOperatorAccountUserResponse, error)
+
+	CreateOperatorAccountUserWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, body CreateOperatorAccountUserJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOperatorAccountUserResponse, error)
+
 	// GetOperatorAccountUserWithResponse request
 	GetOperatorAccountUserWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetOperatorAccountUserResponse, error)
-
-	// ListOperatorAccountUserSigningKeysWithResponse request
-	ListOperatorAccountUserSigningKeysWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, params *ListOperatorAccountUserSigningKeysParams, reqEditors ...RequestEditorFn) (*ListOperatorAccountUserSigningKeysResponse, error)
-
-	// CreateOperatorAccountUserSigningKeyWithResponse request
-	CreateOperatorAccountUserSigningKeyWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*CreateOperatorAccountUserSigningKeyResponse, error)
 
 	// GetOperatorAccountUserTokenWithResponse request
 	GetOperatorAccountUserTokenWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*GetOperatorAccountUserTokenResponse, error)
@@ -3608,6 +3526,28 @@ func (r ListOperatorAccountUsersResponse) StatusCode() int {
 	return 0
 }
 
+type CreateOperatorAccountUserResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *User
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateOperatorAccountUserResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateOperatorAccountUserResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetOperatorAccountUserResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -3624,55 +3564,6 @@ func (r GetOperatorAccountUserResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetOperatorAccountUserResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ListOperatorAccountUserSigningKeysResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		Limit   *float32   `json:"limit,omitempty"`
-		Offset  *float32   `json:"offset,omitempty"`
-		Results *[]KeyPair `json:"results,omitempty"`
-		Total   *float32   `json:"total,omitempty"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r ListOperatorAccountUserSigningKeysResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ListOperatorAccountUserSigningKeysResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateOperatorAccountUserSigningKeyResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *KeyPair
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateOperatorAccountUserSigningKeyResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateOperatorAccountUserSigningKeyResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4438,6 +4329,23 @@ func (c *ClientWithResponses) ListOperatorAccountUsersWithResponse(ctx context.C
 	return ParseListOperatorAccountUsersResponse(rsp)
 }
 
+// CreateOperatorAccountUserWithBodyWithResponse request with arbitrary body returning *CreateOperatorAccountUserResponse
+func (c *ClientWithResponses) CreateOperatorAccountUserWithBodyWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOperatorAccountUserResponse, error) {
+	rsp, err := c.CreateOperatorAccountUserWithBody(ctx, operatorId, accountId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateOperatorAccountUserResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateOperatorAccountUserWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, body CreateOperatorAccountUserJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOperatorAccountUserResponse, error) {
+	rsp, err := c.CreateOperatorAccountUser(ctx, operatorId, accountId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateOperatorAccountUserResponse(rsp)
+}
+
 // GetOperatorAccountUserWithResponse request returning *GetOperatorAccountUserResponse
 func (c *ClientWithResponses) GetOperatorAccountUserWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetOperatorAccountUserResponse, error) {
 	rsp, err := c.GetOperatorAccountUser(ctx, operatorId, accountId, userId, reqEditors...)
@@ -4445,24 +4353,6 @@ func (c *ClientWithResponses) GetOperatorAccountUserWithResponse(ctx context.Con
 		return nil, err
 	}
 	return ParseGetOperatorAccountUserResponse(rsp)
-}
-
-// ListOperatorAccountUserSigningKeysWithResponse request returning *ListOperatorAccountUserSigningKeysResponse
-func (c *ClientWithResponses) ListOperatorAccountUserSigningKeysWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, params *ListOperatorAccountUserSigningKeysParams, reqEditors ...RequestEditorFn) (*ListOperatorAccountUserSigningKeysResponse, error) {
-	rsp, err := c.ListOperatorAccountUserSigningKeys(ctx, operatorId, accountId, userId, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseListOperatorAccountUserSigningKeysResponse(rsp)
-}
-
-// CreateOperatorAccountUserSigningKeyWithResponse request returning *CreateOperatorAccountUserSigningKeyResponse
-func (c *ClientWithResponses) CreateOperatorAccountUserSigningKeyWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*CreateOperatorAccountUserSigningKeyResponse, error) {
-	rsp, err := c.CreateOperatorAccountUserSigningKey(ctx, operatorId, accountId, userId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateOperatorAccountUserSigningKeyResponse(rsp)
 }
 
 // GetOperatorAccountUserTokenWithResponse request returning *GetOperatorAccountUserTokenResponse
@@ -5135,6 +5025,32 @@ func ParseListOperatorAccountUsersResponse(rsp *http.Response) (*ListOperatorAcc
 	return response, nil
 }
 
+// ParseCreateOperatorAccountUserResponse parses an HTTP response from a CreateOperatorAccountUserWithResponse call
+func ParseCreateOperatorAccountUserResponse(rsp *http.Response) (*CreateOperatorAccountUserResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateOperatorAccountUserResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest User
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetOperatorAccountUserResponse parses an HTTP response from a GetOperatorAccountUserWithResponse call
 func ParseGetOperatorAccountUserResponse(rsp *http.Response) (*GetOperatorAccountUserResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -5155,63 +5071,6 @@ func ParseGetOperatorAccountUserResponse(rsp *http.Response) (*GetOperatorAccoun
 			return nil, err
 		}
 		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseListOperatorAccountUserSigningKeysResponse parses an HTTP response from a ListOperatorAccountUserSigningKeysWithResponse call
-func ParseListOperatorAccountUserSigningKeysResponse(rsp *http.Response) (*ListOperatorAccountUserSigningKeysResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ListOperatorAccountUserSigningKeysResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Limit   *float32   `json:"limit,omitempty"`
-			Offset  *float32   `json:"offset,omitempty"`
-			Results *[]KeyPair `json:"results,omitempty"`
-			Total   *float32   `json:"total,omitempty"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseCreateOperatorAccountUserSigningKeyResponse parses an HTTP response from a CreateOperatorAccountUserSigningKeyWithResponse call
-func ParseCreateOperatorAccountUserSigningKeyResponse(rsp *http.Response) (*CreateOperatorAccountUserSigningKeyResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateOperatorAccountUserSigningKeyResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest KeyPair
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
 
 	}
 
