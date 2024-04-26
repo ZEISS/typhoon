@@ -149,18 +149,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/JWTToken"
-    post:
-      summary: Creates a new token for an operator
-      operationId: createOperatorToken
-      parameters:
-        - $ref: "#/components/parameters/operatorId"
-      responses:
-        "201":
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/JWTToken"
     put:
       summary: Updates a token for an operator
       operationId: updateOperatorToken
@@ -210,22 +198,6 @@ paths:
                         type: array
                         items:
                           $ref: "#/components/schemas/KeyPair"
-    post:
-      summary: Creates a new signing key
-      operationId: createOperatorSigningKey
-      tags:
-        - Operator
-      produces:
-        - "application/json"
-      parameters:
-        - $ref: "#/components/parameters/operatorId"
-      responses:
-        "201":
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/KeyPair"
       links:
         GetSigningKeyById:
           operationId: getSigningKey
@@ -279,12 +251,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Account"
-      links:
-        GetAccountById:
-          operationId: getAccount
-          parameters:
-            operatorId: "$response.body#/operatorId"
-            accountId: "$response.body#/id"
 
   /operators/{operatorId}/accounts/{accountId}:
     get:
@@ -339,30 +305,6 @@ paths:
                         type: array
                         items:
                           $ref: "#/components/schemas/KeyPair"
-    post:
-      summary: Creates a new signing key
-      operationId: createOperatorAccountSigningKey
-      tags:
-        - Operator
-      produces:
-        - "application/json"
-      parameters:
-        - $ref: "#/components/parameters/operatorId"
-        - $ref: "#/components/parameters/accountId"
-      responses:
-        "201":
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/KeyPair"
-      links:
-        GetSigningKeyById:
-          operationId: getSigningKey
-          parameters:
-            operatorId: "$response.body#/operatorId"
-            accountId: "$response.body#/accountId"
-            signingKeyId: "$response#body#/id"
 
   /operators/{operatorId}/accounts/{accountId}/token:
     get:
@@ -374,19 +316,6 @@ paths:
       responses:
         "200":
           description: Successful
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/JWTToken"
-    post:
-      summary: Creates a new token for an account
-      operationId: createOperatorAccountToken
-      parameters:
-        - $ref: "#/components/parameters/operatorId"
-        - $ref: "#/components/parameters/accountId"
-      responses:
-        "201":
-          description: Created
           content:
             application/json:
               schema:
@@ -493,21 +422,22 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/JWTToken"
-    post:
-      summary: Creates a new token for a user
-      operationId: createOperatorAccountUserToken
+
+  /operators/{operatorId}/accounts/{accountId}/users/{userId}/credentials:
+    get:
+      summary: Gets the credentials for a user
+      operationId: getOperatorAccountUserCredentials
       parameters:
         - $ref: "#/components/parameters/operatorId"
         - $ref: "#/components/parameters/accountId"
         - $ref: "#/components/parameters/userId"
       responses:
-        "201":
-          description: Created
+        "200":
+          description: Successful
           content:
-            application/json:
+            application/octet-stream:
               schema:
-                $ref: "#/components/schemas/JWTToken"
-
+                $ref: "#/components/schemas/Credentials"
   /teams:
     get:
       summary: List all teams
@@ -1108,6 +1038,10 @@ components:
         privateKey:
           type: string
           format: base32
+
+    Credentials:
+      type: string
+      format: binary
 
     PaginatedResult:
       type: object

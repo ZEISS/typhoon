@@ -40,11 +40,6 @@ func (u *Unimplemented) ListOperatorSignKeys(ctx context.Context, request ListOp
 	return nil, errors.New("not implemented")
 }
 
-// CreateOperatorSignKey ...
-func (u *Unimplemented) CreateOperatorSigningKey(ctx context.Context, request CreateOperatorSigningKeyRequestObject) (CreateOperatorSigningKeyResponseObject, error) {
-	return nil, errors.New("not implemented")
-}
-
 // ListOperatorSigningKeys ...
 func (u *Unimplemented) ListOperatorSigningKeys(ctx context.Context, request ListOperatorSigningKeysRequestObject) (ListOperatorSigningKeysResponseObject, error) {
 	return nil, errors.New("not implemented")
@@ -70,16 +65,6 @@ func (u *Unimplemented) ListOperator(ctx context.Context, request ListOperatorRe
 	return nil, errors.New("not implemented")
 }
 
-// CreateOperatorToken ...
-func (u *Unimplemented) CreateOperatorToken(ctx context.Context, request CreateOperatorTokenRequestObject) (CreateOperatorTokenResponseObject, error) {
-	return nil, errors.New("not implemented")
-}
-
-// CreateOperatorAccountToken ...
-func (u *Unimplemented) CreateOperatorAccountToken(ctx context.Context, request CreateOperatorAccountTokenRequestObject) (CreateOperatorAccountTokenResponseObject, error) {
-	return nil, errors.New("not implemented")
-}
-
 // DeleteOperatorAccountToken ...
 func (u *Unimplemented) DeleteOperatorAccountToken(ctx context.Context, request DeleteOperatorAccountTokenRequestObject) (DeleteOperatorAccountTokenResponseObject, error) {
 	return nil, errors.New("not implemented")
@@ -95,23 +80,18 @@ func (u *Unimplemented) ListOperatorAccountSigningKeys(ctx context.Context, requ
 	return nil, errors.New("not implemented")
 }
 
-// CreateOperatorAccountSigningKey ...
-func (u *Unimplemented) CreateOperatorAccountSigningKey(ctx context.Context, request CreateOperatorAccountSigningKeyRequestObject) (CreateOperatorAccountSigningKeyResponseObject, error) {
-	return nil, errors.New("not implemented")
-}
-
 // ListOperatorAccountUsers ...
 func (u *Unimplemented) ListOperatorAccountUsers(ctx context.Context, request ListOperatorAccountUsersRequestObject) (ListOperatorAccountUsersResponseObject, error) {
 	return nil, errors.New("not implemented")
 }
 
-// CreateOperatorAccountUserToken ...
-func (u *Unimplemented) CreateOperatorAccountUserToken(ctx context.Context, request CreateOperatorAccountUserTokenRequestObject) (CreateOperatorAccountUserTokenResponseObject, error) {
+// GetOperatorAccountUser ...
+func (u *Unimplemented) GetOperatorAccountUser(ctx context.Context, request GetOperatorAccountUserRequestObject) (GetOperatorAccountUserResponseObject, error) {
 	return nil, errors.New("not implemented")
 }
 
-// GetOperatorAccountUser ...
-func (u *Unimplemented) GetOperatorAccountUser(ctx context.Context, request GetOperatorAccountUserRequestObject) (GetOperatorAccountUserResponseObject, error) {
+// GetOperatorAccountUserCredentials ...
+func (u *Unimplemented) GetOperatorAccountUserCredentials(ctx context.Context, request GetOperatorAccountUserCredentialsRequestObject) (GetOperatorAccountUserCredentialsResponseObject, error) {
 	return nil, errors.New("not implemented")
 }
 

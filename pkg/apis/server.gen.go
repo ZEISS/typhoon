@@ -6,6 +6,7 @@ package apis
 import (
 	"context"
 	"fmt"
+	"io"
 	"net/url"
 
 	"github.com/gofiber/fiber/v2"
@@ -45,18 +46,12 @@ type ServerInterface interface {
 	// List all signing keys for an account
 	// (GET /operators/{operatorId}/accounts/{accountId}/signing-keys)
 	ListOperatorAccountSigningKeys(c *fiber.Ctx, operatorId OperatorId, accountId AccountId, params ListOperatorAccountSigningKeysParams) error
-	// Creates a new signing key
-	// (POST /operators/{operatorId}/accounts/{accountId}/signing-keys)
-	CreateOperatorAccountSigningKey(c *fiber.Ctx, operatorId OperatorId, accountId AccountId) error
 	// Deletes a token for an account
 	// (DELETE /operators/{operatorId}/accounts/{accountId}/token)
 	DeleteOperatorAccountToken(c *fiber.Ctx, operatorId OperatorId, accountId AccountId) error
 	// Gets a token for an account
 	// (GET /operators/{operatorId}/accounts/{accountId}/token)
 	GetOperatorAccountToken(c *fiber.Ctx, operatorId OperatorId, accountId AccountId) error
-	// Creates a new token for an account
-	// (POST /operators/{operatorId}/accounts/{accountId}/token)
-	CreateOperatorAccountToken(c *fiber.Ctx, operatorId OperatorId, accountId AccountId) error
 	// List all users for an account
 	// (GET /operators/{operatorId}/accounts/{accountId}/users)
 	ListOperatorAccountUsers(c *fiber.Ctx, operatorId OperatorId, accountId AccountId, params ListOperatorAccountUsersParams) error
@@ -66,27 +61,21 @@ type ServerInterface interface {
 	// Gets a user by ID
 	// (GET /operators/{operatorId}/accounts/{accountId}/users/{userId})
 	GetOperatorAccountUser(c *fiber.Ctx, operatorId OperatorId, accountId AccountId, userId openapi_types.UUID) error
+	// Gets the credentials for a user
+	// (GET /operators/{operatorId}/accounts/{accountId}/users/{userId}/credentials)
+	GetOperatorAccountUserCredentials(c *fiber.Ctx, operatorId OperatorId, accountId AccountId, userId UserId) error
 	// Gets a token for a user
 	// (GET /operators/{operatorId}/accounts/{accountId}/users/{userId}/token)
 	GetOperatorAccountUserToken(c *fiber.Ctx, operatorId OperatorId, accountId AccountId, userId UserId) error
-	// Creates a new token for a user
-	// (POST /operators/{operatorId}/accounts/{accountId}/users/{userId}/token)
-	CreateOperatorAccountUserToken(c *fiber.Ctx, operatorId OperatorId, accountId AccountId, userId UserId) error
 	// List all signing keys for an operator
 	// (GET /operators/{operatorId}/signing-keys)
 	ListOperatorSigningKeys(c *fiber.Ctx, operatorId OperatorId, params ListOperatorSigningKeysParams) error
-	// Creates a new signing key
-	// (POST /operators/{operatorId}/signing-keys)
-	CreateOperatorSigningKey(c *fiber.Ctx, operatorId OperatorId) error
 	// Deletes a token for an operator
 	// (DELETE /operators/{operatorId}/token)
 	DeleteOperatorToken(c *fiber.Ctx, operatorId OperatorId) error
 	// Gets a token for an operator
 	// (GET /operators/{operatorId}/token)
 	GetOperatorToken(c *fiber.Ctx, operatorId OperatorId) error
-	// Creates a new token for an operator
-	// (POST /operators/{operatorId}/token)
-	CreateOperatorToken(c *fiber.Ctx, operatorId OperatorId) error
 	// Updates a token for an operator
 	// (PUT /operators/{operatorId}/token)
 	UpdateOperatorToken(c *fiber.Ctx, operatorId OperatorId) error
@@ -436,36 +425,6 @@ func (siw *ServerInterfaceWrapper) ListOperatorAccountSigningKeys(c *fiber.Ctx) 
 	return siw.Handler.ListOperatorAccountSigningKeys(c, operatorId, accountId, params)
 }
 
-// CreateOperatorAccountSigningKey operation middleware
-func (siw *ServerInterfaceWrapper) CreateOperatorAccountSigningKey(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "operatorId" -------------
-	var operatorId OperatorId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "operatorId", c.Params("operatorId"), &operatorId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(Api_keyScopes, []string{})
-
-	return siw.Handler.CreateOperatorAccountSigningKey(c, operatorId, accountId)
-}
-
 // DeleteOperatorAccountToken operation middleware
 func (siw *ServerInterfaceWrapper) DeleteOperatorAccountToken(c *fiber.Ctx) error {
 
@@ -524,36 +483,6 @@ func (siw *ServerInterfaceWrapper) GetOperatorAccountToken(c *fiber.Ctx) error {
 	c.Context().SetUserValue(Api_keyScopes, []string{})
 
 	return siw.Handler.GetOperatorAccountToken(c, operatorId, accountId)
-}
-
-// CreateOperatorAccountToken operation middleware
-func (siw *ServerInterfaceWrapper) CreateOperatorAccountToken(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "operatorId" -------------
-	var operatorId OperatorId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "operatorId", c.Params("operatorId"), &operatorId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(Api_keyScopes, []string{})
-
-	return siw.Handler.CreateOperatorAccountToken(c, operatorId, accountId)
 }
 
 // ListOperatorAccountUsers operation middleware
@@ -673,6 +602,44 @@ func (siw *ServerInterfaceWrapper) GetOperatorAccountUser(c *fiber.Ctx) error {
 	return siw.Handler.GetOperatorAccountUser(c, operatorId, accountId, userId)
 }
 
+// GetOperatorAccountUserCredentials operation middleware
+func (siw *ServerInterfaceWrapper) GetOperatorAccountUserCredentials(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "operatorId" -------------
+	var operatorId OperatorId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "operatorId", c.Params("operatorId"), &operatorId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
+	}
+
+	// ------------- Path parameter "accountId" -------------
+	var accountId AccountId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
+	}
+
+	// ------------- Path parameter "userId" -------------
+	var userId UserId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "userId", c.Params("userId"), &userId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(Api_keyScopes, []string{})
+
+	return siw.Handler.GetOperatorAccountUserCredentials(c, operatorId, accountId, userId)
+}
+
 // GetOperatorAccountUserToken operation middleware
 func (siw *ServerInterfaceWrapper) GetOperatorAccountUserToken(c *fiber.Ctx) error {
 
@@ -709,44 +676,6 @@ func (siw *ServerInterfaceWrapper) GetOperatorAccountUserToken(c *fiber.Ctx) err
 	c.Context().SetUserValue(Api_keyScopes, []string{})
 
 	return siw.Handler.GetOperatorAccountUserToken(c, operatorId, accountId, userId)
-}
-
-// CreateOperatorAccountUserToken operation middleware
-func (siw *ServerInterfaceWrapper) CreateOperatorAccountUserToken(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "operatorId" -------------
-	var operatorId OperatorId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "operatorId", c.Params("operatorId"), &operatorId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "userId" -------------
-	var userId UserId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "userId", c.Params("userId"), &userId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(Api_keyScopes, []string{})
-
-	return siw.Handler.CreateOperatorAccountUserToken(c, operatorId, accountId, userId)
 }
 
 // ListOperatorSigningKeys operation middleware
@@ -788,28 +717,6 @@ func (siw *ServerInterfaceWrapper) ListOperatorSigningKeys(c *fiber.Ctx) error {
 	}
 
 	return siw.Handler.ListOperatorSigningKeys(c, operatorId, params)
-}
-
-// CreateOperatorSigningKey operation middleware
-func (siw *ServerInterfaceWrapper) CreateOperatorSigningKey(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "operatorId" -------------
-	var operatorId OperatorId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "operatorId", c.Params("operatorId"), &operatorId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(Api_keyScopes, []string{})
-
-	return siw.Handler.CreateOperatorSigningKey(c, operatorId)
 }
 
 // DeleteOperatorToken operation middleware
@@ -854,28 +761,6 @@ func (siw *ServerInterfaceWrapper) GetOperatorToken(c *fiber.Ctx) error {
 	c.Context().SetUserValue(Api_keyScopes, []string{})
 
 	return siw.Handler.GetOperatorToken(c, operatorId)
-}
-
-// CreateOperatorToken operation middleware
-func (siw *ServerInterfaceWrapper) CreateOperatorToken(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "operatorId" -------------
-	var operatorId OperatorId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "operatorId", c.Params("operatorId"), &operatorId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(Api_keyScopes, []string{})
-
-	return siw.Handler.CreateOperatorToken(c, operatorId)
 }
 
 // UpdateOperatorToken operation middleware
@@ -1469,13 +1354,9 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Get(options.BaseURL+"/operators/:operatorId/accounts/:accountId/signing-keys", wrapper.ListOperatorAccountSigningKeys)
 
-	router.Post(options.BaseURL+"/operators/:operatorId/accounts/:accountId/signing-keys", wrapper.CreateOperatorAccountSigningKey)
-
 	router.Delete(options.BaseURL+"/operators/:operatorId/accounts/:accountId/token", wrapper.DeleteOperatorAccountToken)
 
 	router.Get(options.BaseURL+"/operators/:operatorId/accounts/:accountId/token", wrapper.GetOperatorAccountToken)
-
-	router.Post(options.BaseURL+"/operators/:operatorId/accounts/:accountId/token", wrapper.CreateOperatorAccountToken)
 
 	router.Get(options.BaseURL+"/operators/:operatorId/accounts/:accountId/users", wrapper.ListOperatorAccountUsers)
 
@@ -1483,19 +1364,15 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Get(options.BaseURL+"/operators/:operatorId/accounts/:accountId/users/:userId", wrapper.GetOperatorAccountUser)
 
+	router.Get(options.BaseURL+"/operators/:operatorId/accounts/:accountId/users/:userId/credentials", wrapper.GetOperatorAccountUserCredentials)
+
 	router.Get(options.BaseURL+"/operators/:operatorId/accounts/:accountId/users/:userId/token", wrapper.GetOperatorAccountUserToken)
 
-	router.Post(options.BaseURL+"/operators/:operatorId/accounts/:accountId/users/:userId/token", wrapper.CreateOperatorAccountUserToken)
-
 	router.Get(options.BaseURL+"/operators/:operatorId/signing-keys", wrapper.ListOperatorSigningKeys)
-
-	router.Post(options.BaseURL+"/operators/:operatorId/signing-keys", wrapper.CreateOperatorSigningKey)
 
 	router.Delete(options.BaseURL+"/operators/:operatorId/token", wrapper.DeleteOperatorToken)
 
 	router.Get(options.BaseURL+"/operators/:operatorId/token", wrapper.GetOperatorToken)
-
-	router.Post(options.BaseURL+"/operators/:operatorId/token", wrapper.CreateOperatorToken)
 
 	router.Put(options.BaseURL+"/operators/:operatorId/token", wrapper.UpdateOperatorToken)
 
@@ -1727,24 +1604,6 @@ func (response ListOperatorAccountSigningKeys200JSONResponse) VisitListOperatorA
 	return ctx.JSON(&response)
 }
 
-type CreateOperatorAccountSigningKeyRequestObject struct {
-	OperatorId OperatorId `json:"operatorId"`
-	AccountId  AccountId  `json:"accountId"`
-}
-
-type CreateOperatorAccountSigningKeyResponseObject interface {
-	VisitCreateOperatorAccountSigningKeyResponse(ctx *fiber.Ctx) error
-}
-
-type CreateOperatorAccountSigningKey201JSONResponse KeyPair
-
-func (response CreateOperatorAccountSigningKey201JSONResponse) VisitCreateOperatorAccountSigningKeyResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(201)
-
-	return ctx.JSON(&response)
-}
-
 type DeleteOperatorAccountTokenRequestObject struct {
 	OperatorId OperatorId `json:"operatorId"`
 	AccountId  AccountId  `json:"accountId"`
@@ -1776,24 +1635,6 @@ type GetOperatorAccountToken200JSONResponse JWTToken
 func (response GetOperatorAccountToken200JSONResponse) VisitGetOperatorAccountTokenResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
 	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type CreateOperatorAccountTokenRequestObject struct {
-	OperatorId OperatorId `json:"operatorId"`
-	AccountId  AccountId  `json:"accountId"`
-}
-
-type CreateOperatorAccountTokenResponseObject interface {
-	VisitCreateOperatorAccountTokenResponse(ctx *fiber.Ctx) error
-}
-
-type CreateOperatorAccountToken201JSONResponse JWTToken
-
-func (response CreateOperatorAccountToken201JSONResponse) VisitCreateOperatorAccountTokenResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(201)
 
 	return ctx.JSON(&response)
 }
@@ -1860,6 +1701,35 @@ func (response GetOperatorAccountUser200JSONResponse) VisitGetOperatorAccountUse
 	return ctx.JSON(&response)
 }
 
+type GetOperatorAccountUserCredentialsRequestObject struct {
+	OperatorId OperatorId `json:"operatorId"`
+	AccountId  AccountId  `json:"accountId"`
+	UserId     UserId     `json:"userId"`
+}
+
+type GetOperatorAccountUserCredentialsResponseObject interface {
+	VisitGetOperatorAccountUserCredentialsResponse(ctx *fiber.Ctx) error
+}
+
+type GetOperatorAccountUserCredentials200ApplicationoctetStreamResponse struct {
+	Body          io.Reader
+	ContentLength int64
+}
+
+func (response GetOperatorAccountUserCredentials200ApplicationoctetStreamResponse) VisitGetOperatorAccountUserCredentialsResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/octet-stream")
+	if response.ContentLength != 0 {
+		ctx.Response().Header.Set("Content-Length", fmt.Sprint(response.ContentLength))
+	}
+	ctx.Status(200)
+
+	if closer, ok := response.Body.(io.ReadCloser); ok {
+		defer closer.Close()
+	}
+	_, err := io.Copy(ctx.Response().BodyWriter(), response.Body)
+	return err
+}
+
 type GetOperatorAccountUserTokenRequestObject struct {
 	OperatorId OperatorId `json:"operatorId"`
 	AccountId  AccountId  `json:"accountId"`
@@ -1875,25 +1745,6 @@ type GetOperatorAccountUserToken200JSONResponse JWTToken
 func (response GetOperatorAccountUserToken200JSONResponse) VisitGetOperatorAccountUserTokenResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
 	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type CreateOperatorAccountUserTokenRequestObject struct {
-	OperatorId OperatorId `json:"operatorId"`
-	AccountId  AccountId  `json:"accountId"`
-	UserId     UserId     `json:"userId"`
-}
-
-type CreateOperatorAccountUserTokenResponseObject interface {
-	VisitCreateOperatorAccountUserTokenResponse(ctx *fiber.Ctx) error
-}
-
-type CreateOperatorAccountUserToken201JSONResponse JWTToken
-
-func (response CreateOperatorAccountUserToken201JSONResponse) VisitCreateOperatorAccountUserTokenResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(201)
 
 	return ctx.JSON(&response)
 }
@@ -1917,23 +1768,6 @@ type ListOperatorSigningKeys200JSONResponse struct {
 func (response ListOperatorSigningKeys200JSONResponse) VisitListOperatorSigningKeysResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
 	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type CreateOperatorSigningKeyRequestObject struct {
-	OperatorId OperatorId `json:"operatorId"`
-}
-
-type CreateOperatorSigningKeyResponseObject interface {
-	VisitCreateOperatorSigningKeyResponse(ctx *fiber.Ctx) error
-}
-
-type CreateOperatorSigningKey201JSONResponse KeyPair
-
-func (response CreateOperatorSigningKey201JSONResponse) VisitCreateOperatorSigningKeyResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(201)
 
 	return ctx.JSON(&response)
 }
@@ -1967,23 +1801,6 @@ type GetOperatorToken200JSONResponse JWTToken
 func (response GetOperatorToken200JSONResponse) VisitGetOperatorTokenResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
 	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type CreateOperatorTokenRequestObject struct {
-	OperatorId OperatorId `json:"operatorId"`
-}
-
-type CreateOperatorTokenResponseObject interface {
-	VisitCreateOperatorTokenResponse(ctx *fiber.Ctx) error
-}
-
-type CreateOperatorToken201JSONResponse JWTToken
-
-func (response CreateOperatorToken201JSONResponse) VisitCreateOperatorTokenResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(201)
 
 	return ctx.JSON(&response)
 }
@@ -2386,18 +2203,12 @@ type StrictServerInterface interface {
 	// List all signing keys for an account
 	// (GET /operators/{operatorId}/accounts/{accountId}/signing-keys)
 	ListOperatorAccountSigningKeys(ctx context.Context, request ListOperatorAccountSigningKeysRequestObject) (ListOperatorAccountSigningKeysResponseObject, error)
-	// Creates a new signing key
-	// (POST /operators/{operatorId}/accounts/{accountId}/signing-keys)
-	CreateOperatorAccountSigningKey(ctx context.Context, request CreateOperatorAccountSigningKeyRequestObject) (CreateOperatorAccountSigningKeyResponseObject, error)
 	// Deletes a token for an account
 	// (DELETE /operators/{operatorId}/accounts/{accountId}/token)
 	DeleteOperatorAccountToken(ctx context.Context, request DeleteOperatorAccountTokenRequestObject) (DeleteOperatorAccountTokenResponseObject, error)
 	// Gets a token for an account
 	// (GET /operators/{operatorId}/accounts/{accountId}/token)
 	GetOperatorAccountToken(ctx context.Context, request GetOperatorAccountTokenRequestObject) (GetOperatorAccountTokenResponseObject, error)
-	// Creates a new token for an account
-	// (POST /operators/{operatorId}/accounts/{accountId}/token)
-	CreateOperatorAccountToken(ctx context.Context, request CreateOperatorAccountTokenRequestObject) (CreateOperatorAccountTokenResponseObject, error)
 	// List all users for an account
 	// (GET /operators/{operatorId}/accounts/{accountId}/users)
 	ListOperatorAccountUsers(ctx context.Context, request ListOperatorAccountUsersRequestObject) (ListOperatorAccountUsersResponseObject, error)
@@ -2407,27 +2218,21 @@ type StrictServerInterface interface {
 	// Gets a user by ID
 	// (GET /operators/{operatorId}/accounts/{accountId}/users/{userId})
 	GetOperatorAccountUser(ctx context.Context, request GetOperatorAccountUserRequestObject) (GetOperatorAccountUserResponseObject, error)
+	// Gets the credentials for a user
+	// (GET /operators/{operatorId}/accounts/{accountId}/users/{userId}/credentials)
+	GetOperatorAccountUserCredentials(ctx context.Context, request GetOperatorAccountUserCredentialsRequestObject) (GetOperatorAccountUserCredentialsResponseObject, error)
 	// Gets a token for a user
 	// (GET /operators/{operatorId}/accounts/{accountId}/users/{userId}/token)
 	GetOperatorAccountUserToken(ctx context.Context, request GetOperatorAccountUserTokenRequestObject) (GetOperatorAccountUserTokenResponseObject, error)
-	// Creates a new token for a user
-	// (POST /operators/{operatorId}/accounts/{accountId}/users/{userId}/token)
-	CreateOperatorAccountUserToken(ctx context.Context, request CreateOperatorAccountUserTokenRequestObject) (CreateOperatorAccountUserTokenResponseObject, error)
 	// List all signing keys for an operator
 	// (GET /operators/{operatorId}/signing-keys)
 	ListOperatorSigningKeys(ctx context.Context, request ListOperatorSigningKeysRequestObject) (ListOperatorSigningKeysResponseObject, error)
-	// Creates a new signing key
-	// (POST /operators/{operatorId}/signing-keys)
-	CreateOperatorSigningKey(ctx context.Context, request CreateOperatorSigningKeyRequestObject) (CreateOperatorSigningKeyResponseObject, error)
 	// Deletes a token for an operator
 	// (DELETE /operators/{operatorId}/token)
 	DeleteOperatorToken(ctx context.Context, request DeleteOperatorTokenRequestObject) (DeleteOperatorTokenResponseObject, error)
 	// Gets a token for an operator
 	// (GET /operators/{operatorId}/token)
 	GetOperatorToken(ctx context.Context, request GetOperatorTokenRequestObject) (GetOperatorTokenResponseObject, error)
-	// Creates a new token for an operator
-	// (POST /operators/{operatorId}/token)
-	CreateOperatorToken(ctx context.Context, request CreateOperatorTokenRequestObject) (CreateOperatorTokenResponseObject, error)
 	// Updates a token for an operator
 	// (PUT /operators/{operatorId}/token)
 	UpdateOperatorToken(ctx context.Context, request UpdateOperatorTokenRequestObject) (UpdateOperatorTokenResponseObject, error)
@@ -2791,34 +2596,6 @@ func (sh *strictHandler) ListOperatorAccountSigningKeys(ctx *fiber.Ctx, operator
 	return nil
 }
 
-// CreateOperatorAccountSigningKey operation middleware
-func (sh *strictHandler) CreateOperatorAccountSigningKey(ctx *fiber.Ctx, operatorId OperatorId, accountId AccountId) error {
-	var request CreateOperatorAccountSigningKeyRequestObject
-
-	request.OperatorId = operatorId
-	request.AccountId = accountId
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.CreateOperatorAccountSigningKey(ctx.UserContext(), request.(CreateOperatorAccountSigningKeyRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "CreateOperatorAccountSigningKey")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(CreateOperatorAccountSigningKeyResponseObject); ok {
-		if err := validResponse.VisitCreateOperatorAccountSigningKeyResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
 // DeleteOperatorAccountToken operation middleware
 func (sh *strictHandler) DeleteOperatorAccountToken(ctx *fiber.Ctx, operatorId OperatorId, accountId AccountId) error {
 	var request DeleteOperatorAccountTokenRequestObject
@@ -2867,34 +2644,6 @@ func (sh *strictHandler) GetOperatorAccountToken(ctx *fiber.Ctx, operatorId Oper
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	} else if validResponse, ok := response.(GetOperatorAccountTokenResponseObject); ok {
 		if err := validResponse.VisitGetOperatorAccountTokenResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// CreateOperatorAccountToken operation middleware
-func (sh *strictHandler) CreateOperatorAccountToken(ctx *fiber.Ctx, operatorId OperatorId, accountId AccountId) error {
-	var request CreateOperatorAccountTokenRequestObject
-
-	request.OperatorId = operatorId
-	request.AccountId = accountId
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.CreateOperatorAccountToken(ctx.UserContext(), request.(CreateOperatorAccountTokenRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "CreateOperatorAccountToken")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(CreateOperatorAccountTokenResponseObject); ok {
-		if err := validResponse.VisitCreateOperatorAccountTokenResponse(ctx); err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 	} else if response != nil {
@@ -2995,6 +2744,35 @@ func (sh *strictHandler) GetOperatorAccountUser(ctx *fiber.Ctx, operatorId Opera
 	return nil
 }
 
+// GetOperatorAccountUserCredentials operation middleware
+func (sh *strictHandler) GetOperatorAccountUserCredentials(ctx *fiber.Ctx, operatorId OperatorId, accountId AccountId, userId UserId) error {
+	var request GetOperatorAccountUserCredentialsRequestObject
+
+	request.OperatorId = operatorId
+	request.AccountId = accountId
+	request.UserId = userId
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.GetOperatorAccountUserCredentials(ctx.UserContext(), request.(GetOperatorAccountUserCredentialsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetOperatorAccountUserCredentials")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(GetOperatorAccountUserCredentialsResponseObject); ok {
+		if err := validResponse.VisitGetOperatorAccountUserCredentialsResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
 // GetOperatorAccountUserToken operation middleware
 func (sh *strictHandler) GetOperatorAccountUserToken(ctx *fiber.Ctx, operatorId OperatorId, accountId AccountId, userId UserId) error {
 	var request GetOperatorAccountUserTokenRequestObject
@@ -3024,35 +2802,6 @@ func (sh *strictHandler) GetOperatorAccountUserToken(ctx *fiber.Ctx, operatorId 
 	return nil
 }
 
-// CreateOperatorAccountUserToken operation middleware
-func (sh *strictHandler) CreateOperatorAccountUserToken(ctx *fiber.Ctx, operatorId OperatorId, accountId AccountId, userId UserId) error {
-	var request CreateOperatorAccountUserTokenRequestObject
-
-	request.OperatorId = operatorId
-	request.AccountId = accountId
-	request.UserId = userId
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.CreateOperatorAccountUserToken(ctx.UserContext(), request.(CreateOperatorAccountUserTokenRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "CreateOperatorAccountUserToken")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(CreateOperatorAccountUserTokenResponseObject); ok {
-		if err := validResponse.VisitCreateOperatorAccountUserTokenResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
 // ListOperatorSigningKeys operation middleware
 func (sh *strictHandler) ListOperatorSigningKeys(ctx *fiber.Ctx, operatorId OperatorId, params ListOperatorSigningKeysParams) error {
 	var request ListOperatorSigningKeysRequestObject
@@ -3073,33 +2822,6 @@ func (sh *strictHandler) ListOperatorSigningKeys(ctx *fiber.Ctx, operatorId Oper
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	} else if validResponse, ok := response.(ListOperatorSigningKeysResponseObject); ok {
 		if err := validResponse.VisitListOperatorSigningKeysResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// CreateOperatorSigningKey operation middleware
-func (sh *strictHandler) CreateOperatorSigningKey(ctx *fiber.Ctx, operatorId OperatorId) error {
-	var request CreateOperatorSigningKeyRequestObject
-
-	request.OperatorId = operatorId
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.CreateOperatorSigningKey(ctx.UserContext(), request.(CreateOperatorSigningKeyRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "CreateOperatorSigningKey")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(CreateOperatorSigningKeyResponseObject); ok {
-		if err := validResponse.VisitCreateOperatorSigningKeyResponse(ctx); err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 	} else if response != nil {
@@ -3154,33 +2876,6 @@ func (sh *strictHandler) GetOperatorToken(ctx *fiber.Ctx, operatorId OperatorId)
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	} else if validResponse, ok := response.(GetOperatorTokenResponseObject); ok {
 		if err := validResponse.VisitGetOperatorTokenResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// CreateOperatorToken operation middleware
-func (sh *strictHandler) CreateOperatorToken(ctx *fiber.Ctx, operatorId OperatorId) error {
-	var request CreateOperatorTokenRequestObject
-
-	request.OperatorId = operatorId
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.CreateOperatorToken(ctx.UserContext(), request.(CreateOperatorTokenRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "CreateOperatorToken")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(CreateOperatorTokenResponseObject); ok {
-		if err := validResponse.VisitCreateOperatorTokenResponse(ctx); err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 	} else if response != nil {

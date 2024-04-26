@@ -10,7 +10,7 @@ import (
 // GetUser ...
 func (db *DB) GetUser(ctx context.Context, id uuid.UUID) (*models.User, error) {
 	user := &models.User{}
-	if err := db.conn.Where("id = ?", id).Preload("Key").Preload("Account").Preload("Account.SigningKeys").First(user).Error; err != nil {
+	if err := db.conn.Where("id = ?", id).Preload("Key").Preload("Token").Preload("Account").Preload("Account.SigningKeys").First(user).Error; err != nil {
 		return nil, err
 	}
 

@@ -126,17 +126,11 @@ type ClientInterface interface {
 	// ListOperatorAccountSigningKeys request
 	ListOperatorAccountSigningKeys(ctx context.Context, operatorId OperatorId, accountId AccountId, params *ListOperatorAccountSigningKeysParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateOperatorAccountSigningKey request
-	CreateOperatorAccountSigningKey(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error)
-
 	// DeleteOperatorAccountToken request
 	DeleteOperatorAccountToken(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetOperatorAccountToken request
 	GetOperatorAccountToken(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateOperatorAccountToken request
-	CreateOperatorAccountToken(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ListOperatorAccountUsers request
 	ListOperatorAccountUsers(ctx context.Context, operatorId OperatorId, accountId AccountId, params *ListOperatorAccountUsersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -149,26 +143,20 @@ type ClientInterface interface {
 	// GetOperatorAccountUser request
 	GetOperatorAccountUser(ctx context.Context, operatorId OperatorId, accountId AccountId, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetOperatorAccountUserCredentials request
+	GetOperatorAccountUserCredentials(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetOperatorAccountUserToken request
 	GetOperatorAccountUserToken(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateOperatorAccountUserToken request
-	CreateOperatorAccountUserToken(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error)
-
 	// ListOperatorSigningKeys request
 	ListOperatorSigningKeys(ctx context.Context, operatorId OperatorId, params *ListOperatorSigningKeysParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateOperatorSigningKey request
-	CreateOperatorSigningKey(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteOperatorToken request
 	DeleteOperatorToken(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetOperatorToken request
 	GetOperatorToken(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateOperatorToken request
-	CreateOperatorToken(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UpdateOperatorToken request
 	UpdateOperatorToken(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -398,18 +386,6 @@ func (c *Client) ListOperatorAccountSigningKeys(ctx context.Context, operatorId 
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreateOperatorAccountSigningKey(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateOperatorAccountSigningKeyRequest(c.Server, operatorId, accountId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
 func (c *Client) DeleteOperatorAccountToken(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewDeleteOperatorAccountTokenRequest(c.Server, operatorId, accountId)
 	if err != nil {
@@ -424,18 +400,6 @@ func (c *Client) DeleteOperatorAccountToken(ctx context.Context, operatorId Oper
 
 func (c *Client) GetOperatorAccountToken(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetOperatorAccountTokenRequest(c.Server, operatorId, accountId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateOperatorAccountToken(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateOperatorAccountTokenRequest(c.Server, operatorId, accountId)
 	if err != nil {
 		return nil, err
 	}
@@ -494,6 +458,18 @@ func (c *Client) GetOperatorAccountUser(ctx context.Context, operatorId Operator
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetOperatorAccountUserCredentials(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetOperatorAccountUserCredentialsRequest(c.Server, operatorId, accountId, userId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetOperatorAccountUserToken(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetOperatorAccountUserTokenRequest(c.Server, operatorId, accountId, userId)
 	if err != nil {
@@ -506,32 +482,8 @@ func (c *Client) GetOperatorAccountUserToken(ctx context.Context, operatorId Ope
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreateOperatorAccountUserToken(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateOperatorAccountUserTokenRequest(c.Server, operatorId, accountId, userId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
 func (c *Client) ListOperatorSigningKeys(ctx context.Context, operatorId OperatorId, params *ListOperatorSigningKeysParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListOperatorSigningKeysRequest(c.Server, operatorId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateOperatorSigningKey(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateOperatorSigningKeyRequest(c.Server, operatorId)
 	if err != nil {
 		return nil, err
 	}
@@ -556,18 +508,6 @@ func (c *Client) DeleteOperatorToken(ctx context.Context, operatorId OperatorId,
 
 func (c *Client) GetOperatorToken(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetOperatorTokenRequest(c.Server, operatorId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateOperatorToken(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateOperatorTokenRequest(c.Server, operatorId)
 	if err != nil {
 		return nil, err
 	}
@@ -1390,47 +1330,6 @@ func NewListOperatorAccountSigningKeysRequest(server string, operatorId Operator
 	return req, nil
 }
 
-// NewCreateOperatorAccountSigningKeyRequest generates requests for CreateOperatorAccountSigningKey
-func NewCreateOperatorAccountSigningKeyRequest(server string, operatorId OperatorId, accountId AccountId) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/accounts/%s/signing-keys", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
 // NewDeleteOperatorAccountTokenRequest generates requests for DeleteOperatorAccountToken
 func NewDeleteOperatorAccountTokenRequest(server string, operatorId OperatorId, accountId AccountId) (*http.Request, error) {
 	var err error
@@ -1506,47 +1405,6 @@ func NewGetOperatorAccountTokenRequest(server string, operatorId OperatorId, acc
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewCreateOperatorAccountTokenRequest generates requests for CreateOperatorAccountToken
-func NewCreateOperatorAccountTokenRequest(server string, operatorId OperatorId, accountId AccountId) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/accounts/%s/token", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -1735,6 +1593,54 @@ func NewGetOperatorAccountUserRequest(server string, operatorId OperatorId, acco
 	return req, nil
 }
 
+// NewGetOperatorAccountUserCredentialsRequest generates requests for GetOperatorAccountUserCredentials
+func NewGetOperatorAccountUserCredentialsRequest(server string, operatorId OperatorId, accountId AccountId, userId UserId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam2 string
+
+	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "userId", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/operators/%s/accounts/%s/users/%s/credentials", pathParam0, pathParam1, pathParam2)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetOperatorAccountUserTokenRequest generates requests for GetOperatorAccountUserToken
 func NewGetOperatorAccountUserTokenRequest(server string, operatorId OperatorId, accountId AccountId, userId UserId) (*http.Request, error) {
 	var err error
@@ -1776,54 +1682,6 @@ func NewGetOperatorAccountUserTokenRequest(server string, operatorId OperatorId,
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewCreateOperatorAccountUserTokenRequest generates requests for CreateOperatorAccountUserToken
-func NewCreateOperatorAccountUserTokenRequest(server string, operatorId OperatorId, accountId AccountId, userId UserId) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "userId", runtime.ParamLocationPath, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/accounts/%s/users/%s/token", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -1903,40 +1761,6 @@ func NewListOperatorSigningKeysRequest(server string, operatorId OperatorId, par
 	return req, nil
 }
 
-// NewCreateOperatorSigningKeyRequest generates requests for CreateOperatorSigningKey
-func NewCreateOperatorSigningKeyRequest(server string, operatorId OperatorId) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/signing-keys", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
 // NewDeleteOperatorTokenRequest generates requests for DeleteOperatorToken
 func NewDeleteOperatorTokenRequest(server string, operatorId OperatorId) (*http.Request, error) {
 	var err error
@@ -1998,40 +1822,6 @@ func NewGetOperatorTokenRequest(server string, operatorId OperatorId) (*http.Req
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewCreateOperatorTokenRequest generates requests for CreateOperatorToken
-func NewCreateOperatorTokenRequest(server string, operatorId OperatorId) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/token", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -3063,17 +2853,11 @@ type ClientWithResponsesInterface interface {
 	// ListOperatorAccountSigningKeysWithResponse request
 	ListOperatorAccountSigningKeysWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, params *ListOperatorAccountSigningKeysParams, reqEditors ...RequestEditorFn) (*ListOperatorAccountSigningKeysResponse, error)
 
-	// CreateOperatorAccountSigningKeyWithResponse request
-	CreateOperatorAccountSigningKeyWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*CreateOperatorAccountSigningKeyResponse, error)
-
 	// DeleteOperatorAccountTokenWithResponse request
 	DeleteOperatorAccountTokenWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*DeleteOperatorAccountTokenResponse, error)
 
 	// GetOperatorAccountTokenWithResponse request
 	GetOperatorAccountTokenWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*GetOperatorAccountTokenResponse, error)
-
-	// CreateOperatorAccountTokenWithResponse request
-	CreateOperatorAccountTokenWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*CreateOperatorAccountTokenResponse, error)
 
 	// ListOperatorAccountUsersWithResponse request
 	ListOperatorAccountUsersWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, params *ListOperatorAccountUsersParams, reqEditors ...RequestEditorFn) (*ListOperatorAccountUsersResponse, error)
@@ -3086,26 +2870,20 @@ type ClientWithResponsesInterface interface {
 	// GetOperatorAccountUserWithResponse request
 	GetOperatorAccountUserWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetOperatorAccountUserResponse, error)
 
+	// GetOperatorAccountUserCredentialsWithResponse request
+	GetOperatorAccountUserCredentialsWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*GetOperatorAccountUserCredentialsResponse, error)
+
 	// GetOperatorAccountUserTokenWithResponse request
 	GetOperatorAccountUserTokenWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*GetOperatorAccountUserTokenResponse, error)
 
-	// CreateOperatorAccountUserTokenWithResponse request
-	CreateOperatorAccountUserTokenWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*CreateOperatorAccountUserTokenResponse, error)
-
 	// ListOperatorSigningKeysWithResponse request
 	ListOperatorSigningKeysWithResponse(ctx context.Context, operatorId OperatorId, params *ListOperatorSigningKeysParams, reqEditors ...RequestEditorFn) (*ListOperatorSigningKeysResponse, error)
-
-	// CreateOperatorSigningKeyWithResponse request
-	CreateOperatorSigningKeyWithResponse(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*CreateOperatorSigningKeyResponse, error)
 
 	// DeleteOperatorTokenWithResponse request
 	DeleteOperatorTokenWithResponse(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*DeleteOperatorTokenResponse, error)
 
 	// GetOperatorTokenWithResponse request
 	GetOperatorTokenWithResponse(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*GetOperatorTokenResponse, error)
-
-	// CreateOperatorTokenWithResponse request
-	CreateOperatorTokenWithResponse(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*CreateOperatorTokenResponse, error)
 
 	// UpdateOperatorTokenWithResponse request
 	UpdateOperatorTokenWithResponse(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*UpdateOperatorTokenResponse, error)
@@ -3412,28 +3190,6 @@ func (r ListOperatorAccountSigningKeysResponse) StatusCode() int {
 	return 0
 }
 
-type CreateOperatorAccountSigningKeyResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *KeyPair
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateOperatorAccountSigningKeyResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateOperatorAccountSigningKeyResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
 type DeleteOperatorAccountTokenResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -3471,28 +3227,6 @@ func (r GetOperatorAccountTokenResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetOperatorAccountTokenResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateOperatorAccountTokenResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *JWTToken
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateOperatorAccountTokenResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateOperatorAccountTokenResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3570,6 +3304,27 @@ func (r GetOperatorAccountUserResponse) StatusCode() int {
 	return 0
 }
 
+type GetOperatorAccountUserCredentialsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r GetOperatorAccountUserCredentialsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetOperatorAccountUserCredentialsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetOperatorAccountUserTokenResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -3586,28 +3341,6 @@ func (r GetOperatorAccountUserTokenResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetOperatorAccountUserTokenResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateOperatorAccountUserTokenResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *JWTToken
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateOperatorAccountUserTokenResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateOperatorAccountUserTokenResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3635,28 +3368,6 @@ func (r ListOperatorSigningKeysResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r ListOperatorSigningKeysResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateOperatorSigningKeyResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *KeyPair
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateOperatorSigningKeyResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateOperatorSigningKeyResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3700,28 +3411,6 @@ func (r GetOperatorTokenResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetOperatorTokenResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateOperatorTokenResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *JWTToken
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateOperatorTokenResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateOperatorTokenResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4284,15 +3973,6 @@ func (c *ClientWithResponses) ListOperatorAccountSigningKeysWithResponse(ctx con
 	return ParseListOperatorAccountSigningKeysResponse(rsp)
 }
 
-// CreateOperatorAccountSigningKeyWithResponse request returning *CreateOperatorAccountSigningKeyResponse
-func (c *ClientWithResponses) CreateOperatorAccountSigningKeyWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*CreateOperatorAccountSigningKeyResponse, error) {
-	rsp, err := c.CreateOperatorAccountSigningKey(ctx, operatorId, accountId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateOperatorAccountSigningKeyResponse(rsp)
-}
-
 // DeleteOperatorAccountTokenWithResponse request returning *DeleteOperatorAccountTokenResponse
 func (c *ClientWithResponses) DeleteOperatorAccountTokenWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*DeleteOperatorAccountTokenResponse, error) {
 	rsp, err := c.DeleteOperatorAccountToken(ctx, operatorId, accountId, reqEditors...)
@@ -4309,15 +3989,6 @@ func (c *ClientWithResponses) GetOperatorAccountTokenWithResponse(ctx context.Co
 		return nil, err
 	}
 	return ParseGetOperatorAccountTokenResponse(rsp)
-}
-
-// CreateOperatorAccountTokenWithResponse request returning *CreateOperatorAccountTokenResponse
-func (c *ClientWithResponses) CreateOperatorAccountTokenWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*CreateOperatorAccountTokenResponse, error) {
-	rsp, err := c.CreateOperatorAccountToken(ctx, operatorId, accountId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateOperatorAccountTokenResponse(rsp)
 }
 
 // ListOperatorAccountUsersWithResponse request returning *ListOperatorAccountUsersResponse
@@ -4355,6 +4026,15 @@ func (c *ClientWithResponses) GetOperatorAccountUserWithResponse(ctx context.Con
 	return ParseGetOperatorAccountUserResponse(rsp)
 }
 
+// GetOperatorAccountUserCredentialsWithResponse request returning *GetOperatorAccountUserCredentialsResponse
+func (c *ClientWithResponses) GetOperatorAccountUserCredentialsWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*GetOperatorAccountUserCredentialsResponse, error) {
+	rsp, err := c.GetOperatorAccountUserCredentials(ctx, operatorId, accountId, userId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetOperatorAccountUserCredentialsResponse(rsp)
+}
+
 // GetOperatorAccountUserTokenWithResponse request returning *GetOperatorAccountUserTokenResponse
 func (c *ClientWithResponses) GetOperatorAccountUserTokenWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*GetOperatorAccountUserTokenResponse, error) {
 	rsp, err := c.GetOperatorAccountUserToken(ctx, operatorId, accountId, userId, reqEditors...)
@@ -4364,15 +4044,6 @@ func (c *ClientWithResponses) GetOperatorAccountUserTokenWithResponse(ctx contex
 	return ParseGetOperatorAccountUserTokenResponse(rsp)
 }
 
-// CreateOperatorAccountUserTokenWithResponse request returning *CreateOperatorAccountUserTokenResponse
-func (c *ClientWithResponses) CreateOperatorAccountUserTokenWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*CreateOperatorAccountUserTokenResponse, error) {
-	rsp, err := c.CreateOperatorAccountUserToken(ctx, operatorId, accountId, userId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateOperatorAccountUserTokenResponse(rsp)
-}
-
 // ListOperatorSigningKeysWithResponse request returning *ListOperatorSigningKeysResponse
 func (c *ClientWithResponses) ListOperatorSigningKeysWithResponse(ctx context.Context, operatorId OperatorId, params *ListOperatorSigningKeysParams, reqEditors ...RequestEditorFn) (*ListOperatorSigningKeysResponse, error) {
 	rsp, err := c.ListOperatorSigningKeys(ctx, operatorId, params, reqEditors...)
@@ -4380,15 +4051,6 @@ func (c *ClientWithResponses) ListOperatorSigningKeysWithResponse(ctx context.Co
 		return nil, err
 	}
 	return ParseListOperatorSigningKeysResponse(rsp)
-}
-
-// CreateOperatorSigningKeyWithResponse request returning *CreateOperatorSigningKeyResponse
-func (c *ClientWithResponses) CreateOperatorSigningKeyWithResponse(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*CreateOperatorSigningKeyResponse, error) {
-	rsp, err := c.CreateOperatorSigningKey(ctx, operatorId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateOperatorSigningKeyResponse(rsp)
 }
 
 // DeleteOperatorTokenWithResponse request returning *DeleteOperatorTokenResponse
@@ -4407,15 +4069,6 @@ func (c *ClientWithResponses) GetOperatorTokenWithResponse(ctx context.Context, 
 		return nil, err
 	}
 	return ParseGetOperatorTokenResponse(rsp)
-}
-
-// CreateOperatorTokenWithResponse request returning *CreateOperatorTokenResponse
-func (c *ClientWithResponses) CreateOperatorTokenWithResponse(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*CreateOperatorTokenResponse, error) {
-	rsp, err := c.CreateOperatorToken(ctx, operatorId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateOperatorTokenResponse(rsp)
 }
 
 // UpdateOperatorTokenWithResponse request returning *UpdateOperatorTokenResponse
@@ -4900,32 +4553,6 @@ func ParseListOperatorAccountSigningKeysResponse(rsp *http.Response) (*ListOpera
 	return response, nil
 }
 
-// ParseCreateOperatorAccountSigningKeyResponse parses an HTTP response from a CreateOperatorAccountSigningKeyWithResponse call
-func ParseCreateOperatorAccountSigningKeyResponse(rsp *http.Response) (*CreateOperatorAccountSigningKeyResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateOperatorAccountSigningKeyResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest KeyPair
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-
-	}
-
-	return response, nil
-}
-
 // ParseDeleteOperatorAccountTokenResponse parses an HTTP response from a DeleteOperatorAccountTokenWithResponse call
 func ParseDeleteOperatorAccountTokenResponse(rsp *http.Response) (*DeleteOperatorAccountTokenResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -4962,32 +4589,6 @@ func ParseGetOperatorAccountTokenResponse(rsp *http.Response) (*GetOperatorAccou
 			return nil, err
 		}
 		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseCreateOperatorAccountTokenResponse parses an HTTP response from a CreateOperatorAccountTokenWithResponse call
-func ParseCreateOperatorAccountTokenResponse(rsp *http.Response) (*CreateOperatorAccountTokenResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateOperatorAccountTokenResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest JWTToken
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
 
 	}
 
@@ -5077,6 +4678,22 @@ func ParseGetOperatorAccountUserResponse(rsp *http.Response) (*GetOperatorAccoun
 	return response, nil
 }
 
+// ParseGetOperatorAccountUserCredentialsResponse parses an HTTP response from a GetOperatorAccountUserCredentialsWithResponse call
+func ParseGetOperatorAccountUserCredentialsResponse(rsp *http.Response) (*GetOperatorAccountUserCredentialsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetOperatorAccountUserCredentialsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
 // ParseGetOperatorAccountUserTokenResponse parses an HTTP response from a GetOperatorAccountUserTokenWithResponse call
 func ParseGetOperatorAccountUserTokenResponse(rsp *http.Response) (*GetOperatorAccountUserTokenResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -5097,32 +4714,6 @@ func ParseGetOperatorAccountUserTokenResponse(rsp *http.Response) (*GetOperatorA
 			return nil, err
 		}
 		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseCreateOperatorAccountUserTokenResponse parses an HTTP response from a CreateOperatorAccountUserTokenWithResponse call
-func ParseCreateOperatorAccountUserTokenResponse(rsp *http.Response) (*CreateOperatorAccountUserTokenResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateOperatorAccountUserTokenResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest JWTToken
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
 
 	}
 
@@ -5154,32 +4745,6 @@ func ParseListOperatorSigningKeysResponse(rsp *http.Response) (*ListOperatorSign
 			return nil, err
 		}
 		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseCreateOperatorSigningKeyResponse parses an HTTP response from a CreateOperatorSigningKeyWithResponse call
-func ParseCreateOperatorSigningKeyResponse(rsp *http.Response) (*CreateOperatorSigningKeyResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateOperatorSigningKeyResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest KeyPair
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
 
 	}
 
@@ -5222,32 +4787,6 @@ func ParseGetOperatorTokenResponse(rsp *http.Response) (*GetOperatorTokenRespons
 			return nil, err
 		}
 		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseCreateOperatorTokenResponse parses an HTTP response from a CreateOperatorTokenWithResponse call
-func ParseCreateOperatorTokenResponse(rsp *http.Response) (*CreateOperatorTokenResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateOperatorTokenResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest JWTToken
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
 
 	}
 

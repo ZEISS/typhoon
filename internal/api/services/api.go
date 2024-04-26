@@ -1,6 +1,7 @@
 package services
 
 import (
+	"bytes"
 	"context"
 
 	"github.com/zeiss/typhoon/internal/api/controllers"
@@ -64,6 +65,18 @@ func (a *ApiHandlers) CreateOperatorAccountUser(ctx context.Context, req openapi
 	}
 
 	return openapi.CreateOperatorAccountUser201JSONResponse(openapi.User{Id: &user.ID, Name: user.Name}), nil
+}
+
+// GetOperatorAccountUserCredentials ...
+func (a *ApiHandlers) GetOperatorAccountUserCredentials(ctx context.Context, req openapi.GetOperatorAccountUserCredentialsRequestObject) (openapi.GetOperatorAccountUserCredentialsResponseObject, error) {
+	credentials, err := a.users.GetCredentials(ctx, req.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	body := bytes.NewReader(credentials)
+
+	return openapi.GetOperatorAccountUserCredentials200ApplicationoctetStreamResponse(openapi.GetOperatorAccountUserCredentials200ApplicationoctetStreamResponse{Body: body, ContentLength: int64(body.Len())}), nil
 }
 
 // // GetOperator ...
