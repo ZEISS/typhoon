@@ -75,6 +75,32 @@ func (a *ApiHandlers) DeleteOperator(ctx context.Context, req openapi.DeleteOper
 	return openapi.DeleteOperator204Response(openapi.DeleteOperator204Response{}), nil
 }
 
+// ListOperatorAccounts ...
+func (a *ApiHandlers) ListOperatorAccounts(ctx context.Context, req openapi.ListOperatorAccountsRequestObject) (openapi.ListOperatorAccountsResponseObject, error) {
+	pagination := models.Pagination[*models.Account]{
+		Limit:  *req.Params.Limit,
+		Offset: *req.Params.Offset,
+	}
+
+	result, err := a.operators.ListOperatorAccount(ctx, req.OperatorId, pagination)
+	if err != nil {
+		return nil, err
+	}
+
+	accounts := make([]openapi.Account, 0, len(result.Rows))
+	for _, account := range result.Rows {
+		accounts = append(accounts, openapi.Account{
+			Id:        &account.ID,
+			Name:      account.Name,
+			CreatedAt: &account.CreatedAt,
+			UpdatedAt: &account.UpdatedAt,
+			DeletedAt: &account.DeletedAt.Time,
+		})
+	}
+
+	return openapi.ListOperatorAccounts200JSONResponse(openapi.ListOperatorAccounts200JSONResponse{Results: &accounts}), nil
+}
+
 // ListOperator ...
 func (a *ApiHandlers) ListOperator(ctx context.Context, req openapi.ListOperatorRequestObject) (openapi.ListOperatorResponseObject, error) {
 	pagination := models.Pagination[*models.Operator]{

@@ -160,6 +160,11 @@ func (c *OperatorsController) CreateOperatorToken(ctx context.Context, operatorI
 	return t, nil
 }
 
+// ListOperatorAccount ...
+func (c *OperatorsController) ListOperatorAccount(ctx context.Context, operatorID uuid.UUID, pagination models.Pagination[*models.Account]) (*models.Pagination[*models.Account], error) {
+	return c.db.ListOperatorAccounts(ctx, operatorID, pagination)
+}
+
 // CreateOperatorAccountToken ...
 func (c *OperatorsController) CreateOperatorAccountToken(ctx context.Context, accountID uuid.UUID) (*models.Token, error) {
 	a, err := c.db.GetOperatorAccount(ctx, accountID)

@@ -29,6 +29,8 @@ type Operators interface {
 	CreateOperatorAccountToken(ctx context.Context, accountID uuid.UUID, token *models.Token) error
 	// CreateOperatorAccountSigningKey creates a new signing key for the operator account.
 	CreateOperatorAccountSigningKey(ctx context.Context, accountID uuid.UUID, key *models.NKey) error
+	// ListOperatorAccounts ...
+	ListOperatorAccounts(ctx context.Context, operatorID uuid.UUID, pagination models.Pagination[*models.Account]) (*models.Pagination[*models.Account], error)
 	// ListOperatorAccountsSigningKey returns a list of accounts for the operator.
 	ListOperatorAccountsSigningKey(ctx context.Context, operatorID uuid.UUID, pagination models.Pagination[*models.Account]) (*models.Pagination[*models.Account], error)
 	// CreateOperatorAccountUser creates a new user for the operator account.

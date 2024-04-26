@@ -169,6 +169,19 @@ func (db *DB) GetOperatorAccountUser(ctx context.Context, id uuid.UUID) (*models
 	return user, nil
 }
 
+// ListOperatorAccounts ...
+func (db *DB) ListOperatorAccounts(ctx context.Context, operatorID uuid.UUID, pagination models.Pagination[*models.Account]) (*models.Pagination[*models.Account], error) {
+	accounts := []*models.Account{}
+
+	err := db.conn.WithContext(ctx).Scopes(models.Paginate(&accounts, &pagination, db.conn)).Limit(pagination.Limit).Offset(pagination.Offset).Find(&accounts).Error
+	if err != nil {
+		return nil, err
+	}
+	pagination.Rows = accounts
+
+	return &pagination, nil
+}
+
 // CreateOperatorAccountUserToken ...
 func (db *DB) CreateOperatorAccountUserToken(ctx context.Context, userID uuid.UUID, token *models.Token) error {
 	return db.conn.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
