@@ -6,4 +6,5 @@ type Repositories interface {
 	Teams
 	Accounts
 	Operators
+	Users
 }

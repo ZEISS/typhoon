@@ -92,8 +92,9 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		vc := controllers.NewVersionController(build)
 		oc := controllers.NewOperatorsController(db)
 		ac := controllers.NewAccountsController(db)
+		uc := controllers.NewUsersController(db)
 
-		handlers := services.NewApiHandlers(sc, tc, vc, oc, ac)
+		handlers := services.NewApiHandlers(sc, tc, vc, oc, ac, uc)
 
 		handler := openapi.NewStrictHandler(handlers, nil)
 		openapi.RegisterHandlers(app, handler)

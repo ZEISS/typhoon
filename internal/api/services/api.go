@@ -16,13 +16,14 @@ type ApiHandlers struct {
 	version   *controllers.VersionController
 	operators *controllers.OperatorsController
 	accounts  *controllers.AccountsController
+	users     *controllers.UsersController
 
 	openapi.Unimplemented
 }
 
 // NewApiHandlers ...
-func NewApiHandlers(systems *controllers.SystemsController, teams *controllers.TeamsController, version *controllers.VersionController, operators *controllers.OperatorsController, accounts *controllers.AccountsController) *ApiHandlers {
-	return &ApiHandlers{systems: systems, teams: teams, version: version, operators: operators, accounts: accounts}
+func NewApiHandlers(systems *controllers.SystemsController, teams *controllers.TeamsController, version *controllers.VersionController, operators *controllers.OperatorsController, accounts *controllers.AccountsController, users *controllers.UsersController) *ApiHandlers {
+	return &ApiHandlers{systems: systems, teams: teams, version: version, operators: operators, accounts: accounts, users: users}
 }
 
 // CreateOperator ...
@@ -53,6 +54,16 @@ func (a *ApiHandlers) CreateOperatorAccount(ctx context.Context, req openapi.Cre
 	)
 
 	return openapi.CreateOperatorAccount201JSONResponse(resp), nil
+}
+
+// CreateOperatorAccountUser ...
+func (a *ApiHandlers) CreateOperatorAccountUser(ctx context.Context, req openapi.CreateOperatorAccountUserRequestObject) (openapi.CreateOperatorAccountUserResponseObject, error) {
+	user, err := a.users.CreateUser(ctx, req.Body.Name, req.AccountId)
+	if err != nil {
+		return nil, err
+	}
+
+	return openapi.CreateOperatorAccountUser201JSONResponse(openapi.User{Id: &user.ID, Name: user.Name}), nil
 }
 
 // // GetOperator ...
