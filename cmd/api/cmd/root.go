@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/zeiss/typhoon/internal/api/adapters"
+	"github.com/zeiss/typhoon/internal/api/adapters/db"
 	"github.com/zeiss/typhoon/internal/api/controllers"
 	"github.com/zeiss/typhoon/internal/api/services"
 	openapi "github.com/zeiss/typhoon/pkg/apis"
@@ -61,7 +62,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 			return err
 		}
 
-		db := adapters.NewDB(conn)
+		db := db.NewDB(conn)
 		err = db.RunMigrations()
 		if err != nil {
 			return err

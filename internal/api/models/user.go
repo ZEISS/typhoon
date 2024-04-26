@@ -21,8 +21,8 @@ type User struct {
 	KeyID string `json:"key_id" gorm:"foreignKey:ID"`
 
 	// Token is the JWT token used to authenticate the account.
-	Token   string `json:"token"`
-	TokenID string `json:"token_id" gorm:"foreignKey:ID"`
+	Token   Token  `json:"token" gorm:"foreignKey:TokenID"`
+	TokenID string `json:"token_id"`
 
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`

@@ -16,9 +16,9 @@ type Operator struct {
 	Key   NKey   `json:"key"`
 	KeyID string `json:"key_id" gorm:"foreignKey:ID"`
 
-	// Tokens is the list of tokens that the operator has.
-	Token   *Token `json:"tokens" gorm:"foreignKey:ID"`
-	TokenID string `json:"token_id" gorm:"foreignKey:ID"`
+	// Token is the JWT token used to authenticate the account.
+	Token   Token  `json:"token" gorm:"foreignKey:TokenID"`
+	TokenID string `json:"token_id"`
 
 	// Accounts is the list of accounts that the operator has.
 	SigningKeys []NKey `json:"signing_keys" gorm:"many2many:operator_signing_keys;foreignKey:ID;joinForeignKey:OperatorID;joinReferences:SigningKeyID"`

@@ -8,7 +8,7 @@ import (
 
 // Token ...
 type Token struct {
-	ID    string `json:"id" gorm:"primaryKey"`
+	ID    string `json:"token_id" gorm:"primaryKey"`
 	Token string `json:"token"`
 
 	CreatedAt time.Time      `json:"created_at"`

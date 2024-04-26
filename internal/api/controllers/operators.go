@@ -2,9 +2,7 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/google/uuid"
 	"github.com/nats-io/jwt"
 	"github.com/nats-io/nkeys"
 	"github.com/zeiss/typhoon/internal/api/models"
@@ -13,11 +11,11 @@ import (
 
 // OperatorsController ...
 type OperatorsController struct {
-	db ports.Repositories
+	db ports.Operators
 }
 
 // NewOperatorsController ...
-func NewOperatorsController(db ports.Repositories) *OperatorsController {
+func NewOperatorsController(db ports.Operators) *OperatorsController {
 	return &OperatorsController{db}
 }
 
@@ -38,10 +36,47 @@ func (c *OperatorsController) CreateOperator(ctx context.Context, name string) (
 		return nil, err
 	}
 
+	// Create a signing key for the operator
+	sk, err := nkeys.CreateOperator()
+	if err != nil {
+		return nil, err
+	}
+
+	spk, err := sk.PublicKey()
+	if err != nil {
+		return nil, err
+	}
+
+	skSeed, err := sk.Seed()
+	if err != nil {
+		return nil, err
+	}
+
+	// Create a token for the operator
+	oc := jwt.NewOperatorClaims(id)
+	oc.Name = name
+	oc.SigningKeys.Add(spk)
+
+	token, err := oc.Encode(pk)
+	if err != nil {
+		return nil, err
+	}
+
 	op := &models.Operator{
+		Name: name,
 		Key: models.NKey{
 			ID:   id,
 			Seed: seed,
+		},
+		SigningKeys: []models.NKey{
+			{
+				ID:   spk,
+				Seed: skSeed,
+			},
+		},
+		Token: models.Token{
+			ID:    id,
+			Token: token,
 		},
 	}
 
@@ -54,276 +89,289 @@ func (c *OperatorsController) CreateOperator(ctx context.Context, name string) (
 }
 
 // CreateOperatorAccount ...
-func (c *OperatorsController) CreateOperatorAccount(ctx context.Context, name string, operatorID uuid.UUID) (*models.Account, error) {
-	key, err := nkeys.CreateAccount()
-	if err != nil {
-		return nil, err
-	}
+// func (c *OperatorsController) CreateOperatorAccount(ctx context.Context, name string, operatorID uuid.UUID) (*models.Account, error) {
+// 	key, err := nkeys.CreateAccount()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	id, err := key.PublicKey()
-	if err != nil {
-		return nil, err
-	}
+// 	id, err := key.PublicKey()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	seed, err := key.Seed()
-	if err != nil {
-		return nil, err
-	}
+// 	seed, err := key.Seed()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	account := &models.Account{
-		Name:       name,
-		OperatorID: operatorID,
-		Key: models.NKey{
-			ID:   id,
-			Seed: seed,
-		},
-	}
+// 	account := &models.Account{
+// 		Name:       name,
+// 		OperatorID: operatorID,
+// 		Key: models.NKey{
+// 			ID:   id,
+// 			Seed: seed,
+// 		},
+// 	}
 
-	err = c.db.CreateAccount(ctx, account)
-	if err != nil {
-		return nil, err
-	}
+// 	err = c.db.CreateAccount(ctx, account)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return account, nil
-}
+// 	return account, nil
+// }
 
 // CreateOperatorSigningKey ...
-func (c *OperatorsController) CreateOperatorSigningKey(ctx context.Context, operatorID uuid.UUID) (*models.NKey, error) {
-	nkey, err := nkeys.CreateOperator()
-	if err != nil {
-		return nil, err
-	}
+// func (c *OperatorsController) CreateOperatorSigningKey(ctx context.Context, operatorID uuid.UUID) (*models.NKey, error) {
+// 	nkey, err := nkeys.CreateOperator()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	pk, err := nkey.PublicKey()
-	if err != nil {
-		return nil, err
-	}
+// 	pk, err := nkey.PublicKey()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	seed, err := nkey.Seed()
-	if err != nil {
-		return nil, err
-	}
+// 	seed, err := nkey.Seed()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	key := &models.NKey{
-		ID:   pk,
-		Seed: seed,
-	}
+// 	key := &models.NKey{
+// 		ID:   pk,
+// 		Seed: seed,
+// 	}
 
-	err = c.db.CreateOperatorSigningKey(ctx, operatorID, key)
-	if err != nil {
-		return nil, err
-	}
+// 	err = c.db.CreateOperatorSigningKey(ctx, operatorID, key)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return key, nil
-}
+// 	return key, nil
+// }
 
 // CreateOperatorToken ...
-func (c *OperatorsController) CreateOperatorToken(ctx context.Context, operatorID uuid.UUID) (*models.Token, error) {
-	o, err := c.db.GetOperator(ctx, operatorID)
-	if err != nil {
-		return nil, err
-	}
+// func (c *OperatorsController) CreateOperatorToken(ctx context.Context, operatorID uuid.UUID) (*models.Token, error) {
+// 	o, err := c.db.GetOperator(ctx, operatorID)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	okp, err := nkeys.FromSeed(o.Key.Seed)
-	if err != nil {
-		return nil, err
-	}
+// 	okp, err := nkeys.FromSeed(o.Key.Seed)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	opk, err := okp.PublicKey()
-	if err != nil {
-		return nil, err
-	}
+// 	opk, err := okp.PublicKey()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	oc := jwt.NewOperatorClaims(opk)
-	oc.Name = o.Name
+// 	oc := jwt.NewOperatorClaims(opk)
+// 	oc.Name = o.Name
 
-	oc.SigningKeys = make([]string, len(o.SigningKeys))
-	for i, k := range o.SigningKeys {
-		oc.SigningKeys[i] = k.ID
-	}
+// 	oc.SigningKeys = make([]string, len(o.SigningKeys))
+// 	for i, k := range o.SigningKeys {
+// 		oc.SigningKeys[i] = k.ID
+// 	}
 
-	token, err := oc.Encode(okp)
-	if err != nil {
-		return nil, err
-	}
+// 	token, err := oc.Encode(okp)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	t := &models.Token{
-		ID:    opk,
-		Token: token,
-	}
+// 	t := &models.Token{
+// 		TokenID: opk,
+// 		Token:   token,
+// 	}
 
-	err = c.db.CreateOperatorToken(ctx, operatorID, t)
-	if err != nil {
-		return nil, err
-	}
+// 	err = c.db.CreateOperatorToken(ctx, operatorID, t)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return t, nil
-}
+// 	return t, nil
+// }
 
-// ListOperatorAccount ...
-func (c *OperatorsController) ListOperatorAccount(ctx context.Context, operatorID uuid.UUID, pagination models.Pagination[*models.Account]) (*models.Pagination[*models.Account], error) {
-	return c.db.ListOperatorAccounts(ctx, operatorID, pagination)
-}
+// // ListOperatorAccount ...
+// func (c *OperatorsController) ListOperatorAccount(ctx context.Context, operatorID uuid.UUID, pagination models.Pagination[*models.Account]) (*models.Pagination[*models.Account], error) {
+// 	return c.db.ListOperatorAccounts(ctx, operatorID, pagination)
+// }
 
-// CreateOperatorAccountToken ...
-func (c *OperatorsController) CreateOperatorAccountToken(ctx context.Context, accountID uuid.UUID) (*models.Token, error) {
-	a, err := c.db.GetOperatorAccount(ctx, accountID)
-	if err != nil {
-		return nil, err
-	}
+// // ListOperatorAccountUsers ...
+// func (c *OperatorsController) ListOperatorAccountUsers(ctx context.Context, accountID uuid.UUID, pagination models.Pagination[*models.User]) (*models.Pagination[*models.User], error) {
+// 	return c.db.ListOperatorAccountUsers(ctx, accountID, pagination)
+// }
 
-	akp, err := nkeys.FromSeed(a.Key.Seed)
-	if err != nil {
-		return nil, err
-	}
+// // CreateOperatorAccountToken ...
+// func (c *OperatorsController) CreateOperatorAccountToken(ctx context.Context, accountID uuid.UUID) (*models.Token, error) {
+// 	a, err := c.db.GetOperatorAccount(ctx, accountID)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	apk, err := akp.PublicKey()
-	if err != nil {
-		return nil, err
-	}
+// 	akp, err := nkeys.FromSeed(a.Key.Seed)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	ac := jwt.NewAccountClaims(apk)
-	ac.Name = a.Name
+// 	apk, err := akp.PublicKey()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	ac.SigningKeys = make([]string, len(a.SigningKeys))
-	for i, k := range a.SigningKeys {
-		ac.SigningKeys[i] = k.ID
-	}
+// 	ac := jwt.NewAccountClaims(apk)
+// 	ac.Name = a.Name
 
-	token, err := ac.Encode(akp)
-	if err != nil {
-		fmt.Println(err)
-		return nil, err
-	}
+// 	ac.SigningKeys = make([]string, len(a.SigningKeys))
+// 	for i, k := range a.SigningKeys {
+// 		ac.SigningKeys[i] = k.ID
+// 	}
 
-	t := &models.Token{
-		ID:    apk,
-		Token: token,
-	}
+// 	token, err := ac.Encode(akp)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return nil, err
+// 	}
 
-	err = c.db.CreateOperatorAccountToken(ctx, accountID, t)
-	if err != nil {
-		return nil, err
-	}
+// 	t := &models.Token{
+// 		TokenID: apk,
+// 		Token:   token,
+// 	}
 
-	return t, nil
-}
+// 	err = c.db.CreateOperatorAccountToken(ctx, accountID, t)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-// CreateOperatorAccountUser ...
-func (c *OperatorsController) CreateOperatorAccountUser(ctx context.Context, accountID uuid.UUID, name string) (*models.User, error) {
-	key, err := nkeys.CreateUser()
-	if err != nil {
-		return nil, err
-	}
+// 	return t, nil
+// }
 
-	id, err := key.PublicKey()
-	if err != nil {
-		return nil, err
-	}
+// // CreateOperatorAccountUser ...
+// func (c *OperatorsController) CreateOperatorAccountUser(ctx context.Context, accountID uuid.UUID, name string) (*models.User, error) {
+// 	key, err := nkeys.CreateUser()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	seed, err := key.Seed()
-	if err != nil {
-		return nil, err
-	}
+// 	id, err := key.PublicKey()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	user := &models.User{
-		Name:      name,
-		AccountID: accountID,
-		Key: models.NKey{
-			ID:   id,
-			Seed: seed,
-		},
-	}
+// 	seed, err := key.Seed()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	err = c.db.CreateOperatorAccountUser(ctx, user)
-	if err != nil {
-		return nil, err
-	}
+// 	user := &models.User{
+// 		Name:      name,
+// 		AccountID: accountID,
+// 		Key: models.NKey{
+// 			ID:   id,
+// 			Seed: seed,
+// 		},
+// 	}
 
-	return user, nil
-}
+// 	err = c.db.CreateOperatorAccountUser(ctx, user)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-// CreateOperatorAccountUserToken ...
-func (c *OperatorsController) CreateOperatorAccountUserToken(ctx context.Context, userID uuid.UUID) (*models.Token, error) {
-	u, err := c.db.GetOperatorAccountUser(ctx, userID)
-	if err != nil {
-		return nil, err
-	}
+// 	return user, nil
+// }
 
-	ukp, err := nkeys.FromSeed(u.Key.Seed)
-	if err != nil {
-		return nil, err
-	}
+// // CreateOperatorAccountUserToken ...
+// func (c *OperatorsController) CreateOperatorAccountUserToken(ctx context.Context, userID uuid.UUID) (*models.Token, error) {
+// 	u, err := c.db.GetOperatorAccountUser(ctx, userID)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	upk, err := ukp.PublicKey()
-	if err != nil {
-		return nil, err
-	}
+// 	ukp, err := nkeys.FromSeed(u.Key.Seed)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	uc := jwt.NewUserClaims(upk)
-	uc.Name = u.Name
+// 	upk, err := ukp.PublicKey()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	uc.IssuerAccount = u.AccountID.String()
+// 	if len(u.Account.SigningKeys) < 1 {
+// 		return nil, fmt.Errorf("account %s has no signing keys", u.AccountID)
+// 	}
 
-	token, err := uc.Encode(ukp)
-	if err != nil {
-		return nil, err
-	}
+// 	ask, err := nkeys.FromSeed(u.Account.SigningKeys[0].Seed)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	t := &models.Token{
-		ID:    upk,
-		Token: token,
-	}
+// 	uc := jwt.NewUserClaims(upk)
+// 	uc.Name = u.Name
+// 	uc.IssuerAccount = u.Account.KeyID
 
-	err = c.db.CreateOperatorAccountUserToken(ctx, userID, t)
-	if err != nil {
-		return nil, err
-	}
+// 	token, err := uc.Encode(ask)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return t, nil
-}
+// 	t := &models.Token{
+// 		TokenID: upk,
+// 		Token:   token,
+// 	}
 
-// DeleteOperator ...
-func (c *OperatorsController) DeleteOperator(ctx context.Context, id uuid.UUID) error {
-	return c.db.DeleteOperator(ctx, id)
-}
+// 	err = c.db.CreateOperatorAccountUserToken(ctx, userID, t)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-// GetOperator ...
-func (c *OperatorsController) GetOperator(ctx context.Context, id uuid.UUID) (*models.Operator, error) {
-	return c.db.GetOperator(ctx, id)
-}
+// 	return t, nil
+// }
 
-// ListOperator ...
-func (c *OperatorsController) ListOperator(ctx context.Context, pagination models.Pagination[*models.Operator]) (*models.Pagination[*models.Operator], error) {
-	return c.db.ListOperator(ctx, pagination)
-}
+// // DeleteOperator ...
+// func (c *OperatorsController) DeleteOperator(ctx context.Context, id uuid.UUID) error {
+// 	return c.db.DeleteOperator(ctx, id)
+// }
 
-// CreateOperatorAccountSigningKey ...
-func (c *OperatorsController) CreateOperatorAccountSigningKey(ctx context.Context, accountID uuid.UUID) (*models.NKey, error) {
-	nkey, err := nkeys.CreateAccount()
-	if err != nil {
-		return nil, err
-	}
+// // GetOperator ...
+// func (c *OperatorsController) GetOperator(ctx context.Context, id uuid.UUID) (*models.Operator, error) {
+// 	return c.db.GetOperator(ctx, id)
+// }
 
-	pk, err := nkey.PublicKey()
-	if err != nil {
-		return nil, err
-	}
+// // ListOperator ...
+// func (c *OperatorsController) ListOperator(ctx context.Context, pagination models.Pagination[*models.Operator]) (*models.Pagination[*models.Operator], error) {
+// 	return c.db.ListOperator(ctx, pagination)
+// }
 
-	seed, err := nkey.Seed()
-	if err != nil {
-		return nil, err
-	}
+// // CreateOperatorAccountSigningKey ...
+// func (c *OperatorsController) CreateOperatorAccountSigningKey(ctx context.Context, accountID uuid.UUID) (*models.NKey, error) {
+// 	nkey, err := nkeys.CreateAccount()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	key := &models.NKey{
-		ID:   pk,
-		Seed: seed,
-	}
+// 	pk, err := nkey.PublicKey()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	err = c.db.CreateOperatorAccountSigningKey(ctx, accountID, key)
-	if err != nil {
-		return nil, err
-	}
+// 	seed, err := nkey.Seed()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return key, nil
-}
+// 	key := &models.NKey{
+// 		ID:   pk,
+// 		Seed: seed,
+// 	}
+
+// 	err = c.db.CreateOperatorAccountSigningKey(ctx, accountID, key)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return key, nil
+// }
