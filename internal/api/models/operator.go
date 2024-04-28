@@ -23,6 +23,10 @@ type Operator struct {
 	// Accounts is the list of accounts that the operator has.
 	SigningKeys []NKey `json:"signing_keys" gorm:"many2many:operator_signing_keys;foreignKey:ID;joinForeignKey:OperatorID;joinReferences:SigningKeyID"`
 
+	// Sysem is the system that the operator belongs to.
+	System   System    `json:"system" gorm:"foreignKey:SystemID"`
+	SystemID uuid.UUID `json:"system_id"`
+
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
