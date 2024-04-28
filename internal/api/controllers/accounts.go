@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/nats-io/jwt"
@@ -12,16 +13,21 @@ import (
 
 // AccountsController ...
 type AccountsController struct {
-	db ports.Accounts
+	db ports.Repositories
 }
 
 // NewAccountsController ...
-func NewAccountsController(db ports.Accounts) *AccountsController {
+func NewAccountsController(db ports.Repositories) *AccountsController {
 	return &AccountsController{db}
 }
 
 // CreateAccount ...
 func (c *AccountsController) CreateAccount(ctx context.Context, name string, operatorID uuid.UUID) (*models.Account, error) {
+	operator, err := c.db.GetOperator(ctx, operatorID)
+	if err != nil {
+		return nil, err
+	}
+
 	pk, err := nkeys.CreateAccount()
 	if err != nil {
 		return nil, err
@@ -53,12 +59,22 @@ func (c *AccountsController) CreateAccount(ctx context.Context, name string, ope
 		return nil, err
 	}
 
+	if len(operator.SigningKeys) < 1 {
+		return nil, fmt.Errorf("operator %s has no signing keys", operator.ID)
+	}
+
+	osk, err := nkeys.FromSeed(operator.SigningKeys[0].Seed)
+	if err != nil {
+		return nil, err
+	}
+
 	// Create a token for the account
 	oc := jwt.NewAccountClaims(id)
 	oc.Name = name
+	oc.Issuer = operator.KeyID
 	oc.SigningKeys.Add(spk)
 
-	token, err := oc.Encode(pk)
+	token, err := oc.Encode(osk)
 	if err != nil {
 		return nil, err
 	}

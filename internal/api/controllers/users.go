@@ -52,10 +52,16 @@ func (c *UsersController) CreateUser(ctx context.Context, name string, accountId
 		return nil, err
 	}
 
+	askpk, err := ask.PublicKey()
+	if err != nil {
+		return nil, err
+	}
+
 	// Create a token for the user
 	u := jwt.NewUserClaims(id)
 	u.Name = name
 	u.IssuerAccount = ac.KeyID
+	u.Issuer = askpk
 
 	token, err := u.Encode(ask)
 	if err != nil {
