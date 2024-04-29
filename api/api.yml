@@ -809,10 +809,7 @@ paths:
       produces:
         - "application/json"
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/System"
+        $ref: "#/components/requestBodies/CreateSystem"
       responses:
         "201":
           description: Created
@@ -828,32 +825,22 @@ paths:
 
   /systems/{systemId}:
     get:
-      summary: List all managed systems.
+      summary: Gets a system by ID
       operationId: getSystem
-      tags:
-        - Systems
-      description: |-
-        Returns a list of managed systems.
       parameters:
-        - name: systemId
-          in: path
-          required: true
-          description: The id of the system to retrieve
-          schema:
-            type: string
+        - $ref: "#/components/parameters/systemId"
       responses:
         "200":
-          description: A paginated response of all systems
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/System"
     put:
       summary: Updates a system by ID
       operationId: updateSystem
       parameters:
-        - name: systemId
-          in: path
-          required: true
-          description: The id of the system to update
-          schema:
-            type: string
+        - $ref: "#/components/parameters/systemId"
       requestBody:
         content:
           application/json:
@@ -867,16 +854,47 @@ paths:
               schema:
                 $ref: "#/components/schemas/System"
 
-    deleted:
+    delete:
       summary: Deletes a system by ID
       operationId: deleteSystem
       parameters:
-        - name: systemId
-          in: path
-          required: true
-          description: The id of the system to delete
-          schema:
-            type: string
+        - $ref: "#/components/parameters/systemId"
+      responses:
+        "204":
+          description: Successful
+
+  /systems/{systemId}/operator:
+    get:
+      summary: Gets the operator for a system
+      operationId: getSystemOperator
+      parameters:
+        - $ref: "#/components/parameters/systemId"
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Operator"
+    put:
+      summary: Updates the operator for a system
+      operationId: updateSystemOperator
+      parameters:
+        - $ref: "#/components/parameters/systemId"
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateSystemOperator"
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Operator"
+    delete:
+      summary: Deletes the operator for a system
+      operationId: deleteSystemOperator
+      parameters:
+        - $ref: "#/components/parameters/systemId"
       responses:
         "204":
           description: Successful
@@ -893,6 +911,14 @@ definitions:
 
 components:
   parameters:
+    systemId:
+      in: path
+      name: systemId
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The id of the system to retrieve.
     teamId:
       in: path
       name: teamId
@@ -954,6 +980,29 @@ components:
       description: The id of the operator to retrieve.
 
   requestBodies:
+    CreateSystem:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+    UpdateSystemOperator:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - operatorId
+            properties:
+              operatorId:
+                type: string
+                format: uuid
     CreateTeam:
       content:
         application/json:

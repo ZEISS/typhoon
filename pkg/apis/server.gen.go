@@ -85,12 +85,24 @@ type ServerInterface interface {
 	// Creates a new system
 	// (POST /systems)
 	CreateSystem(c *fiber.Ctx) error
-	// List all managed systems.
+	// Deletes a system by ID
+	// (DELETE /systems/{systemId})
+	DeleteSystem(c *fiber.Ctx, systemId SystemId) error
+	// Gets a system by ID
 	// (GET /systems/{systemId})
-	GetSystem(c *fiber.Ctx, systemId string) error
+	GetSystem(c *fiber.Ctx, systemId SystemId) error
 	// Updates a system by ID
 	// (PUT /systems/{systemId})
-	UpdateSystem(c *fiber.Ctx, systemId string) error
+	UpdateSystem(c *fiber.Ctx, systemId SystemId) error
+	// Deletes the operator for a system
+	// (DELETE /systems/{systemId}/operator)
+	DeleteSystemOperator(c *fiber.Ctx, systemId SystemId) error
+	// Gets the operator for a system
+	// (GET /systems/{systemId}/operator)
+	GetSystemOperator(c *fiber.Ctx, systemId SystemId) error
+	// Updates the operator for a system
+	// (PUT /systems/{systemId}/operator)
+	UpdateSystemOperator(c *fiber.Ctx, systemId SystemId) error
 	// List all teams
 	// (GET /teams)
 	ListTeams(c *fiber.Ctx, params ListTeamsParams) error
@@ -809,13 +821,35 @@ func (siw *ServerInterfaceWrapper) CreateSystem(c *fiber.Ctx) error {
 	return siw.Handler.CreateSystem(c)
 }
 
+// DeleteSystem operation middleware
+func (siw *ServerInterfaceWrapper) DeleteSystem(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "systemId" -------------
+	var systemId SystemId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "systemId", c.Params("systemId"), &systemId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter systemId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(Api_keyScopes, []string{})
+
+	return siw.Handler.DeleteSystem(c, systemId)
+}
+
 // GetSystem operation middleware
 func (siw *ServerInterfaceWrapper) GetSystem(c *fiber.Ctx) error {
 
 	var err error
 
 	// ------------- Path parameter "systemId" -------------
-	var systemId string
+	var systemId SystemId
 
 	err = runtime.BindStyledParameterWithOptions("simple", "systemId", c.Params("systemId"), &systemId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
 	if err != nil {
@@ -837,7 +871,7 @@ func (siw *ServerInterfaceWrapper) UpdateSystem(c *fiber.Ctx) error {
 	var err error
 
 	// ------------- Path parameter "systemId" -------------
-	var systemId string
+	var systemId SystemId
 
 	err = runtime.BindStyledParameterWithOptions("simple", "systemId", c.Params("systemId"), &systemId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
 	if err != nil {
@@ -851,6 +885,72 @@ func (siw *ServerInterfaceWrapper) UpdateSystem(c *fiber.Ctx) error {
 	c.Context().SetUserValue(Api_keyScopes, []string{})
 
 	return siw.Handler.UpdateSystem(c, systemId)
+}
+
+// DeleteSystemOperator operation middleware
+func (siw *ServerInterfaceWrapper) DeleteSystemOperator(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "systemId" -------------
+	var systemId SystemId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "systemId", c.Params("systemId"), &systemId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter systemId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(Api_keyScopes, []string{})
+
+	return siw.Handler.DeleteSystemOperator(c, systemId)
+}
+
+// GetSystemOperator operation middleware
+func (siw *ServerInterfaceWrapper) GetSystemOperator(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "systemId" -------------
+	var systemId SystemId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "systemId", c.Params("systemId"), &systemId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter systemId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(Api_keyScopes, []string{})
+
+	return siw.Handler.GetSystemOperator(c, systemId)
+}
+
+// UpdateSystemOperator operation middleware
+func (siw *ServerInterfaceWrapper) UpdateSystemOperator(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "systemId" -------------
+	var systemId SystemId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "systemId", c.Params("systemId"), &systemId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter systemId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(Api_keyScopes, []string{})
+
+	return siw.Handler.UpdateSystemOperator(c, systemId)
 }
 
 // ListTeams operation middleware
@@ -1380,9 +1480,17 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Post(options.BaseURL+"/systems", wrapper.CreateSystem)
 
+	router.Delete(options.BaseURL+"/systems/:systemId", wrapper.DeleteSystem)
+
 	router.Get(options.BaseURL+"/systems/:systemId", wrapper.GetSystem)
 
 	router.Put(options.BaseURL+"/systems/:systemId", wrapper.UpdateSystem)
+
+	router.Delete(options.BaseURL+"/systems/:systemId/operator", wrapper.DeleteSystemOperator)
+
+	router.Get(options.BaseURL+"/systems/:systemId/operator", wrapper.GetSystemOperator)
+
+	router.Put(options.BaseURL+"/systems/:systemId/operator", wrapper.UpdateSystemOperator)
 
 	router.Get(options.BaseURL+"/teams", wrapper.ListTeams)
 
@@ -1860,24 +1968,41 @@ func (response CreateSystem201JSONResponse) VisitCreateSystemResponse(ctx *fiber
 	return ctx.JSON(&response)
 }
 
+type DeleteSystemRequestObject struct {
+	SystemId SystemId `json:"systemId"`
+}
+
+type DeleteSystemResponseObject interface {
+	VisitDeleteSystemResponse(ctx *fiber.Ctx) error
+}
+
+type DeleteSystem204Response struct {
+}
+
+func (response DeleteSystem204Response) VisitDeleteSystemResponse(ctx *fiber.Ctx) error {
+	ctx.Status(204)
+	return nil
+}
+
 type GetSystemRequestObject struct {
-	SystemId string `json:"systemId"`
+	SystemId SystemId `json:"systemId"`
 }
 
 type GetSystemResponseObject interface {
 	VisitGetSystemResponse(ctx *fiber.Ctx) error
 }
 
-type GetSystem200Response struct {
-}
+type GetSystem200JSONResponse System
 
-func (response GetSystem200Response) VisitGetSystemResponse(ctx *fiber.Ctx) error {
+func (response GetSystem200JSONResponse) VisitGetSystemResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
 	ctx.Status(200)
-	return nil
+
+	return ctx.JSON(&response)
 }
 
 type UpdateSystemRequestObject struct {
-	SystemId string `json:"systemId"`
+	SystemId SystemId `json:"systemId"`
 	Body     *UpdateSystemJSONRequestBody
 }
 
@@ -1888,6 +2013,57 @@ type UpdateSystemResponseObject interface {
 type UpdateSystem200JSONResponse System
 
 func (response UpdateSystem200JSONResponse) VisitUpdateSystemResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type DeleteSystemOperatorRequestObject struct {
+	SystemId SystemId `json:"systemId"`
+}
+
+type DeleteSystemOperatorResponseObject interface {
+	VisitDeleteSystemOperatorResponse(ctx *fiber.Ctx) error
+}
+
+type DeleteSystemOperator204Response struct {
+}
+
+func (response DeleteSystemOperator204Response) VisitDeleteSystemOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Status(204)
+	return nil
+}
+
+type GetSystemOperatorRequestObject struct {
+	SystemId SystemId `json:"systemId"`
+}
+
+type GetSystemOperatorResponseObject interface {
+	VisitGetSystemOperatorResponse(ctx *fiber.Ctx) error
+}
+
+type GetSystemOperator200JSONResponse Operator
+
+func (response GetSystemOperator200JSONResponse) VisitGetSystemOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type UpdateSystemOperatorRequestObject struct {
+	SystemId SystemId `json:"systemId"`
+	Body     *UpdateSystemOperatorJSONRequestBody
+}
+
+type UpdateSystemOperatorResponseObject interface {
+	VisitUpdateSystemOperatorResponse(ctx *fiber.Ctx) error
+}
+
+type UpdateSystemOperator200JSONResponse Operator
+
+func (response UpdateSystemOperator200JSONResponse) VisitUpdateSystemOperatorResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
 	ctx.Status(200)
 
@@ -2242,12 +2418,24 @@ type StrictServerInterface interface {
 	// Creates a new system
 	// (POST /systems)
 	CreateSystem(ctx context.Context, request CreateSystemRequestObject) (CreateSystemResponseObject, error)
-	// List all managed systems.
+	// Deletes a system by ID
+	// (DELETE /systems/{systemId})
+	DeleteSystem(ctx context.Context, request DeleteSystemRequestObject) (DeleteSystemResponseObject, error)
+	// Gets a system by ID
 	// (GET /systems/{systemId})
 	GetSystem(ctx context.Context, request GetSystemRequestObject) (GetSystemResponseObject, error)
 	// Updates a system by ID
 	// (PUT /systems/{systemId})
 	UpdateSystem(ctx context.Context, request UpdateSystemRequestObject) (UpdateSystemResponseObject, error)
+	// Deletes the operator for a system
+	// (DELETE /systems/{systemId}/operator)
+	DeleteSystemOperator(ctx context.Context, request DeleteSystemOperatorRequestObject) (DeleteSystemOperatorResponseObject, error)
+	// Gets the operator for a system
+	// (GET /systems/{systemId}/operator)
+	GetSystemOperator(ctx context.Context, request GetSystemOperatorRequestObject) (GetSystemOperatorResponseObject, error)
+	// Updates the operator for a system
+	// (PUT /systems/{systemId}/operator)
+	UpdateSystemOperator(ctx context.Context, request UpdateSystemOperatorRequestObject) (UpdateSystemOperatorResponseObject, error)
 	// List all teams
 	// (GET /teams)
 	ListTeams(ctx context.Context, request ListTeamsRequestObject) (ListTeamsResponseObject, error)
@@ -2967,8 +3155,35 @@ func (sh *strictHandler) CreateSystem(ctx *fiber.Ctx) error {
 	return nil
 }
 
+// DeleteSystem operation middleware
+func (sh *strictHandler) DeleteSystem(ctx *fiber.Ctx, systemId SystemId) error {
+	var request DeleteSystemRequestObject
+
+	request.SystemId = systemId
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteSystem(ctx.UserContext(), request.(DeleteSystemRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteSystem")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(DeleteSystemResponseObject); ok {
+		if err := validResponse.VisitDeleteSystemResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
 // GetSystem operation middleware
-func (sh *strictHandler) GetSystem(ctx *fiber.Ctx, systemId string) error {
+func (sh *strictHandler) GetSystem(ctx *fiber.Ctx, systemId SystemId) error {
 	var request GetSystemRequestObject
 
 	request.SystemId = systemId
@@ -2995,7 +3210,7 @@ func (sh *strictHandler) GetSystem(ctx *fiber.Ctx, systemId string) error {
 }
 
 // UpdateSystem operation middleware
-func (sh *strictHandler) UpdateSystem(ctx *fiber.Ctx, systemId string) error {
+func (sh *strictHandler) UpdateSystem(ctx *fiber.Ctx, systemId SystemId) error {
 	var request UpdateSystemRequestObject
 
 	request.SystemId = systemId
@@ -3019,6 +3234,93 @@ func (sh *strictHandler) UpdateSystem(ctx *fiber.Ctx, systemId string) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	} else if validResponse, ok := response.(UpdateSystemResponseObject); ok {
 		if err := validResponse.VisitUpdateSystemResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// DeleteSystemOperator operation middleware
+func (sh *strictHandler) DeleteSystemOperator(ctx *fiber.Ctx, systemId SystemId) error {
+	var request DeleteSystemOperatorRequestObject
+
+	request.SystemId = systemId
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteSystemOperator(ctx.UserContext(), request.(DeleteSystemOperatorRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteSystemOperator")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(DeleteSystemOperatorResponseObject); ok {
+		if err := validResponse.VisitDeleteSystemOperatorResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// GetSystemOperator operation middleware
+func (sh *strictHandler) GetSystemOperator(ctx *fiber.Ctx, systemId SystemId) error {
+	var request GetSystemOperatorRequestObject
+
+	request.SystemId = systemId
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.GetSystemOperator(ctx.UserContext(), request.(GetSystemOperatorRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetSystemOperator")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(GetSystemOperatorResponseObject); ok {
+		if err := validResponse.VisitGetSystemOperatorResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// UpdateSystemOperator operation middleware
+func (sh *strictHandler) UpdateSystemOperator(ctx *fiber.Ctx, systemId SystemId) error {
+	var request UpdateSystemOperatorRequestObject
+
+	request.SystemId = systemId
+
+	var body UpdateSystemOperatorJSONRequestBody
+	if err := ctx.BodyParser(&body); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	request.Body = &body
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateSystemOperator(ctx.UserContext(), request.(UpdateSystemOperatorRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateSystemOperator")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(UpdateSystemOperatorResponseObject); ok {
+		if err := validResponse.VisitUpdateSystemOperatorResponse(ctx); err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 	} else if response != nil {

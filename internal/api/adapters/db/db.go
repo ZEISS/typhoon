@@ -11,6 +11,7 @@ var (
 	_ ports.Users     = (*DB)(nil)
 	_ ports.Accounts  = (*DB)(nil)
 	_ ports.Operators = (*DB)(nil)
+	_ ports.Systems   = (*DB)(nil)
 )
 
 // DB ...
@@ -29,5 +30,6 @@ func (db *DB) RunMigrations() error {
 		&models.User{},
 		&models.Account{},
 		&models.Operator{},
+		&models.System{},
 	)
 }

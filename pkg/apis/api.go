@@ -140,6 +140,26 @@ func (u *Unimplemented) UpdateSystem(ctx context.Context, request UpdateSystemRe
 	return nil, errors.New("not implemented")
 }
 
+// DeleteSystem ...
+func (u *Unimplemented) DeleteSystem(ctx context.Context, request DeleteSystemRequestObject) (DeleteSystemResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// DeleteSystemOperator ...
+func (u *Unimplemented) DeleteSystemOperator(ctx context.Context, request DeleteSystemOperatorRequestObject) (DeleteSystemOperatorResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// GetSystemOperator ...
+func (u *Unimplemented) GetSystemOperator(ctx context.Context, request GetSystemOperatorRequestObject) (GetSystemOperatorResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// UpdateSystemOperator ...
+func (u *Unimplemented) UpdateSystemOperator(ctx context.Context, request UpdateSystemOperatorRequestObject) (UpdateSystemOperatorResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
 // ListTeams ...
 func (u *Unimplemented) ListTeams(ctx context.Context, request ListTeamsRequestObject) (ListTeamsResponseObject, error) {
 	return nil, errors.New("not implemented")

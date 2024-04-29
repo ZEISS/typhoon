@@ -11,3 +11,8 @@ func PtrInt(i int) *int {
 func PtrUUID(u uuid.UUID) *uuid.UUID {
 	return &u
 }
+
+// StrPtr returns a pointer to a string.
+func StrPtr(s string) *string {
+	return &s
+}

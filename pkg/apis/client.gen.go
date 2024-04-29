@@ -169,13 +169,27 @@ type ClientInterface interface {
 
 	CreateSystem(ctx context.Context, body CreateSystemJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// DeleteSystem request
+	DeleteSystem(ctx context.Context, systemId SystemId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetSystem request
-	GetSystem(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetSystem(ctx context.Context, systemId SystemId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UpdateSystemWithBody request with any body
-	UpdateSystemWithBody(ctx context.Context, systemId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateSystemWithBody(ctx context.Context, systemId SystemId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	UpdateSystem(ctx context.Context, systemId string, body UpdateSystemJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateSystem(ctx context.Context, systemId SystemId, body UpdateSystemJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteSystemOperator request
+	DeleteSystemOperator(ctx context.Context, systemId SystemId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetSystemOperator request
+	GetSystemOperator(ctx context.Context, systemId SystemId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateSystemOperatorWithBody request with any body
+	UpdateSystemOperatorWithBody(ctx context.Context, systemId SystemId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateSystemOperator(ctx context.Context, systemId SystemId, body UpdateSystemOperatorJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ListTeams request
 	ListTeams(ctx context.Context, params *ListTeamsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -566,7 +580,19 @@ func (c *Client) CreateSystem(ctx context.Context, body CreateSystemJSONRequestB
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetSystem(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) DeleteSystem(ctx context.Context, systemId SystemId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteSystemRequest(c.Server, systemId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetSystem(ctx context.Context, systemId SystemId, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetSystemRequest(c.Server, systemId)
 	if err != nil {
 		return nil, err
@@ -578,7 +604,7 @@ func (c *Client) GetSystem(ctx context.Context, systemId string, reqEditors ...R
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpdateSystemWithBody(ctx context.Context, systemId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) UpdateSystemWithBody(ctx context.Context, systemId SystemId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateSystemRequestWithBody(c.Server, systemId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -590,8 +616,56 @@ func (c *Client) UpdateSystemWithBody(ctx context.Context, systemId string, cont
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpdateSystem(ctx context.Context, systemId string, body UpdateSystemJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) UpdateSystem(ctx context.Context, systemId SystemId, body UpdateSystemJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateSystemRequest(c.Server, systemId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteSystemOperator(ctx context.Context, systemId SystemId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteSystemOperatorRequest(c.Server, systemId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetSystemOperator(ctx context.Context, systemId SystemId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetSystemOperatorRequest(c.Server, systemId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateSystemOperatorWithBody(ctx context.Context, systemId SystemId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateSystemOperatorRequestWithBody(c.Server, systemId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateSystemOperator(ctx context.Context, systemId SystemId, body UpdateSystemOperatorJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateSystemOperatorRequest(c.Server, systemId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1930,8 +2004,42 @@ func NewCreateSystemRequestWithBody(server string, contentType string, body io.R
 	return req, nil
 }
 
+// NewDeleteSystemRequest generates requests for DeleteSystem
+func NewDeleteSystemRequest(server string, systemId SystemId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "systemId", runtime.ParamLocationPath, systemId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/systems/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetSystemRequest generates requests for GetSystem
-func NewGetSystemRequest(server string, systemId string) (*http.Request, error) {
+func NewGetSystemRequest(server string, systemId SystemId) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1965,7 +2073,7 @@ func NewGetSystemRequest(server string, systemId string) (*http.Request, error) 
 }
 
 // NewUpdateSystemRequest calls the generic UpdateSystem builder with application/json body
-func NewUpdateSystemRequest(server string, systemId string, body UpdateSystemJSONRequestBody) (*http.Request, error) {
+func NewUpdateSystemRequest(server string, systemId SystemId, body UpdateSystemJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
@@ -1976,7 +2084,7 @@ func NewUpdateSystemRequest(server string, systemId string, body UpdateSystemJSO
 }
 
 // NewUpdateSystemRequestWithBody generates requests for UpdateSystem with any type of body
-func NewUpdateSystemRequestWithBody(server string, systemId string, contentType string, body io.Reader) (*http.Request, error) {
+func NewUpdateSystemRequestWithBody(server string, systemId SystemId, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1992,6 +2100,121 @@ func NewUpdateSystemRequestWithBody(server string, systemId string, contentType 
 	}
 
 	operationPath := fmt.Sprintf("/systems/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteSystemOperatorRequest generates requests for DeleteSystemOperator
+func NewDeleteSystemOperatorRequest(server string, systemId SystemId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "systemId", runtime.ParamLocationPath, systemId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/systems/%s/operator", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetSystemOperatorRequest generates requests for GetSystemOperator
+func NewGetSystemOperatorRequest(server string, systemId SystemId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "systemId", runtime.ParamLocationPath, systemId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/systems/%s/operator", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateSystemOperatorRequest calls the generic UpdateSystemOperator builder with application/json body
+func NewUpdateSystemOperatorRequest(server string, systemId SystemId, body UpdateSystemOperatorJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateSystemOperatorRequestWithBody(server, systemId, "application/json", bodyReader)
+}
+
+// NewUpdateSystemOperatorRequestWithBody generates requests for UpdateSystemOperator with any type of body
+func NewUpdateSystemOperatorRequestWithBody(server string, systemId SystemId, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "systemId", runtime.ParamLocationPath, systemId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/systems/%s/operator", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -2896,13 +3119,27 @@ type ClientWithResponsesInterface interface {
 
 	CreateSystemWithResponse(ctx context.Context, body CreateSystemJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSystemResponse, error)
 
+	// DeleteSystemWithResponse request
+	DeleteSystemWithResponse(ctx context.Context, systemId SystemId, reqEditors ...RequestEditorFn) (*DeleteSystemResponse, error)
+
 	// GetSystemWithResponse request
-	GetSystemWithResponse(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*GetSystemResponse, error)
+	GetSystemWithResponse(ctx context.Context, systemId SystemId, reqEditors ...RequestEditorFn) (*GetSystemResponse, error)
 
 	// UpdateSystemWithBodyWithResponse request with any body
-	UpdateSystemWithBodyWithResponse(ctx context.Context, systemId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateSystemResponse, error)
+	UpdateSystemWithBodyWithResponse(ctx context.Context, systemId SystemId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateSystemResponse, error)
 
-	UpdateSystemWithResponse(ctx context.Context, systemId string, body UpdateSystemJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateSystemResponse, error)
+	UpdateSystemWithResponse(ctx context.Context, systemId SystemId, body UpdateSystemJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateSystemResponse, error)
+
+	// DeleteSystemOperatorWithResponse request
+	DeleteSystemOperatorWithResponse(ctx context.Context, systemId SystemId, reqEditors ...RequestEditorFn) (*DeleteSystemOperatorResponse, error)
+
+	// GetSystemOperatorWithResponse request
+	GetSystemOperatorWithResponse(ctx context.Context, systemId SystemId, reqEditors ...RequestEditorFn) (*GetSystemOperatorResponse, error)
+
+	// UpdateSystemOperatorWithBodyWithResponse request with any body
+	UpdateSystemOperatorWithBodyWithResponse(ctx context.Context, systemId SystemId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateSystemOperatorResponse, error)
+
+	UpdateSystemOperatorWithResponse(ctx context.Context, systemId SystemId, body UpdateSystemOperatorJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateSystemOperatorResponse, error)
 
 	// ListTeamsWithResponse request
 	ListTeamsWithResponse(ctx context.Context, params *ListTeamsParams, reqEditors ...RequestEditorFn) (*ListTeamsResponse, error)
@@ -3488,9 +3725,31 @@ func (r CreateSystemResponse) StatusCode() int {
 	return 0
 }
 
+type DeleteSystemResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteSystemResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteSystemResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetSystemResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSON200      *System
 }
 
 // Status returns HTTPResponse.Status
@@ -3525,6 +3784,71 @@ func (r UpdateSystemResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r UpdateSystemResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteSystemOperatorResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteSystemOperatorResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteSystemOperatorResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetSystemOperatorResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Operator
+}
+
+// Status returns HTTPResponse.Status
+func (r GetSystemOperatorResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetSystemOperatorResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateSystemOperatorResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Operator
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateSystemOperatorResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateSystemOperatorResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4106,8 +4430,17 @@ func (c *ClientWithResponses) CreateSystemWithResponse(ctx context.Context, body
 	return ParseCreateSystemResponse(rsp)
 }
 
+// DeleteSystemWithResponse request returning *DeleteSystemResponse
+func (c *ClientWithResponses) DeleteSystemWithResponse(ctx context.Context, systemId SystemId, reqEditors ...RequestEditorFn) (*DeleteSystemResponse, error) {
+	rsp, err := c.DeleteSystem(ctx, systemId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteSystemResponse(rsp)
+}
+
 // GetSystemWithResponse request returning *GetSystemResponse
-func (c *ClientWithResponses) GetSystemWithResponse(ctx context.Context, systemId string, reqEditors ...RequestEditorFn) (*GetSystemResponse, error) {
+func (c *ClientWithResponses) GetSystemWithResponse(ctx context.Context, systemId SystemId, reqEditors ...RequestEditorFn) (*GetSystemResponse, error) {
 	rsp, err := c.GetSystem(ctx, systemId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -4116,7 +4449,7 @@ func (c *ClientWithResponses) GetSystemWithResponse(ctx context.Context, systemI
 }
 
 // UpdateSystemWithBodyWithResponse request with arbitrary body returning *UpdateSystemResponse
-func (c *ClientWithResponses) UpdateSystemWithBodyWithResponse(ctx context.Context, systemId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateSystemResponse, error) {
+func (c *ClientWithResponses) UpdateSystemWithBodyWithResponse(ctx context.Context, systemId SystemId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateSystemResponse, error) {
 	rsp, err := c.UpdateSystemWithBody(ctx, systemId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -4124,12 +4457,47 @@ func (c *ClientWithResponses) UpdateSystemWithBodyWithResponse(ctx context.Conte
 	return ParseUpdateSystemResponse(rsp)
 }
 
-func (c *ClientWithResponses) UpdateSystemWithResponse(ctx context.Context, systemId string, body UpdateSystemJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateSystemResponse, error) {
+func (c *ClientWithResponses) UpdateSystemWithResponse(ctx context.Context, systemId SystemId, body UpdateSystemJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateSystemResponse, error) {
 	rsp, err := c.UpdateSystem(ctx, systemId, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
 	return ParseUpdateSystemResponse(rsp)
+}
+
+// DeleteSystemOperatorWithResponse request returning *DeleteSystemOperatorResponse
+func (c *ClientWithResponses) DeleteSystemOperatorWithResponse(ctx context.Context, systemId SystemId, reqEditors ...RequestEditorFn) (*DeleteSystemOperatorResponse, error) {
+	rsp, err := c.DeleteSystemOperator(ctx, systemId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteSystemOperatorResponse(rsp)
+}
+
+// GetSystemOperatorWithResponse request returning *GetSystemOperatorResponse
+func (c *ClientWithResponses) GetSystemOperatorWithResponse(ctx context.Context, systemId SystemId, reqEditors ...RequestEditorFn) (*GetSystemOperatorResponse, error) {
+	rsp, err := c.GetSystemOperator(ctx, systemId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetSystemOperatorResponse(rsp)
+}
+
+// UpdateSystemOperatorWithBodyWithResponse request with arbitrary body returning *UpdateSystemOperatorResponse
+func (c *ClientWithResponses) UpdateSystemOperatorWithBodyWithResponse(ctx context.Context, systemId SystemId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateSystemOperatorResponse, error) {
+	rsp, err := c.UpdateSystemOperatorWithBody(ctx, systemId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateSystemOperatorResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateSystemOperatorWithResponse(ctx context.Context, systemId SystemId, body UpdateSystemOperatorJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateSystemOperatorResponse, error) {
+	rsp, err := c.UpdateSystemOperator(ctx, systemId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateSystemOperatorResponse(rsp)
 }
 
 // ListTeamsWithResponse request returning *ListTeamsResponse
@@ -4876,6 +5244,22 @@ func ParseCreateSystemResponse(rsp *http.Response) (*CreateSystemResponse, error
 	return response, nil
 }
 
+// ParseDeleteSystemResponse parses an HTTP response from a DeleteSystemWithResponse call
+func ParseDeleteSystemResponse(rsp *http.Response) (*DeleteSystemResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteSystemResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
 // ParseGetSystemResponse parses an HTTP response from a GetSystemWithResponse call
 func ParseGetSystemResponse(rsp *http.Response) (*GetSystemResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -4887,6 +5271,16 @@ func ParseGetSystemResponse(rsp *http.Response) (*GetSystemResponse, error) {
 	response := &GetSystemResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest System
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
 	}
 
 	return response, nil
@@ -4908,6 +5302,74 @@ func ParseUpdateSystemResponse(rsp *http.Response) (*UpdateSystemResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest System
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteSystemOperatorResponse parses an HTTP response from a DeleteSystemOperatorWithResponse call
+func ParseDeleteSystemOperatorResponse(rsp *http.Response) (*DeleteSystemOperatorResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteSystemOperatorResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParseGetSystemOperatorResponse parses an HTTP response from a GetSystemOperatorWithResponse call
+func ParseGetSystemOperatorResponse(rsp *http.Response) (*GetSystemOperatorResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetSystemOperatorResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Operator
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateSystemOperatorResponse parses an HTTP response from a UpdateSystemOperatorWithResponse call
+func ParseUpdateSystemOperatorResponse(rsp *http.Response) (*UpdateSystemOperatorResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateSystemOperatorResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Operator
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
