@@ -155,6 +155,16 @@ func (a *ApiHandlers) GetOperatorAccountUserCredentials(ctx context.Context, req
 	return openapi.GetOperatorAccountUserCredentials200ApplicationoctetStreamResponse(openapi.GetOperatorAccountUserCredentials200ApplicationoctetStreamResponse{Body: body, ContentLength: int64(body.Len())}), nil
 }
 
+// UpdateOperatorAccount ...
+func (a *ApiHandlers) UpdateOperatorAccount(ctx context.Context, req openapi.UpdateOperatorAccountRequestObject) (openapi.UpdateOperatorAccountResponseObject, error) {
+	account, err := a.accounts.UpdateAccount(ctx, controllers.UpdateOperatorAccountRequestObject(req))
+	if err != nil {
+		return nil, err
+	}
+
+	return openapi.UpdateOperatorAccount200JSONResponse(openapi.Account{Name: account.Name}), nil
+}
+
 // // GetOperator ...
 // func (a *ApiHandlers) GetOperator(ctx context.Context, req openapi.GetOperatorRequestObject) (openapi.GetOperatorResponseObject, error) {
 // 	operator, err := a.operators.GetOperator(ctx, req.OperatorId)

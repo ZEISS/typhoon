@@ -266,6 +266,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Account"
+
+    put:
+      summary: Updates an account by ID
+      operationId: updateOperatorAccount
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateAccount"
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+
     delete:
       summary: Deletes an account by ID
       operationId: deleteOperatorAccount
@@ -1034,6 +1051,23 @@ components:
                 type: string
               description:
                 type: string
+
+    # Body for updating an account
+    UpdateAccount:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              claims:
+                $ref: "#/components/schemas/JWTAccountClaims"
+
     CreateOperatorAccountUser:
       content:
         application/json:
@@ -1369,6 +1403,39 @@ components:
           format: date-time
           description: Creation date and time
           example: "2021-01-30T08:30:00Z"
+
+    JWTInfo:
+      type: object
+      properties:
+        description:
+          type: string
+        info_url:
+          type: string
+
+    JWTExport:
+      type: object
+      properties:
+        name:
+          type: string
+        subject:
+          type: string
+        type:
+          type: integer
+        response_type:
+          type: string
+        account_token_position:
+          type: integer
+          x-go-type: "uint"
+        info:
+          $ref: "#/components/schemas/JWTInfo"
+
+    JWTAccountClaims:
+      type: object
+      properties:
+        exports:
+          type: array
+          items:
+            $ref: "#/components/schemas/JWTExport"
 
     Version:
       type: object

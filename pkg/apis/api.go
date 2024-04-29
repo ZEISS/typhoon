@@ -75,6 +75,11 @@ func (u *Unimplemented) GetOperatorAccountToken(ctx context.Context, request Get
 	return nil, errors.New("not implemented")
 }
 
+// UpdateOperatorAccount ...
+func (u *Unimplemented) UpdateOperatorAccount(ctx context.Context, request UpdateOperatorAccountRequestObject) (UpdateOperatorAccountResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
 // ListOperatorAccountSigningKeys ...
 func (u *Unimplemented) ListOperatorAccountSigningKeys(ctx context.Context, request ListOperatorAccountSigningKeysRequestObject) (ListOperatorAccountSigningKeysResponseObject, error) {
 	return nil, errors.New("not implemented")

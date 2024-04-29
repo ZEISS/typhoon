@@ -17,6 +17,8 @@
 
 # Output of the go coverage ctool, specifically when used with LiteIDE
 *.out
+*.creds
+*.jwt
 
 # Dependency directories (remove the comment below to include it)
 # vendor/

@@ -5,12 +5,21 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/zeiss/typhoon/internal/api/models"
+	"gorm.io/gorm"
 )
 
 // GetAccount ...
 func (db *DB) GetAccount(ctx context.Context, id uuid.UUID) (*models.Account, error) {
 	account := &models.Account{}
-	if err := db.conn.Where("id = ?", id).Preload("SigningKeys").First(account).Error; err != nil {
+	err := db.conn.
+		Where("id = ?", id).
+		Preload("Token").
+		Preload("Operator").
+		Preload("Operator.Token").
+		Preload("Operator.SigningKeys").
+		Preload("SigningKeys").
+		First(account).Error
+	if err != nil {
 		return nil, err
 	}
 
@@ -24,7 +33,7 @@ func (db *DB) CreateAccount(ctx context.Context, account *models.Account) error 
 
 // UpdateAccount ...
 func (db *DB) UpdateAccount(ctx context.Context, account *models.Account) error {
-	return db.conn.WithContext(ctx).Save(account).Error
+	return db.conn.Session(&gorm.Session{FullSaveAssociations: true}).WithContext(ctx).Updates(account).Error
 }
 
 // ListAccounts ...

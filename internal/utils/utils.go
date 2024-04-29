@@ -16,3 +16,12 @@ func PtrUUID(u uuid.UUID) *uuid.UUID {
 func StrPtr(s string) *string {
 	return &s
 }
+
+// PtrStr returns a pointer to a string.
+func PtrStr(s *string) string {
+	if s == nil {
+		return ""
+	}
+
+	return *s
+}

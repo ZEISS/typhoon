@@ -123,6 +123,11 @@ type ClientInterface interface {
 	// GetOperatorAccount request
 	GetOperatorAccount(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// UpdateOperatorAccountWithBody request with any body
+	UpdateOperatorAccountWithBody(ctx context.Context, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateOperatorAccount(ctx context.Context, operatorId OperatorId, accountId AccountId, body UpdateOperatorAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListOperatorAccountSigningKeys request
 	ListOperatorAccountSigningKeys(ctx context.Context, operatorId OperatorId, accountId AccountId, params *ListOperatorAccountSigningKeysParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -378,6 +383,30 @@ func (c *Client) DeleteOperatorAccount(ctx context.Context, operatorId OperatorI
 
 func (c *Client) GetOperatorAccount(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetOperatorAccountRequest(c.Server, operatorId, accountId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateOperatorAccountWithBody(ctx context.Context, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateOperatorAccountRequestWithBody(c.Server, operatorId, accountId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateOperatorAccount(ctx context.Context, operatorId OperatorId, accountId AccountId, body UpdateOperatorAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateOperatorAccountRequest(c.Server, operatorId, accountId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1321,6 +1350,60 @@ func NewGetOperatorAccountRequest(server string, operatorId OperatorId, accountI
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewUpdateOperatorAccountRequest calls the generic UpdateOperatorAccount builder with application/json body
+func NewUpdateOperatorAccountRequest(server string, operatorId OperatorId, accountId AccountId, body UpdateOperatorAccountJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateOperatorAccountRequestWithBody(server, operatorId, accountId, "application/json", bodyReader)
+}
+
+// NewUpdateOperatorAccountRequestWithBody generates requests for UpdateOperatorAccount with any type of body
+func NewUpdateOperatorAccountRequestWithBody(server string, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/operators/%s/accounts/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -3073,6 +3156,11 @@ type ClientWithResponsesInterface interface {
 	// GetOperatorAccountWithResponse request
 	GetOperatorAccountWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*GetOperatorAccountResponse, error)
 
+	// UpdateOperatorAccountWithBodyWithResponse request with any body
+	UpdateOperatorAccountWithBodyWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateOperatorAccountResponse, error)
+
+	UpdateOperatorAccountWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, body UpdateOperatorAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateOperatorAccountResponse, error)
+
 	// ListOperatorAccountSigningKeysWithResponse request
 	ListOperatorAccountSigningKeysWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, params *ListOperatorAccountSigningKeysParams, reqEditors ...RequestEditorFn) (*ListOperatorAccountSigningKeysResponse, error)
 
@@ -3394,6 +3482,28 @@ func (r GetOperatorAccountResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetOperatorAccountResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateOperatorAccountResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Account
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateOperatorAccountResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateOperatorAccountResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4288,6 +4398,23 @@ func (c *ClientWithResponses) GetOperatorAccountWithResponse(ctx context.Context
 	return ParseGetOperatorAccountResponse(rsp)
 }
 
+// UpdateOperatorAccountWithBodyWithResponse request with arbitrary body returning *UpdateOperatorAccountResponse
+func (c *ClientWithResponses) UpdateOperatorAccountWithBodyWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateOperatorAccountResponse, error) {
+	rsp, err := c.UpdateOperatorAccountWithBody(ctx, operatorId, accountId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateOperatorAccountResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateOperatorAccountWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, body UpdateOperatorAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateOperatorAccountResponse, error) {
+	rsp, err := c.UpdateOperatorAccount(ctx, operatorId, accountId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateOperatorAccountResponse(rsp)
+}
+
 // ListOperatorAccountSigningKeysWithResponse request returning *ListOperatorAccountSigningKeysResponse
 func (c *ClientWithResponses) ListOperatorAccountSigningKeysWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, params *ListOperatorAccountSigningKeysParams, reqEditors ...RequestEditorFn) (*ListOperatorAccountSigningKeysResponse, error) {
 	rsp, err := c.ListOperatorAccountSigningKeys(ctx, operatorId, accountId, params, reqEditors...)
@@ -4873,6 +5000,32 @@ func ParseGetOperatorAccountResponse(rsp *http.Response) (*GetOperatorAccountRes
 	}
 
 	response := &GetOperatorAccountResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Account
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateOperatorAccountResponse parses an HTTP response from a UpdateOperatorAccountWithResponse call
+func ParseUpdateOperatorAccountResponse(rsp *http.Response) (*UpdateOperatorAccountResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateOperatorAccountResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
