@@ -13,9 +13,14 @@ type System struct {
 	Name        string    `json:"name" gorm:"unique"`
 	Description string    `json:"description"`
 
-	// Operator is the operator that the system belongs to.
+	// Operator is the operator this is associated with this system to operate.
 	Operator   Operator   `json:"operator" gorm:"foreignKey:OperatorID"`
 	OperatorID *uuid.UUID `json:"operator_id"`
+
+	// SystemAccount is the account used to control the system.
+	// The system account needs to be signed by the operator.
+	SystemAccount   Account    `json:"system_account" gorm:"foreignKey:SystemAccountID"`
+	SystemAccountID *uuid.UUID `json:"system_account_id"`
 
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
