@@ -2,29 +2,42 @@ package cmd
 
 import (
 	"context"
-	"log"
 	"strings"
 
+	"github.com/zeiss/typhoon/internal/accounts/adapters"
+	"github.com/zeiss/typhoon/internal/accounts/controllers"
+	"github.com/zeiss/typhoon/internal/accounts/models"
+
 	"github.com/katallaxie/pkg/server"
+	"github.com/kelseyhightower/envconfig"
 	"github.com/nats-io/nats.go"
 	"github.com/spf13/cobra"
 )
 
+var cfg = New()
+
 func init() {
-	Root.PersistentFlags().StringVar(&cfg.Flags.Addr, "addr", ":8080", "addr")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Database, "db-database", cfg.Flags.DB.Database, "Database name")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Username, "db-username", cfg.Flags.DB.Username, "Database user")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Password, "db-password", cfg.Flags.DB.Password, "Database password")
 	Root.PersistentFlags().IntVar(&cfg.Flags.DB.Port, "db-port", cfg.Flags.DB.Port, "Database port")
-	Root.PersistentFlags().StringVar(&cfg.Flags.Nats.Credentials, "credentials", cfg.Flags.Nats.Credentials, "credentials file")
-	Root.PersistentFlags().StringVar(&cfg.Flags.Nats.Url, "url", cfg.Flags.Nats.Url, "url")
+	Root.PersistentFlags().StringVar(&cfg.Flags.Nats.Credentials, "nats-credentials", cfg.Flags.Nats.Credentials, "credentials file")
+	Root.PersistentFlags().StringVar(&cfg.Flags.Nats.Url, "nats-url", cfg.Flags.Nats.Url, "url")
 
 	Root.SilenceUsage = true
 }
 
 var Root = &cobra.Command{
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		err := envconfig.Process("", cfg.Flags)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		srv := NewWebSrv(cfg)
+		srv := NewAccountSrv(cfg)
 
 		s, _ := server.WithContext(cmd.Context())
 		s.Listen(srv, false)
@@ -33,36 +46,67 @@ var Root = &cobra.Command{
 	},
 }
 
-var _ server.Listener = (*AccountServ)(nil)
+var _ server.Listener = (*AccountSrv)(nil)
 
-// AccountServ is the server that implements the Noop interface.
-type AccountServ struct {
+// AccountSrv is the server that implements the Noop interface.
+type AccountSrv struct {
 	cfg *Config
 }
 
-// NewWebSrv returns a new instance of AccountServ.
-func NewWebSrv(cfg *Config) *AccountServ {
-	return &AccountServ{cfg}
+// NewAccountSrv returns a new instance of AccountServ.
+func NewAccountSrv(cfg *Config) *AccountSrv {
+	return &AccountSrv{cfg}
 }
 
 // Start starts the server.
-func (s *AccountServ) Start(ctx context.Context, ready server.ReadyFunc, run server.RunFunc) func() error {
+func (s *AccountSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.RunFunc) func() error {
 	return func() error {
+		db := adapters.NewDB(nil)
+		ac := controllers.NewAccountsController(db)
+		lh := adapters.NewAccountLookupRequestHandler(ac)
+
 		nc, err := nats.Connect(cfg.Flags.Nats.Url, nats.UserCredentials(cfg.Flags.Nats.Credentials))
 		if err != nil {
 			return err
 		}
 
-		sub, err := nc.Subscribe("$SYS.REQ.ACCOUNT.*.CLAIMS.LOOKUP", func(msg *nats.Msg) {
-			accountId := strings.TrimSuffix(strings.TrimPrefix(msg.Subject, "$SYS.REQ.ACCOUNT."), ".CLAIMS.LOOKUP")
-			log.Println("account lookup", "accountId", accountId)
-		})
+		sub, err := nc.SubscribeSync("$SYS.REQ.ACCOUNT.*.CLAIMS.LOOKUP")
 		if err != nil {
 			return err
 		}
 
-		<-ctx.Done()
+		for {
+			select {
+			case <-ctx.Done():
+				return sub.Unsubscribe()
+			default:
+			}
 
-		return sub.Unsubscribe()
+			msg, err := sub.NextMsgWithContext(ctx)
+			if err != nil {
+				return err
+			}
+
+			err = msg.InProgress()
+			if err != nil {
+				return err
+			}
+
+			accountId := strings.TrimSuffix(strings.TrimPrefix(msg.Subject, "$SYS.REQ.ACCOUNT."), ".CLAIMS.LOOKUP")
+			accountJWTToken, err := lh.HandleLookupRequest(ctx, models.AccountPublicKey(accountId))
+			if err != nil {
+				return err
+			}
+
+			err = msg.Respond([]byte(accountJWTToken))
+			if err != nil {
+				return err
+			}
+
+			err = msg.Ack(nats.Context(ctx))
+			if err != nil {
+				return err
+			}
+		}
 	}
 }

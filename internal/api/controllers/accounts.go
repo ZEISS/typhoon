@@ -9,7 +9,6 @@ import (
 	"github.com/nats-io/nkeys"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/api/ports"
-	"github.com/zeiss/typhoon/internal/utils"
 
 	openapi "github.com/zeiss/typhoon/pkg/apis"
 )
@@ -133,24 +132,25 @@ func (c *AccountsController) UpdateAccount(ctx context.Context, req UpdateOperat
 	if err != nil {
 		return nil, err
 	}
+	ac.Exports = make([]*jwt.Export, 0)
 
-	if len(*req.Body.Claims.Exports) > 0 {
-		for _, e := range *req.Body.Claims.Exports {
-			export := &jwt.Export{
-				Name:                 utils.PtrStr(e.Name),
-				Subject:              jwt.Subject(utils.PtrStr(e.Subject)),
-				Type:                 jwt.ExportType(*e.Type),
-				ResponseType:         jwt.ResponseType(*e.ResponseType),
-				AccountTokenPosition: *e.AccountTokenPosition,
-				Info: jwt.Info{
-					Description: utils.PtrStr(e.Info.Description),
-					InfoURL:     utils.PtrStr(e.Info.InfoUrl),
-				},
-			}
+	// if len(*req.Body.Claims.Exports) > 0 {
+	// 	for _, e := range *req.Body.Claims.Exports {
+	// 		export := &jwt.Export{
+	// 			Name:                 utils.PtrStr(e.Name),
+	// 			Subject:              jwt.Subject(utils.PtrStr(e.Subject)),
+	// 			Type:                 jwt.ExportType(*e.Type),
+	// 			ResponseType:         jwt.ResponseType(*e.ResponseType),
+	// 			AccountTokenPosition: *e.AccountTokenPosition,
+	// 			Info: jwt.Info{
+	// 				Description: utils.PtrStr(e.Info.Description),
+	// 				InfoURL:     utils.PtrStr(e.Info.InfoUrl),
+	// 			},
+	// 		}
 
-			ac.Exports.Add(export)
-		}
-	}
+	// 		ac.Exports.Add(export)
+	// 	}
+	// }
 
 	token, err := ac.Encode(osk)
 	if err != nil {
