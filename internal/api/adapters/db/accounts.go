@@ -18,6 +18,7 @@ func (db *DB) GetAccount(ctx context.Context, id uuid.UUID) (*models.Account, er
 		Preload("Operator.Token").
 		Preload("Operator.SigningKeys").
 		Preload("SigningKeys").
+		Preload("Users").
 		First(account).Error
 	if err != nil {
 		return nil, err

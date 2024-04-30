@@ -69,6 +69,16 @@ func (a *ApiHandlers) DeleteSystem(ctx context.Context, req openapi.DeleteSystem
 	return openapi.DeleteSystem204Response(openapi.DeleteSystem204Response{}), nil
 }
 
+// DeleteOperatorAccountToken ...
+func (a *ApiHandlers) DeleteOperatorAccountToken(ctx context.Context, req openapi.DeleteOperatorAccountTokenRequestObject) (openapi.DeleteOperatorAccountTokenResponseObject, error) {
+	err := a.accounts.DeleteToken(ctx, req.AccountId)
+	if err != nil {
+		return nil, err
+	}
+
+	return openapi.DeleteOperatorAccountToken204Response(openapi.DeleteOperatorAccountToken204Response{}), nil
+}
+
 // ListSystems ...
 func (a *ApiHandlers) ListSystems(ctx context.Context, req openapi.ListSystemsRequestObject) (openapi.ListSystemsResponseObject, error) {
 	pagination := models.Pagination[models.System]{}

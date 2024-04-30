@@ -27,6 +27,9 @@ type Account struct {
 	// Accounts is the list of accounts that the operator has.
 	SigningKeys []NKey `json:"signing_keys" gorm:"many2many:account_signing_keys;foreignKey:ID;joinForeignKey:AccountID;joinReferences:SigningKeyID"`
 
+	// Users is the list of users that the account has.
+	Users []User `json:"users" gorm:"foreignKey:AccountID"`
+
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`

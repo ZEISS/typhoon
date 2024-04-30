@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/nats-io/jwt/v2"
@@ -164,4 +165,48 @@ func (c *AccountsController) UpdateAccount(ctx context.Context, req UpdateOperat
 	}
 
 	return account, nil
+}
+
+// DeleteToken ...
+func (c *AccountsController) DeleteToken(ctx context.Context, accountID uuid.UUID) error {
+	account, err := c.db.GetAccount(ctx, accountID)
+	if err != nil {
+		return err
+	}
+
+	operator, err := c.db.GetOperator(ctx, account.OperatorID)
+	if err != nil {
+		return err
+	}
+
+	osk, err := nkeys.FromSeed(operator.SigningKeys[0].Seed)
+	if err != nil {
+		return err
+	}
+
+	ac, err := jwt.DecodeAccountClaims(account.Token.Token)
+	if err != nil {
+		return err
+	}
+
+	ac.Expires = time.Now().Add(time.Minute).Unix()
+
+	for _, user := range account.Users {
+		if ac.Revocations[user.KeyID] == 0 {
+			ac.Revoke(user.KeyID)
+		}
+	}
+
+	token, err := ac.Encode(osk)
+	if err != nil {
+		return err
+	}
+	account.Token.Token = token
+
+	err = c.db.UpdateAccount(ctx, account)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
