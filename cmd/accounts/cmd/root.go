@@ -7,6 +7,8 @@ import (
 	"github.com/zeiss/typhoon/internal/accounts/adapters"
 	"github.com/zeiss/typhoon/internal/accounts/controllers"
 	"github.com/zeiss/typhoon/internal/accounts/models"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 
 	"github.com/katallaxie/pkg/server"
 	"github.com/kelseyhightower/envconfig"
@@ -61,7 +63,13 @@ func NewAccountSrv(cfg *Config) *AccountSrv {
 // Start starts the server.
 func (s *AccountSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.RunFunc) func() error {
 	return func() error {
-		db := adapters.NewDB(nil)
+		dsn := "host=localhost user=example password=example dbname=example port=5432 sslmode=disable"
+		conn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		if err != nil {
+			return err
+		}
+
+		db := adapters.NewDB(conn)
 		ac := controllers.NewAccountsController(db)
 		lh := adapters.NewAccountLookupRequestHandler(ac)
 
@@ -76,18 +84,7 @@ func (s *AccountSrv) Start(ctx context.Context, ready server.ReadyFunc, run serv
 		}
 
 		for {
-			select {
-			case <-ctx.Done():
-				return sub.Unsubscribe()
-			default:
-			}
-
 			msg, err := sub.NextMsgWithContext(ctx)
-			if err != nil {
-				return err
-			}
-
-			err = msg.InProgress()
 			if err != nil {
 				return err
 			}
@@ -99,11 +96,6 @@ func (s *AccountSrv) Start(ctx context.Context, ready server.ReadyFunc, run serv
 			}
 
 			err = msg.Respond([]byte(accountJWTToken))
-			if err != nil {
-				return err
-			}
-
-			err = msg.Ack(nats.Context(ctx))
 			if err != nil {
 				return err
 			}

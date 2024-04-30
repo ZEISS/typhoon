@@ -5,6 +5,7 @@ import (
 
 	"github.com/zeiss/typhoon/internal/accounts/models"
 	"github.com/zeiss/typhoon/internal/accounts/ports"
+	api "github.com/zeiss/typhoon/internal/api/models"
 
 	"gorm.io/gorm"
 )
@@ -22,6 +23,12 @@ func NewDB(conn *gorm.DB) *DB {
 }
 
 // GetToken ...
-func (db *DB) GetToken(ctx context.Context, account models.AccountPublicKey) (models.AccountToken, error) {
-	return models.AccountToken(""), nil
+func (db *DB) GetToken(ctx context.Context, pubKey models.AccountPublicKey) (models.AccountToken, error) {
+	var token api.Token
+
+	if err := db.conn.Where("id = ?", pubKey).First(&token).Error; err != nil {
+		return models.AccountToken(""), err
+	}
+
+	return models.AccountToken(token.Token), nil
 }
