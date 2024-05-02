@@ -1,19 +1,12 @@
 package models
 
 import (
-	"time"
-
-	"github.com/google/uuid"
-	"gorm.io/gorm"
+	authz "github.com/zeiss/fiber-authz"
 )
 
 // Team ...
 type Team struct {
-	ID          uuid.UUID `json:"id" gorm:"type:uuid;default:gen_random_uuid()"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
-	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
+	*authz.Team
+	// The systems that the teams have access to.
+	Systems []*System `gorm:"many2many:team_systems;"`
 }

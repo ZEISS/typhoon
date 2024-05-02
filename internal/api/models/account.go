@@ -30,6 +30,9 @@ type Account struct {
 	// Users is the list of users that the account has.
 	Users []User `json:"users" gorm:"foreignKey:AccountID"`
 
+	// Owner is the owner of the account.
+	Owner Ownership `json:"owner" gorm:"polymorphic:Ownable;polymorphicValue:account;"`
+
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`

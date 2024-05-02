@@ -7,10 +7,14 @@ import (
 	"gorm.io/gorm"
 )
 
-// Operator ...
+// Operator is the operator that is used to manage the systems.
 type Operator struct {
-	ID   uuid.UUID `json:"id" gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
-	Name string    `json:"name"`
+	// ID is the unique identifier for the operator.
+	ID uuid.UUID `json:"id" gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
+	// Name is the name of the operator.
+	Name string `json:"name" validate:"required,min=3,max=128"`
+	// Description is the description of the operator.
+	Description string `json:"description" validate:"max=1024"`
 
 	// Key is the issuer key identifier.
 	Key   NKey   `json:"key"`
@@ -26,7 +30,13 @@ type Operator struct {
 	// Accounts is the list of accounts that the operator has.
 	SigningKeys []NKey `json:"signing_keys" gorm:"many2many:operator_signing_keys;foreignKey:ID;joinForeignKey:OperatorID;joinReferences:SigningKeyID"`
 
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
+	// Owner is the owner of the operator.
+	Owner Ownership `json:"owner" gorm:"polymorphic:Ownable;polymorphicValue:operator;"`
+
+	// CreatedAt is the time the operator was created.
+	CreatedAt time.Time `json:"created_at"`
+	// UpdatedAt is the time the operator was updated.
+	UpdatedAt time.Time `json:"updated_at"`
+	// DeletedAt is the time the operator was deleted.
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
 }

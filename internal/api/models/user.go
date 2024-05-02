@@ -24,6 +24,9 @@ type User struct {
 	Token   Token  `json:"token" gorm:"foreignKey:TokenID"`
 	TokenID string `json:"token_id"`
 
+	// Owner is the owner of the user.
+	Owner Ownership `json:"owner" gorm:"polymorphic:Ownable;polymorphicValue:user;"`
+
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
