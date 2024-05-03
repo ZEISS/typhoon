@@ -112,6 +112,9 @@ type ServerInterface interface {
 	// Creates a new team
 	// (POST /teams)
 	CreateTeam(c *fiber.Ctx) error
+	// Deletes a team by ID
+	// (DELETE /teams/{teamId})
+	DeleteTeam(c *fiber.Ctx, teamId TeamId) error
 	// Gets a team by ID
 	// (GET /teams/{teamId})
 	GetTeam(c *fiber.Ctx, teamId TeamId) error
@@ -201,8 +204,6 @@ func (siw *ServerInterfaceWrapper) ListOperator(c *fiber.Ctx) error {
 // CreateOperator operation middleware
 func (siw *ServerInterfaceWrapper) CreateOperator(c *fiber.Ctx) error {
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -222,8 +223,6 @@ func (siw *ServerInterfaceWrapper) DeleteOperator(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
 	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
@@ -245,8 +244,6 @@ func (siw *ServerInterfaceWrapper) GetOperator(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -266,8 +263,6 @@ func (siw *ServerInterfaceWrapper) UpdateOperator(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
 	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
@@ -330,8 +325,6 @@ func (siw *ServerInterfaceWrapper) CreateOperatorAccount(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -359,8 +352,6 @@ func (siw *ServerInterfaceWrapper) DeleteOperatorAccount(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
 	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
@@ -390,8 +381,6 @@ func (siw *ServerInterfaceWrapper) GetOperatorAccount(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -419,8 +408,6 @@ func (siw *ServerInterfaceWrapper) UpdateOperatorAccount(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
 	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
@@ -499,8 +486,6 @@ func (siw *ServerInterfaceWrapper) DeleteOperatorAccountToken(c *fiber.Ctx) erro
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -528,8 +513,6 @@ func (siw *ServerInterfaceWrapper) GetOperatorAccountToken(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
 	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
@@ -608,8 +591,6 @@ func (siw *ServerInterfaceWrapper) CreateOperatorAccountUser(c *fiber.Ctx) error
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -645,8 +626,6 @@ func (siw *ServerInterfaceWrapper) GetOperatorAccountUser(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
 	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
@@ -684,8 +663,6 @@ func (siw *ServerInterfaceWrapper) GetOperatorAccountUserCredentials(c *fiber.Ct
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -721,8 +698,6 @@ func (siw *ServerInterfaceWrapper) GetOperatorAccountUserToken(c *fiber.Ctx) err
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
 	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
@@ -785,8 +760,6 @@ func (siw *ServerInterfaceWrapper) DeleteOperatorToken(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -806,8 +779,6 @@ func (siw *ServerInterfaceWrapper) GetOperatorToken(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
 	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
@@ -829,8 +800,6 @@ func (siw *ServerInterfaceWrapper) UpdateOperatorToken(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -841,8 +810,6 @@ func (siw *ServerInterfaceWrapper) UpdateOperatorToken(c *fiber.Ctx) error {
 // ListSystems operation middleware
 func (siw *ServerInterfaceWrapper) ListSystems(c *fiber.Ctx) error {
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -852,8 +819,6 @@ func (siw *ServerInterfaceWrapper) ListSystems(c *fiber.Ctx) error {
 
 // CreateSystem operation middleware
 func (siw *ServerInterfaceWrapper) CreateSystem(c *fiber.Ctx) error {
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
@@ -875,8 +840,6 @@ func (siw *ServerInterfaceWrapper) DeleteSystem(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter systemId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -896,8 +859,6 @@ func (siw *ServerInterfaceWrapper) GetSystem(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter systemId: %w", err).Error())
 	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
@@ -919,8 +880,6 @@ func (siw *ServerInterfaceWrapper) UpdateSystem(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter systemId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -940,8 +899,6 @@ func (siw *ServerInterfaceWrapper) DeleteSystemOperator(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter systemId: %w", err).Error())
 	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
@@ -963,8 +920,6 @@ func (siw *ServerInterfaceWrapper) GetSystemOperator(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter systemId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -985,8 +940,6 @@ func (siw *ServerInterfaceWrapper) UpdateSystemOperator(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter systemId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -1000,6 +953,8 @@ func (siw *ServerInterfaceWrapper) ListTeams(c *fiber.Ctx) error {
 	var err error
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{"read:teams"})
+
+	c.Context().SetUserValue(ApiKeyScopes, []string{"read"})
 
 	// Parameter object where we will unmarshal all parameters from the context
 	var params ListTeamsParams
@@ -1030,13 +985,31 @@ func (siw *ServerInterfaceWrapper) ListTeams(c *fiber.Ctx) error {
 // CreateTeam operation middleware
 func (siw *ServerInterfaceWrapper) CreateTeam(c *fiber.Ctx) error {
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.CreateTeam(c)
+}
+
+// DeleteTeam operation middleware
+func (siw *ServerInterfaceWrapper) DeleteTeam(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "teamId" -------------
+	var teamId TeamId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{"delete"})
+
+	c.Context().SetUserValue(ApiKeyScopes, []string{"delete"})
+
+	return siw.Handler.DeleteTeam(c, teamId)
 }
 
 // GetTeam operation middleware
@@ -1052,11 +1025,9 @@ func (siw *ServerInterfaceWrapper) GetTeam(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
+	c.Context().SetUserValue(BearerAuthScopes, []string{"read"})
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{"read"})
 
 	return siw.Handler.GetTeam(c, teamId)
 }
@@ -1122,8 +1093,6 @@ func (siw *ServerInterfaceWrapper) GetAccount(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
 	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
@@ -1202,8 +1171,6 @@ func (siw *ServerInterfaceWrapper) CreateGroup(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -1239,8 +1206,6 @@ func (siw *ServerInterfaceWrapper) DeleteSigningKeyGroup(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter groupId: %w", err).Error())
 	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
@@ -1278,8 +1243,6 @@ func (siw *ServerInterfaceWrapper) GetGroup(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter groupId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -1315,8 +1278,6 @@ func (siw *ServerInterfaceWrapper) UpdateGroup(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter groupId: %w", err).Error())
 	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
@@ -1395,8 +1356,6 @@ func (siw *ServerInterfaceWrapper) CreateUser(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -1432,8 +1391,6 @@ func (siw *ServerInterfaceWrapper) DeleteTeamAccountUser(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
 	}
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
@@ -1471,8 +1428,6 @@ func (siw *ServerInterfaceWrapper) GetUser(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -1509,8 +1464,6 @@ func (siw *ServerInterfaceWrapper) UpdateUser(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
-
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
@@ -1520,8 +1473,6 @@ func (siw *ServerInterfaceWrapper) UpdateUser(c *fiber.Ctx) error {
 
 // Version operation middleware
 func (siw *ServerInterfaceWrapper) Version(c *fiber.Ctx) error {
-
-	c.Context().SetUserValue(CookieAuthScopes, []string{})
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
@@ -1615,6 +1566,8 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Post(options.BaseURL+"/teams", wrapper.CreateTeam)
 
+	router.Delete(options.BaseURL+"/teams/:teamId", wrapper.DeleteTeam)
+
 	router.Get(options.BaseURL+"/teams/:teamId", wrapper.GetTeam)
 
 	router.Get(options.BaseURL+"/teams/:teamId/accounts", wrapper.ListTeamAccounts)
@@ -1646,6 +1599,8 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 }
 
 type BadRequestJSONResponse Error
+
+type DuplicateJSONResponse Error
 
 type InternalErrorJSONResponse Error
 
@@ -2327,6 +2282,94 @@ func (response CreateTeam201JSONResponse) VisitCreateTeamResponse(ctx *fiber.Ctx
 	return ctx.JSON(&response)
 }
 
+type CreateTeam400JSONResponse struct{ BadRequestJSONResponse }
+
+func (response CreateTeam400JSONResponse) VisitCreateTeamResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(400)
+
+	return ctx.JSON(&response)
+}
+
+type CreateTeam404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response CreateTeam404JSONResponse) VisitCreateTeamResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(404)
+
+	return ctx.JSON(&response)
+}
+
+type CreateTeam409JSONResponse struct{ DuplicateJSONResponse }
+
+func (response CreateTeam409JSONResponse) VisitCreateTeamResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(409)
+
+	return ctx.JSON(&response)
+}
+
+type CreateTeam500JSONResponse struct{ InternalErrorJSONResponse }
+
+func (response CreateTeam500JSONResponse) VisitCreateTeamResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(500)
+
+	return ctx.JSON(&response)
+}
+
+type CreateTeam501JSONResponse struct{ UnimplementedJSONResponse }
+
+func (response CreateTeam501JSONResponse) VisitCreateTeamResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(501)
+
+	return ctx.JSON(&response)
+}
+
+type DeleteTeamRequestObject struct {
+	TeamId TeamId `json:"teamId"`
+}
+
+type DeleteTeamResponseObject interface {
+	VisitDeleteTeamResponse(ctx *fiber.Ctx) error
+}
+
+type DeleteTeam204Response struct {
+}
+
+func (response DeleteTeam204Response) VisitDeleteTeamResponse(ctx *fiber.Ctx) error {
+	ctx.Status(204)
+	return nil
+}
+
+type DeleteTeam401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response DeleteTeam401JSONResponse) VisitDeleteTeamResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(401)
+
+	return ctx.JSON(&response)
+}
+
+type DeleteTeam500JSONResponse struct{ InternalErrorJSONResponse }
+
+func (response DeleteTeam500JSONResponse) VisitDeleteTeamResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(500)
+
+	return ctx.JSON(&response)
+}
+
+type DeleteTeam501JSONResponse struct{ UnimplementedJSONResponse }
+
+func (response DeleteTeam501JSONResponse) VisitDeleteTeamResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(501)
+
+	return ctx.JSON(&response)
+}
+
 type GetTeamRequestObject struct {
 	TeamId TeamId `json:"teamId"`
 }
@@ -2340,6 +2383,42 @@ type GetTeam200JSONResponse Team
 func (response GetTeam200JSONResponse) VisitGetTeamResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
 	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type GetTeam401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetTeam401JSONResponse) VisitGetTeamResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(401)
+
+	return ctx.JSON(&response)
+}
+
+type GetTeam404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetTeam404JSONResponse) VisitGetTeamResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(404)
+
+	return ctx.JSON(&response)
+}
+
+type GetTeam500JSONResponse struct{ InternalErrorJSONResponse }
+
+func (response GetTeam500JSONResponse) VisitGetTeamResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(500)
+
+	return ctx.JSON(&response)
+}
+
+type GetTeam501JSONResponse struct{ UnimplementedJSONResponse }
+
+func (response GetTeam501JSONResponse) VisitGetTeamResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(501)
 
 	return ctx.JSON(&response)
 }
@@ -2601,6 +2680,24 @@ func (response Version200JSONResponse) VisitVersionResponse(ctx *fiber.Ctx) erro
 	return ctx.JSON(&response)
 }
 
+type Version500JSONResponse struct{ InternalErrorJSONResponse }
+
+func (response Version500JSONResponse) VisitVersionResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(500)
+
+	return ctx.JSON(&response)
+}
+
+type Version501JSONResponse struct{ UnimplementedJSONResponse }
+
+func (response Version501JSONResponse) VisitVersionResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(501)
+
+	return ctx.JSON(&response)
+}
+
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 	// List all operators
@@ -2699,6 +2796,9 @@ type StrictServerInterface interface {
 	// Creates a new team
 	// (POST /teams)
 	CreateTeam(ctx context.Context, request CreateTeamRequestObject) (CreateTeamResponseObject, error)
+	// Deletes a team by ID
+	// (DELETE /teams/{teamId})
+	DeleteTeam(ctx context.Context, request DeleteTeamRequestObject) (DeleteTeamResponseObject, error)
 	// Gets a team by ID
 	// (GET /teams/{teamId})
 	GetTeam(ctx context.Context, request GetTeamRequestObject) (GetTeamResponseObject, error)
@@ -3676,6 +3776,33 @@ func (sh *strictHandler) CreateTeam(ctx *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	} else if validResponse, ok := response.(CreateTeamResponseObject); ok {
 		if err := validResponse.VisitCreateTeamResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// DeleteTeam operation middleware
+func (sh *strictHandler) DeleteTeam(ctx *fiber.Ctx, teamId TeamId) error {
+	var request DeleteTeamRequestObject
+
+	request.TeamId = teamId
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteTeam(ctx.UserContext(), request.(DeleteTeamRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteTeam")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(DeleteTeamResponseObject); ok {
+		if err := validResponse.VisitDeleteTeamResponse(ctx); err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 	} else if response != nil {

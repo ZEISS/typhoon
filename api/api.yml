@@ -48,6 +48,9 @@ paths:
       operationId: version
       tags:
         - Server
+      security:
+        - bearerAuth: [] # no scopes required
+        - apiKey: [] # no scopes required
       responses:
         "200":
           description: Successful
@@ -55,7 +58,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Version"
-
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "501":
+          $ref: "#/components/responses/Unimplemented"
   /operators:
     get:
       summary: List all operators
@@ -442,6 +448,7 @@ paths:
         - $ref: "#/components/parameters/limitParam"
       security:
         - bearerAuth: ["read:teams"]
+        - apiKey: ["read"]
       responses:
         "200":
           description: Successfull response
@@ -450,12 +457,7 @@ paths:
               schema:
                 allOf:
                   - $ref: "#/components/schemas/PaginatedResult"
-                  - type: object
-                    properties:
-                      results:
-                        type: array
-                        items:
-                          $ref: "#/components/schemas/Team"
+                  - $ref: "#/components/schemas/Teams"
 
     post:
       summary: Creates a new team
@@ -471,6 +473,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Team"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Duplicate"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "501":
+          $ref: "#/components/responses/Unimplemented"
 
   /teams/{teamId}:
     get:
@@ -478,6 +490,9 @@ paths:
       operationId: getTeam
       parameters:
         - $ref: "#/components/parameters/teamId"
+      security:
+        - bearerAuth: ["read"]
+        - apiKey: ["read"]
       responses:
         "200":
           description: Successful
@@ -485,6 +500,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Team"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "501":
+          $ref: "#/components/responses/Unimplemented"
+    delete:
+      summary: Deletes a team by ID
+      operationId: deleteTeam
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+      security:
+        - bearerAuth: ["delete"]
+        - apiKey: ["delete"]
+      responses:
+        "204":
+          description: Successful
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "501":
+          $ref: "#/components/responses/Unimplemented"
 
   /teams/{teamId}/accounts:
     get:
@@ -946,6 +986,12 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Error"
+    Duplicate:
+      description: The requested resource was a duplicate.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
 
   requestBodies:
     CreateSystem:
@@ -975,7 +1021,15 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Team"
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+
     CreateOperator:
       content:
         application/json:
@@ -1033,18 +1087,14 @@ components:
                 type: string
 
   securitySchemes:
-    cookieAuth:
-      type: apiKey
-      in: cookie
-      name: JSESSIONID
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
     apiKey:
-      in: header
-      name: apiKey
       type: apiKey
+      in: header
+      name: X-API-Key
 
   schemas:
     Error:
@@ -1427,7 +1477,14 @@ components:
           items:
             $ref: "#/components/schemas/Operator"
 
+    Teams:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/Team"
+
 security:
-  - cookieAuth: []
   - bearerAuth: []
   - apiKey: []

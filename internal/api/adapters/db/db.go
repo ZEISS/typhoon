@@ -9,12 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var (
-	_ ports.Users     = (*DB)(nil)
-	_ ports.Accounts  = (*DB)(nil)
-	_ ports.Operators = (*DB)(nil)
-	_ ports.Systems   = (*DB)(nil)
-)
+var _ ports.Repositories = (*DB)(nil)
 
 // DB ...
 type DB struct {

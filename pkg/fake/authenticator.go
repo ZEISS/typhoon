@@ -18,6 +18,8 @@ func NewAuthenticator() openapi3filter.AuthenticationFunc {
 
 // Authenticate is a fake implementation of the authenticator.
 func Authenticate(ctx context.Context, input *openapi3filter.AuthenticationInput) error {
+	fmt.Println(input.SecuritySchemeName)
+
 	if input.SecuritySchemeName != "apiKey" {
 		return fmt.Errorf("security scheme %s != 'apiKey'", input.SecuritySchemeName)
 	}
@@ -36,9 +38,9 @@ func Authenticate(ctx context.Context, input *openapi3filter.AuthenticationInput
 
 // GetAPIKeyFromRequest is a fake implementation of the API key extractor.
 func GetAPIKeyFromRequest(req *http.Request) (string, error) {
-	auth := req.Header.Get("Authorization")
+	key := req.Header.Get("X-API-Key")
 
-	if auth != "Bearer "+fakeAPIKey {
+	if key != fakeAPIKey {
 		return "", fmt.Errorf("invalid API key")
 	}
 

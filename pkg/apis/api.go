@@ -187,6 +187,11 @@ func (u *Unimplemented) GetTeam(ctx context.Context, request GetTeamRequestObjec
 	return nil, errors.New("not implemented")
 }
 
+// DeleteTeam ...
+func (u *Unimplemented) DeleteTeam(ctx context.Context, request DeleteTeamRequestObject) (DeleteTeamResponseObject, error) {
+	return DeleteTeam501JSONResponse(DeleteTeam501JSONResponse{UnimplementedJSONResponse(NotImplemented("Not implemented"))}), nil
+}
+
 // ListAccounts ...
 func (u *Unimplemented) ListTeamAccounts(ctx context.Context, request ListTeamAccountsRequestObject) (ListTeamAccountsResponseObject, error) {
 	return nil, errors.New("not implemented")
