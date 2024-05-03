@@ -5,9 +5,6 @@ import (
 	"errors"
 )
 
-// Unimplemented ...
-type Unimplemented struct{}
-
 var _ StrictServerInterface = (*Unimplemented)(nil)
 
 // CreateOperator ...
@@ -85,6 +82,11 @@ func (u *Unimplemented) ListOperatorAccountSigningKeys(ctx context.Context, requ
 	return nil, errors.New("not implemented")
 }
 
+// DeleteSigningKeyGroup ...
+func (u *Unimplemented) DeleteSigningKeyGroup(ctx context.Context, request DeleteSigningKeyGroupRequestObject) (DeleteSigningKeyGroupResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
 // ListOperatorAccountUsers ...
 func (u *Unimplemented) ListOperatorAccountUsers(ctx context.Context, request ListOperatorAccountUsersRequestObject) (ListOperatorAccountUsersResponseObject, error) {
 	return nil, errors.New("not implemented")
@@ -102,6 +104,11 @@ func (u *Unimplemented) GetOperatorAccountUserCredentials(ctx context.Context, r
 
 // CreateOperatorAccountUser ...
 func (u *Unimplemented) CreateOperatorAccountUser(ctx context.Context, request CreateOperatorAccountUserRequestObject) (CreateOperatorAccountUserResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
+// DeleteTeamAccountUser ...
+func (u *Unimplemented) DeleteTeamAccountUser(ctx context.Context, request DeleteTeamAccountUserRequestObject) (DeleteTeamAccountUserResponseObject, error) {
 	return nil, errors.New("not implemented")
 }
 
@@ -137,7 +144,7 @@ func (u *Unimplemented) CreateSystem(ctx context.Context, request CreateSystemRe
 
 // GetSystem ...
 func (u *Unimplemented) GetSystem(ctx context.Context, request GetSystemRequestObject) (GetSystemResponseObject, error) {
-	return nil, errors.New("not implemented")
+	return GetSystem501JSONResponse(GetOperator501JSONResponse{UnimplementedJSONResponse(NotImplemented("Not implemented"))}), nil
 }
 
 // UpdateSystem ...

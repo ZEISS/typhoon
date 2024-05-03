@@ -27,10 +27,11 @@ type System struct {
 
 	// Tags is the tags that are associated with the system.
 	Tags []*Tag `json:"tags" gorm:"polymorphic:Taggable;polymorphicValue:system;"`
-	// Owners is the owners that are associated with the system.
-	Owners []*Ownership `json:"owners" gorm:"polymorphic:Ownable;polymorphicValue:system;"`
 	// Teams is the teams that are associated with the system.
 	Teams []*Team `json:"teams" gorm:"many2many:team_systems;"`
+
+	// OwnedBy is the owner of the account. This is usually a team.
+	OwnedBy Ownership `json:"owner" gorm:"polymorphic:Ownable;polymorphicValue:account;"`
 
 	// CreatedAt is the time the system was created.
 	CreatedAt time.Time `json:"created_at"`

@@ -14,8 +14,8 @@ var _ openapi.StrictServerInterface = (*ApiHandlers)(nil)
 
 // ApiHandlers ...
 type ApiHandlers struct {
+	teams     controllers.TeamsController
 	systems   *controllers.SystemsController
-	teams     *controllers.TeamsController
 	version   *controllers.VersionController
 	operators *controllers.OperatorsController
 	accounts  *controllers.AccountsController
@@ -25,7 +25,7 @@ type ApiHandlers struct {
 }
 
 // NewApiHandlers ...
-func NewApiHandlers(systems *controllers.SystemsController, teams *controllers.TeamsController, version *controllers.VersionController, operators *controllers.OperatorsController, accounts *controllers.AccountsController, users *controllers.UsersController) *ApiHandlers {
+func NewApiHandlers(systems *controllers.SystemsController, teams controllers.TeamsController, version *controllers.VersionController, operators *controllers.OperatorsController, accounts *controllers.AccountsController, users *controllers.UsersController) *ApiHandlers {
 	return &ApiHandlers{systems: systems, teams: teams, version: version, operators: operators, accounts: accounts, users: users}
 }
 

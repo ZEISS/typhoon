@@ -3,11 +3,13 @@ package controllers
 import "github.com/zeiss/typhoon/internal/api/ports"
 
 // TeamsController ...
-type TeamsController struct {
+type TeamsController interface{}
+
+type teamsController struct {
 	db ports.Teams
 }
 
 // NewTeamsController ...
-func NewTeamsController(db ports.Teams) *TeamsController {
-	return &TeamsController{db}
+func NewTeamsController(db ports.Teams) *teamsController {
+	return &teamsController{db}
 }

@@ -8,8 +8,8 @@ import (
 	"github.com/zeiss/typhoon/internal/api/controllers"
 	"github.com/zeiss/typhoon/internal/api/services"
 	openapi "github.com/zeiss/typhoon/pkg/apis"
+	"github.com/zeiss/typhoon/pkg/fake"
 
-	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/gofiber/fiber/v2"
 	logger "github.com/gofiber/fiber/v2/middleware/logger"
 	requestid "github.com/gofiber/fiber/v2/middleware/requestid"
@@ -81,9 +81,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Use(logger.New())
 
 		validatorOptions := &middleware.Options{}
-		validatorOptions.Options.AuthenticationFunc = func(ctx context.Context, filter *openapi3filter.AuthenticationInput) error {
-			return nil
-		}
+		validatorOptions.Options.AuthenticationFunc = fake.NewAuthenticator()
 
 		app.Use(middleware.OapiRequestValidatorWithOptions(swagger, validatorOptions))
 

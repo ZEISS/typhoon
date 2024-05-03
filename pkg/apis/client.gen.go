@@ -221,6 +221,9 @@ type ClientInterface interface {
 
 	CreateGroup(ctx context.Context, teamId TeamId, accountId AccountId, body CreateGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// DeleteSigningKeyGroup request
+	DeleteSigningKeyGroup(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetGroup request
 	GetGroup(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -237,13 +240,16 @@ type ClientInterface interface {
 
 	CreateUser(ctx context.Context, teamId TeamId, accountId AccountId, body CreateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// DeleteTeamAccountUser request
+	DeleteTeamAccountUser(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetUser request
-	GetUser(ctx context.Context, teamId TeamId, accountId AccountId, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetUser(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UpdateUserWithBody request with any body
-	UpdateUserWithBody(ctx context.Context, teamId TeamId, accountId AccountId, userId openapi_types.UUID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateUserWithBody(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	UpdateUser(ctx context.Context, teamId TeamId, accountId AccountId, userId openapi_types.UUID, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateUser(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// Version request
 	Version(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -813,6 +819,18 @@ func (c *Client) CreateGroup(ctx context.Context, teamId TeamId, accountId Accou
 	return c.Client.Do(req)
 }
 
+func (c *Client) DeleteSigningKeyGroup(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteSigningKeyGroupRequest(c.Server, teamId, accountId, groupId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetGroup(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetGroupRequest(c.Server, teamId, accountId, groupId)
 	if err != nil {
@@ -885,7 +903,19 @@ func (c *Client) CreateUser(ctx context.Context, teamId TeamId, accountId Accoun
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetUser(ctx context.Context, teamId TeamId, accountId AccountId, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) DeleteTeamAccountUser(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteTeamAccountUserRequest(c.Server, teamId, accountId, userId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetUser(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetUserRequest(c.Server, teamId, accountId, userId)
 	if err != nil {
 		return nil, err
@@ -897,7 +927,7 @@ func (c *Client) GetUser(ctx context.Context, teamId TeamId, accountId AccountId
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpdateUserWithBody(ctx context.Context, teamId TeamId, accountId AccountId, userId openapi_types.UUID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) UpdateUserWithBody(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateUserRequestWithBody(c.Server, teamId, accountId, userId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -909,7 +939,7 @@ func (c *Client) UpdateUserWithBody(ctx context.Context, teamId TeamId, accountI
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpdateUser(ctx context.Context, teamId TeamId, accountId AccountId, userId openapi_types.UUID, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) UpdateUser(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateUserRequest(c.Server, teamId, accountId, userId, body)
 	if err != nil {
 		return nil, err
@@ -2702,6 +2732,54 @@ func NewCreateGroupRequestWithBody(server string, teamId TeamId, accountId Accou
 	return req, nil
 }
 
+// NewDeleteSigningKeyGroupRequest generates requests for DeleteSigningKeyGroup
+func NewDeleteSigningKeyGroupRequest(server string, teamId TeamId, accountId AccountId, groupId GroupId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam2 string
+
+	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "groupId", runtime.ParamLocationPath, groupId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/teams/%s/accounts/%s/groups/%s", pathParam0, pathParam1, pathParam2)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetGroupRequest generates requests for GetGroup
 func NewGetGroupRequest(server string, teamId TeamId, accountId AccountId, groupId GroupId) (*http.Request, error) {
 	var err error
@@ -2944,8 +3022,56 @@ func NewCreateUserRequestWithBody(server string, teamId TeamId, accountId Accoun
 	return req, nil
 }
 
+// NewDeleteTeamAccountUserRequest generates requests for DeleteTeamAccountUser
+func NewDeleteTeamAccountUserRequest(server string, teamId TeamId, accountId AccountId, userId UserId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam2 string
+
+	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "userId", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/teams/%s/accounts/%s/users/%s", pathParam0, pathParam1, pathParam2)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetUserRequest generates requests for GetUser
-func NewGetUserRequest(server string, teamId TeamId, accountId AccountId, userId openapi_types.UUID) (*http.Request, error) {
+func NewGetUserRequest(server string, teamId TeamId, accountId AccountId, userId UserId) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -2993,7 +3119,7 @@ func NewGetUserRequest(server string, teamId TeamId, accountId AccountId, userId
 }
 
 // NewUpdateUserRequest calls the generic UpdateUser builder with application/json body
-func NewUpdateUserRequest(server string, teamId TeamId, accountId AccountId, userId openapi_types.UUID, body UpdateUserJSONRequestBody) (*http.Request, error) {
+func NewUpdateUserRequest(server string, teamId TeamId, accountId AccountId, userId UserId, body UpdateUserJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
@@ -3004,7 +3130,7 @@ func NewUpdateUserRequest(server string, teamId TeamId, accountId AccountId, use
 }
 
 // NewUpdateUserRequestWithBody generates requests for UpdateUser with any type of body
-func NewUpdateUserRequestWithBody(server string, teamId TeamId, accountId AccountId, userId openapi_types.UUID, contentType string, body io.Reader) (*http.Request, error) {
+func NewUpdateUserRequestWithBody(server string, teamId TeamId, accountId AccountId, userId UserId, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -3254,6 +3380,9 @@ type ClientWithResponsesInterface interface {
 
 	CreateGroupWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, body CreateGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGroupResponse, error)
 
+	// DeleteSigningKeyGroupWithResponse request
+	DeleteSigningKeyGroupWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, reqEditors ...RequestEditorFn) (*DeleteSigningKeyGroupResponse, error)
+
 	// GetGroupWithResponse request
 	GetGroupWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, reqEditors ...RequestEditorFn) (*GetGroupResponse, error)
 
@@ -3270,13 +3399,16 @@ type ClientWithResponsesInterface interface {
 
 	CreateUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, body CreateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateUserResponse, error)
 
+	// DeleteTeamAccountUserWithResponse request
+	DeleteTeamAccountUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*DeleteTeamAccountUserResponse, error)
+
 	// GetUserWithResponse request
-	GetUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetUserResponse, error)
+	GetUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*GetUserResponse, error)
 
 	// UpdateUserWithBodyWithResponse request with any body
-	UpdateUserWithBodyWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId openapi_types.UUID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error)
+	UpdateUserWithBodyWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error)
 
-	UpdateUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId openapi_types.UUID, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error)
+	UpdateUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error)
 
 	// VersionWithResponse request
 	VersionWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*VersionResponse, error)
@@ -3356,6 +3488,9 @@ type GetOperatorResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Operator
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+	JSON501      *Unimplemented
 }
 
 // Status returns HTTPResponse.Status
@@ -3860,6 +3995,10 @@ type GetSystemResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *System
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+	JSON501      *Unimplemented
+	JSONDefault  *InternalError
 }
 
 // Status returns HTTPResponse.Status
@@ -4134,6 +4273,27 @@ func (r CreateGroupResponse) StatusCode() int {
 	return 0
 }
 
+type DeleteSigningKeyGroupResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteSigningKeyGroupResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteSigningKeyGroupResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetGroupResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -4221,6 +4381,27 @@ func (r CreateUserResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r CreateUserResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteTeamAccountUserResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteTeamAccountUserResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteTeamAccountUserResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4706,6 +4887,15 @@ func (c *ClientWithResponses) CreateGroupWithResponse(ctx context.Context, teamI
 	return ParseCreateGroupResponse(rsp)
 }
 
+// DeleteSigningKeyGroupWithResponse request returning *DeleteSigningKeyGroupResponse
+func (c *ClientWithResponses) DeleteSigningKeyGroupWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, reqEditors ...RequestEditorFn) (*DeleteSigningKeyGroupResponse, error) {
+	rsp, err := c.DeleteSigningKeyGroup(ctx, teamId, accountId, groupId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteSigningKeyGroupResponse(rsp)
+}
+
 // GetGroupWithResponse request returning *GetGroupResponse
 func (c *ClientWithResponses) GetGroupWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, reqEditors ...RequestEditorFn) (*GetGroupResponse, error) {
 	rsp, err := c.GetGroup(ctx, teamId, accountId, groupId, reqEditors...)
@@ -4758,8 +4948,17 @@ func (c *ClientWithResponses) CreateUserWithResponse(ctx context.Context, teamId
 	return ParseCreateUserResponse(rsp)
 }
 
+// DeleteTeamAccountUserWithResponse request returning *DeleteTeamAccountUserResponse
+func (c *ClientWithResponses) DeleteTeamAccountUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*DeleteTeamAccountUserResponse, error) {
+	rsp, err := c.DeleteTeamAccountUser(ctx, teamId, accountId, userId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteTeamAccountUserResponse(rsp)
+}
+
 // GetUserWithResponse request returning *GetUserResponse
-func (c *ClientWithResponses) GetUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetUserResponse, error) {
+func (c *ClientWithResponses) GetUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*GetUserResponse, error) {
 	rsp, err := c.GetUser(ctx, teamId, accountId, userId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -4768,7 +4967,7 @@ func (c *ClientWithResponses) GetUserWithResponse(ctx context.Context, teamId Te
 }
 
 // UpdateUserWithBodyWithResponse request with arbitrary body returning *UpdateUserResponse
-func (c *ClientWithResponses) UpdateUserWithBodyWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId openapi_types.UUID, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error) {
+func (c *ClientWithResponses) UpdateUserWithBodyWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error) {
 	rsp, err := c.UpdateUserWithBody(ctx, teamId, accountId, userId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -4776,7 +4975,7 @@ func (c *ClientWithResponses) UpdateUserWithBodyWithResponse(ctx context.Context
 	return ParseUpdateUserResponse(rsp)
 }
 
-func (c *ClientWithResponses) UpdateUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId openapi_types.UUID, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error) {
+func (c *ClientWithResponses) UpdateUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error) {
 	rsp, err := c.UpdateUser(ctx, teamId, accountId, userId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -4886,6 +5085,27 @@ func ParseGetOperatorResponse(rsp *http.Response) (*GetOperatorResponse, error) 
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 501:
+		var dest Unimplemented
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON501 = &dest
 
 	}
 
@@ -5434,6 +5654,34 @@ func ParseGetSystemResponse(rsp *http.Response) (*GetSystemResponse, error) {
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 501:
+		var dest Unimplemented
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON501 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest InternalError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5730,6 +5978,22 @@ func ParseCreateGroupResponse(rsp *http.Response) (*CreateGroupResponse, error) 
 	return response, nil
 }
 
+// ParseDeleteSigningKeyGroupResponse parses an HTTP response from a DeleteSigningKeyGroupWithResponse call
+func ParseDeleteSigningKeyGroupResponse(rsp *http.Response) (*DeleteSigningKeyGroupResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteSigningKeyGroupResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
 // ParseGetGroupResponse parses an HTTP response from a GetGroupWithResponse call
 func ParseGetGroupResponse(rsp *http.Response) (*GetGroupResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -5834,6 +6098,22 @@ func ParseCreateUserResponse(rsp *http.Response) (*CreateUserResponse, error) {
 		}
 		response.JSON201 = &dest
 
+	}
+
+	return response, nil
+}
+
+// ParseDeleteTeamAccountUserResponse parses an HTTP response from a DeleteTeamAccountUserWithResponse call
+func ParseDeleteTeamAccountUserResponse(rsp *http.Response) (*DeleteTeamAccountUserResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteTeamAccountUserResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
 	}
 
 	return response, nil

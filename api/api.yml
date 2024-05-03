@@ -3,19 +3,34 @@ openapi: 3.1.0
 info:
   version: 1.0.0
   title: Typhoon API
+  summary: |-
+    Typhoon is an event bridge built on top of an event mesh,
+    with a powerful API and beautiful experience.
+  contact:
+    name: Sebastian Doell
+    email: sebastian@katallaxie.dev
   description: |
     # Introduction
 
     Typhoon is an event bridge for applications and services.
   license:
     name: Apache 2.0
-    url: "https://www.apache.org/licenses/LICENSE-2.0.html"
+    identifier: Apache-2.0
 
 servers:
   - url: http://localhost:8080/api/v1
     description: Development server
 
 tags:
+  - name: Server
+    description: |-
+      These are administrative operations.
+  - name: Teams
+    description: |-
+      These are the teams that manage Typhoon.
+  - name: Users
+    description: |-
+      These are the users that manage Typhonn.
   - name: System
     description: |-
       These are the system managed by Typhoon.
@@ -26,14 +41,6 @@ tags:
     description: |-
       These are the triggers that are used to send events to Typhoon.
 
-consumes:
-  - "application/json"
-produces:
-  - "application/json"
-schemes:
-  #- "https"
-  - "http"
-
 paths:
   /version:
     get:
@@ -43,6 +50,7 @@ paths:
         - Server
       responses:
         "200":
+          description: Successful
           content:
             application/json:
               schema:
@@ -54,13 +62,12 @@ paths:
       operationId: listOperator
       tags:
         - Operator
-      produces:
-        - "application/json"
       parameters:
         - $ref: "#/components/parameters/offsetParam"
         - $ref: "#/components/parameters/limitParam"
       security:
         - bearerAuth: ["read:operators"]
+        - apiKey: ["read:operators"]
       responses:
         "200":
           description: Successfull response
@@ -69,19 +76,12 @@ paths:
               schema:
                 allOf:
                   - $ref: "#/components/schemas/PaginatedResult"
-                  - type: object
-                    properties:
-                      results:
-                        type: array
-                        items:
-                          $ref: "#/components/schemas/Operator"
+                  - $ref: "#/components/schemas/Operators"
     post:
       summary: Creates a new operator
       operationId: createOperator
       tags:
         - Operator
-      produces:
-        - "application/json"
       requestBody:
         $ref: "#/components/requestBodies/CreateOperator"
       responses:
@@ -91,11 +91,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Operator"
-      links:
-        GetOperatorById:
-          operationId: getOperator
-          parameters:
-            operatorId: "$response.body#/id"
 
   /operators/{operatorId}:
     get:
@@ -110,6 +105,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Operator"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "501":
+          $ref: "#/components/responses/Unimplemented"
     put:
       summary: Updates an operator by ID
       operationId: updateOperator
@@ -176,8 +177,6 @@ paths:
       operationId: listOperatorSigningKeys
       tags:
         - Operator
-      produces:
-        - "application/json"
       parameters:
         - $ref: "#/components/parameters/operatorId"
         - $ref: "#/components/parameters/offsetParam"
@@ -198,12 +197,6 @@ paths:
                         type: array
                         items:
                           $ref: "#/components/schemas/KeyPair"
-      links:
-        GetSigningKeyById:
-          operationId: getSigningKey
-          parameters:
-            operatorId: "$response.body#/operatorId"
-            signingKeyId: "$response.body#/id"
 
   /operators/{operatorId}/accounts:
     get:
@@ -211,8 +204,6 @@ paths:
       operationId: listOperatorAccounts
       tags:
         - Operator
-      produces:
-        - "application/json"
       parameters:
         - $ref: "#/components/parameters/operatorId"
         - $ref: "#/components/parameters/offsetParam"
@@ -238,8 +229,6 @@ paths:
       operationId: createOperatorAccount
       tags:
         - Operator
-      produces:
-        - "application/json"
       parameters:
         - $ref: "#/components/parameters/operatorId"
       requestBody:
@@ -299,8 +288,6 @@ paths:
       operationId: listOperatorAccountSigningKeys
       tags:
         - Operator
-      produces:
-        - "application/json"
       parameters:
         - $ref: "#/components/parameters/operatorId"
         - $ref: "#/components/parameters/accountId"
@@ -353,8 +340,6 @@ paths:
       operationId: listOperatorAccountUsers
       tags:
         - Operator
-      produces:
-        - "application/json"
       parameters:
         - $ref: "#/components/parameters/operatorId"
         - $ref: "#/components/parameters/accountId"
@@ -381,8 +366,6 @@ paths:
       operationId: createOperatorAccountUser
       tags:
         - Operator
-      produces:
-        - "application/json"
       parameters:
         - $ref: "#/components/parameters/operatorId"
         - $ref: "#/components/parameters/accountId"
@@ -395,13 +378,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
-      links:
-        GetUserById:
-          operationId: getOperatorAccountUser
-          parameters:
-            operatorId: "$response.body#/operatorId"
-            accountId: "$response.body#/accountId"
-            userId: "$response.body#/id"
 
   /operators/{operatorId}/accounts/{accountId}/users/{userId}:
     get:
@@ -461,8 +437,6 @@ paths:
       operationId: listTeams
       tags:
         - Team
-      produces:
-        - "application/json"
       parameters:
         - $ref: "#/components/parameters/offsetParam"
         - $ref: "#/components/parameters/limitParam"
@@ -488,8 +462,6 @@ paths:
       operationId: createTeam
       tags:
         - Team
-      produces:
-        - "application/json"
       requestBody:
         $ref: "#/components/requestBodies/CreateTeam"
       responses:
@@ -499,11 +471,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Team"
-      links:
-        GetTeamById:
-          operationId: getTeam
-          parameters:
-            teamId: "$response.body#/id"
 
   /teams/{teamId}:
     get:
@@ -525,8 +492,6 @@ paths:
       operationId: listTeamAccounts
       tags:
         - Team
-      produces:
-        - "application/json"
       parameters:
         - $ref: "#/components/parameters/teamId"
         - $ref: "#/components/parameters/offsetParam"
@@ -579,8 +544,6 @@ paths:
       operationId: listGroups
       tags:
         - Team
-      produces:
-        - "application/json"
       parameters:
         - $ref: "#/components/parameters/teamId"
         - $ref: "#/components/parameters/accountId"
@@ -607,8 +570,6 @@ paths:
       operationId: createGroup
       tags:
         - Team
-      produces:
-        - "application/json"
       parameters:
         - $ref: "#/components/parameters/teamId"
         - $ref: "#/components/parameters/accountId"
@@ -624,13 +585,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SigningKeyGroup"
-      links:
-        GetGroupById:
-          operationId: getGroup
-          parameters:
-            teamId: "$response.body#/teamId"
-            accountId: "$response.body#/accountId"
-            groupId: "$response.body#/id"
 
   /teams/{teamId}/accounts/{accountId}/groups/{groupId}:
     get:
@@ -666,9 +620,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SigningKeyGroup"
-    deleted:
+    delete:
       summary: Deletes a signing key group by ID
-      operationId: deleteGroup
+      operationId: deleteSigningKeyGroup
       parameters:
         - $ref: "#/components/parameters/teamId"
         - $ref: "#/components/parameters/accountId"
@@ -683,8 +637,6 @@ paths:
       operationId: listUsers
       tags:
         - Team
-      produces:
-        - "application/json"
       parameters:
         - $ref: "#/components/parameters/teamId"
         - $ref: "#/components/parameters/accountId"
@@ -711,8 +663,6 @@ paths:
       operationId: createUser
       tags:
         - Team
-      produces:
-        - "application/json"
       parameters:
         - $ref: "#/components/parameters/teamId"
         - $ref: "#/components/parameters/accountId"
@@ -728,13 +678,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
-      links:
-        GetUserById:
-          operationId: getUser
-          parameters:
-            teamId: "$response.body#/teamId"
-            accountId: "$response.body#/accountId"
-            userId: "$response.body#/id"
 
   /teams/{teamId}/accounts/{accountId}/users/{userId}:
     get:
@@ -743,12 +686,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/teamId"
         - $ref: "#/components/parameters/accountId"
-        - in: path
-          name: userId
-          required: true
-          schema:
-            type: string
-            format: uuid
+        - $ref: "#/components/parameters/userId"
       responses:
         "200":
           description: Successful
@@ -762,12 +700,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/teamId"
         - $ref: "#/components/parameters/accountId"
-        - in: path
-          name: userId
-          required: true
-          schema:
-            type: string
-            format: uuid
+        - $ref: "#/components/parameters/userId"
       requestBody:
         content:
           application/json:
@@ -780,18 +713,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
-    deleted:
+    delete:
       summary: Deletes a user by ID
-      operationId: deleteUser
+      operationId: deleteTeamAccountUser
       parameters:
         - $ref: "#/components/parameters/teamId"
         - $ref: "#/components/parameters/accountId"
-        - in: path
-          name: userId
-          required: true
-          schema:
-            type: string
-            format: uuid
+        - $ref: "#/components/parameters/userId"
       responses:
         "204":
           description: Successful
@@ -823,8 +751,6 @@ paths:
       operationId: createSystem
       tags:
         - System
-      produces:
-        - "application/json"
       requestBody:
         $ref: "#/components/requestBodies/CreateSystem"
       responses:
@@ -834,11 +760,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/System"
-      links:
-        GetSystemById:
-          operationId: getSystem
-          parameters:
-            systemId: "$response.body#/id"
 
   /systems/{systemId}:
     get:
@@ -853,6 +774,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/System"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "501":
+          $ref: "#/components/responses/Unimplemented"
+        default:
+          $ref: "#/components/responses/InternalError"
     put:
       summary: Updates a system by ID
       operationId: updateSystem
@@ -915,16 +844,6 @@ paths:
       responses:
         "204":
           description: Successful
-
-definitions:
-  schemas:
-    createTeamResponse:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
 
 components:
   parameters:
@@ -995,6 +914,38 @@ components:
         type: string
         format: uuid
       description: The id of the operator to retrieve.
+
+  responses:
+    InternalError:
+      description: An internal error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: The request was not authorized.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    BadRequest:
+      description: The request was not valid.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unimplemented:
+      description: The requested resource was not implemented.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
 
   requestBodies:
     CreateSystem:
@@ -1090,12 +1041,26 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-    api_key:
+    apiKey:
       in: header
-      name: api_key
+      name: apiKey
       type: apiKey
 
   schemas:
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        ref:
+          type: string
+        message:
+          type: string
+
     NKey:
       description: |
         An NKey is the private key of a NATS account.
@@ -1454,7 +1419,15 @@ components:
       items:
         $ref: "#/components/schemas/System"
 
+    Operators:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/Operator"
+
 security:
   - cookieAuth: []
   - bearerAuth: []
-  - api_key: []
+  - apiKey: []

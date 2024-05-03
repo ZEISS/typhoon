@@ -7,15 +7,19 @@ import (
 	"gorm.io/gorm"
 )
 
-// OwnableType ...
+// OwnableType is a polymorphic type for ownership.
 type OwnableType string
 
 // OwnableType are the different types of ownable resources.
 const (
-	SystemOwnable   OwnableType = "system"
-	AccountOwnable  OwnableType = "account"
+	// SystemOwnable is a system.
+	SystemOwnable OwnableType = "system"
+	// AccountOwnable is an account.
+	AccountOwnable OwnableType = "account"
+	// OperatorOwnable is an operator.
 	OperatorOwnable OwnableType = "operator"
-	UserOwnable     OwnableType = "user"
+	// UserOwnable is a user.
+	UserOwnable OwnableType = "user"
 )
 
 // Ownership ...

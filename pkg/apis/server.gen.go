@@ -127,6 +127,9 @@ type ServerInterface interface {
 	// Creates a new signing key group
 	// (POST /teams/{teamId}/accounts/{accountId}/groups)
 	CreateGroup(c *fiber.Ctx, teamId TeamId, accountId AccountId) error
+	// Deletes a signing key group by ID
+	// (DELETE /teams/{teamId}/accounts/{accountId}/groups/{groupId})
+	DeleteSigningKeyGroup(c *fiber.Ctx, teamId TeamId, accountId AccountId, groupId GroupId) error
 	// Gets a signing key group by ID
 	// (GET /teams/{teamId}/accounts/{accountId}/groups/{groupId})
 	GetGroup(c *fiber.Ctx, teamId TeamId, accountId AccountId, groupId GroupId) error
@@ -139,12 +142,15 @@ type ServerInterface interface {
 	// Creates a new user
 	// (POST /teams/{teamId}/accounts/{accountId}/users)
 	CreateUser(c *fiber.Ctx, teamId TeamId, accountId AccountId) error
+	// Deletes a user by ID
+	// (DELETE /teams/{teamId}/accounts/{accountId}/users/{userId})
+	DeleteTeamAccountUser(c *fiber.Ctx, teamId TeamId, accountId AccountId, userId UserId) error
 	// Gets a user by ID
 	// (GET /teams/{teamId}/accounts/{accountId}/users/{userId})
-	GetUser(c *fiber.Ctx, teamId TeamId, accountId AccountId, userId openapi_types.UUID) error
+	GetUser(c *fiber.Ctx, teamId TeamId, accountId AccountId, userId UserId) error
 	// Updates a user by ID
 	// (PUT /teams/{teamId}/accounts/{accountId}/users/{userId})
-	UpdateUser(c *fiber.Ctx, teamId TeamId, accountId AccountId, userId openapi_types.UUID) error
+	UpdateUser(c *fiber.Ctx, teamId TeamId, accountId AccountId, userId UserId) error
 	// Returns the current version of the API.
 	// (GET /version)
 	Version(c *fiber.Ctx) error
@@ -163,6 +169,8 @@ func (siw *ServerInterfaceWrapper) ListOperator(c *fiber.Ctx) error {
 	var err error
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{"read:operators"})
+
+	c.Context().SetUserValue(ApiKeyScopes, []string{"read:operators"})
 
 	// Parameter object where we will unmarshal all parameters from the context
 	var params ListOperatorParams
@@ -197,7 +205,7 @@ func (siw *ServerInterfaceWrapper) CreateOperator(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.CreateOperator(c)
 }
@@ -219,7 +227,7 @@ func (siw *ServerInterfaceWrapper) DeleteOperator(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.DeleteOperator(c, operatorId)
 }
@@ -241,7 +249,7 @@ func (siw *ServerInterfaceWrapper) GetOperator(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.GetOperator(c, operatorId)
 }
@@ -263,7 +271,7 @@ func (siw *ServerInterfaceWrapper) UpdateOperator(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.UpdateOperator(c, operatorId)
 }
@@ -326,7 +334,7 @@ func (siw *ServerInterfaceWrapper) CreateOperatorAccount(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.CreateOperatorAccount(c, operatorId)
 }
@@ -356,7 +364,7 @@ func (siw *ServerInterfaceWrapper) DeleteOperatorAccount(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.DeleteOperatorAccount(c, operatorId, accountId)
 }
@@ -386,7 +394,7 @@ func (siw *ServerInterfaceWrapper) GetOperatorAccount(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.GetOperatorAccount(c, operatorId, accountId)
 }
@@ -416,7 +424,7 @@ func (siw *ServerInterfaceWrapper) UpdateOperatorAccount(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.UpdateOperatorAccount(c, operatorId, accountId)
 }
@@ -495,7 +503,7 @@ func (siw *ServerInterfaceWrapper) DeleteOperatorAccountToken(c *fiber.Ctx) erro
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.DeleteOperatorAccountToken(c, operatorId, accountId)
 }
@@ -525,7 +533,7 @@ func (siw *ServerInterfaceWrapper) GetOperatorAccountToken(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.GetOperatorAccountToken(c, operatorId, accountId)
 }
@@ -604,7 +612,7 @@ func (siw *ServerInterfaceWrapper) CreateOperatorAccountUser(c *fiber.Ctx) error
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.CreateOperatorAccountUser(c, operatorId, accountId)
 }
@@ -642,7 +650,7 @@ func (siw *ServerInterfaceWrapper) GetOperatorAccountUser(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.GetOperatorAccountUser(c, operatorId, accountId, userId)
 }
@@ -680,7 +688,7 @@ func (siw *ServerInterfaceWrapper) GetOperatorAccountUserCredentials(c *fiber.Ct
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.GetOperatorAccountUserCredentials(c, operatorId, accountId, userId)
 }
@@ -718,7 +726,7 @@ func (siw *ServerInterfaceWrapper) GetOperatorAccountUserToken(c *fiber.Ctx) err
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.GetOperatorAccountUserToken(c, operatorId, accountId, userId)
 }
@@ -781,7 +789,7 @@ func (siw *ServerInterfaceWrapper) DeleteOperatorToken(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.DeleteOperatorToken(c, operatorId)
 }
@@ -803,7 +811,7 @@ func (siw *ServerInterfaceWrapper) GetOperatorToken(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.GetOperatorToken(c, operatorId)
 }
@@ -825,7 +833,7 @@ func (siw *ServerInterfaceWrapper) UpdateOperatorToken(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.UpdateOperatorToken(c, operatorId)
 }
@@ -837,7 +845,7 @@ func (siw *ServerInterfaceWrapper) ListSystems(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.ListSystems(c)
 }
@@ -849,7 +857,7 @@ func (siw *ServerInterfaceWrapper) CreateSystem(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.CreateSystem(c)
 }
@@ -871,7 +879,7 @@ func (siw *ServerInterfaceWrapper) DeleteSystem(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.DeleteSystem(c, systemId)
 }
@@ -893,7 +901,7 @@ func (siw *ServerInterfaceWrapper) GetSystem(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.GetSystem(c, systemId)
 }
@@ -915,7 +923,7 @@ func (siw *ServerInterfaceWrapper) UpdateSystem(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.UpdateSystem(c, systemId)
 }
@@ -937,7 +945,7 @@ func (siw *ServerInterfaceWrapper) DeleteSystemOperator(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.DeleteSystemOperator(c, systemId)
 }
@@ -959,7 +967,7 @@ func (siw *ServerInterfaceWrapper) GetSystemOperator(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.GetSystemOperator(c, systemId)
 }
@@ -981,7 +989,7 @@ func (siw *ServerInterfaceWrapper) UpdateSystemOperator(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.UpdateSystemOperator(c, systemId)
 }
@@ -1026,7 +1034,7 @@ func (siw *ServerInterfaceWrapper) CreateTeam(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.CreateTeam(c)
 }
@@ -1048,7 +1056,7 @@ func (siw *ServerInterfaceWrapper) GetTeam(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.GetTeam(c, teamId)
 }
@@ -1119,7 +1127,7 @@ func (siw *ServerInterfaceWrapper) GetAccount(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.GetAccount(c, teamId, accountId)
 }
@@ -1198,9 +1206,47 @@ func (siw *ServerInterfaceWrapper) CreateGroup(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.CreateGroup(c, teamId, accountId)
+}
+
+// DeleteSigningKeyGroup operation middleware
+func (siw *ServerInterfaceWrapper) DeleteSigningKeyGroup(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "teamId" -------------
+	var teamId TeamId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
+	}
+
+	// ------------- Path parameter "accountId" -------------
+	var accountId AccountId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
+	}
+
+	// ------------- Path parameter "groupId" -------------
+	var groupId GroupId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "groupId", c.Params("groupId"), &groupId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter groupId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
+
+	return siw.Handler.DeleteSigningKeyGroup(c, teamId, accountId, groupId)
 }
 
 // GetGroup operation middleware
@@ -1236,7 +1282,7 @@ func (siw *ServerInterfaceWrapper) GetGroup(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.GetGroup(c, teamId, accountId, groupId)
 }
@@ -1274,7 +1320,7 @@ func (siw *ServerInterfaceWrapper) UpdateGroup(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.UpdateGroup(c, teamId, accountId, groupId)
 }
@@ -1353,9 +1399,47 @@ func (siw *ServerInterfaceWrapper) CreateUser(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.CreateUser(c, teamId, accountId)
+}
+
+// DeleteTeamAccountUser operation middleware
+func (siw *ServerInterfaceWrapper) DeleteTeamAccountUser(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "teamId" -------------
+	var teamId TeamId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
+	}
+
+	// ------------- Path parameter "accountId" -------------
+	var accountId AccountId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
+	}
+
+	// ------------- Path parameter "userId" -------------
+	var userId UserId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "userId", c.Params("userId"), &userId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(CookieAuthScopes, []string{})
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
+
+	return siw.Handler.DeleteTeamAccountUser(c, teamId, accountId, userId)
 }
 
 // GetUser operation middleware
@@ -1380,7 +1464,7 @@ func (siw *ServerInterfaceWrapper) GetUser(c *fiber.Ctx) error {
 	}
 
 	// ------------- Path parameter "userId" -------------
-	var userId openapi_types.UUID
+	var userId UserId
 
 	err = runtime.BindStyledParameterWithOptions("simple", "userId", c.Params("userId"), &userId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
 	if err != nil {
@@ -1391,7 +1475,7 @@ func (siw *ServerInterfaceWrapper) GetUser(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.GetUser(c, teamId, accountId, userId)
 }
@@ -1418,7 +1502,7 @@ func (siw *ServerInterfaceWrapper) UpdateUser(c *fiber.Ctx) error {
 	}
 
 	// ------------- Path parameter "userId" -------------
-	var userId openapi_types.UUID
+	var userId UserId
 
 	err = runtime.BindStyledParameterWithOptions("simple", "userId", c.Params("userId"), &userId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
 	if err != nil {
@@ -1429,7 +1513,7 @@ func (siw *ServerInterfaceWrapper) UpdateUser(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.UpdateUser(c, teamId, accountId, userId)
 }
@@ -1441,7 +1525,7 @@ func (siw *ServerInterfaceWrapper) Version(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
-	c.Context().SetUserValue(Api_keyScopes, []string{})
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.Version(c)
 }
@@ -1541,6 +1625,8 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Post(options.BaseURL+"/teams/:teamId/accounts/:accountId/groups", wrapper.CreateGroup)
 
+	router.Delete(options.BaseURL+"/teams/:teamId/accounts/:accountId/groups/:groupId", wrapper.DeleteSigningKeyGroup)
+
 	router.Get(options.BaseURL+"/teams/:teamId/accounts/:accountId/groups/:groupId", wrapper.GetGroup)
 
 	router.Put(options.BaseURL+"/teams/:teamId/accounts/:accountId/groups/:groupId", wrapper.UpdateGroup)
@@ -1549,6 +1635,8 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Post(options.BaseURL+"/teams/:teamId/accounts/:accountId/users", wrapper.CreateUser)
 
+	router.Delete(options.BaseURL+"/teams/:teamId/accounts/:accountId/users/:userId", wrapper.DeleteTeamAccountUser)
+
 	router.Get(options.BaseURL+"/teams/:teamId/accounts/:accountId/users/:userId", wrapper.GetUser)
 
 	router.Put(options.BaseURL+"/teams/:teamId/accounts/:accountId/users/:userId", wrapper.UpdateUser)
@@ -1556,6 +1644,16 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 	router.Get(options.BaseURL+"/version", wrapper.Version)
 
 }
+
+type BadRequestJSONResponse Error
+
+type InternalErrorJSONResponse Error
+
+type NotFoundJSONResponse Error
+
+type UnauthorizedJSONResponse Error
+
+type UnimplementedJSONResponse Error
 
 type ListOperatorRequestObject struct {
 	Params ListOperatorParams
@@ -1625,6 +1723,33 @@ type GetOperator200JSONResponse Operator
 func (response GetOperator200JSONResponse) VisitGetOperatorResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
 	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type GetOperator401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetOperator401JSONResponse) VisitGetOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(401)
+
+	return ctx.JSON(&response)
+}
+
+type GetOperator404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetOperator404JSONResponse) VisitGetOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(404)
+
+	return ctx.JSON(&response)
+}
+
+type GetOperator501JSONResponse struct{ UnimplementedJSONResponse }
+
+func (response GetOperator501JSONResponse) VisitGetOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(501)
 
 	return ctx.JSON(&response)
 }
@@ -2055,6 +2180,45 @@ func (response GetSystem200JSONResponse) VisitGetSystemResponse(ctx *fiber.Ctx) 
 	return ctx.JSON(&response)
 }
 
+type GetSystem401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetSystem401JSONResponse) VisitGetSystemResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(401)
+
+	return ctx.JSON(&response)
+}
+
+type GetSystem404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetSystem404JSONResponse) VisitGetSystemResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(404)
+
+	return ctx.JSON(&response)
+}
+
+type GetSystem501JSONResponse struct{ UnimplementedJSONResponse }
+
+func (response GetSystem501JSONResponse) VisitGetSystemResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(501)
+
+	return ctx.JSON(&response)
+}
+
+type GetSystemdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response GetSystemdefaultJSONResponse) VisitGetSystemResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type UpdateSystemRequestObject struct {
 	SystemId SystemId `json:"systemId"`
 	Body     *UpdateSystemJSONRequestBody
@@ -2264,6 +2428,24 @@ func (response CreateGroup201JSONResponse) VisitCreateGroupResponse(ctx *fiber.C
 	return ctx.JSON(&response)
 }
 
+type DeleteSigningKeyGroupRequestObject struct {
+	TeamId    TeamId    `json:"teamId"`
+	AccountId AccountId `json:"accountId"`
+	GroupId   GroupId   `json:"groupId"`
+}
+
+type DeleteSigningKeyGroupResponseObject interface {
+	VisitDeleteSigningKeyGroupResponse(ctx *fiber.Ctx) error
+}
+
+type DeleteSigningKeyGroup204Response struct {
+}
+
+func (response DeleteSigningKeyGroup204Response) VisitDeleteSigningKeyGroupResponse(ctx *fiber.Ctx) error {
+	ctx.Status(204)
+	return nil
+}
+
 type GetGroupRequestObject struct {
 	TeamId    TeamId    `json:"teamId"`
 	AccountId AccountId `json:"accountId"`
@@ -2346,10 +2528,28 @@ func (response CreateUser201JSONResponse) VisitCreateUserResponse(ctx *fiber.Ctx
 	return ctx.JSON(&response)
 }
 
+type DeleteTeamAccountUserRequestObject struct {
+	TeamId    TeamId    `json:"teamId"`
+	AccountId AccountId `json:"accountId"`
+	UserId    UserId    `json:"userId"`
+}
+
+type DeleteTeamAccountUserResponseObject interface {
+	VisitDeleteTeamAccountUserResponse(ctx *fiber.Ctx) error
+}
+
+type DeleteTeamAccountUser204Response struct {
+}
+
+func (response DeleteTeamAccountUser204Response) VisitDeleteTeamAccountUserResponse(ctx *fiber.Ctx) error {
+	ctx.Status(204)
+	return nil
+}
+
 type GetUserRequestObject struct {
-	TeamId    TeamId             `json:"teamId"`
-	AccountId AccountId          `json:"accountId"`
-	UserId    openapi_types.UUID `json:"userId"`
+	TeamId    TeamId    `json:"teamId"`
+	AccountId AccountId `json:"accountId"`
+	UserId    UserId    `json:"userId"`
 }
 
 type GetUserResponseObject interface {
@@ -2366,9 +2566,9 @@ func (response GetUser200JSONResponse) VisitGetUserResponse(ctx *fiber.Ctx) erro
 }
 
 type UpdateUserRequestObject struct {
-	TeamId    TeamId             `json:"teamId"`
-	AccountId AccountId          `json:"accountId"`
-	UserId    openapi_types.UUID `json:"userId"`
+	TeamId    TeamId    `json:"teamId"`
+	AccountId AccountId `json:"accountId"`
+	UserId    UserId    `json:"userId"`
 	Body      *UpdateUserJSONRequestBody
 }
 
@@ -2514,6 +2714,9 @@ type StrictServerInterface interface {
 	// Creates a new signing key group
 	// (POST /teams/{teamId}/accounts/{accountId}/groups)
 	CreateGroup(ctx context.Context, request CreateGroupRequestObject) (CreateGroupResponseObject, error)
+	// Deletes a signing key group by ID
+	// (DELETE /teams/{teamId}/accounts/{accountId}/groups/{groupId})
+	DeleteSigningKeyGroup(ctx context.Context, request DeleteSigningKeyGroupRequestObject) (DeleteSigningKeyGroupResponseObject, error)
 	// Gets a signing key group by ID
 	// (GET /teams/{teamId}/accounts/{accountId}/groups/{groupId})
 	GetGroup(ctx context.Context, request GetGroupRequestObject) (GetGroupResponseObject, error)
@@ -2526,6 +2729,9 @@ type StrictServerInterface interface {
 	// Creates a new user
 	// (POST /teams/{teamId}/accounts/{accountId}/users)
 	CreateUser(ctx context.Context, request CreateUserRequestObject) (CreateUserResponseObject, error)
+	// Deletes a user by ID
+	// (DELETE /teams/{teamId}/accounts/{accountId}/users/{userId})
+	DeleteTeamAccountUser(ctx context.Context, request DeleteTeamAccountUserRequestObject) (DeleteTeamAccountUserResponseObject, error)
 	// Gets a user by ID
 	// (GET /teams/{teamId}/accounts/{accountId}/users/{userId})
 	GetUser(ctx context.Context, request GetUserRequestObject) (GetUserResponseObject, error)
@@ -3624,6 +3830,35 @@ func (sh *strictHandler) CreateGroup(ctx *fiber.Ctx, teamId TeamId, accountId Ac
 	return nil
 }
 
+// DeleteSigningKeyGroup operation middleware
+func (sh *strictHandler) DeleteSigningKeyGroup(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, groupId GroupId) error {
+	var request DeleteSigningKeyGroupRequestObject
+
+	request.TeamId = teamId
+	request.AccountId = accountId
+	request.GroupId = groupId
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteSigningKeyGroup(ctx.UserContext(), request.(DeleteSigningKeyGroupRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteSigningKeyGroup")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(DeleteSigningKeyGroupResponseObject); ok {
+		if err := validResponse.VisitDeleteSigningKeyGroupResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
 // GetGroup operation middleware
 func (sh *strictHandler) GetGroup(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, groupId GroupId) error {
 	var request GetGroupRequestObject
@@ -3751,8 +3986,37 @@ func (sh *strictHandler) CreateUser(ctx *fiber.Ctx, teamId TeamId, accountId Acc
 	return nil
 }
 
+// DeleteTeamAccountUser operation middleware
+func (sh *strictHandler) DeleteTeamAccountUser(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, userId UserId) error {
+	var request DeleteTeamAccountUserRequestObject
+
+	request.TeamId = teamId
+	request.AccountId = accountId
+	request.UserId = userId
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteTeamAccountUser(ctx.UserContext(), request.(DeleteTeamAccountUserRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteTeamAccountUser")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(DeleteTeamAccountUserResponseObject); ok {
+		if err := validResponse.VisitDeleteTeamAccountUserResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
 // GetUser operation middleware
-func (sh *strictHandler) GetUser(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, userId openapi_types.UUID) error {
+func (sh *strictHandler) GetUser(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, userId UserId) error {
 	var request GetUserRequestObject
 
 	request.TeamId = teamId
@@ -3781,7 +4045,7 @@ func (sh *strictHandler) GetUser(ctx *fiber.Ctx, teamId TeamId, accountId Accoun
 }
 
 // UpdateUser operation middleware
-func (sh *strictHandler) UpdateUser(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, userId openapi_types.UUID) error {
+func (sh *strictHandler) UpdateUser(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, userId UserId) error {
 	var request UpdateUserRequestObject
 
 	request.TeamId = teamId
