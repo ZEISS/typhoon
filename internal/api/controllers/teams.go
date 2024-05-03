@@ -12,7 +12,7 @@ import (
 // TeamsController ...
 type TeamsController interface {
 	// CreateTeam ...
-	CreateTeam(ctx context.Context, name string) (models.Team, error)
+	CreateTeam(ctx context.Context, name string, description *string) (models.Team, error)
 	// DeleteTeam ...
 	DeleteTeam(ctx context.Context, id uuid.UUID) error
 	// GetTeam ...
@@ -29,8 +29,8 @@ func NewTeamsController(db ports.Teams) *teamsController {
 }
 
 // CreateTeam ...
-func (c *teamsController) CreateTeam(ctx context.Context, name string) (models.Team, error) {
-	return c.db.CreateTeam(ctx, models.Team{Team: &authz.Team{Name: name}})
+func (c *teamsController) CreateTeam(ctx context.Context, name string, description *string) (models.Team, error) {
+	return c.db.CreateTeam(ctx, models.Team{Team: &authz.Team{Name: name, Description: description}})
 }
 
 // DeleteTeam ...

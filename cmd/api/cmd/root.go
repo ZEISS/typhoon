@@ -82,6 +82,14 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 
 		validatorOptions := &middleware.Options{}
 		validatorOptions.Options.AuthenticationFunc = fake.NewAuthenticator()
+		validatorOptions.ErrorHandler = func(c *fiber.Ctx, message string, statusCode int) {
+			customErr := openapi.Error{
+				Code:    int32(statusCode),
+				Message: message,
+			}
+
+			c.Status(statusCode).JSON(customErr)
+		}
 
 		app.Use(middleware.OapiRequestValidatorWithOptions(swagger, validatorOptions))
 
