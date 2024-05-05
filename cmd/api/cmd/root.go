@@ -3,12 +3,12 @@ package cmd
 import (
 	"context"
 
+	authz "github.com/zeiss/fiber-authz"
 	"github.com/zeiss/typhoon/internal/api/adapters"
 	"github.com/zeiss/typhoon/internal/api/adapters/db"
 	"github.com/zeiss/typhoon/internal/api/controllers"
 	"github.com/zeiss/typhoon/internal/api/services"
 	openapi "github.com/zeiss/typhoon/pkg/apis"
-	"github.com/zeiss/typhoon/pkg/fake"
 
 	"github.com/gofiber/fiber/v2"
 	logger "github.com/gofiber/fiber/v2/middleware/logger"
@@ -62,6 +62,11 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 			return err
 		}
 
+		err = authz.RunMigrations(conn)
+		if err != nil {
+			return err
+		}
+
 		db := db.NewDB(conn)
 		err = db.RunMigrations()
 		if err != nil {
@@ -81,15 +86,8 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Use(logger.New())
 
 		validatorOptions := &middleware.Options{}
-		validatorOptions.Options.AuthenticationFunc = fake.NewAuthenticator()
-		validatorOptions.ErrorHandler = func(c *fiber.Ctx, message string, statusCode int) {
-			customErr := openapi.Error{
-				Code:    int32(statusCode),
-				Message: message,
-			}
-
-			c.Status(statusCode).JSON(customErr)
-		}
+		validatorOptions.Options.AuthenticationFunc = authz.NewOpenAPIAuthenticator(authz.WithPathParam("teamId"), authz.WithChecker(authz.NewAPIKey(conn)))
+		validatorOptions.ErrorHandler = authz.NewOpenAPIErrorHandler()
 
 		app.Use(middleware.OapiRequestValidatorWithOptions(swagger, validatorOptions))
 

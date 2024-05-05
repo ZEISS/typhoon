@@ -173,7 +173,7 @@ func (siw *ServerInterfaceWrapper) ListOperator(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{"read:operators"})
 
-	c.Context().SetUserValue(ApiKeyScopes, []string{"read:operators"})
+	c.Context().SetUserValue(ApiKeyScopes, []string{"superadmin"})
 
 	// Parameter object where we will unmarshal all parameters from the context
 	var params ListOperatorParams
@@ -954,7 +954,7 @@ func (siw *ServerInterfaceWrapper) ListTeams(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(BearerAuthScopes, []string{"read:teams"})
 
-	c.Context().SetUserValue(ApiKeyScopes, []string{"read"})
+	c.Context().SetUserValue(ApiKeyScopes, []string{"superadmin"})
 
 	// Parameter object where we will unmarshal all parameters from the context
 	var params ListTeamsParams
@@ -1025,9 +1025,9 @@ func (siw *ServerInterfaceWrapper) GetTeam(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{"read"})
+	c.Context().SetUserValue(BearerAuthScopes, []string{"superadmin"})
 
-	c.Context().SetUserValue(ApiKeyScopes, []string{"read"})
+	c.Context().SetUserValue(ApiKeyScopes, []string{"superadmin"})
 
 	return siw.Handler.GetTeam(c, teamId)
 }

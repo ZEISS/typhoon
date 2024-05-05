@@ -73,7 +73,7 @@ paths:
         - $ref: "#/components/parameters/limitParam"
       security:
         - bearerAuth: ["read:operators"]
-        - apiKey: ["read:operators"]
+        - apiKey: ["superadmin"]
       responses:
         "200":
           description: Successfull response
@@ -448,7 +448,7 @@ paths:
         - $ref: "#/components/parameters/limitParam"
       security:
         - bearerAuth: ["read:teams"]
-        - apiKey: ["read"]
+        - apiKey: ["superadmin"]
       responses:
         "200":
           description: Successfull response
@@ -491,8 +491,8 @@ paths:
       parameters:
         - $ref: "#/components/parameters/teamId"
       security:
-        - bearerAuth: ["read"]
-        - apiKey: ["read"]
+        - bearerAuth: ["superadmin"]
+        - apiKey: ["superadmin"]
       responses:
         "200":
           description: Successful
