@@ -17,7 +17,8 @@ jobs:
         with:
           node-version: "20"
       - run: npx -y @redocly/cli build-docs api/api.yml --o docs/index.html
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
+        name: docs
         if: github.ref == 'refs/heads/main'
         with:
           path: docs
