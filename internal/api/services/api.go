@@ -38,16 +38,6 @@ func (a *ApiHandlers) GetSystem(ctx context.Context, req openapi.GetSystemReques
 	return openapi.GetSystem200JSONResponse(openapi.System{Id: &system.ID, Name: system.Name, Description: utils.StrPtr(system.Description), Operator: &openapi.Operator{Id: system.OperatorID}}), nil
 }
 
-// GetSystemOperator ...
-func (a *ApiHandlers) GetSystemOperator(ctx context.Context, req openapi.GetSystemOperatorRequestObject) (openapi.GetSystemOperatorResponseObject, error) {
-	system, err := a.systems.GetSystem(ctx, req.SystemId)
-	if err != nil {
-		return nil, err
-	}
-
-	return openapi.GetSystemOperator200JSONResponse(openapi.Operator{Id: utils.PtrUUID(system.Operator.ID), Name: system.Operator.Name}), nil
-}
-
 // DeleteSystem ...
 func (a *ApiHandlers) DeleteSystem(ctx context.Context, req openapi.DeleteSystemRequestObject) (openapi.DeleteSystemResponseObject, error) {
 	err := a.systems.DeleteSystem(ctx, req.SystemId)

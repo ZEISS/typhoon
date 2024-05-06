@@ -889,6 +889,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Operator"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
     put:
       summary: Updates the operator for a system
       operationId: updateSystemOperator
@@ -897,12 +905,18 @@ paths:
       requestBody:
         $ref: "#/components/requestBodies/UpdateSystemOperator"
       responses:
-        "200":
+        "201":
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Operator"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
     delete:
       summary: Deletes the operator for a system
       operationId: deleteSystemOperator
@@ -911,6 +925,12 @@ paths:
       responses:
         "204":
           description: Successful
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
 
 components:
   parameters:
@@ -1097,7 +1117,7 @@ components:
                 type: string
               claims:
                 $ref: "#/components/schemas/JWTAccountClaims"
-
+    # Body for creating an operator account user
     CreateOperatorAccountUser:
       content:
         application/json:

@@ -70,3 +70,17 @@ func (a *ApiHandlers) CreateSystem(ctx context.Context, req openapi.CreateSystem
 
 	return openapi.CreateSystem201JSONResponse(res), nil
 }
+
+// GetSystemOperator ...
+func (a *ApiHandlers) GetSystemOperator(ctx context.Context, req openapi.GetSystemOperatorRequestObject) (openapi.GetSystemOperatorResponseObject, error) {
+	system, err := a.systems.GetSystem(ctx, req.SystemId)
+	if err != nil {
+		return nil, err
+	}
+
+	if system.OperatorID == nil {
+		return openapi.GetSystemOperator404JSONResponse(openapi.GetSystemOperator404JSONResponse{openapi.NotFoundJSONResponse(openapi.ErrorNotFound("no operator found"))}), nil
+	}
+
+	return openapi.GetSystemOperator200JSONResponse(openapi.Operator{Id: utils.PtrUUID(system.Operator.ID), Name: system.Operator.Name}), nil
+}

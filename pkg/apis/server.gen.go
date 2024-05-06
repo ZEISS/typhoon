@@ -2254,6 +2254,33 @@ func (response DeleteSystemOperator204Response) VisitDeleteSystemOperatorRespons
 	return nil
 }
 
+type DeleteSystemOperator401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response DeleteSystemOperator401JSONResponse) VisitDeleteSystemOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(401)
+
+	return ctx.JSON(&response)
+}
+
+type DeleteSystemOperator404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response DeleteSystemOperator404JSONResponse) VisitDeleteSystemOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(404)
+
+	return ctx.JSON(&response)
+}
+
+type DeleteSystemOperator500JSONResponse struct{ InternalErrorJSONResponse }
+
+func (response DeleteSystemOperator500JSONResponse) VisitDeleteSystemOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(500)
+
+	return ctx.JSON(&response)
+}
+
 type GetSystemOperatorRequestObject struct {
 	SystemId SystemId `json:"systemId"`
 }
@@ -2271,6 +2298,42 @@ func (response GetSystemOperator200JSONResponse) VisitGetSystemOperatorResponse(
 	return ctx.JSON(&response)
 }
 
+type GetSystemOperator400JSONResponse struct{ BadRequestJSONResponse }
+
+func (response GetSystemOperator400JSONResponse) VisitGetSystemOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(400)
+
+	return ctx.JSON(&response)
+}
+
+type GetSystemOperator401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response GetSystemOperator401JSONResponse) VisitGetSystemOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(401)
+
+	return ctx.JSON(&response)
+}
+
+type GetSystemOperator404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response GetSystemOperator404JSONResponse) VisitGetSystemOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(404)
+
+	return ctx.JSON(&response)
+}
+
+type GetSystemOperator500JSONResponse struct{ InternalErrorJSONResponse }
+
+func (response GetSystemOperator500JSONResponse) VisitGetSystemOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(500)
+
+	return ctx.JSON(&response)
+}
+
 type UpdateSystemOperatorRequestObject struct {
 	SystemId SystemId `json:"systemId"`
 	Body     *UpdateSystemOperatorJSONRequestBody
@@ -2280,11 +2343,38 @@ type UpdateSystemOperatorResponseObject interface {
 	VisitUpdateSystemOperatorResponse(ctx *fiber.Ctx) error
 }
 
-type UpdateSystemOperator200JSONResponse Operator
+type UpdateSystemOperator201JSONResponse Operator
 
-func (response UpdateSystemOperator200JSONResponse) VisitUpdateSystemOperatorResponse(ctx *fiber.Ctx) error {
+func (response UpdateSystemOperator201JSONResponse) VisitUpdateSystemOperatorResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(200)
+	ctx.Status(201)
+
+	return ctx.JSON(&response)
+}
+
+type UpdateSystemOperator400JSONResponse struct{ BadRequestJSONResponse }
+
+func (response UpdateSystemOperator400JSONResponse) VisitUpdateSystemOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(400)
+
+	return ctx.JSON(&response)
+}
+
+type UpdateSystemOperator401JSONResponse struct{ UnauthorizedJSONResponse }
+
+func (response UpdateSystemOperator401JSONResponse) VisitUpdateSystemOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(401)
+
+	return ctx.JSON(&response)
+}
+
+type UpdateSystemOperator404JSONResponse struct{ NotFoundJSONResponse }
+
+func (response UpdateSystemOperator404JSONResponse) VisitUpdateSystemOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(404)
 
 	return ctx.JSON(&response)
 }
