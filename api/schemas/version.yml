@@ -1,0 +1,12 @@
+components:
+  schemas:
+    Version:
+      type: object
+      required:
+        - version
+        - date
+      properties:
+        version:
+          type: string
+        date:
+          type: string

@@ -3,12 +3,12 @@
 BASE_DIR		?= $(CURDIR)
 OUTPUT_DIR      ?= $(BASE_DIR)/dist
 
-GO 				?= go
+GO 						?= go
 GO_RUN_TOOLS	?= $(GO) run -modfile ./tools/go.mod
-GO_TEST 		?= $(GO_RUN_TOOLS) gotest.tools/gotestsum --format pkgname
+GO_TEST 			?= $(GO_RUN_TOOLS) gotest.tools/gotestsum --format pkgname
 GO_RELEASER 	?= $(GO_RUN_TOOLS) github.com/goreleaser/goreleaser
-GO_KO 			?= $(GO_RUN_TOOLS) github.com/google/ko
-GO_MOD 			?= $(shell ${GO} list -m)
+GO_KO 				?= $(GO_RUN_TOOLS) github.com/google/ko
+GO_MOD 				?= $(shell ${GO} list -m)
 
 COMMANDS		:= $(notdir $(wildcard cmd/*))
 
@@ -20,14 +20,11 @@ KOFLAGS         ?=
 build: $(COMMANDS) ## Build the application.
 
 $(filter-out $(CUSTOM_BUILD_BINARIES), $(COMMANDS)): ## Build artifact
-	$(GO) build -ldflags "$(LDFLAGS_STATIC)" -o $(BIN_OUTPUT_DIR)/$@ ./cmd/$@	
+	$(GO) build -ldflags "$(LDFLAGS_STATIC)" -o $(BIN_OUTPUT_DIR)/$@ ./cmd/$@
 
 .PHONY: generate
 generate: ## Generate code.
 	$(GO) generate ./...
-	$(GO_RUN_TOOLS) github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen -config ./api/config.models.yml ./api/api.yml
-	$(GO_RUN_TOOLS) github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen -config ./api/config.client.yml ./api/api.yml
-	$(GO_RUN_TOOLS) github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen -config ./api/config.server.yml ./api/api.yml
 
 .PHONY: fmt
 fmt: ## Run go fmt against code.

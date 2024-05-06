@@ -1,9 +1,10 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/deepmap/oapi-codegen/HEAD/configuration-schema.json
 package: apis
 generate:
   fiber-server: true
   strict-server: true
-output: pkg/apis/server.gen.go
+output: ../pkg/apis/server.gen.go
 output-options:
   skip-prune: true
-
-
+import-mapping:
+  ./schemas/version.yml: github.com/zeiss/typhoon/api/schemas

@@ -1,5 +1,4 @@
 openapi: 3.1.0
-
 info:
   version: 1.0.0
   title: Typhoon API
@@ -16,31 +15,22 @@ info:
   license:
     name: Apache 2.0
     identifier: Apache-2.0
-
 servers:
   - url: http://localhost:8080/api/v1
     description: Development server
-
 tags:
   - name: Server
-    description: |-
-      These are administrative operations.
+    description: These are administrative operations.
   - name: Teams
-    description: |-
-      These are the teams that manage Typhoon.
+    description: These are the teams that manage Typhoon.
   - name: Users
-    description: |-
-      These are the users that manage Typhonn.
+    description: These are the users that manage Typhonn.
   - name: System
-    description: |-
-      These are the system managed by Typhoon.
+    description: These are the system managed by Typhoon.
   - name: Team
-    description: |-
-      These are the teams that are using Typhoon.
+    description: These are the teams that are using Typhoon.
   - name: Triggers
-    description: |-
-      These are the triggers that are used to send events to Typhoon.
-
+    description: These are the triggers that are used to send events to Typhoon.
 paths:
   /version:
     get:
@@ -49,19 +39,19 @@ paths:
       tags:
         - Server
       security:
-        - bearerAuth: [] # no scopes required
-        - apiKey: [] # no scopes required
+        - bearerAuth: []
+        - apiKey: []
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "./schemas/version.yml#/components/schemas/Version"
-        "500":
-          $ref: "#/components/responses/InternalError"
-        "501":
-          $ref: "#/components/responses/Unimplemented"
+                $ref: '#/components/schemas/Version'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '501':
+          $ref: '#/components/responses/Unimplemented'
   /operators:
     get:
       summary: List all operators
@@ -69,114 +59,113 @@ paths:
       tags:
         - Operator
       parameters:
-        - $ref: "#/components/parameters/offsetParam"
-        - $ref: "#/components/parameters/limitParam"
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
       security:
-        - bearerAuth: ["read:operators"]
-        - apiKey: ["superadmin"]
+        - bearerAuth:
+            - read:operators
+        - apiKey:
+            - superadmin
       responses:
-        "200":
+        '200':
           description: Successfull response
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/PaginatedResult"
-                  - $ref: "#/components/schemas/Operators"
+                  - $ref: '#/components/schemas/PaginatedResult'
+                  - $ref: '#/components/schemas/Operators'
     post:
       summary: Creates a new operator
       operationId: createOperator
       tags:
         - Operator
       requestBody:
-        $ref: "#/components/requestBodies/CreateOperator"
+        $ref: '#/components/requestBodies/CreateOperator'
       responses:
-        "201":
+        '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Operator"
-
+                $ref: '#/components/schemas/Operator'
   /operators/{operatorId}:
     get:
       summary: Gets an operator by ID
       operationId: getOperator
       parameters:
-        - $ref: "#/components/parameters/operatorId"
+        - $ref: '#/components/parameters/operatorId'
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Operator"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "501":
-          $ref: "#/components/responses/Unimplemented"
+                $ref: '#/components/schemas/Operator'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '501':
+          $ref: '#/components/responses/Unimplemented'
     put:
       summary: Updates an operator by ID
       operationId: updateOperator
       parameters:
-        - $ref: "#/components/parameters/operatorId"
+        - $ref: '#/components/parameters/operatorId'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Operator"
+              $ref: '#/components/schemas/Operator'
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Operator"
+                $ref: '#/components/schemas/Operator'
     delete:
       summary: Deletes an operator by ID
       operationId: deleteOperator
       parameters:
-        - $ref: "#/components/parameters/operatorId"
+        - $ref: '#/components/parameters/operatorId'
       responses:
-        "204":
+        '204':
           description: Successful
-
   /operators/{operatorId}/token:
     get:
       summary: Gets a token for an operator
       operationId: getOperatorToken
       parameters:
-        - $ref: "#/components/parameters/operatorId"
+        - $ref: '#/components/parameters/operatorId'
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/JWTToken"
+                $ref: '#/components/schemas/JWTToken'
     put:
       summary: Updates a token for an operator
       operationId: updateOperatorToken
       parameters:
-        - $ref: "#/components/parameters/operatorId"
+        - $ref: '#/components/parameters/operatorId'
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/JWTToken"
+                $ref: '#/components/schemas/JWTToken'
     delete:
       summary: Deletes a token for an operator
       operationId: deleteOperatorToken
       parameters:
-        - $ref: "#/components/parameters/operatorId"
+        - $ref: '#/components/parameters/operatorId'
       responses:
-        "204":
+        '204':
           description: Successful
-
   /operators/{operatorId}/signing-keys:
     get:
       summary: List all signing keys for an operator
@@ -184,26 +173,26 @@ paths:
       tags:
         - Operator
       parameters:
-        - $ref: "#/components/parameters/operatorId"
-        - $ref: "#/components/parameters/offsetParam"
-        - $ref: "#/components/parameters/limitParam"
+        - $ref: '#/components/parameters/operatorId'
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
       security:
-        - bearerAuth: ["read:signing-keys"]
+        - bearerAuth:
+            - read:signing-keys
       responses:
-        "200":
+        '200':
           description: Successfull response
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/PaginatedResult"
+                  - $ref: '#/components/schemas/PaginatedResult'
                   - type: object
                     properties:
                       results:
                         type: array
                         items:
-                          $ref: "#/components/schemas/KeyPair"
-
+                          $ref: '#/components/schemas/KeyPair'
   /operators/{operatorId}/accounts:
     get:
       summary: List all accounts for an operator
@@ -211,83 +200,80 @@ paths:
       tags:
         - Operator
       parameters:
-        - $ref: "#/components/parameters/operatorId"
-        - $ref: "#/components/parameters/offsetParam"
-        - $ref: "#/components/parameters/limitParam"
+        - $ref: '#/components/parameters/operatorId'
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
       security:
-        - bearerAuth: ["read:accounts"]
+        - bearerAuth:
+            - read:accounts
       responses:
-        "200":
+        '200':
           description: Successfull response
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/PaginatedResult"
+                  - $ref: '#/components/schemas/PaginatedResult'
                   - type: object
                     properties:
                       results:
                         type: array
                         items:
-                          $ref: "#/components/schemas/Account"
+                          $ref: '#/components/schemas/Account'
     post:
       summary: Creates a new account
       operationId: createOperatorAccount
       tags:
         - Operator
       parameters:
-        - $ref: "#/components/parameters/operatorId"
+        - $ref: '#/components/parameters/operatorId'
       requestBody:
-        $ref: "#/components/requestBodies/CreateAccount"
+        $ref: '#/components/requestBodies/CreateAccount'
       responses:
-        "201":
+        '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Account"
-
+                $ref: '#/components/schemas/Account'
   /operators/{operatorId}/accounts/{accountId}:
     get:
       summary: Gets an account by ID
       operationId: getOperatorAccount
       parameters:
-        - $ref: "#/components/parameters/operatorId"
-        - $ref: "#/components/parameters/accountId"
+        - $ref: '#/components/parameters/operatorId'
+        - $ref: '#/components/parameters/accountId'
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Account"
-
+                $ref: '#/components/schemas/Account'
     put:
       summary: Updates an account by ID
       operationId: updateOperatorAccount
       parameters:
-        - $ref: "#/components/parameters/operatorId"
-        - $ref: "#/components/parameters/accountId"
+        - $ref: '#/components/parameters/operatorId'
+        - $ref: '#/components/parameters/accountId'
       requestBody:
-        $ref: "#/components/requestBodies/UpdateAccount"
+        $ref: '#/components/requestBodies/UpdateAccount'
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Account"
-
+                $ref: '#/components/schemas/Account'
     delete:
       summary: Deletes an account by ID
       operationId: deleteOperatorAccount
       parameters:
-        - $ref: "#/components/parameters/operatorId"
-        - $ref: "#/components/parameters/accountId"
+        - $ref: '#/components/parameters/operatorId'
+        - $ref: '#/components/parameters/accountId'
       responses:
-        "204":
+        '204':
           description: Successful
-
   /operators/{operatorId}/accounts/{accountId}/signing-keys:
     get:
       summary: List all signing keys for an account
@@ -295,51 +281,50 @@ paths:
       tags:
         - Operator
       parameters:
-        - $ref: "#/components/parameters/operatorId"
-        - $ref: "#/components/parameters/accountId"
-        - $ref: "#/components/parameters/offsetParam"
-        - $ref: "#/components/parameters/limitParam"
+        - $ref: '#/components/parameters/operatorId'
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
       security:
-        - bearerAuth: ["read:signing-keys"]
+        - bearerAuth:
+            - read:signing-keys
       responses:
-        "200":
+        '200':
           description: Successfull response
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/PaginatedResult"
+                  - $ref: '#/components/schemas/PaginatedResult'
                   - type: object
                     properties:
                       results:
                         type: array
                         items:
-                          $ref: "#/components/schemas/KeyPair"
-
+                          $ref: '#/components/schemas/KeyPair'
   /operators/{operatorId}/accounts/{accountId}/token:
     get:
       summary: Gets a token for an account
       operationId: getOperatorAccountToken
       parameters:
-        - $ref: "#/components/parameters/operatorId"
-        - $ref: "#/components/parameters/accountId"
+        - $ref: '#/components/parameters/operatorId'
+        - $ref: '#/components/parameters/accountId'
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/JWTToken"
+                $ref: '#/components/schemas/JWTToken'
     delete:
       summary: Deletes a token for an account
       operationId: deleteOperatorAccountToken
       parameters:
-        - $ref: "#/components/parameters/operatorId"
-        - $ref: "#/components/parameters/accountId"
+        - $ref: '#/components/parameters/operatorId'
+        - $ref: '#/components/parameters/accountId'
       responses:
-        "204":
+        '204':
           description: Successful
-
   /operators/{operatorId}/accounts/{accountId}/users:
     get:
       summary: List all users for an account
@@ -347,51 +332,51 @@ paths:
       tags:
         - Operator
       parameters:
-        - $ref: "#/components/parameters/operatorId"
-        - $ref: "#/components/parameters/accountId"
-        - $ref: "#/components/parameters/offsetParam"
-        - $ref: "#/components/parameters/limitParam"
+        - $ref: '#/components/parameters/operatorId'
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
       security:
-        - bearerAuth: ["read:users"]
+        - bearerAuth:
+            - read:users
       responses:
-        "200":
+        '200':
           description: Successfull response
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/PaginatedResult"
+                  - $ref: '#/components/schemas/PaginatedResult'
                   - type: object
                     properties:
                       results:
                         type: array
                         items:
-                          $ref: "#/components/schemas/User"
+                          $ref: '#/components/schemas/User'
     post:
       summary: Creates a new user
       operationId: createOperatorAccountUser
       tags:
         - Operator
       parameters:
-        - $ref: "#/components/parameters/operatorId"
-        - $ref: "#/components/parameters/accountId"
+        - $ref: '#/components/parameters/operatorId'
+        - $ref: '#/components/parameters/accountId'
       requestBody:
-        $ref: "#/components/requestBodies/CreateOperatorAccountUser"
+        $ref: '#/components/requestBodies/CreateOperatorAccountUser'
       responses:
-        "201":
+        '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
-
+                $ref: '#/components/schemas/User'
   /operators/{operatorId}/accounts/{accountId}/users/{userId}:
     get:
       summary: Gets a user by ID
       operationId: getOperatorAccountUser
       parameters:
-        - $ref: "#/components/parameters/operatorId"
-        - $ref: "#/components/parameters/accountId"
+        - $ref: '#/components/parameters/operatorId'
+        - $ref: '#/components/parameters/accountId'
         - in: path
           name: userId
           required: true
@@ -399,44 +384,42 @@ paths:
             type: string
             format: uuid
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
-
+                $ref: '#/components/schemas/User'
   /operators/{operatorId}/accounts/{accountId}/users/{userId}/token:
     get:
       summary: Gets a token for a user
       operationId: getOperatorAccountUserToken
       parameters:
-        - $ref: "#/components/parameters/operatorId"
-        - $ref: "#/components/parameters/accountId"
-        - $ref: "#/components/parameters/userId"
+        - $ref: '#/components/parameters/operatorId'
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/userId'
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/JWTToken"
-
+                $ref: '#/components/schemas/JWTToken'
   /operators/{operatorId}/accounts/{accountId}/users/{userId}/credentials:
     get:
       summary: Gets the credentials for a user
       operationId: getOperatorAccountUserCredentials
       parameters:
-        - $ref: "#/components/parameters/operatorId"
-        - $ref: "#/components/parameters/accountId"
-        - $ref: "#/components/parameters/userId"
+        - $ref: '#/components/parameters/operatorId'
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/userId'
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/octet-stream:
               schema:
-                $ref: "#/components/schemas/Credentials"
+                $ref: '#/components/schemas/Credentials'
   /teams:
     get:
       summary: List all teams
@@ -444,88 +427,91 @@ paths:
       tags:
         - Team
       parameters:
-        - $ref: "#/components/parameters/offsetParam"
-        - $ref: "#/components/parameters/limitParam"
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
       security:
-        - bearerAuth: ["read:teams"]
-        - apiKey: ["superadmin"]
+        - bearerAuth:
+            - read:teams
+        - apiKey:
+            - superadmin
       responses:
-        "200":
+        '200':
           description: Successfull response
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/PaginatedResult"
-                  - $ref: "#/components/schemas/Teams"
-
+                  - $ref: '#/components/schemas/PaginatedResult'
+                  - $ref: '#/components/schemas/Teams'
     post:
       summary: Creates a new team
       operationId: createTeam
       tags:
         - Team
       requestBody:
-        $ref: "#/components/requestBodies/CreateTeam"
+        $ref: '#/components/requestBodies/CreateTeam'
       responses:
-        "201":
+        '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Team"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "409":
-          $ref: "#/components/responses/Duplicate"
-        "500":
-          $ref: "#/components/responses/InternalError"
-        "501":
-          $ref: "#/components/responses/Unimplemented"
-
+                $ref: '#/components/schemas/Team'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Duplicate'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '501':
+          $ref: '#/components/responses/Unimplemented'
   /teams/{teamId}:
     get:
       summary: Gets a team by ID
       operationId: getTeam
       parameters:
-        - $ref: "#/components/parameters/teamId"
+        - $ref: '#/components/parameters/teamId'
       security:
-        - bearerAuth: ["superadmin"]
-        - apiKey: ["superadmin"]
+        - bearerAuth:
+            - superadmin
+        - apiKey:
+            - superadmin
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Team"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
-        "501":
-          $ref: "#/components/responses/Unimplemented"
+                $ref: '#/components/schemas/Team'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '501':
+          $ref: '#/components/responses/Unimplemented'
     delete:
       summary: Deletes a team by ID
       operationId: deleteTeam
       parameters:
-        - $ref: "#/components/parameters/teamId"
+        - $ref: '#/components/parameters/teamId'
       security:
-        - bearerAuth: ["delete"]
-        - apiKey: ["delete"]
+        - bearerAuth:
+            - delete
+        - apiKey:
+            - delete
       responses:
-        "204":
+        '204':
           description: Successful
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "500":
-          $ref: "#/components/responses/InternalError"
-        "501":
-          $ref: "#/components/responses/Unimplemented"
-
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '501':
+          $ref: '#/components/responses/Unimplemented'
   /teams/{teamId}/systems:
     get:
       summary: List all systems for a team
@@ -533,26 +519,26 @@ paths:
       tags:
         - Team
       parameters:
-        - $ref: "#/components/parameters/teamId"
-        - $ref: "#/components/parameters/offsetParam"
-        - $ref: "#/components/parameters/limitParam"
+        - $ref: '#/components/parameters/teamId'
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
       security:
-        - bearerAuth: ["read:systems"]
+        - bearerAuth:
+            - read:systems
       responses:
-        "200":
+        '200':
           description: Successfull response
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/PaginatedResult"
+                  - $ref: '#/components/schemas/PaginatedResult'
                   - type: object
                     properties:
                       results:
                         type: array
                         items:
-                          $ref: "#/components/schemas/System"
-
+                          $ref: '#/components/schemas/System'
   /teams/{teamId}/accounts:
     get:
       summary: List all accounts for a team
@@ -560,26 +546,26 @@ paths:
       tags:
         - Team
       parameters:
-        - $ref: "#/components/parameters/teamId"
-        - $ref: "#/components/parameters/offsetParam"
-        - $ref: "#/components/parameters/limitParam"
+        - $ref: '#/components/parameters/teamId'
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
       security:
-        - bearerAuth: ["read:accounts"]
+        - bearerAuth:
+            - read:accounts
       responses:
-        "200":
+        '200':
           description: Successfull response
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/PaginatedResult"
+                  - $ref: '#/components/schemas/PaginatedResult'
                   - type: object
                     properties:
                       results:
                         type: array
                         items:
-                          $ref: "#/components/schemas/Account"
-
+                          $ref: '#/components/schemas/Account'
   /teams/{teamId}/accounts/{accountId}:
     get:
       summary: Gets an account by ID
@@ -598,13 +584,12 @@ paths:
             type: string
             format: uuid
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Account"
-
+                $ref: '#/components/schemas/Account'
   /teams/{teamId}/accounts/{accountId}/groups:
     get:
       summary: List all signing key groups for an account
@@ -612,92 +597,91 @@ paths:
       tags:
         - Team
       parameters:
-        - $ref: "#/components/parameters/teamId"
-        - $ref: "#/components/parameters/accountId"
-        - $ref: "#/components/parameters/offsetParam"
-        - $ref: "#/components/parameters/limitParam"
+        - $ref: '#/components/parameters/teamId'
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
       security:
-        - bearerAuth: ["read:groups"]
+        - bearerAuth:
+            - read:groups
       responses:
-        "200":
+        '200':
           description: Successfull response
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/PaginatedResult"
+                  - $ref: '#/components/schemas/PaginatedResult'
                   - type: object
                     properties:
                       results:
                         type: array
                         items:
-                          $ref: "#/components/schemas/SigningKeyGroup"
+                          $ref: '#/components/schemas/SigningKeyGroup'
     post:
       summary: Creates a new signing key group
       operationId: createGroup
       tags:
         - Team
       parameters:
-        - $ref: "#/components/parameters/teamId"
-        - $ref: "#/components/parameters/accountId"
+        - $ref: '#/components/parameters/teamId'
+        - $ref: '#/components/parameters/accountId'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/SigningKeyGroup"
+              $ref: '#/components/schemas/SigningKeyGroup'
       responses:
-        "201":
+        '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SigningKeyGroup"
-
+                $ref: '#/components/schemas/SigningKeyGroup'
   /teams/{teamId}/accounts/{accountId}/groups/{groupId}:
     get:
       summary: Gets a signing key group by ID
       operationId: getGroup
       parameters:
-        - $ref: "#/components/parameters/teamId"
-        - $ref: "#/components/parameters/accountId"
-        - $ref: "#/components/parameters/groupId"
+        - $ref: '#/components/parameters/teamId'
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/groupId'
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SigningKeyGroup"
+                $ref: '#/components/schemas/SigningKeyGroup'
     put:
       summary: Updates a signing key group by ID
       operationId: updateGroup
       parameters:
-        - $ref: "#/components/parameters/teamId"
-        - $ref: "#/components/parameters/accountId"
-        - $ref: "#/components/parameters/groupId"
+        - $ref: '#/components/parameters/teamId'
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/groupId'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/SigningKeyGroup"
+              $ref: '#/components/schemas/SigningKeyGroup'
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SigningKeyGroup"
+                $ref: '#/components/schemas/SigningKeyGroup'
     delete:
       summary: Deletes a signing key group by ID
       operationId: deleteSigningKeyGroup
       parameters:
-        - $ref: "#/components/parameters/teamId"
-        - $ref: "#/components/parameters/accountId"
-        - $ref: "#/components/parameters/groupId"
+        - $ref: '#/components/parameters/teamId'
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/groupId'
       responses:
-        "204":
+        '204':
           description: Successful
-
   /teams/{teamId}/accounts/{accountId}/users:
     get:
       summary: List all users for an account
@@ -705,233 +689,227 @@ paths:
       tags:
         - Team
       parameters:
-        - $ref: "#/components/parameters/teamId"
-        - $ref: "#/components/parameters/accountId"
-        - $ref: "#/components/parameters/offsetParam"
-        - $ref: "#/components/parameters/limitParam"
+        - $ref: '#/components/parameters/teamId'
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
       security:
-        - bearerAuth: ["read:users"]
+        - bearerAuth:
+            - read:users
       responses:
-        "200":
+        '200':
           description: Successfull response
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/PaginatedResult"
+                  - $ref: '#/components/schemas/PaginatedResult'
                   - type: object
                     properties:
                       results:
                         type: array
                         items:
-                          $ref: "#/components/schemas/User"
+                          $ref: '#/components/schemas/User'
     post:
       summary: Creates a new user
       operationId: createUser
       tags:
         - Team
       parameters:
-        - $ref: "#/components/parameters/teamId"
-        - $ref: "#/components/parameters/accountId"
+        - $ref: '#/components/parameters/teamId'
+        - $ref: '#/components/parameters/accountId'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/User"
+              $ref: '#/components/schemas/User'
       responses:
-        "201":
+        '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
-
+                $ref: '#/components/schemas/User'
   /teams/{teamId}/accounts/{accountId}/users/{userId}:
     get:
       summary: Gets a user by ID
       operationId: getUser
       parameters:
-        - $ref: "#/components/parameters/teamId"
-        - $ref: "#/components/parameters/accountId"
-        - $ref: "#/components/parameters/userId"
+        - $ref: '#/components/parameters/teamId'
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/userId'
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: '#/components/schemas/User'
     put:
       summary: Updates a user by ID
       operationId: updateUser
       parameters:
-        - $ref: "#/components/parameters/teamId"
-        - $ref: "#/components/parameters/accountId"
-        - $ref: "#/components/parameters/userId"
+        - $ref: '#/components/parameters/teamId'
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/userId'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/User"
+              $ref: '#/components/schemas/User'
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: '#/components/schemas/User'
     delete:
       summary: Deletes a user by ID
       operationId: deleteTeamAccountUser
       parameters:
-        - $ref: "#/components/parameters/teamId"
-        - $ref: "#/components/parameters/accountId"
-        - $ref: "#/components/parameters/userId"
+        - $ref: '#/components/parameters/teamId'
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/userId'
       responses:
-        "204":
+        '204':
           description: Successful
-
   /systems:
     get:
       summary: List all managed systems.
       operationId: listSystems
       tags:
         - System
-      description: |-
-        Returns a list of managed systems.
+      description: Returns a list of managed systems.
       responses:
-        "200":
+        '200':
           description: Successfull response
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/PaginatedResult"
+                  - $ref: '#/components/schemas/PaginatedResult'
                   - type: object
                     properties:
                       results:
                         type: array
                         items:
-                          $ref: "#/components/schemas/System"
+                          $ref: '#/components/schemas/System'
     post:
       summary: Creates a new system
       operationId: createSystem
       tags:
         - System
       requestBody:
-        $ref: "#/components/requestBodies/CreateSystem"
+        $ref: '#/components/requestBodies/CreateSystem'
       responses:
-        "201":
+        '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/System"
-
+                $ref: '#/components/schemas/System'
   /systems/{systemId}:
     get:
       summary: Gets a system by ID
       operationId: getSystem
       parameters:
-        - $ref: "#/components/parameters/systemId"
+        - $ref: '#/components/parameters/systemId'
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/System"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "501":
-          $ref: "#/components/responses/Unimplemented"
+                $ref: '#/components/schemas/System'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '501':
+          $ref: '#/components/responses/Unimplemented'
         default:
-          $ref: "#/components/responses/InternalError"
+          $ref: '#/components/responses/InternalError'
     put:
       summary: Updates a system by ID
       operationId: updateSystem
       parameters:
-        - $ref: "#/components/parameters/systemId"
+        - $ref: '#/components/parameters/systemId'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/System"
+              $ref: '#/components/schemas/System'
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/System"
-
+                $ref: '#/components/schemas/System'
     delete:
       summary: Deletes a system by ID
       operationId: deleteSystem
       parameters:
-        - $ref: "#/components/parameters/systemId"
+        - $ref: '#/components/parameters/systemId'
       responses:
-        "204":
+        '204':
           description: Successful
-
   /systems/{systemId}/operator:
     get:
       summary: Gets the operator for a system
       operationId: getSystemOperator
       parameters:
-        - $ref: "#/components/parameters/systemId"
+        - $ref: '#/components/parameters/systemId'
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Operator"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
+                $ref: '#/components/schemas/Operator'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
     put:
       summary: Updates the operator for a system
       operationId: updateSystemOperator
       parameters:
-        - $ref: "#/components/parameters/systemId"
+        - $ref: '#/components/parameters/systemId'
       requestBody:
-        $ref: "#/components/requestBodies/UpdateSystemOperator"
+        $ref: '#/components/requestBodies/UpdateSystemOperator'
       responses:
-        "201":
+        '201':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Operator"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/Operator'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       summary: Deletes the operator for a system
       operationId: deleteSystemOperator
       parameters:
-        - $ref: "#/components/parameters/systemId"
+        - $ref: '#/components/parameters/systemId'
       responses:
-        "204":
+        '204':
           description: Successful
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
 components:
   parameters:
     systemId:
@@ -1001,54 +979,49 @@ components:
         type: string
         format: uuid
       description: The id of the operator to retrieve.
-
   responses:
     InternalError:
       description: An internal error occurred.
       content:
         application/json:
           schema:
-            $ref: "./schemas/error.yml#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
     NotFound:
       description: The requested resource was not found.
       content:
         application/json:
           schema:
-            $ref: "./schemas/error.yml#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
     Unauthorized:
       description: The request was not authorized.
       content:
         application/json:
           schema:
-            $ref: "./schemas/error.yml#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
     BadRequest:
       description: The request was not valid.
       content:
         application/json:
           schema:
-            $ref: "./schemas/error.yml#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
     Unimplemented:
       description: The requested resource was not implemented.
       content:
         application/json:
           schema:
-            $ref: "./schemas/error.yml#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
     Duplicate:
       description: The requested resource was a duplicate.
       content:
         application/json:
           schema:
-            $ref: "./schemas/error.yml#/components/schemas/Error"
-
+            $ref: '#/components/schemas/Error'
   requestBodies:
-    # Body for creating a system
     CreateSystem:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/System"
-
-    # Body for updating an operator
+            $ref: '#/components/schemas/System'
     UpdateSystemOperator:
       content:
         application/json:
@@ -1060,7 +1033,6 @@ components:
               operatorId:
                 type: string
                 format: uuid
-    # Body for creating a team
     CreateTeam:
       content:
         application/json:
@@ -1073,7 +1045,6 @@ components:
                 type: string
               description:
                 type: string
-    # Body for creating an operator
     CreateOperator:
       content:
         application/json:
@@ -1088,7 +1059,6 @@ components:
                 type: string
               contactEmail:
                 type: string
-    # Body for creating an account
     CreateAccount:
       content:
         application/json:
@@ -1101,8 +1071,6 @@ components:
                 type: string
               description:
                 type: string
-
-    # Body for updating an account
     UpdateAccount:
       content:
         application/json:
@@ -1116,8 +1084,7 @@ components:
               description:
                 type: string
               claims:
-                $ref: "#/components/schemas/JWTAccountClaims"
-    # Body for creating an operator account user
+                $ref: '#/components/schemas/JWTAccountClaims'
     CreateOperatorAccountUser:
       content:
         application/json:
@@ -1130,7 +1097,6 @@ components:
                 type: string
               email:
                 type: string
-
   securitySchemes:
     bearerAuth:
       type: http
@@ -1140,20 +1106,17 @@ components:
       type: apiKey
       in: header
       name: X-API-Key
-
   schemas:
     NKey:
       description: |
         An NKey is the private key of a NATS account.
       type: string
       format: base32
-
     JWTToken:
       description: |
         A JWT token is a JSON Web Token.
       type: string
       format: JWT
-
     KeyPair:
       descriptio: |
         A KeyPair is a public/private key pair.
@@ -1167,11 +1130,9 @@ components:
         privateKey:
           type: string
           format: base32
-
     Credentials:
       type: string
       format: binary
-
     PaginatedResult:
       type: object
       properties:
@@ -1183,8 +1144,7 @@ components:
           type: integer
         results:
           type: array
-          items:
-
+          items: null
     System:
       type: object
       required:
@@ -1198,30 +1158,29 @@ components:
         name:
           type: string
           description: Name of the system
-          example: "eu-west-1"
+          example: eu-west-1
         description:
           type: string
           description: A description of the system.
         operator:
-          $ref: "#/components/schemas/Operator"
+          $ref: '#/components/schemas/Operator'
         clusters:
-          $ref: "#/components/schemas/Clusters"
+          $ref: '#/components/schemas/Clusters'
         createdAt:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
+          example: '2021-01-30T08:30:00Z'
         updatedAt:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
+          example: '2021-01-30T08:30:00Z'
         deletedAt:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
-
+          example: '2021-01-30T08:30:00Z'
     Operator:
       type: object
       required:
@@ -1234,11 +1193,11 @@ components:
         name:
           type: string
         key:
-          $ref: "#/components/schemas/KeyPair"
+          $ref: '#/components/schemas/KeyPair'
         signingKeys:
           type: array
           items:
-            $ref: "#/components/schemas/KeyPair"
+            $ref: '#/components/schemas/KeyPair'
         description:
           type: string
         contactEmail:
@@ -1247,18 +1206,17 @@ components:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
+          example: '2021-01-30T08:30:00Z'
         updatedAt:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
+          example: '2021-01-30T08:30:00Z'
         deletedAt:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
-
+          example: '2021-01-30T08:30:00Z'
     Team:
       type: object
       required:
@@ -1278,18 +1236,17 @@ components:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
+          example: '2021-01-30T08:30:00Z'
         updatedAt:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
+          example: '2021-01-30T08:30:00Z'
         deletedAt:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
-
+          example: '2021-01-30T08:30:00Z'
     Cluster:
       type: object
       required:
@@ -1310,18 +1267,17 @@ components:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
+          example: '2021-01-30T08:30:00Z'
         updatedAt:
           type: string
           format: date-time
           description: Update date and time
-          example: "2021-01-30T08:30:00Z"
+          example: '2021-01-30T08:30:00Z'
         deletedAt:
           type: string
           format: date-time
           description: Delete date and time
-          example: "2021-01-30T08:30:00Z"
-
+          example: '2021-01-30T08:30:00Z'
     Account:
       type: object
       required:
@@ -1338,27 +1294,26 @@ components:
         contactEmail:
           type: string
         key:
-          $ref: "#/components/schemas/KeyPair"
+          $ref: '#/components/schemas/KeyPair'
         signingKeys:
           type: array
           items:
-            $ref: "#/components/schemas/KeyPair"
+            $ref: '#/components/schemas/KeyPair'
         createdAt:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
+          example: '2021-01-30T08:30:00Z'
         updatedAt:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
+          example: '2021-01-30T08:30:00Z'
         deletedAt:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
-
+          example: '2021-01-30T08:30:00Z'
     SigningKeyGroup:
       type: object
       required:
@@ -1373,7 +1328,7 @@ components:
         description:
           type: string
         scope:
-          $ref: "#/components/schemas/SigningKeyGroupScope"
+          $ref: '#/components/schemas/SigningKeyGroupScope'
         is_scoped:
           type: boolean
           default: false
@@ -1384,25 +1339,24 @@ components:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
+          example: '2021-01-30T08:30:00Z'
         updatedAt:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
+          example: '2021-01-30T08:30:00Z'
         deletedAt:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
-
+          example: '2021-01-30T08:30:00Z'
     SigningKeyGroupScope:
       type: object
       properties:
         publish:
-          $ref: "#/components/schemas/SigningKeyGroupScopePublish"
+          $ref: '#/components/schemas/SigningKeyGroupScopePublish'
         subscribe:
-          $ref: "#/components/schemas/SigningKeyGroupScopeSubscribe"
+          $ref: '#/components/schemas/SigningKeyGroupScopeSubscribe'
         subscriptions:
           type: integer
           default: 0
@@ -1412,7 +1366,6 @@ components:
         data:
           type: integer
           default: 0
-
     SigningKeyGroupScopePublish:
       type: object
       properties:
@@ -1424,7 +1377,6 @@ components:
           type: array
           items:
             type: string
-
     SigningKeyGroupScopeSubscribe:
       type: object
       properties:
@@ -1436,7 +1388,6 @@ components:
           type: array
           items:
             type: string
-
     User:
       type: object
       required:
@@ -1458,18 +1409,17 @@ components:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
+          example: '2021-01-30T08:30:00Z'
         updatedAt:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
+          example: '2021-01-30T08:30:00Z'
         deletedAt:
           type: string
           format: date-time
           description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
-
+          example: '2021-01-30T08:30:00Z'
     JWTInfo:
       type: object
       properties:
@@ -1477,7 +1427,6 @@ components:
           type: string
         info_url:
           type: string
-
     JWTExport:
       type: object
       properties:
@@ -1491,46 +1440,63 @@ components:
           type: string
         account_token_position:
           type: integer
-          x-go-type: "uint"
+          x-go-type: uint
         info:
-          $ref: "#/components/schemas/JWTInfo"
-
+          $ref: '#/components/schemas/JWTInfo'
     JWTAccountClaims:
       type: object
       properties:
         exports:
           type: array
           items:
-            $ref: "#/components/schemas/JWTExport"
-
+            $ref: '#/components/schemas/JWTExport'
     Clusters:
       type: array
       maxItems: 100
       items:
-        $ref: "#/components/schemas/Cluster"
-
+        $ref: '#/components/schemas/Cluster'
     Systems:
       type: array
       maxItems: 100
       items:
-        $ref: "#/components/schemas/System"
-
+        $ref: '#/components/schemas/System'
     Operators:
       type: object
       properties:
         results:
           type: array
           items:
-            $ref: "#/components/schemas/Operator"
-
+            $ref: '#/components/schemas/Operator'
     Teams:
       type: object
       properties:
         results:
           type: array
           items:
-            $ref: "#/components/schemas/Team"
-
+            $ref: '#/components/schemas/Team'
+    Version:
+      type: object
+      required:
+        - version
+        - date
+      properties:
+        version:
+          type: string
+        date:
+          type: string
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        ref:
+          type: string
+        message:
+          type: string
 security:
   - bearerAuth: []
   - apiKey: []
