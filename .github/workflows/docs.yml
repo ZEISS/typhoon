@@ -15,8 +15,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "14"
-      - run: npx @redocly/cli build-docs api/api.yml --o docs/index.html
+          node-version: "20"
+      - run: npx -y @redocly/cli build-docs api/api.yml --o docs/index.html
       - uses: actions/upload-artifact@v2
         if: github.ref == 'refs/heads/main'
         with:
