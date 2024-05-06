@@ -2,9 +2,7 @@ package services
 
 import (
 	"context"
-	"fmt"
 
-	authz "github.com/zeiss/fiber-authz"
 	"github.com/zeiss/typhoon/internal/utils"
 	openapi "github.com/zeiss/typhoon/pkg/apis"
 )
@@ -25,9 +23,6 @@ func (a *ApiHandlers) GetTeam(ctx context.Context, req openapi.GetTeamRequestObj
 	if err != nil {
 		return openapi.GetTeam404JSONResponse{}, nil
 	}
-
-	key, err := authz.GetAPIKeyFromContext(ctx)
-	fmt.Println(key)
 
 	return openapi.GetTeam200JSONResponse(openapi.Team{Id: utils.UUIDPtr(team.ID), Name: team.Name, Description: team.Description, CreatedAt: utils.PtrTime(team.CreatedAt), UpdatedAt: utils.PtrTime(team.UpdatedAt), DeletedAt: utils.PtrTime(team.DeletedAt.Time)}), nil
 }

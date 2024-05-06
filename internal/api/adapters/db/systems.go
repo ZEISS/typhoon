@@ -10,7 +10,11 @@ import (
 // GetSystem ...
 func (db *DB) GetSystem(ctx context.Context, id uuid.UUID) (*models.System, error) {
 	system := &models.System{}
-	if err := db.conn.Where("id = ?", id).Preload("Operator").First(system).Error; err != nil {
+	err := db.conn.Where("id = ?", id).
+		Preload("Clusters").
+		Preload("Operator").
+		First(system).Error
+	if err != nil {
 		return nil, err
 	}
 
@@ -26,7 +30,13 @@ func (db *DB) CreateSystem(ctx context.Context, system *models.System) error {
 func (db *DB) ListSystems(ctx context.Context, pagination models.Pagination[models.System]) (models.Pagination[models.System], error) {
 	systems := []models.System{}
 
-	err := db.conn.WithContext(ctx).Scopes(models.Paginate(&systems, &pagination, db.conn)).Limit(pagination.Limit).Offset(pagination.Offset).Find(&systems).Error
+	err := db.conn.WithContext(ctx).
+		Scopes(models.Paginate(&systems, &pagination, db.conn)).
+		Preload("Clusters").
+		Preload("Operator").
+		Limit(pagination.Limit).
+		Offset(pagination.Offset).
+		Find(&systems).Error
 	if err != nil {
 		return pagination, err
 	}

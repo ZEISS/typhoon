@@ -177,6 +177,11 @@ func (u *Unimplemented) ListTeams(ctx context.Context, request ListTeamsRequestO
 	return nil, errors.New("not implemented")
 }
 
+// ListTeamSystems ...
+func (u *Unimplemented) ListTeamSystems(ctx context.Context, request ListTeamSystemsRequestObject) (ListTeamSystemsResponseObject, error) {
+	return nil, errors.New("not implemented")
+}
+
 // CreateTeam ...
 func (u *Unimplemented) CreateTeam(ctx context.Context, request CreateTeamRequestObject) (CreateTeamResponseObject, error) {
 	return nil, errors.New("not implemented")

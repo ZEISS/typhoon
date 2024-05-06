@@ -17,7 +17,7 @@ type Pagination[R any] struct {
 	// Sort is the sorting order.
 	Sort string `json:"sort,omitempty" xml:"sort" form:"sort"`
 	// TotalRows is the total number of rows.
-	TotalRows int64 `json:"total_rows"`
+	TotalRows int `json:"total_rows"`
 	// TotalPages is the total number of pages.
 	TotalPages int `json:"total_pages"`
 	// Rows is the items to return.
@@ -61,7 +61,7 @@ func Paginate[R any](value interface{}, pagination *Pagination[R], db *gorm.DB) 
 	var totalRows int64
 	db.Model(value).Count(&totalRows).Where("deleted_at IS NULL")
 
-	pagination.TotalRows = totalRows
+	pagination.TotalRows = int(totalRows)
 	totalPages := int(math.Ceil(float64(totalRows) / float64(pagination.Limit)))
 	pagination.TotalPages = totalPages
 

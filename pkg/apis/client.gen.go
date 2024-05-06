@@ -254,6 +254,9 @@ type ClientInterface interface {
 
 	UpdateUser(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListTeamSystems request
+	ListTeamSystems(ctx context.Context, teamId TeamId, params *ListTeamSystemsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// Version request
 	Version(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
@@ -956,6 +959,18 @@ func (c *Client) UpdateUserWithBody(ctx context.Context, teamId TeamId, accountI
 
 func (c *Client) UpdateUser(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateUserRequest(c.Server, teamId, accountId, userId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListTeamSystems(ctx context.Context, teamId TeamId, params *ListTeamSystemsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListTeamSystemsRequest(c.Server, teamId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -3228,6 +3243,78 @@ func NewUpdateUserRequestWithBody(server string, teamId TeamId, accountId Accoun
 	return req, nil
 }
 
+// NewListTeamSystemsRequest generates requests for ListTeamSystems
+func NewListTeamSystemsRequest(server string, teamId TeamId, params *ListTeamSystemsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/teams/%s/systems", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Offset != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewVersionRequest generates requests for Version
 func NewVersionRequest(server string) (*http.Request, error) {
 	var err error
@@ -3462,6 +3549,9 @@ type ClientWithResponsesInterface interface {
 
 	UpdateUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error)
 
+	// ListTeamSystemsWithResponse request
+	ListTeamSystemsWithResponse(ctx context.Context, teamId TeamId, params *ListTeamSystemsParams, reqEditors ...RequestEditorFn) (*ListTeamSystemsResponse, error)
+
 	// VersionWithResponse request
 	VersionWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*VersionResponse, error)
 }
@@ -3470,10 +3560,10 @@ type ListOperatorResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
-		Limit   *float32    `json:"limit,omitempty"`
-		Offset  *float32    `json:"offset,omitempty"`
+		Limit   *int        `json:"limit,omitempty"`
+		Offset  *int        `json:"offset,omitempty"`
 		Results *[]Operator `json:"results,omitempty"`
-		Total   *float32    `json:"total,omitempty"`
+		Total   *int        `json:"total,omitempty"`
 	}
 }
 
@@ -3587,10 +3677,10 @@ type ListOperatorAccountsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
-		Limit   *float32   `json:"limit,omitempty"`
-		Offset  *float32   `json:"offset,omitempty"`
+		Limit   *int       `json:"limit,omitempty"`
+		Offset  *int       `json:"offset,omitempty"`
 		Results *[]Account `json:"results,omitempty"`
-		Total   *float32   `json:"total,omitempty"`
+		Total   *int       `json:"total,omitempty"`
 	}
 }
 
@@ -3701,10 +3791,10 @@ type ListOperatorAccountSigningKeysResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
-		Limit   *float32   `json:"limit,omitempty"`
-		Offset  *float32   `json:"offset,omitempty"`
+		Limit   *int       `json:"limit,omitempty"`
+		Offset  *int       `json:"offset,omitempty"`
 		Results *[]KeyPair `json:"results,omitempty"`
-		Total   *float32   `json:"total,omitempty"`
+		Total   *int       `json:"total,omitempty"`
 	}
 }
 
@@ -3771,10 +3861,10 @@ type ListOperatorAccountUsersResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
-		Limit   *float32 `json:"limit,omitempty"`
-		Offset  *float32 `json:"offset,omitempty"`
-		Results *[]User  `json:"results,omitempty"`
-		Total   *float32 `json:"total,omitempty"`
+		Limit   *int    `json:"limit,omitempty"`
+		Offset  *int    `json:"offset,omitempty"`
+		Results *[]User `json:"results,omitempty"`
+		Total   *int    `json:"total,omitempty"`
 	}
 }
 
@@ -3885,10 +3975,10 @@ type ListOperatorSigningKeysResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
-		Limit   *float32   `json:"limit,omitempty"`
-		Offset  *float32   `json:"offset,omitempty"`
+		Limit   *int       `json:"limit,omitempty"`
+		Offset  *int       `json:"offset,omitempty"`
 		Results *[]KeyPair `json:"results,omitempty"`
-		Total   *float32   `json:"total,omitempty"`
+		Total   *int       `json:"total,omitempty"`
 	}
 }
 
@@ -3977,10 +4067,10 @@ type ListSystemsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
-		Limit   *float32  `json:"limit,omitempty"`
-		Offset  *float32  `json:"offset,omitempty"`
+		Limit   *int      `json:"limit,omitempty"`
+		Offset  *int      `json:"offset,omitempty"`
 		Results *[]System `json:"results,omitempty"`
-		Total   *float32  `json:"total,omitempty"`
+		Total   *int      `json:"total,omitempty"`
 	}
 }
 
@@ -4160,10 +4250,10 @@ type ListTeamsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
-		Limit   *float32 `json:"limit,omitempty"`
-		Offset  *float32 `json:"offset,omitempty"`
-		Results *[]Team  `json:"results,omitempty"`
-		Total   *float32 `json:"total,omitempty"`
+		Limit   *int    `json:"limit,omitempty"`
+		Offset  *int    `json:"offset,omitempty"`
+		Results *[]Team `json:"results,omitempty"`
+		Total   *int    `json:"total,omitempty"`
 	}
 }
 
@@ -4264,10 +4354,10 @@ type ListTeamAccountsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
-		Limit   *float32   `json:"limit,omitempty"`
-		Offset  *float32   `json:"offset,omitempty"`
+		Limit   *int       `json:"limit,omitempty"`
+		Offset  *int       `json:"offset,omitempty"`
 		Results *[]Account `json:"results,omitempty"`
-		Total   *float32   `json:"total,omitempty"`
+		Total   *int       `json:"total,omitempty"`
 	}
 }
 
@@ -4313,10 +4403,10 @@ type ListGroupsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
-		Limit   *float32           `json:"limit,omitempty"`
-		Offset  *float32           `json:"offset,omitempty"`
+		Limit   *int               `json:"limit,omitempty"`
+		Offset  *int               `json:"offset,omitempty"`
 		Results *[]SigningKeyGroup `json:"results,omitempty"`
-		Total   *float32           `json:"total,omitempty"`
+		Total   *int               `json:"total,omitempty"`
 	}
 }
 
@@ -4427,10 +4517,10 @@ type ListUsersResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
-		Limit   *float32 `json:"limit,omitempty"`
-		Offset  *float32 `json:"offset,omitempty"`
-		Results *[]User  `json:"results,omitempty"`
-		Total   *float32 `json:"total,omitempty"`
+		Limit   *int    `json:"limit,omitempty"`
+		Offset  *int    `json:"offset,omitempty"`
+		Results *[]User `json:"results,omitempty"`
+		Total   *int    `json:"total,omitempty"`
 	}
 }
 
@@ -4531,6 +4621,33 @@ func (r UpdateUserResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r UpdateUserResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListTeamSystemsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Limit   *int      `json:"limit,omitempty"`
+		Offset  *int      `json:"offset,omitempty"`
+		Results *[]System `json:"results,omitempty"`
+		Total   *int      `json:"total,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r ListTeamSystemsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListTeamSystemsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5079,6 +5196,15 @@ func (c *ClientWithResponses) UpdateUserWithResponse(ctx context.Context, teamId
 	return ParseUpdateUserResponse(rsp)
 }
 
+// ListTeamSystemsWithResponse request returning *ListTeamSystemsResponse
+func (c *ClientWithResponses) ListTeamSystemsWithResponse(ctx context.Context, teamId TeamId, params *ListTeamSystemsParams, reqEditors ...RequestEditorFn) (*ListTeamSystemsResponse, error) {
+	rsp, err := c.ListTeamSystems(ctx, teamId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListTeamSystemsResponse(rsp)
+}
+
 // VersionWithResponse request returning *VersionResponse
 func (c *ClientWithResponses) VersionWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*VersionResponse, error) {
 	rsp, err := c.Version(ctx, reqEditors...)
@@ -5104,10 +5230,10 @@ func ParseListOperatorResponse(rsp *http.Response) (*ListOperatorResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Limit   *float32    `json:"limit,omitempty"`
-			Offset  *float32    `json:"offset,omitempty"`
+			Limit   *int        `json:"limit,omitempty"`
+			Offset  *int        `json:"offset,omitempty"`
 			Results *[]Operator `json:"results,omitempty"`
-			Total   *float32    `json:"total,omitempty"`
+			Total   *int        `json:"total,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -5250,10 +5376,10 @@ func ParseListOperatorAccountsResponse(rsp *http.Response) (*ListOperatorAccount
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Limit   *float32   `json:"limit,omitempty"`
-			Offset  *float32   `json:"offset,omitempty"`
+			Limit   *int       `json:"limit,omitempty"`
+			Offset  *int       `json:"offset,omitempty"`
 			Results *[]Account `json:"results,omitempty"`
-			Total   *float32   `json:"total,omitempty"`
+			Total   *int       `json:"total,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -5375,10 +5501,10 @@ func ParseListOperatorAccountSigningKeysResponse(rsp *http.Response) (*ListOpera
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Limit   *float32   `json:"limit,omitempty"`
-			Offset  *float32   `json:"offset,omitempty"`
+			Limit   *int       `json:"limit,omitempty"`
+			Offset  *int       `json:"offset,omitempty"`
 			Results *[]KeyPair `json:"results,omitempty"`
-			Total   *float32   `json:"total,omitempty"`
+			Total   *int       `json:"total,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -5448,10 +5574,10 @@ func ParseListOperatorAccountUsersResponse(rsp *http.Response) (*ListOperatorAcc
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Limit   *float32 `json:"limit,omitempty"`
-			Offset  *float32 `json:"offset,omitempty"`
-			Results *[]User  `json:"results,omitempty"`
-			Total   *float32 `json:"total,omitempty"`
+			Limit   *int    `json:"limit,omitempty"`
+			Offset  *int    `json:"offset,omitempty"`
+			Results *[]User `json:"results,omitempty"`
+			Total   *int    `json:"total,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -5573,10 +5699,10 @@ func ParseListOperatorSigningKeysResponse(rsp *http.Response) (*ListOperatorSign
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Limit   *float32   `json:"limit,omitempty"`
-			Offset  *float32   `json:"offset,omitempty"`
+			Limit   *int       `json:"limit,omitempty"`
+			Offset  *int       `json:"offset,omitempty"`
 			Results *[]KeyPair `json:"results,omitempty"`
-			Total   *float32   `json:"total,omitempty"`
+			Total   *int       `json:"total,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -5672,10 +5798,10 @@ func ParseListSystemsResponse(rsp *http.Response) (*ListSystemsResponse, error) 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Limit   *float32  `json:"limit,omitempty"`
-			Offset  *float32  `json:"offset,omitempty"`
+			Limit   *int      `json:"limit,omitempty"`
+			Offset  *int      `json:"offset,omitempty"`
 			Results *[]System `json:"results,omitempty"`
-			Total   *float32  `json:"total,omitempty"`
+			Total   *int      `json:"total,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -5893,10 +6019,10 @@ func ParseListTeamsResponse(rsp *http.Response) (*ListTeamsResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Limit   *float32 `json:"limit,omitempty"`
-			Offset  *float32 `json:"offset,omitempty"`
-			Results *[]Team  `json:"results,omitempty"`
-			Total   *float32 `json:"total,omitempty"`
+			Limit   *int    `json:"limit,omitempty"`
+			Offset  *int    `json:"offset,omitempty"`
+			Results *[]Team `json:"results,omitempty"`
+			Total   *int    `json:"total,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -6079,10 +6205,10 @@ func ParseListTeamAccountsResponse(rsp *http.Response) (*ListTeamAccountsRespons
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Limit   *float32   `json:"limit,omitempty"`
-			Offset  *float32   `json:"offset,omitempty"`
+			Limit   *int       `json:"limit,omitempty"`
+			Offset  *int       `json:"offset,omitempty"`
 			Results *[]Account `json:"results,omitempty"`
-			Total   *float32   `json:"total,omitempty"`
+			Total   *int       `json:"total,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -6136,10 +6262,10 @@ func ParseListGroupsResponse(rsp *http.Response) (*ListGroupsResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Limit   *float32           `json:"limit,omitempty"`
-			Offset  *float32           `json:"offset,omitempty"`
+			Limit   *int               `json:"limit,omitempty"`
+			Offset  *int               `json:"offset,omitempty"`
 			Results *[]SigningKeyGroup `json:"results,omitempty"`
-			Total   *float32           `json:"total,omitempty"`
+			Total   *int               `json:"total,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -6261,10 +6387,10 @@ func ParseListUsersResponse(rsp *http.Response) (*ListUsersResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Limit   *float32 `json:"limit,omitempty"`
-			Offset  *float32 `json:"offset,omitempty"`
-			Results *[]User  `json:"results,omitempty"`
-			Total   *float32 `json:"total,omitempty"`
+			Limit   *int    `json:"limit,omitempty"`
+			Offset  *int    `json:"offset,omitempty"`
+			Results *[]User `json:"results,omitempty"`
+			Total   *int    `json:"total,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -6360,6 +6486,37 @@ func ParseUpdateUserResponse(rsp *http.Response) (*UpdateUserResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest User
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListTeamSystemsResponse parses an HTTP response from a ListTeamSystemsWithResponse call
+func ParseListTeamSystemsResponse(rsp *http.Response) (*ListTeamSystemsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListTeamSystemsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Limit   *int      `json:"limit,omitempty"`
+			Offset  *int      `json:"offset,omitempty"`
+			Results *[]System `json:"results,omitempty"`
+			Total   *int      `json:"total,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

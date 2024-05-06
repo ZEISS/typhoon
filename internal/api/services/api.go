@@ -5,7 +5,6 @@ import (
 	"context"
 
 	"github.com/zeiss/typhoon/internal/api/controllers"
-	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/utils"
 	openapi "github.com/zeiss/typhoon/pkg/apis"
 )
@@ -15,7 +14,7 @@ var _ openapi.StrictServerInterface = (*ApiHandlers)(nil)
 // ApiHandlers ...
 type ApiHandlers struct {
 	teams     controllers.TeamsController
-	systems   *controllers.SystemsController
+	systems   controllers.SystemsController
 	version   *controllers.VersionController
 	operators *controllers.OperatorsController
 	accounts  *controllers.AccountsController
@@ -25,18 +24,8 @@ type ApiHandlers struct {
 }
 
 // NewApiHandlers ...
-func NewApiHandlers(systems *controllers.SystemsController, teams controllers.TeamsController, version *controllers.VersionController, operators *controllers.OperatorsController, accounts *controllers.AccountsController, users *controllers.UsersController) *ApiHandlers {
+func NewApiHandlers(systems controllers.SystemsController, teams controllers.TeamsController, version *controllers.VersionController, operators *controllers.OperatorsController, accounts *controllers.AccountsController, users *controllers.UsersController) *ApiHandlers {
 	return &ApiHandlers{systems: systems, teams: teams, version: version, operators: operators, accounts: accounts, users: users}
-}
-
-// CreateSystem ...
-func (a *ApiHandlers) CreateSystem(ctx context.Context, req openapi.CreateSystemRequestObject) (openapi.CreateSystemResponseObject, error) {
-	system, err := a.systems.CreateSystem(ctx, req.Body.Name, *req.Body.Description)
-	if err != nil {
-		return nil, err
-	}
-
-	return openapi.CreateSystem201JSONResponse(openapi.System{Id: &system.ID, Name: system.Name, Description: utils.StrPtr(system.Description)}), nil
 }
 
 // GetSystem ...
@@ -79,39 +68,15 @@ func (a *ApiHandlers) DeleteOperatorAccountToken(ctx context.Context, req openap
 	return openapi.DeleteOperatorAccountToken204Response(openapi.DeleteOperatorAccountToken204Response{}), nil
 }
 
-// ListSystems ...
-func (a *ApiHandlers) ListSystems(ctx context.Context, req openapi.ListSystemsRequestObject) (openapi.ListSystemsResponseObject, error) {
-	pagination := models.Pagination[models.System]{}
+// // UpdateSystemOperator ...
+// func (a *ApiHandlers) UpdateSystemOperator(ctx context.Context, req openapi.UpdateSystemOperatorRequestObject) (openapi.UpdateSystemOperatorResponseObject, error) {
+// 	system, err := a.systems.UpdateSystemOperator(ctx, req.SystemId, *&req.Body.OperatorId)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	result, err := a.systems.ListSystems(ctx, pagination)
-	if err != nil {
-		return nil, err
-	}
-
-	systems := make([]openapi.System, 0, len(result.Rows))
-	for _, system := range result.Rows {
-		systems = append(systems, openapi.System{
-			Id:          &system.ID,
-			Name:        system.Name,
-			Description: utils.StrPtr(system.Description),
-			CreatedAt:   &system.CreatedAt,
-			UpdatedAt:   &system.UpdatedAt,
-			DeletedAt:   &system.DeletedAt.Time,
-		})
-	}
-
-	return openapi.ListSystems200JSONResponse(openapi.ListSystems200JSONResponse{Results: &systems}), nil
-}
-
-// UpdateSystemOperator ...
-func (a *ApiHandlers) UpdateSystemOperator(ctx context.Context, req openapi.UpdateSystemOperatorRequestObject) (openapi.UpdateSystemOperatorResponseObject, error) {
-	system, err := a.systems.UpdateSystemOperator(ctx, req.SystemId, *&req.Body.OperatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	return openapi.UpdateSystemOperator200JSONResponse(openapi.UpdateSystemOperator200JSONResponse{Id: utils.PtrUUID(system.ID)}), nil
-}
+// 	return openapi.UpdateSystemOperator200JSONResponse(openapi.UpdateSystemOperator200JSONResponse{Id: utils.PtrUUID(system.ID)}), nil
+// }
 
 // CreateOperator ...
 func (a *ApiHandlers) CreateOperator(ctx context.Context, req openapi.CreateOperatorRequestObject) (openapi.CreateOperatorResponseObject, error) {

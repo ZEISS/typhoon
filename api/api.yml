@@ -526,6 +526,33 @@ paths:
         "501":
           $ref: "#/components/responses/Unimplemented"
 
+  /teams/{teamId}/systems:
+    get:
+      summary: List all systems for a team
+      operationId: listTeamSystems
+      tags:
+        - Team
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: ["read:systems"]
+      responses:
+        "200":
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/System"
+
   /teams/{teamId}/accounts:
     get:
       summary: List all accounts for a team
@@ -994,18 +1021,14 @@ components:
             $ref: "#/components/schemas/Error"
 
   requestBodies:
+    # Body for creating a system
     CreateSystem:
       content:
         application/json:
           schema:
-            type: object
-            required:
-              - name
-            properties:
-              name:
-                type: string
-              description:
-                type: string
+            $ref: "#/components/schemas/System"
+
+    # Body for updating an operator
     UpdateSystemOperator:
       content:
         application/json:
@@ -1017,6 +1040,7 @@ components:
               operatorId:
                 type: string
                 format: uuid
+    # Body for creating a team
     CreateTeam:
       content:
         application/json:
@@ -1029,7 +1053,7 @@ components:
                 type: string
               description:
                 type: string
-
+    # Body for creating an operator
     CreateOperator:
       content:
         application/json:
@@ -1044,6 +1068,7 @@ components:
                 type: string
               contactEmail:
                 type: string
+    # Body for creating an account
     CreateAccount:
       content:
         application/json:
@@ -1145,11 +1170,11 @@ components:
       type: object
       properties:
         total:
-          type: number
+          type: integer
         offset:
-          type: number
+          type: integer
         limit:
-          type: number
+          type: integer
         results:
           type: array
           items:
@@ -1158,7 +1183,7 @@ components:
       type: object
       required:
         - name
-        - cluster
+        - clusters
       properties:
         id:
           type: string
@@ -1173,8 +1198,8 @@ components:
           description: A description of the system.
         operator:
           $ref: "#/components/schemas/Operator"
-        cluster:
-          $ref: "#/components/schemas/Cluster"
+        clusters:
+          $ref: "#/components/schemas/Clusters"
         createdAt:
           type: string
           format: date-time
@@ -1263,13 +1288,33 @@ components:
       type: object
       required:
         - name
+        - serverURL
       properties:
         id:
           type: string
           format: uuid
           readOnly: true
-        url:
+        name:
           type: string
+        description:
+          type: string
+        serverURL:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Update date and time
+          example: "2021-01-30T08:30:00Z"
+        deletedAt:
+          type: string
+          format: date-time
+          description: Delete date and time
+          example: "2021-01-30T08:30:00Z"
 
     Account:
       type: object
@@ -1462,6 +1507,12 @@ components:
           type: string
         date:
           type: string
+
+    Clusters:
+      type: array
+      maxItems: 100
+      items:
+        $ref: "#/components/schemas/Cluster"
 
     Systems:
       type: array

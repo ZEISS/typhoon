@@ -37,5 +37,7 @@ func (db *DB) RunMigrations() error {
 		&models.System{},
 		&models.Tag{},
 		&models.Ownership{},
+		&models.Allow{},
+		&models.Cluster{},
 	)
 }

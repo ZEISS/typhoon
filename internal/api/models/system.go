@@ -4,8 +4,19 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	openapi "github.com/zeiss/typhoon/pkg/apis"
 	"gorm.io/gorm"
 )
+
+// FromAPI ...
+type FromAPI[T any] interface {
+	FromAPI(api *T)
+}
+
+// ToAPI ...
+type ToAPI[T any] interface {
+	ToAPI() *T
+}
 
 // System ...
 type System struct {
@@ -15,6 +26,9 @@ type System struct {
 	Name string `json:"name" gorm:"unique" validate:"required,min=3,max=128"`
 	// Description is the description of the system.
 	Description string `json:"description" validate:"max=1024"`
+
+	// Clusters is the clusters that are associated with the system.
+	Clusters []Cluster `json:"clusters" gorm:"foreignKey:SystemID"`
 
 	// Operator is the operator this is associated with this system to operate.
 	Operator   Operator   `json:"operator" gorm:"foreignKey:OperatorID"`
@@ -27,11 +41,12 @@ type System struct {
 
 	// Tags is the tags that are associated with the system.
 	Tags []*Tag `json:"tags" gorm:"polymorphic:Taggable;polymorphicValue:system;"`
-	// Teams is the teams that are associated with the system.
-	Teams []*Team `json:"teams" gorm:"many2many:team_systems;"`
 
 	// OwnedBy is the owner of the account. This is usually a team.
-	OwnedBy Ownership `json:"owner" gorm:"polymorphic:Ownable;polymorphicValue:account;"`
+	OwnedBy Ownership `json:"owned_by" gorm:"polymorphic:Ownable;polymorphicValue:system;"`
+
+	// AllowedBy is the allowed by of the account. This is usually a team.
+	AllowedBy []Allow `json:"allowed_by" gorm:"polymorphic:Allowable;polymorphicValue:system;"`
 
 	// CreatedAt is the time the system was created.
 	CreatedAt time.Time `json:"created_at"`
@@ -39,4 +54,20 @@ type System struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	// DeletedAt is the time the system was deleted.
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
+}
+
+// FromAPI converts the API model to the database model.
+func (s *System) FromAPI(api *openapi.System) {
+	s.Name = api.Name
+	s.Description = *api.Description
+
+	for _, cluster := range api.Clusters {
+		c := Cluster{
+			Name:        cluster.Name,
+			Description: *cluster.Description,
+			ServerURL:   cluster.ServerURL,
+		}
+
+		s.Clusters = append(s.Clusters, c)
+	}
 }

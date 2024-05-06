@@ -32,7 +32,7 @@ require (
 	github.com/tidwall/gjson v1.17.1
 	github.com/wamuir/go-xslt v0.1.5
 	github.com/xdg-go/scram v1.0.2
-	github.com/zeiss/fiber-authz v1.0.18
+	github.com/zeiss/fiber-authz v1.0.19
 	github.com/zeiss/fiber-goth v1.2.0
 	github.com/zeiss/fiber-htmx v1.2.3
 	github.com/zeiss/snow-go v0.0.0-20240312201415-88f059622cff
@@ -238,7 +238,7 @@ require (
 	github.com/nunnatsa/ginkgolinter v0.16.2 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
-	github.com/openfga/go-sdk v0.3.5 // indirect
+	github.com/openfga/go-sdk v0.3.6 // indirect
 	github.com/openzipkin/zipkin-go v0.4.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.0 // indirect
 	github.com/perimeterx/marshmallow v1.1.5 // indirect

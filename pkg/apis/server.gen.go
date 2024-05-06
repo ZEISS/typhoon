@@ -154,6 +154,9 @@ type ServerInterface interface {
 	// Updates a user by ID
 	// (PUT /teams/{teamId}/accounts/{accountId}/users/{userId})
 	UpdateUser(c *fiber.Ctx, teamId TeamId, accountId AccountId, userId UserId) error
+	// List all systems for a team
+	// (GET /teams/{teamId}/systems)
+	ListTeamSystems(c *fiber.Ctx, teamId TeamId, params ListTeamSystemsParams) error
 	// Returns the current version of the API.
 	// (GET /version)
 	Version(c *fiber.Ctx) error
@@ -1471,6 +1474,47 @@ func (siw *ServerInterfaceWrapper) UpdateUser(c *fiber.Ctx) error {
 	return siw.Handler.UpdateUser(c, teamId, accountId, userId)
 }
 
+// ListTeamSystems operation middleware
+func (siw *ServerInterfaceWrapper) ListTeamSystems(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "teamId" -------------
+	var teamId TeamId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{"read:systems"})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListTeamSystemsParams
+
+	var query url.Values
+	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
+	}
+
+	// ------------- Optional query parameter "offset" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "offset", query, &params.Offset)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter offset: %w", err).Error())
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", query, &params.Limit)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter limit: %w", err).Error())
+	}
+
+	return siw.Handler.ListTeamSystems(c, teamId, params)
+}
+
 // Version operation middleware
 func (siw *ServerInterfaceWrapper) Version(c *fiber.Ctx) error {
 
@@ -1594,6 +1638,8 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Put(options.BaseURL+"/teams/:teamId/accounts/:accountId/users/:userId", wrapper.UpdateUser)
 
+	router.Get(options.BaseURL+"/teams/:teamId/systems", wrapper.ListTeamSystems)
+
 	router.Get(options.BaseURL+"/version", wrapper.Version)
 
 }
@@ -1619,10 +1665,10 @@ type ListOperatorResponseObject interface {
 }
 
 type ListOperator200JSONResponse struct {
-	Limit   *float32    `json:"limit,omitempty"`
-	Offset  *float32    `json:"offset,omitempty"`
+	Limit   *int        `json:"limit,omitempty"`
+	Offset  *int        `json:"offset,omitempty"`
 	Results *[]Operator `json:"results,omitempty"`
-	Total   *float32    `json:"total,omitempty"`
+	Total   *int        `json:"total,omitempty"`
 }
 
 func (response ListOperator200JSONResponse) VisitListOperatorResponse(ctx *fiber.Ctx) error {
@@ -1737,10 +1783,10 @@ type ListOperatorAccountsResponseObject interface {
 }
 
 type ListOperatorAccounts200JSONResponse struct {
-	Limit   *float32   `json:"limit,omitempty"`
-	Offset  *float32   `json:"offset,omitempty"`
+	Limit   *int       `json:"limit,omitempty"`
+	Offset  *int       `json:"offset,omitempty"`
 	Results *[]Account `json:"results,omitempty"`
-	Total   *float32   `json:"total,omitempty"`
+	Total   *int       `json:"total,omitempty"`
 }
 
 func (response ListOperatorAccounts200JSONResponse) VisitListOperatorAccountsResponse(ctx *fiber.Ctx) error {
@@ -1833,10 +1879,10 @@ type ListOperatorAccountSigningKeysResponseObject interface {
 }
 
 type ListOperatorAccountSigningKeys200JSONResponse struct {
-	Limit   *float32   `json:"limit,omitempty"`
-	Offset  *float32   `json:"offset,omitempty"`
+	Limit   *int       `json:"limit,omitempty"`
+	Offset  *int       `json:"offset,omitempty"`
 	Results *[]KeyPair `json:"results,omitempty"`
-	Total   *float32   `json:"total,omitempty"`
+	Total   *int       `json:"total,omitempty"`
 }
 
 func (response ListOperatorAccountSigningKeys200JSONResponse) VisitListOperatorAccountSigningKeysResponse(ctx *fiber.Ctx) error {
@@ -1892,10 +1938,10 @@ type ListOperatorAccountUsersResponseObject interface {
 }
 
 type ListOperatorAccountUsers200JSONResponse struct {
-	Limit   *float32 `json:"limit,omitempty"`
-	Offset  *float32 `json:"offset,omitempty"`
-	Results *[]User  `json:"results,omitempty"`
-	Total   *float32 `json:"total,omitempty"`
+	Limit   *int    `json:"limit,omitempty"`
+	Offset  *int    `json:"offset,omitempty"`
+	Results *[]User `json:"results,omitempty"`
+	Total   *int    `json:"total,omitempty"`
 }
 
 func (response ListOperatorAccountUsers200JSONResponse) VisitListOperatorAccountUsersResponse(ctx *fiber.Ctx) error {
@@ -2001,10 +2047,10 @@ type ListOperatorSigningKeysResponseObject interface {
 }
 
 type ListOperatorSigningKeys200JSONResponse struct {
-	Limit   *float32   `json:"limit,omitempty"`
-	Offset  *float32   `json:"offset,omitempty"`
+	Limit   *int       `json:"limit,omitempty"`
+	Offset  *int       `json:"offset,omitempty"`
 	Results *[]KeyPair `json:"results,omitempty"`
-	Total   *float32   `json:"total,omitempty"`
+	Total   *int       `json:"total,omitempty"`
 }
 
 func (response ListOperatorSigningKeys200JSONResponse) VisitListOperatorSigningKeysResponse(ctx *fiber.Ctx) error {
@@ -2072,10 +2118,10 @@ type ListSystemsResponseObject interface {
 }
 
 type ListSystems200JSONResponse struct {
-	Limit   *float32  `json:"limit,omitempty"`
-	Offset  *float32  `json:"offset,omitempty"`
+	Limit   *int      `json:"limit,omitempty"`
+	Offset  *int      `json:"offset,omitempty"`
 	Results *[]System `json:"results,omitempty"`
-	Total   *float32  `json:"total,omitempty"`
+	Total   *int      `json:"total,omitempty"`
 }
 
 func (response ListSystems200JSONResponse) VisitListSystemsResponse(ctx *fiber.Ctx) error {
@@ -2252,10 +2298,10 @@ type ListTeamsResponseObject interface {
 }
 
 type ListTeams200JSONResponse struct {
-	Limit   *float32 `json:"limit,omitempty"`
-	Offset  *float32 `json:"offset,omitempty"`
-	Results *[]Team  `json:"results,omitempty"`
-	Total   *float32 `json:"total,omitempty"`
+	Limit   *int    `json:"limit,omitempty"`
+	Offset  *int    `json:"offset,omitempty"`
+	Results *[]Team `json:"results,omitempty"`
+	Total   *int    `json:"total,omitempty"`
 }
 
 func (response ListTeams200JSONResponse) VisitListTeamsResponse(ctx *fiber.Ctx) error {
@@ -2433,10 +2479,10 @@ type ListTeamAccountsResponseObject interface {
 }
 
 type ListTeamAccounts200JSONResponse struct {
-	Limit   *float32   `json:"limit,omitempty"`
-	Offset  *float32   `json:"offset,omitempty"`
+	Limit   *int       `json:"limit,omitempty"`
+	Offset  *int       `json:"offset,omitempty"`
 	Results *[]Account `json:"results,omitempty"`
-	Total   *float32   `json:"total,omitempty"`
+	Total   *int       `json:"total,omitempty"`
 }
 
 func (response ListTeamAccounts200JSONResponse) VisitListTeamAccountsResponse(ctx *fiber.Ctx) error {
@@ -2475,10 +2521,10 @@ type ListGroupsResponseObject interface {
 }
 
 type ListGroups200JSONResponse struct {
-	Limit   *float32           `json:"limit,omitempty"`
-	Offset  *float32           `json:"offset,omitempty"`
+	Limit   *int               `json:"limit,omitempty"`
+	Offset  *int               `json:"offset,omitempty"`
 	Results *[]SigningKeyGroup `json:"results,omitempty"`
-	Total   *float32           `json:"total,omitempty"`
+	Total   *int               `json:"total,omitempty"`
 }
 
 func (response ListGroups200JSONResponse) VisitListGroupsResponse(ctx *fiber.Ctx) error {
@@ -2575,10 +2621,10 @@ type ListUsersResponseObject interface {
 }
 
 type ListUsers200JSONResponse struct {
-	Limit   *float32 `json:"limit,omitempty"`
-	Offset  *float32 `json:"offset,omitempty"`
-	Results *[]User  `json:"results,omitempty"`
-	Total   *float32 `json:"total,omitempty"`
+	Limit   *int    `json:"limit,omitempty"`
+	Offset  *int    `json:"offset,omitempty"`
+	Results *[]User `json:"results,omitempty"`
+	Total   *int    `json:"total,omitempty"`
 }
 
 func (response ListUsers200JSONResponse) VisitListUsersResponse(ctx *fiber.Ctx) error {
@@ -2658,6 +2704,29 @@ type UpdateUserResponseObject interface {
 type UpdateUser200JSONResponse User
 
 func (response UpdateUser200JSONResponse) VisitUpdateUserResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type ListTeamSystemsRequestObject struct {
+	TeamId TeamId `json:"teamId"`
+	Params ListTeamSystemsParams
+}
+
+type ListTeamSystemsResponseObject interface {
+	VisitListTeamSystemsResponse(ctx *fiber.Ctx) error
+}
+
+type ListTeamSystems200JSONResponse struct {
+	Limit   *int      `json:"limit,omitempty"`
+	Offset  *int      `json:"offset,omitempty"`
+	Results *[]System `json:"results,omitempty"`
+	Total   *int      `json:"total,omitempty"`
+}
+
+func (response ListTeamSystems200JSONResponse) VisitListTeamSystemsResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
 	ctx.Status(200)
 
@@ -2838,6 +2907,9 @@ type StrictServerInterface interface {
 	// Updates a user by ID
 	// (PUT /teams/{teamId}/accounts/{accountId}/users/{userId})
 	UpdateUser(ctx context.Context, request UpdateUserRequestObject) (UpdateUserResponseObject, error)
+	// List all systems for a team
+	// (GET /teams/{teamId}/systems)
+	ListTeamSystems(ctx context.Context, request ListTeamSystemsRequestObject) (ListTeamSystemsResponseObject, error)
 	// Returns the current version of the API.
 	// (GET /version)
 	Version(ctx context.Context, request VersionRequestObject) (VersionResponseObject, error)
@@ -4198,6 +4270,34 @@ func (sh *strictHandler) UpdateUser(ctx *fiber.Ctx, teamId TeamId, accountId Acc
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	} else if validResponse, ok := response.(UpdateUserResponseObject); ok {
 		if err := validResponse.VisitUpdateUserResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// ListTeamSystems operation middleware
+func (sh *strictHandler) ListTeamSystems(ctx *fiber.Ctx, teamId TeamId, params ListTeamSystemsParams) error {
+	var request ListTeamSystemsRequestObject
+
+	request.TeamId = teamId
+	request.Params = params
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.ListTeamSystems(ctx.UserContext(), request.(ListTeamSystemsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListTeamSystems")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(ListTeamSystemsResponseObject); ok {
+		if err := validResponse.VisitListTeamSystemsResponse(ctx); err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 	} else if response != nil {

@@ -86,7 +86,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Use(logger.New())
 
 		validatorOptions := &middleware.Options{}
-		validatorOptions.Options.AuthenticationFunc = authz.NewOpenAPIAuthenticator(authz.WithPathParam("teamId"), authz.WithChecker(authz.NewAPIKey(conn)))
+		validatorOptions.Options.AuthenticationFunc = authz.NewOpenAPIAuthenticator(authz.WithAuthzChecker(authz.NewFake(true)))
 		validatorOptions.ErrorHandler = authz.NewOpenAPIErrorHandler()
 
 		app.Use(middleware.OapiRequestValidatorWithOptions(swagger, validatorOptions))

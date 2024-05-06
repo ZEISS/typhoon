@@ -26,14 +26,14 @@ const (
 type Ownership struct {
 	// ID is the unique identifier for the ownership.
 	ID int `json:"id" gorm:"primary_key"`
-	// OwnableID is the unique identifier for the owner.
+	// OwnableID is the unique identifier for .
 	OwnableID uuid.UUID `json:"owner_id"`
 	// OwnableType is the type of the owner.
 	OwnableType string `json:"owner_type"`
-	// ResourceID is the unique identifier for the resource.
-	ResourceID uuid.UUID `json:"resource_id"`
-	// ResourceType is the type of the resource.
-	ResourceType string `json:"resource_type"`
+	// TeamID is the identifier of the team.
+	TeamID uuid.UUID `json:"team_id"`
+	// Team is the team that this is owned by.
+	Team Team `json:"team" gorm:"foreignKey:TeamID"`
 	// CreatedAt is the time the ownership was created.
 	CreatedAt time.Time `json:"created_at"`
 	// UpdatedAt is the time the ownership was updated.
