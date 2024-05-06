@@ -79,7 +79,7 @@ func (a *ApiHandlers) GetSystemOperator(ctx context.Context, req openapi.GetSyst
 	}
 
 	if system.OperatorID == nil {
-		return openapi.GetSystemOperator404JSONResponse(openapi.GetSystemOperator404JSONResponse{openapi.NotFoundJSONResponse(openapi.ErrorNotFound("no operator found"))}), nil
+		return openapi.GetSystemOperator404JSONResponse(openapi.GetOperator404JSONResponse{}), nil
 	}
 
 	return openapi.GetSystemOperator200JSONResponse(openapi.Operator{Id: utils.PtrUUID(system.Operator.ID), Name: system.Operator.Name}), nil
