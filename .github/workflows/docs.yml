@@ -17,10 +17,9 @@ jobs:
         with:
           node-version: "20"
       - run: npx -y @redocly/cli build-docs api/api.yml --o docs/index.html
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-pages-artifact@v3
         if: github.ref == 'refs/heads/main'
         with:
-          name: "github-pages"
           path: docs
 
   deploy:
