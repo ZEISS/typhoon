@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.1/schema.json
-openapi: "3.1.0"
+openapi: 3.1.0
 
 info:
-  version: "1.0.0"
+  version: 1.0.0
   title: Typhoon API
   summary: |-
     Typhoon is an event bridge built on top of an event mesh,
@@ -53,16 +53,18 @@ paths:
         - bearerAuth: [] # no scopes required
         - apiKey: [] # no scopes required
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "./schemas/version.yml#/components/schemas/Version"
-        "500":
-          $ref: "#/components/responses/InternalError"
-        "501":
-          $ref: "#/components/responses/Unimplemented"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
   /operators:
     get:
       summary: List all operators
@@ -76,7 +78,7 @@ paths:
         - bearerAuth: ["read:operators"]
         - apiKey: ["superadmin"]
       responses:
-        "200":
+        200:
           description: Successfull response
           content:
             application/json:
@@ -84,6 +86,12 @@ paths:
                 allOf:
                   - $ref: "#/components/schemas/PaginatedResult"
                   - $ref: "#/components/schemas/Operators"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     post:
       summary: Creates a new operator
       operationId: createOperator
@@ -92,12 +100,18 @@ paths:
       requestBody:
         $ref: "#/components/requestBodies/CreateOperator"
       responses:
-        "201":
+        201:
           description: Created
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Operator"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /operators/{operatorId}:
     get:
@@ -106,18 +120,18 @@ paths:
       parameters:
         - $ref: "#/components/parameters/operatorId"
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Operator"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "501":
-          $ref: "#/components/responses/Unimplemented"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     put:
       summary: Updates an operator by ID
       operationId: updateOperator
@@ -129,20 +143,32 @@ paths:
             schema:
               $ref: "#/components/schemas/Operator"
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Operator"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     delete:
       summary: Deletes an operator by ID
       operationId: deleteOperator
       parameters:
         - $ref: "#/components/parameters/operatorId"
       responses:
-        "204":
+        204:
           description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /operators/{operatorId}/token:
     get:
@@ -151,32 +177,50 @@ paths:
       parameters:
         - $ref: "#/components/parameters/operatorId"
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/JWTToken"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     put:
       summary: Updates a token for an operator
       operationId: updateOperatorToken
       parameters:
         - $ref: "#/components/parameters/operatorId"
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/JWTToken"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     delete:
       summary: Deletes a token for an operator
       operationId: deleteOperatorToken
       parameters:
         - $ref: "#/components/parameters/operatorId"
       responses:
-        "204":
+        204:
           description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /operators/{operatorId}/signing-keys:
     get:
@@ -191,7 +235,7 @@ paths:
       security:
         - bearerAuth: ["read:signing-keys"]
       responses:
-        "200":
+        200:
           description: Successfull response
           content:
             application/json:
@@ -204,6 +248,12 @@ paths:
                         type: array
                         items:
                           $ref: "#/components/schemas/KeyPair"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /operators/{operatorId}/accounts:
     get:
@@ -218,7 +268,7 @@ paths:
       security:
         - bearerAuth: ["read:accounts"]
       responses:
-        "200":
+        200:
           description: Successfull response
           content:
             application/json:
@@ -231,6 +281,12 @@ paths:
                         type: array
                         items:
                           $ref: "#/components/schemas/Account"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     post:
       summary: Creates a new account
       operationId: createOperatorAccount
@@ -241,12 +297,18 @@ paths:
       requestBody:
         $ref: "#/components/requestBodies/CreateAccount"
       responses:
-        "201":
+        201:
           description: Created
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Account"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /operators/{operatorId}/accounts/{accountId}:
     get:
@@ -256,12 +318,18 @@ paths:
         - $ref: "#/components/parameters/operatorId"
         - $ref: "#/components/parameters/accountId"
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Account"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
     put:
       summary: Updates an account by ID
@@ -272,12 +340,18 @@ paths:
       requestBody:
         $ref: "#/components/requestBodies/UpdateAccount"
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Account"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
     delete:
       summary: Deletes an account by ID
@@ -286,8 +360,14 @@ paths:
         - $ref: "#/components/parameters/operatorId"
         - $ref: "#/components/parameters/accountId"
       responses:
-        "204":
+        204:
           description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /operators/{operatorId}/accounts/{accountId}/signing-keys:
     get:
@@ -303,7 +383,7 @@ paths:
       security:
         - bearerAuth: ["read:signing-keys"]
       responses:
-        "200":
+        200:
           description: Successfull response
           content:
             application/json:
@@ -316,6 +396,12 @@ paths:
                         type: array
                         items:
                           $ref: "#/components/schemas/KeyPair"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /operators/{operatorId}/accounts/{accountId}/token:
     get:
@@ -325,12 +411,18 @@ paths:
         - $ref: "#/components/parameters/operatorId"
         - $ref: "#/components/parameters/accountId"
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/JWTToken"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     delete:
       summary: Deletes a token for an account
       operationId: deleteOperatorAccountToken
@@ -338,8 +430,14 @@ paths:
         - $ref: "#/components/parameters/operatorId"
         - $ref: "#/components/parameters/accountId"
       responses:
-        "204":
+        204:
           description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /operators/{operatorId}/accounts/{accountId}/users:
     get:
@@ -355,7 +453,7 @@ paths:
       security:
         - bearerAuth: ["read:users"]
       responses:
-        "200":
+        200:
           description: Successfull response
           content:
             application/json:
@@ -368,6 +466,12 @@ paths:
                         type: array
                         items:
                           $ref: "#/components/schemas/User"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     post:
       summary: Creates a new user
       operationId: createOperatorAccountUser
@@ -379,12 +483,18 @@ paths:
       requestBody:
         $ref: "#/components/requestBodies/CreateOperatorAccountUser"
       responses:
-        "201":
+        201:
           description: Created
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /operators/{operatorId}/accounts/{accountId}/users/{userId}:
     get:
@@ -400,12 +510,18 @@ paths:
             type: string
             format: uuid
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /operators/{operatorId}/accounts/{accountId}/users/{userId}/token:
     get:
@@ -416,12 +532,18 @@ paths:
         - $ref: "#/components/parameters/accountId"
         - $ref: "#/components/parameters/userId"
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/JWTToken"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /operators/{operatorId}/accounts/{accountId}/users/{userId}/credentials:
     get:
@@ -432,12 +554,18 @@ paths:
         - $ref: "#/components/parameters/accountId"
         - $ref: "#/components/parameters/userId"
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/octet-stream:
               schema:
                 $ref: "#/components/schemas/Credentials"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
   /teams:
     get:
       summary: List all teams
@@ -451,7 +579,7 @@ paths:
         - bearerAuth: ["read:teams"]
         - apiKey: ["superadmin"]
       responses:
-        "200":
+        200:
           description: Successfull response
           content:
             application/json:
@@ -459,6 +587,12 @@ paths:
                 allOf:
                   - $ref: "#/components/schemas/PaginatedResult"
                   - $ref: "#/components/schemas/Teams"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
     post:
       summary: Creates a new team
@@ -468,22 +602,18 @@ paths:
       requestBody:
         $ref: "#/components/requestBodies/CreateTeam"
       responses:
-        "201":
+        201:
           description: Created
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Team"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "409":
-          $ref: "#/components/responses/Duplicate"
-        "500":
-          $ref: "#/components/responses/InternalError"
-        "501":
-          $ref: "#/components/responses/Unimplemented"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /teams/{teamId}:
     get:
@@ -495,20 +625,18 @@ paths:
         - bearerAuth: ["superadmin"]
         - apiKey: ["superadmin"]
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Team"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
-        "501":
-          $ref: "#/components/responses/Unimplemented"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     delete:
       summary: Deletes a team by ID
       operationId: deleteTeam
@@ -518,14 +646,14 @@ paths:
         - bearerAuth: ["delete"]
         - apiKey: ["delete"]
       responses:
-        "204":
+        204:
           description: Successful
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "500":
-          $ref: "#/components/responses/InternalError"
-        "501":
-          $ref: "#/components/responses/Unimplemented"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /teams/{teamId}/systems:
     get:
@@ -540,7 +668,7 @@ paths:
       security:
         - bearerAuth: ["read:systems"]
       responses:
-        "200":
+        200:
           description: Successfull response
           content:
             application/json:
@@ -553,6 +681,12 @@ paths:
                         type: array
                         items:
                           $ref: "#/components/schemas/System"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /teams/{teamId}/accounts:
     get:
@@ -567,7 +701,7 @@ paths:
       security:
         - bearerAuth: ["read:accounts"]
       responses:
-        "200":
+        200:
           description: Successfull response
           content:
             application/json:
@@ -580,6 +714,12 @@ paths:
                         type: array
                         items:
                           $ref: "#/components/schemas/Account"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /teams/{teamId}/accounts/{accountId}:
     get:
@@ -599,12 +739,18 @@ paths:
             type: string
             format: uuid
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Account"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /teams/{teamId}/accounts/{accountId}/groups:
     get:
@@ -620,7 +766,7 @@ paths:
       security:
         - bearerAuth: ["read:groups"]
       responses:
-        "200":
+        200:
           description: Successfull response
           content:
             application/json:
@@ -633,6 +779,12 @@ paths:
                         type: array
                         items:
                           $ref: "#/components/schemas/SigningKeyGroup"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     post:
       summary: Creates a new signing key group
       operationId: createGroup
@@ -647,12 +799,18 @@ paths:
             schema:
               $ref: "#/components/schemas/SigningKeyGroup"
       responses:
-        "201":
+        201:
           description: Created
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/SigningKeyGroup"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /teams/{teamId}/accounts/{accountId}/groups/{groupId}:
     get:
@@ -663,12 +821,18 @@ paths:
         - $ref: "#/components/parameters/accountId"
         - $ref: "#/components/parameters/groupId"
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/SigningKeyGroup"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     put:
       summary: Updates a signing key group by ID
       operationId: updateGroup
@@ -682,12 +846,18 @@ paths:
             schema:
               $ref: "#/components/schemas/SigningKeyGroup"
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/SigningKeyGroup"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     delete:
       summary: Deletes a signing key group by ID
       operationId: deleteSigningKeyGroup
@@ -696,8 +866,14 @@ paths:
         - $ref: "#/components/parameters/accountId"
         - $ref: "#/components/parameters/groupId"
       responses:
-        "204":
+        204:
           description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /teams/{teamId}/accounts/{accountId}/users:
     get:
@@ -713,7 +889,7 @@ paths:
       security:
         - bearerAuth: ["read:users"]
       responses:
-        "200":
+        200:
           description: Successfull response
           content:
             application/json:
@@ -726,6 +902,12 @@ paths:
                         type: array
                         items:
                           $ref: "#/components/schemas/User"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     post:
       summary: Creates a new user
       operationId: createUser
@@ -740,12 +922,18 @@ paths:
             schema:
               $ref: "#/components/schemas/User"
       responses:
-        "201":
+        201:
           description: Created
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /teams/{teamId}/accounts/{accountId}/users/{userId}:
     get:
@@ -756,12 +944,18 @@ paths:
         - $ref: "#/components/parameters/accountId"
         - $ref: "#/components/parameters/userId"
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     put:
       summary: Updates a user by ID
       operationId: updateUser
@@ -775,12 +969,18 @@ paths:
             schema:
               $ref: "#/components/schemas/User"
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     delete:
       summary: Deletes a user by ID
       operationId: deleteTeamAccountUser
@@ -789,8 +989,14 @@ paths:
         - $ref: "#/components/parameters/accountId"
         - $ref: "#/components/parameters/userId"
       responses:
-        "204":
+        204:
           description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /systems:
     get:
@@ -801,7 +1007,7 @@ paths:
       description: |-
         Returns a list of managed systems.
       responses:
-        "200":
+        200:
           description: Successfull response
           content:
             application/json:
@@ -814,6 +1020,12 @@ paths:
                         type: array
                         items:
                           $ref: "#/components/schemas/System"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     post:
       summary: Creates a new system
       operationId: createSystem
@@ -822,12 +1034,18 @@ paths:
       requestBody:
         $ref: "#/components/requestBodies/CreateSystem"
       responses:
-        "201":
+        201:
           description: Created
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/System"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /systems/{systemId}:
     get:
@@ -836,20 +1054,18 @@ paths:
       parameters:
         - $ref: "#/components/parameters/systemId"
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/System"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "501":
-          $ref: "#/components/responses/Unimplemented"
         default:
-          $ref: "#/components/responses/InternalError"
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     put:
       summary: Updates a system by ID
       operationId: updateSystem
@@ -861,12 +1077,18 @@ paths:
             schema:
               $ref: "#/components/schemas/System"
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/System"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
     delete:
       summary: Deletes a system by ID
@@ -874,8 +1096,14 @@ paths:
       parameters:
         - $ref: "#/components/parameters/systemId"
       responses:
-        "204":
+        204:
           description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
   /systems/{systemId}/operator:
     get:
@@ -884,20 +1112,18 @@ paths:
       parameters:
         - $ref: "#/components/parameters/systemId"
       responses:
-        "200":
+        200:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Operator"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     put:
       summary: Updates the operator for a system
       operationId: updateSystemOperator
@@ -906,32 +1132,32 @@ paths:
       requestBody:
         $ref: "#/components/requestBodies/UpdateSystemOperator"
       responses:
-        "201":
+        201:
           description: Successful
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Operator"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
     delete:
       summary: Deletes the operator for a system
       operationId: deleteSystemOperator
       parameters:
         - $ref: "#/components/parameters/systemId"
       responses:
-        "204":
+        204:
           description: Successful
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
 
 components:
   parameters:

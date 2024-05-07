@@ -1678,6 +1678,18 @@ func (response ListOperator200JSONResponse) VisitListOperatorResponse(ctx *fiber
 	return ctx.JSON(&response)
 }
 
+type ListOperatordefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response ListOperatordefaultJSONResponse) VisitListOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type CreateOperatorRequestObject struct {
 	Body *CreateOperatorJSONRequestBody
 }
@@ -1695,6 +1707,18 @@ func (response CreateOperator201JSONResponse) VisitCreateOperatorResponse(ctx *f
 	return ctx.JSON(&response)
 }
 
+type CreateOperatordefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response CreateOperatordefaultJSONResponse) VisitCreateOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type DeleteOperatorRequestObject struct {
 	OperatorId OperatorId `json:"operatorId"`
 }
@@ -1709,6 +1733,18 @@ type DeleteOperator204Response struct {
 func (response DeleteOperator204Response) VisitDeleteOperatorResponse(ctx *fiber.Ctx) error {
 	ctx.Status(204)
 	return nil
+}
+
+type DeleteOperatordefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response DeleteOperatordefaultJSONResponse) VisitDeleteOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
 }
 
 type GetOperatorRequestObject struct {
@@ -1728,31 +1764,16 @@ func (response GetOperator200JSONResponse) VisitGetOperatorResponse(ctx *fiber.C
 	return ctx.JSON(&response)
 }
 
-type GetOperator401JSONResponse struct{ UnauthorizedJSONResponse }
-
-func (response GetOperator401JSONResponse) VisitGetOperatorResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(401)
-
-	return ctx.JSON(&response)
+type GetOperatordefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
 }
 
-type GetOperator404JSONResponse struct{ NotFoundJSONResponse }
-
-func (response GetOperator404JSONResponse) VisitGetOperatorResponse(ctx *fiber.Ctx) error {
+func (response GetOperatordefaultJSONResponse) VisitGetOperatorResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(404)
+	ctx.Status(response.StatusCode)
 
-	return ctx.JSON(&response)
-}
-
-type GetOperator501JSONResponse struct{ UnimplementedJSONResponse }
-
-func (response GetOperator501JSONResponse) VisitGetOperatorResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(501)
-
-	return ctx.JSON(&response)
+	return ctx.JSON(&response.Body)
 }
 
 type UpdateOperatorRequestObject struct {
@@ -1771,6 +1792,18 @@ func (response UpdateOperator200JSONResponse) VisitUpdateOperatorResponse(ctx *f
 	ctx.Status(200)
 
 	return ctx.JSON(&response)
+}
+
+type UpdateOperatordefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response UpdateOperatordefaultJSONResponse) VisitUpdateOperatorResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
 }
 
 type ListOperatorAccountsRequestObject struct {
@@ -1796,6 +1829,18 @@ func (response ListOperatorAccounts200JSONResponse) VisitListOperatorAccountsRes
 	return ctx.JSON(&response)
 }
 
+type ListOperatorAccountsdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response ListOperatorAccountsdefaultJSONResponse) VisitListOperatorAccountsResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type CreateOperatorAccountRequestObject struct {
 	OperatorId OperatorId `json:"operatorId"`
 	Body       *CreateOperatorAccountJSONRequestBody
@@ -1814,6 +1859,18 @@ func (response CreateOperatorAccount201JSONResponse) VisitCreateOperatorAccountR
 	return ctx.JSON(&response)
 }
 
+type CreateOperatorAccountdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response CreateOperatorAccountdefaultJSONResponse) VisitCreateOperatorAccountResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type DeleteOperatorAccountRequestObject struct {
 	OperatorId OperatorId `json:"operatorId"`
 	AccountId  AccountId  `json:"accountId"`
@@ -1829,6 +1886,18 @@ type DeleteOperatorAccount204Response struct {
 func (response DeleteOperatorAccount204Response) VisitDeleteOperatorAccountResponse(ctx *fiber.Ctx) error {
 	ctx.Status(204)
 	return nil
+}
+
+type DeleteOperatorAccountdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response DeleteOperatorAccountdefaultJSONResponse) VisitDeleteOperatorAccountResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
 }
 
 type GetOperatorAccountRequestObject struct {
@@ -1849,6 +1918,18 @@ func (response GetOperatorAccount200JSONResponse) VisitGetOperatorAccountRespons
 	return ctx.JSON(&response)
 }
 
+type GetOperatorAccountdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response GetOperatorAccountdefaultJSONResponse) VisitGetOperatorAccountResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type UpdateOperatorAccountRequestObject struct {
 	OperatorId OperatorId `json:"operatorId"`
 	AccountId  AccountId  `json:"accountId"`
@@ -1866,6 +1947,18 @@ func (response UpdateOperatorAccount200JSONResponse) VisitUpdateOperatorAccountR
 	ctx.Status(200)
 
 	return ctx.JSON(&response)
+}
+
+type UpdateOperatorAccountdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response UpdateOperatorAccountdefaultJSONResponse) VisitUpdateOperatorAccountResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
 }
 
 type ListOperatorAccountSigningKeysRequestObject struct {
@@ -1892,6 +1985,18 @@ func (response ListOperatorAccountSigningKeys200JSONResponse) VisitListOperatorA
 	return ctx.JSON(&response)
 }
 
+type ListOperatorAccountSigningKeysdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response ListOperatorAccountSigningKeysdefaultJSONResponse) VisitListOperatorAccountSigningKeysResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type DeleteOperatorAccountTokenRequestObject struct {
 	OperatorId OperatorId `json:"operatorId"`
 	AccountId  AccountId  `json:"accountId"`
@@ -1907,6 +2012,18 @@ type DeleteOperatorAccountToken204Response struct {
 func (response DeleteOperatorAccountToken204Response) VisitDeleteOperatorAccountTokenResponse(ctx *fiber.Ctx) error {
 	ctx.Status(204)
 	return nil
+}
+
+type DeleteOperatorAccountTokendefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response DeleteOperatorAccountTokendefaultJSONResponse) VisitDeleteOperatorAccountTokenResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
 }
 
 type GetOperatorAccountTokenRequestObject struct {
@@ -1925,6 +2042,18 @@ func (response GetOperatorAccountToken200JSONResponse) VisitGetOperatorAccountTo
 	ctx.Status(200)
 
 	return ctx.JSON(&response)
+}
+
+type GetOperatorAccountTokendefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response GetOperatorAccountTokendefaultJSONResponse) VisitGetOperatorAccountTokenResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
 }
 
 type ListOperatorAccountUsersRequestObject struct {
@@ -1951,6 +2080,18 @@ func (response ListOperatorAccountUsers200JSONResponse) VisitListOperatorAccount
 	return ctx.JSON(&response)
 }
 
+type ListOperatorAccountUsersdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response ListOperatorAccountUsersdefaultJSONResponse) VisitListOperatorAccountUsersResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type CreateOperatorAccountUserRequestObject struct {
 	OperatorId OperatorId `json:"operatorId"`
 	AccountId  AccountId  `json:"accountId"`
@@ -1970,6 +2111,18 @@ func (response CreateOperatorAccountUser201JSONResponse) VisitCreateOperatorAcco
 	return ctx.JSON(&response)
 }
 
+type CreateOperatorAccountUserdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response CreateOperatorAccountUserdefaultJSONResponse) VisitCreateOperatorAccountUserResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type GetOperatorAccountUserRequestObject struct {
 	OperatorId OperatorId         `json:"operatorId"`
 	AccountId  AccountId          `json:"accountId"`
@@ -1987,6 +2140,18 @@ func (response GetOperatorAccountUser200JSONResponse) VisitGetOperatorAccountUse
 	ctx.Status(200)
 
 	return ctx.JSON(&response)
+}
+
+type GetOperatorAccountUserdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response GetOperatorAccountUserdefaultJSONResponse) VisitGetOperatorAccountUserResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
 }
 
 type GetOperatorAccountUserCredentialsRequestObject struct {
@@ -2018,6 +2183,18 @@ func (response GetOperatorAccountUserCredentials200ApplicationoctetStreamRespons
 	return err
 }
 
+type GetOperatorAccountUserCredentialsdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response GetOperatorAccountUserCredentialsdefaultJSONResponse) VisitGetOperatorAccountUserCredentialsResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type GetOperatorAccountUserTokenRequestObject struct {
 	OperatorId OperatorId `json:"operatorId"`
 	AccountId  AccountId  `json:"accountId"`
@@ -2035,6 +2212,18 @@ func (response GetOperatorAccountUserToken200JSONResponse) VisitGetOperatorAccou
 	ctx.Status(200)
 
 	return ctx.JSON(&response)
+}
+
+type GetOperatorAccountUserTokendefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response GetOperatorAccountUserTokendefaultJSONResponse) VisitGetOperatorAccountUserTokenResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
 }
 
 type ListOperatorSigningKeysRequestObject struct {
@@ -2060,6 +2249,18 @@ func (response ListOperatorSigningKeys200JSONResponse) VisitListOperatorSigningK
 	return ctx.JSON(&response)
 }
 
+type ListOperatorSigningKeysdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response ListOperatorSigningKeysdefaultJSONResponse) VisitListOperatorSigningKeysResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type DeleteOperatorTokenRequestObject struct {
 	OperatorId OperatorId `json:"operatorId"`
 }
@@ -2074,6 +2275,18 @@ type DeleteOperatorToken204Response struct {
 func (response DeleteOperatorToken204Response) VisitDeleteOperatorTokenResponse(ctx *fiber.Ctx) error {
 	ctx.Status(204)
 	return nil
+}
+
+type DeleteOperatorTokendefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response DeleteOperatorTokendefaultJSONResponse) VisitDeleteOperatorTokenResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
 }
 
 type GetOperatorTokenRequestObject struct {
@@ -2093,6 +2306,18 @@ func (response GetOperatorToken200JSONResponse) VisitGetOperatorTokenResponse(ct
 	return ctx.JSON(&response)
 }
 
+type GetOperatorTokendefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response GetOperatorTokendefaultJSONResponse) VisitGetOperatorTokenResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type UpdateOperatorTokenRequestObject struct {
 	OperatorId OperatorId `json:"operatorId"`
 }
@@ -2108,6 +2333,18 @@ func (response UpdateOperatorToken200JSONResponse) VisitUpdateOperatorTokenRespo
 	ctx.Status(200)
 
 	return ctx.JSON(&response)
+}
+
+type UpdateOperatorTokendefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response UpdateOperatorTokendefaultJSONResponse) VisitUpdateOperatorTokenResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
 }
 
 type ListSystemsRequestObject struct {
@@ -2131,6 +2368,18 @@ func (response ListSystems200JSONResponse) VisitListSystemsResponse(ctx *fiber.C
 	return ctx.JSON(&response)
 }
 
+type ListSystemsdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response ListSystemsdefaultJSONResponse) VisitListSystemsResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type CreateSystemRequestObject struct {
 	Body *CreateSystemJSONRequestBody
 }
@@ -2146,6 +2395,18 @@ func (response CreateSystem201JSONResponse) VisitCreateSystemResponse(ctx *fiber
 	ctx.Status(201)
 
 	return ctx.JSON(&response)
+}
+
+type CreateSystemdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response CreateSystemdefaultJSONResponse) VisitCreateSystemResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
 }
 
 type DeleteSystemRequestObject struct {
@@ -2164,6 +2425,18 @@ func (response DeleteSystem204Response) VisitDeleteSystemResponse(ctx *fiber.Ctx
 	return nil
 }
 
+type DeleteSystemdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response DeleteSystemdefaultJSONResponse) VisitDeleteSystemResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type GetSystemRequestObject struct {
 	SystemId SystemId `json:"systemId"`
 }
@@ -2177,33 +2450,6 @@ type GetSystem200JSONResponse System
 func (response GetSystem200JSONResponse) VisitGetSystemResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
 	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type GetSystem401JSONResponse struct{ UnauthorizedJSONResponse }
-
-func (response GetSystem401JSONResponse) VisitGetSystemResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(401)
-
-	return ctx.JSON(&response)
-}
-
-type GetSystem404JSONResponse struct{ NotFoundJSONResponse }
-
-func (response GetSystem404JSONResponse) VisitGetSystemResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(404)
-
-	return ctx.JSON(&response)
-}
-
-type GetSystem501JSONResponse struct{ UnimplementedJSONResponse }
-
-func (response GetSystem501JSONResponse) VisitGetSystemResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(501)
 
 	return ctx.JSON(&response)
 }
@@ -2238,6 +2484,18 @@ func (response UpdateSystem200JSONResponse) VisitUpdateSystemResponse(ctx *fiber
 	return ctx.JSON(&response)
 }
 
+type UpdateSystemdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response UpdateSystemdefaultJSONResponse) VisitUpdateSystemResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type DeleteSystemOperatorRequestObject struct {
 	SystemId SystemId `json:"systemId"`
 }
@@ -2254,31 +2512,16 @@ func (response DeleteSystemOperator204Response) VisitDeleteSystemOperatorRespons
 	return nil
 }
 
-type DeleteSystemOperator401JSONResponse struct{ UnauthorizedJSONResponse }
-
-func (response DeleteSystemOperator401JSONResponse) VisitDeleteSystemOperatorResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(401)
-
-	return ctx.JSON(&response)
+type DeleteSystemOperatordefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
 }
 
-type DeleteSystemOperator404JSONResponse struct{ NotFoundJSONResponse }
-
-func (response DeleteSystemOperator404JSONResponse) VisitDeleteSystemOperatorResponse(ctx *fiber.Ctx) error {
+func (response DeleteSystemOperatordefaultJSONResponse) VisitDeleteSystemOperatorResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(404)
+	ctx.Status(response.StatusCode)
 
-	return ctx.JSON(&response)
-}
-
-type DeleteSystemOperator500JSONResponse struct{ InternalErrorJSONResponse }
-
-func (response DeleteSystemOperator500JSONResponse) VisitDeleteSystemOperatorResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(500)
-
-	return ctx.JSON(&response)
+	return ctx.JSON(&response.Body)
 }
 
 type GetSystemOperatorRequestObject struct {
@@ -2298,40 +2541,16 @@ func (response GetSystemOperator200JSONResponse) VisitGetSystemOperatorResponse(
 	return ctx.JSON(&response)
 }
 
-type GetSystemOperator400JSONResponse struct{ BadRequestJSONResponse }
-
-func (response GetSystemOperator400JSONResponse) VisitGetSystemOperatorResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(400)
-
-	return ctx.JSON(&response)
+type GetSystemOperatordefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
 }
 
-type GetSystemOperator401JSONResponse struct{ UnauthorizedJSONResponse }
-
-func (response GetSystemOperator401JSONResponse) VisitGetSystemOperatorResponse(ctx *fiber.Ctx) error {
+func (response GetSystemOperatordefaultJSONResponse) VisitGetSystemOperatorResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(401)
+	ctx.Status(response.StatusCode)
 
-	return ctx.JSON(&response)
-}
-
-type GetSystemOperator404JSONResponse struct{ NotFoundJSONResponse }
-
-func (response GetSystemOperator404JSONResponse) VisitGetSystemOperatorResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(404)
-
-	return ctx.JSON(&response)
-}
-
-type GetSystemOperator500JSONResponse struct{ InternalErrorJSONResponse }
-
-func (response GetSystemOperator500JSONResponse) VisitGetSystemOperatorResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(500)
-
-	return ctx.JSON(&response)
+	return ctx.JSON(&response.Body)
 }
 
 type UpdateSystemOperatorRequestObject struct {
@@ -2352,31 +2571,16 @@ func (response UpdateSystemOperator201JSONResponse) VisitUpdateSystemOperatorRes
 	return ctx.JSON(&response)
 }
 
-type UpdateSystemOperator400JSONResponse struct{ BadRequestJSONResponse }
-
-func (response UpdateSystemOperator400JSONResponse) VisitUpdateSystemOperatorResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(400)
-
-	return ctx.JSON(&response)
+type UpdateSystemOperatordefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
 }
 
-type UpdateSystemOperator401JSONResponse struct{ UnauthorizedJSONResponse }
-
-func (response UpdateSystemOperator401JSONResponse) VisitUpdateSystemOperatorResponse(ctx *fiber.Ctx) error {
+func (response UpdateSystemOperatordefaultJSONResponse) VisitUpdateSystemOperatorResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(401)
+	ctx.Status(response.StatusCode)
 
-	return ctx.JSON(&response)
-}
-
-type UpdateSystemOperator404JSONResponse struct{ NotFoundJSONResponse }
-
-func (response UpdateSystemOperator404JSONResponse) VisitUpdateSystemOperatorResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(404)
-
-	return ctx.JSON(&response)
+	return ctx.JSON(&response.Body)
 }
 
 type ListTeamsRequestObject struct {
@@ -2401,6 +2605,18 @@ func (response ListTeams200JSONResponse) VisitListTeamsResponse(ctx *fiber.Ctx) 
 	return ctx.JSON(&response)
 }
 
+type ListTeamsdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response ListTeamsdefaultJSONResponse) VisitListTeamsResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type CreateTeamRequestObject struct {
 	Body *CreateTeamJSONRequestBody
 }
@@ -2418,49 +2634,16 @@ func (response CreateTeam201JSONResponse) VisitCreateTeamResponse(ctx *fiber.Ctx
 	return ctx.JSON(&response)
 }
 
-type CreateTeam400JSONResponse struct{ BadRequestJSONResponse }
-
-func (response CreateTeam400JSONResponse) VisitCreateTeamResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(400)
-
-	return ctx.JSON(&response)
+type CreateTeamdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
 }
 
-type CreateTeam404JSONResponse struct{ NotFoundJSONResponse }
-
-func (response CreateTeam404JSONResponse) VisitCreateTeamResponse(ctx *fiber.Ctx) error {
+func (response CreateTeamdefaultJSONResponse) VisitCreateTeamResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(404)
+	ctx.Status(response.StatusCode)
 
-	return ctx.JSON(&response)
-}
-
-type CreateTeam409JSONResponse struct{ DuplicateJSONResponse }
-
-func (response CreateTeam409JSONResponse) VisitCreateTeamResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(409)
-
-	return ctx.JSON(&response)
-}
-
-type CreateTeam500JSONResponse struct{ InternalErrorJSONResponse }
-
-func (response CreateTeam500JSONResponse) VisitCreateTeamResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(500)
-
-	return ctx.JSON(&response)
-}
-
-type CreateTeam501JSONResponse struct{ UnimplementedJSONResponse }
-
-func (response CreateTeam501JSONResponse) VisitCreateTeamResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(501)
-
-	return ctx.JSON(&response)
+	return ctx.JSON(&response.Body)
 }
 
 type DeleteTeamRequestObject struct {
@@ -2479,31 +2662,16 @@ func (response DeleteTeam204Response) VisitDeleteTeamResponse(ctx *fiber.Ctx) er
 	return nil
 }
 
-type DeleteTeam401JSONResponse struct{ UnauthorizedJSONResponse }
-
-func (response DeleteTeam401JSONResponse) VisitDeleteTeamResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(401)
-
-	return ctx.JSON(&response)
+type DeleteTeamdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
 }
 
-type DeleteTeam500JSONResponse struct{ InternalErrorJSONResponse }
-
-func (response DeleteTeam500JSONResponse) VisitDeleteTeamResponse(ctx *fiber.Ctx) error {
+func (response DeleteTeamdefaultJSONResponse) VisitDeleteTeamResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(500)
+	ctx.Status(response.StatusCode)
 
-	return ctx.JSON(&response)
-}
-
-type DeleteTeam501JSONResponse struct{ UnimplementedJSONResponse }
-
-func (response DeleteTeam501JSONResponse) VisitDeleteTeamResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(501)
-
-	return ctx.JSON(&response)
+	return ctx.JSON(&response.Body)
 }
 
 type GetTeamRequestObject struct {
@@ -2523,40 +2691,16 @@ func (response GetTeam200JSONResponse) VisitGetTeamResponse(ctx *fiber.Ctx) erro
 	return ctx.JSON(&response)
 }
 
-type GetTeam401JSONResponse struct{ UnauthorizedJSONResponse }
-
-func (response GetTeam401JSONResponse) VisitGetTeamResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(401)
-
-	return ctx.JSON(&response)
+type GetTeamdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
 }
 
-type GetTeam404JSONResponse struct{ NotFoundJSONResponse }
-
-func (response GetTeam404JSONResponse) VisitGetTeamResponse(ctx *fiber.Ctx) error {
+func (response GetTeamdefaultJSONResponse) VisitGetTeamResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(404)
+	ctx.Status(response.StatusCode)
 
-	return ctx.JSON(&response)
-}
-
-type GetTeam500JSONResponse struct{ InternalErrorJSONResponse }
-
-func (response GetTeam500JSONResponse) VisitGetTeamResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(500)
-
-	return ctx.JSON(&response)
-}
-
-type GetTeam501JSONResponse struct{ UnimplementedJSONResponse }
-
-func (response GetTeam501JSONResponse) VisitGetTeamResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(501)
-
-	return ctx.JSON(&response)
+	return ctx.JSON(&response.Body)
 }
 
 type ListTeamAccountsRequestObject struct {
@@ -2582,6 +2726,18 @@ func (response ListTeamAccounts200JSONResponse) VisitListTeamAccountsResponse(ct
 	return ctx.JSON(&response)
 }
 
+type ListTeamAccountsdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response ListTeamAccountsdefaultJSONResponse) VisitListTeamAccountsResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type GetAccountRequestObject struct {
 	TeamId    openapi_types.UUID `json:"teamId"`
 	AccountId openapi_types.UUID `json:"accountId"`
@@ -2598,6 +2754,18 @@ func (response GetAccount200JSONResponse) VisitGetAccountResponse(ctx *fiber.Ctx
 	ctx.Status(200)
 
 	return ctx.JSON(&response)
+}
+
+type GetAccountdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response GetAccountdefaultJSONResponse) VisitGetAccountResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
 }
 
 type ListGroupsRequestObject struct {
@@ -2624,6 +2792,18 @@ func (response ListGroups200JSONResponse) VisitListGroupsResponse(ctx *fiber.Ctx
 	return ctx.JSON(&response)
 }
 
+type ListGroupsdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response ListGroupsdefaultJSONResponse) VisitListGroupsResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type CreateGroupRequestObject struct {
 	TeamId    TeamId    `json:"teamId"`
 	AccountId AccountId `json:"accountId"`
@@ -2643,6 +2823,18 @@ func (response CreateGroup201JSONResponse) VisitCreateGroupResponse(ctx *fiber.C
 	return ctx.JSON(&response)
 }
 
+type CreateGroupdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response CreateGroupdefaultJSONResponse) VisitCreateGroupResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type DeleteSigningKeyGroupRequestObject struct {
 	TeamId    TeamId    `json:"teamId"`
 	AccountId AccountId `json:"accountId"`
@@ -2659,6 +2851,18 @@ type DeleteSigningKeyGroup204Response struct {
 func (response DeleteSigningKeyGroup204Response) VisitDeleteSigningKeyGroupResponse(ctx *fiber.Ctx) error {
 	ctx.Status(204)
 	return nil
+}
+
+type DeleteSigningKeyGroupdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response DeleteSigningKeyGroupdefaultJSONResponse) VisitDeleteSigningKeyGroupResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
 }
 
 type GetGroupRequestObject struct {
@@ -2680,6 +2884,18 @@ func (response GetGroup200JSONResponse) VisitGetGroupResponse(ctx *fiber.Ctx) er
 	return ctx.JSON(&response)
 }
 
+type GetGroupdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response GetGroupdefaultJSONResponse) VisitGetGroupResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type UpdateGroupRequestObject struct {
 	TeamId    TeamId    `json:"teamId"`
 	AccountId AccountId `json:"accountId"`
@@ -2698,6 +2914,18 @@ func (response UpdateGroup200JSONResponse) VisitUpdateGroupResponse(ctx *fiber.C
 	ctx.Status(200)
 
 	return ctx.JSON(&response)
+}
+
+type UpdateGroupdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response UpdateGroupdefaultJSONResponse) VisitUpdateGroupResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
 }
 
 type ListUsersRequestObject struct {
@@ -2724,6 +2952,18 @@ func (response ListUsers200JSONResponse) VisitListUsersResponse(ctx *fiber.Ctx) 
 	return ctx.JSON(&response)
 }
 
+type ListUsersdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response ListUsersdefaultJSONResponse) VisitListUsersResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type CreateUserRequestObject struct {
 	TeamId    TeamId    `json:"teamId"`
 	AccountId AccountId `json:"accountId"`
@@ -2743,6 +2983,18 @@ func (response CreateUser201JSONResponse) VisitCreateUserResponse(ctx *fiber.Ctx
 	return ctx.JSON(&response)
 }
 
+type CreateUserdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response CreateUserdefaultJSONResponse) VisitCreateUserResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type DeleteTeamAccountUserRequestObject struct {
 	TeamId    TeamId    `json:"teamId"`
 	AccountId AccountId `json:"accountId"`
@@ -2759,6 +3011,18 @@ type DeleteTeamAccountUser204Response struct {
 func (response DeleteTeamAccountUser204Response) VisitDeleteTeamAccountUserResponse(ctx *fiber.Ctx) error {
 	ctx.Status(204)
 	return nil
+}
+
+type DeleteTeamAccountUserdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response DeleteTeamAccountUserdefaultJSONResponse) VisitDeleteTeamAccountUserResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
 }
 
 type GetUserRequestObject struct {
@@ -2780,6 +3044,18 @@ func (response GetUser200JSONResponse) VisitGetUserResponse(ctx *fiber.Ctx) erro
 	return ctx.JSON(&response)
 }
 
+type GetUserdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response GetUserdefaultJSONResponse) VisitGetUserResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type UpdateUserRequestObject struct {
 	TeamId    TeamId    `json:"teamId"`
 	AccountId AccountId `json:"accountId"`
@@ -2798,6 +3074,18 @@ func (response UpdateUser200JSONResponse) VisitUpdateUserResponse(ctx *fiber.Ctx
 	ctx.Status(200)
 
 	return ctx.JSON(&response)
+}
+
+type UpdateUserdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response UpdateUserdefaultJSONResponse) VisitUpdateUserResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
 }
 
 type ListTeamSystemsRequestObject struct {
@@ -2823,6 +3111,18 @@ func (response ListTeamSystems200JSONResponse) VisitListTeamSystemsResponse(ctx 
 	return ctx.JSON(&response)
 }
 
+type ListTeamSystemsdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response ListTeamSystemsdefaultJSONResponse) VisitListTeamSystemsResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
 type VersionRequestObject struct {
 }
 
@@ -2839,22 +3139,16 @@ func (response Version200JSONResponse) VisitVersionResponse(ctx *fiber.Ctx) erro
 	return ctx.JSON(&response)
 }
 
-type Version500JSONResponse struct{ InternalErrorJSONResponse }
-
-func (response Version500JSONResponse) VisitVersionResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(500)
-
-	return ctx.JSON(&response)
+type VersiondefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
 }
 
-type Version501JSONResponse struct{ UnimplementedJSONResponse }
-
-func (response Version501JSONResponse) VisitVersionResponse(ctx *fiber.Ctx) error {
+func (response VersiondefaultJSONResponse) VisitVersionResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(501)
+	ctx.Status(response.StatusCode)
 
-	return ctx.JSON(&response)
+	return ctx.JSON(&response.Body)
 }
 
 // StrictServerInterface represents all server handlers.

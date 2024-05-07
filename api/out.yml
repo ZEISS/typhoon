@@ -48,10 +48,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Version'
-        '500':
-          $ref: '#/components/responses/InternalError'
-        '501':
-          $ref: '#/components/responses/Unimplemented'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /operators:
     get:
       summary: List all operators
@@ -75,6 +77,12 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/PaginatedResult'
                   - $ref: '#/components/schemas/Operators'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
       summary: Creates a new operator
       operationId: createOperator
@@ -89,6 +97,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Operator'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /operators/{operatorId}:
     get:
       summary: Gets an operator by ID
@@ -102,12 +116,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Operator'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '501':
-          $ref: '#/components/responses/Unimplemented'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
       summary: Updates an operator by ID
       operationId: updateOperator
@@ -125,6 +139,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Operator'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       summary: Deletes an operator by ID
       operationId: deleteOperator
@@ -133,6 +153,12 @@ paths:
       responses:
         '204':
           description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /operators/{operatorId}/token:
     get:
       summary: Gets a token for an operator
@@ -146,6 +172,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/JWTToken'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
       summary: Updates a token for an operator
       operationId: updateOperatorToken
@@ -158,6 +190,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/JWTToken'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       summary: Deletes a token for an operator
       operationId: deleteOperatorToken
@@ -166,6 +204,12 @@ paths:
       responses:
         '204':
           description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /operators/{operatorId}/signing-keys:
     get:
       summary: List all signing keys for an operator
@@ -193,6 +237,12 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/KeyPair'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /operators/{operatorId}/accounts:
     get:
       summary: List all accounts for an operator
@@ -220,6 +270,12 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/Account'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
       summary: Creates a new account
       operationId: createOperatorAccount
@@ -236,6 +292,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Account'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /operators/{operatorId}/accounts/{accountId}:
     get:
       summary: Gets an account by ID
@@ -250,6 +312,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Account'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
       summary: Updates an account by ID
       operationId: updateOperatorAccount
@@ -265,6 +333,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Account'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       summary: Deletes an account by ID
       operationId: deleteOperatorAccount
@@ -274,6 +348,12 @@ paths:
       responses:
         '204':
           description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /operators/{operatorId}/accounts/{accountId}/signing-keys:
     get:
       summary: List all signing keys for an account
@@ -302,6 +382,12 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/KeyPair'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /operators/{operatorId}/accounts/{accountId}/token:
     get:
       summary: Gets a token for an account
@@ -316,6 +402,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/JWTToken'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       summary: Deletes a token for an account
       operationId: deleteOperatorAccountToken
@@ -325,6 +417,12 @@ paths:
       responses:
         '204':
           description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /operators/{operatorId}/accounts/{accountId}/users:
     get:
       summary: List all users for an account
@@ -353,6 +451,12 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/User'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
       summary: Creates a new user
       operationId: createOperatorAccountUser
@@ -370,6 +474,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /operators/{operatorId}/accounts/{accountId}/users/{userId}:
     get:
       summary: Gets a user by ID
@@ -390,6 +500,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /operators/{operatorId}/accounts/{accountId}/users/{userId}/token:
     get:
       summary: Gets a token for a user
@@ -405,6 +521,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/JWTToken'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /operators/{operatorId}/accounts/{accountId}/users/{userId}/credentials:
     get:
       summary: Gets the credentials for a user
@@ -420,6 +542,12 @@ paths:
             application/octet-stream:
               schema:
                 $ref: '#/components/schemas/Credentials'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /teams:
     get:
       summary: List all teams
@@ -443,6 +571,12 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/PaginatedResult'
                   - $ref: '#/components/schemas/Teams'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
       summary: Creates a new team
       operationId: createTeam
@@ -457,16 +591,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Team'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          $ref: '#/components/responses/Duplicate'
-        '500':
-          $ref: '#/components/responses/InternalError'
-        '501':
-          $ref: '#/components/responses/Unimplemented'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /teams/{teamId}:
     get:
       summary: Gets a team by ID
@@ -485,14 +615,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Team'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
-        '501':
-          $ref: '#/components/responses/Unimplemented'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       summary: Deletes a team by ID
       operationId: deleteTeam
@@ -506,12 +634,12 @@ paths:
       responses:
         '204':
           description: Successful
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalError'
-        '501':
-          $ref: '#/components/responses/Unimplemented'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /teams/{teamId}/systems:
     get:
       summary: List all systems for a team
@@ -539,6 +667,12 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/System'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /teams/{teamId}/accounts:
     get:
       summary: List all accounts for a team
@@ -566,6 +700,12 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/Account'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /teams/{teamId}/accounts/{accountId}:
     get:
       summary: Gets an account by ID
@@ -590,6 +730,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Account'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /teams/{teamId}/accounts/{accountId}/groups:
     get:
       summary: List all signing key groups for an account
@@ -618,6 +764,12 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/SigningKeyGroup'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
       summary: Creates a new signing key group
       operationId: createGroup
@@ -638,6 +790,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SigningKeyGroup'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /teams/{teamId}/accounts/{accountId}/groups/{groupId}:
     get:
       summary: Gets a signing key group by ID
@@ -653,6 +811,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SigningKeyGroup'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
       summary: Updates a signing key group by ID
       operationId: updateGroup
@@ -672,6 +836,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SigningKeyGroup'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       summary: Deletes a signing key group by ID
       operationId: deleteSigningKeyGroup
@@ -682,6 +852,12 @@ paths:
       responses:
         '204':
           description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /teams/{teamId}/accounts/{accountId}/users:
     get:
       summary: List all users for an account
@@ -710,6 +886,12 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/User'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
       summary: Creates a new user
       operationId: createUser
@@ -730,6 +912,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /teams/{teamId}/accounts/{accountId}/users/{userId}:
     get:
       summary: Gets a user by ID
@@ -745,6 +933,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
       summary: Updates a user by ID
       operationId: updateUser
@@ -764,6 +958,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       summary: Deletes a user by ID
       operationId: deleteTeamAccountUser
@@ -774,6 +974,12 @@ paths:
       responses:
         '204':
           description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /systems:
     get:
       summary: List all managed systems.
@@ -795,6 +1001,12 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/System'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
       summary: Creates a new system
       operationId: createSystem
@@ -809,6 +1021,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/System'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /systems/{systemId}:
     get:
       summary: Gets a system by ID
@@ -822,14 +1040,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/System'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '501':
-          $ref: '#/components/responses/Unimplemented'
         default:
-          $ref: '#/components/responses/InternalError'
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
       summary: Updates a system by ID
       operationId: updateSystem
@@ -847,6 +1063,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/System'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       summary: Deletes a system by ID
       operationId: deleteSystem
@@ -855,6 +1077,12 @@ paths:
       responses:
         '204':
           description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /systems/{systemId}/operator:
     get:
       summary: Gets the operator for a system
@@ -868,14 +1096,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Operator'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     put:
       summary: Updates the operator for a system
       operationId: updateSystemOperator
@@ -890,12 +1116,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Operator'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       summary: Deletes the operator for a system
       operationId: deleteSystemOperator
@@ -904,12 +1130,12 @@ paths:
       responses:
         '204':
           description: Successful
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalError'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   parameters:
     systemId:
@@ -1474,16 +1700,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Team'
-    Version:
-      type: object
-      required:
-        - version
-        - date
-      properties:
-        version:
-          type: string
-        date:
-          type: string
     Error:
       type: object
       required:
@@ -1493,9 +1709,22 @@ components:
         code:
           type: integer
           format: int32
+          description: Error code
         ref:
           type: string
+          description: Reference to the error
         message:
+          type: string
+          description: Error message
+    Version:
+      type: object
+      required:
+        - version
+        - date
+      properties:
+        version:
+          type: string
+        date:
           type: string
 security:
   - bearerAuth: []

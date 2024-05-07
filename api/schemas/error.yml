@@ -9,7 +9,10 @@ components:
         code:
           type: integer
           format: int32
+          description: Error code
         ref:
           type: string
+          description: Reference to the error
         message:
           type: string
+          description: Error message

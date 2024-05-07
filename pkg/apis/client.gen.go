@@ -3565,6 +3565,7 @@ type ListOperatorResponse struct {
 		Results *[]Operator `json:"results,omitempty"`
 		Total   *int        `json:"total,omitempty"`
 	}
+	JSONDefault *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -3587,6 +3588,7 @@ type CreateOperatorResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON201      *Operator
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -3608,6 +3610,7 @@ func (r CreateOperatorResponse) StatusCode() int {
 type DeleteOperatorResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -3630,9 +3633,7 @@ type GetOperatorResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Operator
-	JSON401      *Unauthorized
-	JSON404      *NotFound
-	JSON501      *Unimplemented
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -3655,6 +3656,7 @@ type UpdateOperatorResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Operator
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -3682,6 +3684,7 @@ type ListOperatorAccountsResponse struct {
 		Results *[]Account `json:"results,omitempty"`
 		Total   *int       `json:"total,omitempty"`
 	}
+	JSONDefault *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -3704,6 +3707,7 @@ type CreateOperatorAccountResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON201      *Account
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -3725,6 +3729,7 @@ func (r CreateOperatorAccountResponse) StatusCode() int {
 type DeleteOperatorAccountResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -3747,6 +3752,7 @@ type GetOperatorAccountResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Account
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -3769,6 +3775,7 @@ type UpdateOperatorAccountResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Account
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -3796,6 +3803,7 @@ type ListOperatorAccountSigningKeysResponse struct {
 		Results *[]KeyPair `json:"results,omitempty"`
 		Total   *int       `json:"total,omitempty"`
 	}
+	JSONDefault *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -3817,6 +3825,7 @@ func (r ListOperatorAccountSigningKeysResponse) StatusCode() int {
 type DeleteOperatorAccountTokenResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -3839,6 +3848,7 @@ type GetOperatorAccountTokenResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *JWTToken
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -3866,6 +3876,7 @@ type ListOperatorAccountUsersResponse struct {
 		Results *[]User `json:"results,omitempty"`
 		Total   *int    `json:"total,omitempty"`
 	}
+	JSONDefault *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -3888,6 +3899,7 @@ type CreateOperatorAccountUserResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON201      *User
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -3910,6 +3922,7 @@ type GetOperatorAccountUserResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *User
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -3931,6 +3944,7 @@ func (r GetOperatorAccountUserResponse) StatusCode() int {
 type GetOperatorAccountUserCredentialsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -3953,6 +3967,7 @@ type GetOperatorAccountUserTokenResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *JWTToken
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -3980,6 +3995,7 @@ type ListOperatorSigningKeysResponse struct {
 		Results *[]KeyPair `json:"results,omitempty"`
 		Total   *int       `json:"total,omitempty"`
 	}
+	JSONDefault *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4001,6 +4017,7 @@ func (r ListOperatorSigningKeysResponse) StatusCode() int {
 type DeleteOperatorTokenResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4023,6 +4040,7 @@ type GetOperatorTokenResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *JWTToken
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4045,6 +4063,7 @@ type UpdateOperatorTokenResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *JWTToken
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4072,6 +4091,7 @@ type ListSystemsResponse struct {
 		Results *[]System `json:"results,omitempty"`
 		Total   *int      `json:"total,omitempty"`
 	}
+	JSONDefault *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4094,6 +4114,7 @@ type CreateSystemResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON201      *System
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4115,6 +4136,7 @@ func (r CreateSystemResponse) StatusCode() int {
 type DeleteSystemResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4137,10 +4159,7 @@ type GetSystemResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *System
-	JSON401      *Unauthorized
-	JSON404      *NotFound
-	JSON501      *Unimplemented
-	JSONDefault  *InternalError
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4163,6 +4182,7 @@ type UpdateSystemResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *System
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4184,9 +4204,7 @@ func (r UpdateSystemResponse) StatusCode() int {
 type DeleteSystemOperatorResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON401      *Unauthorized
-	JSON404      *NotFound
-	JSON500      *InternalError
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4209,10 +4227,7 @@ type GetSystemOperatorResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Operator
-	JSON400      *BadRequest
-	JSON401      *Unauthorized
-	JSON404      *NotFound
-	JSON500      *InternalError
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4235,9 +4250,7 @@ type UpdateSystemOperatorResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON201      *Operator
-	JSON400      *BadRequest
-	JSON401      *Unauthorized
-	JSON404      *NotFound
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4265,6 +4278,7 @@ type ListTeamsResponse struct {
 		Results *[]Team `json:"results,omitempty"`
 		Total   *int    `json:"total,omitempty"`
 	}
+	JSONDefault *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4287,11 +4301,7 @@ type CreateTeamResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON201      *Team
-	JSON400      *BadRequest
-	JSON404      *NotFound
-	JSON409      *Duplicate
-	JSON500      *InternalError
-	JSON501      *Unimplemented
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4313,9 +4323,7 @@ func (r CreateTeamResponse) StatusCode() int {
 type DeleteTeamResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON401      *Unauthorized
-	JSON500      *InternalError
-	JSON501      *Unimplemented
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4338,10 +4346,7 @@ type GetTeamResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Team
-	JSON401      *Unauthorized
-	JSON404      *NotFound
-	JSON500      *InternalError
-	JSON501      *Unimplemented
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4369,6 +4374,7 @@ type ListTeamAccountsResponse struct {
 		Results *[]Account `json:"results,omitempty"`
 		Total   *int       `json:"total,omitempty"`
 	}
+	JSONDefault *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4391,6 +4397,7 @@ type GetAccountResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Account
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4418,6 +4425,7 @@ type ListGroupsResponse struct {
 		Results *[]SigningKeyGroup `json:"results,omitempty"`
 		Total   *int               `json:"total,omitempty"`
 	}
+	JSONDefault *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4440,6 +4448,7 @@ type CreateGroupResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON201      *SigningKeyGroup
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4461,6 +4470,7 @@ func (r CreateGroupResponse) StatusCode() int {
 type DeleteSigningKeyGroupResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4483,6 +4493,7 @@ type GetGroupResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *SigningKeyGroup
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4505,6 +4516,7 @@ type UpdateGroupResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *SigningKeyGroup
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4532,6 +4544,7 @@ type ListUsersResponse struct {
 		Results *[]User `json:"results,omitempty"`
 		Total   *int    `json:"total,omitempty"`
 	}
+	JSONDefault *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4554,6 +4567,7 @@ type CreateUserResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON201      *User
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4575,6 +4589,7 @@ func (r CreateUserResponse) StatusCode() int {
 type DeleteTeamAccountUserResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4597,6 +4612,7 @@ type GetUserResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *User
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4619,6 +4635,7 @@ type UpdateUserResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *User
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4646,6 +4663,7 @@ type ListTeamSystemsResponse struct {
 		Results *[]System `json:"results,omitempty"`
 		Total   *int      `json:"total,omitempty"`
 	}
+	JSONDefault *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -4668,8 +4686,7 @@ type VersionResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Version
-	JSON500      *InternalError
-	JSON501      *Unimplemented
+	JSONDefault  *Error
 }
 
 // Status returns HTTPResponse.Status
@@ -5250,6 +5267,13 @@ func ParseListOperatorResponse(rsp *http.Response) (*ListOperatorResponse, error
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5276,6 +5300,13 @@ func ParseCreateOperatorResponse(rsp *http.Response) (*CreateOperatorResponse, e
 		}
 		response.JSON201 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5292,6 +5323,16 @@ func ParseDeleteOperatorResponse(rsp *http.Response) (*DeleteOperatorResponse, e
 	response := &DeleteOperatorResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5318,26 +5359,12 @@ func ParseGetOperatorResponse(rsp *http.Response) (*GetOperatorResponse, error) 
 		}
 		response.JSON200 = &dest
 
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest Unauthorized
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON401 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest NotFound
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 501:
-		var dest Unimplemented
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON501 = &dest
+		response.JSONDefault = &dest
 
 	}
 
@@ -5364,6 +5391,13 @@ func ParseUpdateOperatorResponse(rsp *http.Response) (*UpdateOperatorResponse, e
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
 
 	}
 
@@ -5396,6 +5430,13 @@ func ParseListOperatorAccountsResponse(rsp *http.Response) (*ListOperatorAccount
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5422,6 +5463,13 @@ func ParseCreateOperatorAccountResponse(rsp *http.Response) (*CreateOperatorAcco
 		}
 		response.JSON201 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5438,6 +5486,16 @@ func ParseDeleteOperatorAccountResponse(rsp *http.Response) (*DeleteOperatorAcco
 	response := &DeleteOperatorAccountResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5464,6 +5522,13 @@ func ParseGetOperatorAccountResponse(rsp *http.Response) (*GetOperatorAccountRes
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5489,6 +5554,13 @@ func ParseUpdateOperatorAccountResponse(rsp *http.Response) (*UpdateOperatorAcco
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
 
 	}
 
@@ -5521,6 +5593,13 @@ func ParseListOperatorAccountSigningKeysResponse(rsp *http.Response) (*ListOpera
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5537,6 +5616,16 @@ func ParseDeleteOperatorAccountTokenResponse(rsp *http.Response) (*DeleteOperato
 	response := &DeleteOperatorAccountTokenResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5562,6 +5651,13 @@ func ParseGetOperatorAccountTokenResponse(rsp *http.Response) (*GetOperatorAccou
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
 
 	}
 
@@ -5594,6 +5690,13 @@ func ParseListOperatorAccountUsersResponse(rsp *http.Response) (*ListOperatorAcc
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5619,6 +5722,13 @@ func ParseCreateOperatorAccountUserResponse(rsp *http.Response) (*CreateOperator
 			return nil, err
 		}
 		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
 
 	}
 
@@ -5646,6 +5756,13 @@ func ParseGetOperatorAccountUserResponse(rsp *http.Response) (*GetOperatorAccoun
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5662,6 +5779,16 @@ func ParseGetOperatorAccountUserCredentialsResponse(rsp *http.Response) (*GetOpe
 	response := &GetOperatorAccountUserCredentialsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5687,6 +5814,13 @@ func ParseGetOperatorAccountUserTokenResponse(rsp *http.Response) (*GetOperatorA
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
 
 	}
 
@@ -5719,6 +5853,13 @@ func ParseListOperatorSigningKeysResponse(rsp *http.Response) (*ListOperatorSign
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5735,6 +5876,16 @@ func ParseDeleteOperatorTokenResponse(rsp *http.Response) (*DeleteOperatorTokenR
 	response := &DeleteOperatorTokenResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5761,6 +5912,13 @@ func ParseGetOperatorTokenResponse(rsp *http.Response) (*GetOperatorTokenRespons
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5786,6 +5944,13 @@ func ParseUpdateOperatorTokenResponse(rsp *http.Response) (*UpdateOperatorTokenR
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
 
 	}
 
@@ -5818,6 +5983,13 @@ func ParseListSystemsResponse(rsp *http.Response) (*ListSystemsResponse, error) 
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5844,6 +6016,13 @@ func ParseCreateSystemResponse(rsp *http.Response) (*CreateSystemResponse, error
 		}
 		response.JSON201 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5860,6 +6039,16 @@ func ParseDeleteSystemResponse(rsp *http.Response) (*DeleteSystemResponse, error
 	response := &DeleteSystemResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5886,29 +6075,8 @@ func ParseGetSystemResponse(rsp *http.Response) (*GetSystemResponse, error) {
 		}
 		response.JSON200 = &dest
 
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest Unauthorized
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON401 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest NotFound
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 501:
-		var dest Unimplemented
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON501 = &dest
-
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest InternalError
+		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5940,6 +6108,13 @@ func ParseUpdateSystemResponse(rsp *http.Response) (*UpdateSystemResponse, error
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -5959,26 +6134,12 @@ func ParseDeleteSystemOperatorResponse(rsp *http.Response) (*DeleteSystemOperato
 	}
 
 	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest Unauthorized
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON401 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest NotFound
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest InternalError
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON500 = &dest
+		response.JSONDefault = &dest
 
 	}
 
@@ -6006,33 +6167,12 @@ func ParseGetSystemOperatorResponse(rsp *http.Response) (*GetSystemOperatorRespo
 		}
 		response.JSON200 = &dest
 
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest BadRequest
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON400 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest Unauthorized
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON401 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest NotFound
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest InternalError
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON500 = &dest
+		response.JSONDefault = &dest
 
 	}
 
@@ -6060,26 +6200,12 @@ func ParseUpdateSystemOperatorResponse(rsp *http.Response) (*UpdateSystemOperato
 		}
 		response.JSON201 = &dest
 
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest BadRequest
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON400 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest Unauthorized
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON401 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest NotFound
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
+		response.JSONDefault = &dest
 
 	}
 
@@ -6112,6 +6238,13 @@ func ParseListTeamsResponse(rsp *http.Response) (*ListTeamsResponse, error) {
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -6138,40 +6271,12 @@ func ParseCreateTeamResponse(rsp *http.Response) (*CreateTeamResponse, error) {
 		}
 		response.JSON201 = &dest
 
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest BadRequest
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON400 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest NotFound
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
-		var dest Duplicate
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON409 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest InternalError
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON500 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 501:
-		var dest Unimplemented
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON501 = &dest
+		response.JSONDefault = &dest
 
 	}
 
@@ -6192,26 +6297,12 @@ func ParseDeleteTeamResponse(rsp *http.Response) (*DeleteTeamResponse, error) {
 	}
 
 	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest Unauthorized
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON401 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest InternalError
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON500 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 501:
-		var dest Unimplemented
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON501 = &dest
+		response.JSONDefault = &dest
 
 	}
 
@@ -6239,33 +6330,12 @@ func ParseGetTeamResponse(rsp *http.Response) (*GetTeamResponse, error) {
 		}
 		response.JSON200 = &dest
 
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest Unauthorized
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON401 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest NotFound
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest InternalError
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON500 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 501:
-		var dest Unimplemented
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON501 = &dest
+		response.JSONDefault = &dest
 
 	}
 
@@ -6298,6 +6368,13 @@ func ParseListTeamAccountsResponse(rsp *http.Response) (*ListTeamAccountsRespons
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -6323,6 +6400,13 @@ func ParseGetAccountResponse(rsp *http.Response) (*GetAccountResponse, error) {
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
 
 	}
 
@@ -6355,6 +6439,13 @@ func ParseListGroupsResponse(rsp *http.Response) (*ListGroupsResponse, error) {
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -6381,6 +6472,13 @@ func ParseCreateGroupResponse(rsp *http.Response) (*CreateGroupResponse, error) 
 		}
 		response.JSON201 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -6397,6 +6495,16 @@ func ParseDeleteSigningKeyGroupResponse(rsp *http.Response) (*DeleteSigningKeyGr
 	response := &DeleteSigningKeyGroupResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -6423,6 +6531,13 @@ func ParseGetGroupResponse(rsp *http.Response) (*GetGroupResponse, error) {
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -6448,6 +6563,13 @@ func ParseUpdateGroupResponse(rsp *http.Response) (*UpdateGroupResponse, error) 
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
 
 	}
 
@@ -6480,6 +6602,13 @@ func ParseListUsersResponse(rsp *http.Response) (*ListUsersResponse, error) {
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -6506,6 +6635,13 @@ func ParseCreateUserResponse(rsp *http.Response) (*CreateUserResponse, error) {
 		}
 		response.JSON201 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -6522,6 +6658,16 @@ func ParseDeleteTeamAccountUserResponse(rsp *http.Response) (*DeleteTeamAccountU
 	response := &DeleteTeamAccountUserResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -6548,6 +6694,13 @@ func ParseGetUserResponse(rsp *http.Response) (*GetUserResponse, error) {
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -6573,6 +6726,13 @@ func ParseUpdateUserResponse(rsp *http.Response) (*UpdateUserResponse, error) {
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
 
 	}
 
@@ -6605,6 +6765,13 @@ func ParseListTeamSystemsResponse(rsp *http.Response) (*ListTeamSystemsResponse,
 		}
 		response.JSON200 = &dest
 
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
 	}
 
 	return response, nil
@@ -6631,19 +6798,12 @@ func ParseVersionResponse(rsp *http.Response) (*VersionResponse, error) {
 		}
 		response.JSON200 = &dest
 
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest InternalError
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON500 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 501:
-		var dest Unimplemented
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON501 = &dest
+		response.JSONDefault = &dest
 
 	}
 

@@ -144,7 +144,7 @@ func (u *Unimplemented) CreateSystem(ctx context.Context, request CreateSystemRe
 
 // GetSystem ...
 func (u *Unimplemented) GetSystem(ctx context.Context, request GetSystemRequestObject) (GetSystemResponseObject, error) {
-	return GetSystem501JSONResponse(GetOperator501JSONResponse{UnimplementedJSONResponse(NotImplemented("Not implemented"))}), nil
+	return nil, errors.New("not implemented")
 }
 
 // UpdateSystem ...
@@ -194,7 +194,7 @@ func (u *Unimplemented) GetTeam(ctx context.Context, request GetTeamRequestObjec
 
 // DeleteTeam ...
 func (u *Unimplemented) DeleteTeam(ctx context.Context, request DeleteTeamRequestObject) (DeleteTeamResponseObject, error) {
-	return DeleteTeam501JSONResponse(DeleteTeam501JSONResponse{UnimplementedJSONResponse(NotImplemented("Not implemented"))}), nil
+	return nil, errors.New("not implemented")
 }
 
 // ListAccounts ...

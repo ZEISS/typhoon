@@ -25,3 +25,19 @@ func ErrorNotFound(message string, args ...interface{}) Error {
 		Message: fmt.Sprintf(message, args...),
 	}
 }
+
+// ErrorBadRequest is a helper function to create a new Error with a 400 status code.
+func ErrorBadRequest(message string, args ...interface{}) Error {
+	return Error{
+		Code:    http.StatusBadRequest,
+		Message: fmt.Sprintf(message, args...),
+	}
+}
+
+// ErrorUnauthorized is a helper function to create a new Error with a 401 status code.
+func ErrorUnauthorized(message string, args ...interface{}) Error {
+	return Error{
+		Code:    http.StatusUnauthorized,
+		Message: fmt.Sprintf(message, args...),
+	}
+}

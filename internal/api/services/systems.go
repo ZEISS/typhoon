@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/utils"
@@ -79,7 +80,7 @@ func (a *ApiHandlers) GetSystemOperator(ctx context.Context, req openapi.GetSyst
 	}
 
 	if system.OperatorID == nil {
-		return openapi.GetSystemOperator404JSONResponse(openapi.GetOperator404JSONResponse{}), nil
+		return openapi.GetSystemOperatordefaultJSONResponse(openapi.GetGroupdefaultJSONResponse{StatusCode: http.StatusNotFound, Body: openapi.ErrorNotFound("could not find an operator")}), nil
 	}
 
 	return openapi.GetSystemOperator200JSONResponse(openapi.Operator{Id: utils.PtrUUID(system.Operator.ID), Name: system.Operator.Name}), nil

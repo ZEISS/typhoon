@@ -96,9 +96,6 @@ func (c *UsersController) GetCredentials(ctx context.Context, id uuid.UUID) ([]b
 		return nil, err
 	}
 
-	fmt.Println("user.Token.Token: ", user.Token.Token)
-	fmt.Println("user.Key.Seed: ", user.Key.Seed)
-
 	// generate a creds formatted file that can be used by a NATS client
 	creds, err := jwt.FormatUserConfig(user.Token.Token, user.Key.Seed)
 	if err != nil {
