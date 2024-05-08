@@ -1,4 +1,4 @@
-package services
+package handlers
 
 import (
 	"context"
@@ -16,14 +16,14 @@ type ApiHandlers struct {
 	operators controllers.OperatorsController
 	systems   controllers.SystemsController
 	teams     controllers.TeamsController
-	users     *controllers.UsersController
+	users     controllers.UsersController
 	version   *controllers.VersionController
 
 	openapi.Unimplemented
 }
 
 // NewApiHandlers ...
-func NewApiHandlers(systems controllers.SystemsController, teams controllers.TeamsController, version *controllers.VersionController, operators controllers.OperatorsController, accounts controllers.AccountsController, users *controllers.UsersController) *ApiHandlers {
+func NewApiHandlers(systems controllers.SystemsController, teams controllers.TeamsController, version *controllers.VersionController, operators controllers.OperatorsController, accounts controllers.AccountsController, users controllers.UsersController) *ApiHandlers {
 	return &ApiHandlers{systems: systems, teams: teams, version: version, operators: operators, accounts: accounts, users: users}
 }
 
@@ -48,22 +48,22 @@ func (a *ApiHandlers) DeleteSystem(ctx context.Context, req openapi.DeleteSystem
 }
 
 // CreateOperatorSigningKeyGroup ...
-func (a *ApiHandlers) CreateOperatorSigningKeyGroup(ctx context.Context, req openapi.CreateOperatorSigningKeyGroupRequestObject) (openapi.CreateOperatorSigningKeyGroupResponseObject, error) {
-	key, err := a.operators.CreateOperatorSigningKeyGroup(ctx, req.OperatorId, req.Body.Name, utils.PtrStr(req.Body.Description))
-	if err != nil {
-		return nil, err
-	}
+// func (a *ApiHandlers) CreateOperatorSigningKeyGroup(ctx context.Context, req openapi.CreateOperatorSigningKeyGroupRequestObject) (openapi.CreateOperatorSigningKeyGroupResponseObject, error) {
+// 	key, err := a.operators.CreateOperatorSigningKeyGroup(ctx, req.OperatorId, req.Body.Name, utils.PtrStr(req.Body.Description))
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	res := openapi.SigningKeyGroup{
-		Id:        &key.ID,
-		Name:      key.Name,
-		UpdatedAt: utils.PtrTime(key.UpdatedAt),
-		CreatedAt: utils.PtrTime(key.CreatedAt),
-		DeletedAt: utils.PtrTime(key.DeletedAt.Time),
-	}
+// 	res := openapi.SigningKeyGroup{
+// 		Id:        &key.ID,
+// 		Name:      key.Name,
+// 		UpdatedAt: utils.PtrTime(key.UpdatedAt),
+// 		CreatedAt: utils.PtrTime(key.CreatedAt),
+// 		DeletedAt: utils.PtrTime(key.DeletedAt.Time),
+// 	}
 
-	return openapi.CreateOperatorSigningKeyGroup201JSONResponse(openapi.CreateOperatorSigningKeyGroup201JSONResponse(res)), nil
-}
+// 	return openapi.CreateOperatorSigningKeyGroup201JSONResponse(openapi.CreateOperatorSigningKeyGroup201JSONResponse(res)), nil
+// }
 
 // // UpdateSystemOperator ...
 // func (a *ApiHandlers) UpdateSystemOperator(ctx context.Context, req openapi.UpdateSystemOperatorRequestObject) (openapi.UpdateSystemOperatorResponseObject, error) {
@@ -74,16 +74,6 @@ func (a *ApiHandlers) CreateOperatorSigningKeyGroup(ctx context.Context, req ope
 
 // 	return openapi.UpdateSystemOperator200JSONResponse(openapi.UpdateSystemOperator200JSONResponse{Id: utils.PtrUUID(system.ID)}), nil
 // }
-
-// CreateOperator ...
-func (a *ApiHandlers) CreateOperator(ctx context.Context, req openapi.CreateOperatorRequestObject) (openapi.CreateOperatorResponseObject, error) {
-	operator, err := a.operators.CreateOperator(ctx, req.Body.Name)
-	if err != nil {
-		return nil, err
-	}
-
-	return openapi.CreateOperator201JSONResponse(openapi.Operator{Id: &operator.ID, Name: operator.Name}), nil
-}
 
 // // GetOperator ...
 // func (a *ApiHandlers) GetOperator(ctx context.Context, req openapi.GetOperatorRequestObject) (openapi.GetOperatorResponseObject, error) {

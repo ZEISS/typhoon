@@ -3,7 +3,6 @@ package ports
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/zeiss/typhoon/internal/api/models"
 )
 
@@ -14,7 +13,7 @@ type Operators interface {
 	// UpdateOperator updates an existing operator.
 	UpdateOperator(ctx context.Context, operator *models.Operator) error
 	// GetOperator returns the operator with the given ID.
-	GetOperator(ctx context.Context, id uuid.UUID) (*models.Operator, error)
+	GetOperator(ctx context.Context, operator *models.Operator) error
 	// ListOperators returns a list of operators.
 	ListOperators(ctx context.Context, pagination models.OperatorPagination) (models.OperatorPagination, error)
 }

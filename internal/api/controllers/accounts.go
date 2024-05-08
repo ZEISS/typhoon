@@ -8,6 +8,21 @@ import (
 	"github.com/zeiss/typhoon/internal/api/ports"
 )
 
+// ListAccountsRequest ...
+type ListAccountsRequest struct {
+	SystemID uuid.UUID
+	Limit    int
+	Offset   int
+}
+
+// ListAccountsResponse ...
+type ListAccountsResponse struct {
+	Accounts []models.Account
+	Total    int
+	Offset   int
+	Limit    int
+}
+
 // AccountsController is the interface that wraps the methods to access accounts.
 type AccountsController interface {
 	// CreateAccount creates a new account.
@@ -19,22 +34,7 @@ type AccountsController interface {
 	// ListSigningKeys of an account.
 	ListSigningKeys(ctx context.Context, accountID uuid.UUID, pagination models.Pagination[models.NKey]) (models.Pagination[models.NKey], error)
 	// ListAccounts ...
-	ListAccounts(ctx context.Context, input ListAccountsInput) (ListAccountsOutput, error)
-}
-
-// ListAccountsInput ...
-type ListAccountsInput struct {
-	SystemID uuid.UUID
-	Limit    int
-	Offset   int
-}
-
-// ListAccountsOutput ...
-type ListAccountsOutput struct {
-	Accounts []models.Account
-	Total    int
-	Offset   int
-	Limit    int
+	ListAccounts(ctx context.Context, req ListAccountsRequest) (ListAccountsResponse, error)
 }
 
 var _ AccountsController = (*accountsController)(nil)
@@ -135,8 +135,15 @@ func (c *accountsController) CreateAccount(ctx context.Context, name string, ope
 }
 
 // ListAccounts ...
-func (c *accountsController) ListAccounts(ctx context.Context, input ListAccountsInput) (ListAccountsOutput, error) {
-	return ListAccountsOutput{}, nil
+func (c *accountsController) ListAccounts(ctx context.Context, input ListAccountsRequest) (ListAccountsResponse, error) {
+	results := models.Pagination[models.Account]{}
+
+	results, err := c.db.ListAccounts(ctx, results)
+	if err != nil {
+		return ListAccountsResponse{}, err
+	}
+
+	return ListAccountsResponse{Total: results.TotalRows, Limit: results.Limit, Offset: results.Limit, Accounts: results.Rows}, nil
 }
 
 // DeleteToken ...

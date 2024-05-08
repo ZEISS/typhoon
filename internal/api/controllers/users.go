@@ -9,18 +9,27 @@ import (
 	"github.com/zeiss/typhoon/internal/api/ports"
 )
 
-// UsersController ...
-type UsersController struct {
-	db ports.Repositories
+var _ UsersController = (*UsersControllerImpl)(nil)
+
+// UsersController is the interface that wraps the methods to access users.
+type UsersController interface {
+	// CreateUser creates a new user.
+	CreateUser(ctx context.Context, name string, accountId uuid.UUID) (*models.User, error)
+	// GetCredentials returns the credentials for a user.
+	GetCredentials(ctx context.Context, id uuid.UUID) ([]byte, error)
+}
+
+type UsersControllerImpl struct {
+	db ports.Users
 }
 
 // NewUsersController ...
-func NewUsersController(db ports.Repositories) *UsersController {
-	return &UsersController{db}
+func NewUsersController(db ports.Users) *UsersControllerImpl {
+	return &UsersControllerImpl{db}
 }
 
 // CreateUser ...
-func (c *UsersController) CreateUser(ctx context.Context, name string, accountId uuid.UUID) (*models.User, error) {
+func (c *UsersControllerImpl) CreateUser(ctx context.Context, name string, accountId uuid.UUID) (*models.User, error) {
 	return nil, nil
 
 	// pk, err := nkeys.CreateUser()
@@ -90,7 +99,7 @@ func (c *UsersController) CreateUser(ctx context.Context, name string, accountId
 }
 
 // GetCredentials ...
-func (c *UsersController) GetCredentials(ctx context.Context, id uuid.UUID) ([]byte, error) {
+func (c *UsersControllerImpl) GetCredentials(ctx context.Context, id uuid.UUID) ([]byte, error) {
 	user, err := c.db.GetUser(ctx, id)
 	if err != nil {
 		return nil, err

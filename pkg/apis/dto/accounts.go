@@ -1,4 +1,4 @@
-package transformers
+package dto
 
 import (
 	"github.com/zeiss/typhoon/internal/api/controllers"
@@ -7,7 +7,7 @@ import (
 )
 
 // ToListAccountResponse ...
-func ToListAccountResponse(output controllers.ListAccountsOutput) openapi.ListAccounts200JSONResponse {
+func ToListAccountResponse(output controllers.ListAccountsResponse) openapi.ListAccounts200JSONResponse {
 	response := openapi.ListAccounts200JSONResponse{}
 
 	response.Limit = utils.PtrInt(output.Limit)
@@ -33,8 +33,8 @@ func ToListAccountResponse(output controllers.ListAccountsOutput) openapi.ListAc
 }
 
 // FromListAccountRequest ...
-func FromListAccountRequest(req openapi.ListAccountsRequestObject) controllers.ListAccountsInput {
-	return controllers.ListAccountsInput{
+func FromListAccountRequest(req openapi.ListAccountsRequestObject) controllers.ListAccountsRequest {
+	return controllers.ListAccountsRequest{
 		Limit:  utils.IntPtr(req.Params.Limit),
 		Offset: utils.IntPtr(req.Params.Offset),
 	}

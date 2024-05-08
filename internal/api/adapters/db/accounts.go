@@ -38,13 +38,12 @@ func (db *DB) UpdateAccount(ctx context.Context, account *models.Account) error 
 }
 
 // ListAccounts ...
-func (db *DB) ListAccounts(ctx context.Context, pagination models.Pagination[*models.Account]) (*models.Pagination[*models.Account], error) {
-	accounts := []*models.Account{}
-	if err := db.conn.WithContext(ctx).Find(&accounts).Error; err != nil {
-		return nil, err
+func (db *DB) ListAccounts(ctx context.Context, pagination models.Pagination[models.Account]) (models.Pagination[models.Account], error) {
+	if err := db.conn.WithContext(ctx).Find(&pagination.Rows).Error; err != nil {
+		return pagination, err
 	}
 
-	return &models.Pagination[*models.Account]{Rows: accounts}, nil
+	return pagination, nil
 }
 
 // ListSigningKeys ...
@@ -57,7 +56,7 @@ func (db *DB) ListSigningKeys(ctx context.Context, accountID uuid.UUID, paginati
 		Preload("SigningKeys").
 		First(account).Error
 	if err != nil {
-		return models.Pagination[models.NKey]{}, err
+		return pagination, err
 	}
 
 	pagination.Rows = keys

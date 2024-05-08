@@ -8,22 +8,19 @@ import (
 	"gorm.io/gorm"
 )
 
-// GetOperator ...
-func (db *DB) GetOperator(ctx context.Context, id uuid.UUID) (*models.Operator, error) {
-	operator := &models.Operator{}
-
+// GetOperator is a method to get an operator from the database.
+func (db *DB) GetOperator(ctx context.Context, op *models.Operator) error {
 	err := db.conn.
-		Where("id = ?", id).
 		Preload("SigningKeyGroups").
 		Preload("SigningKeyGroups.Key").
 		Preload("Token").
 		Preload("Key").
-		First(operator).Error
+		First(&op).Error
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return operator, nil
+	return nil
 }
 
 // DeleteOperator ...
@@ -31,14 +28,14 @@ func (db *DB) DeleteOperator(ctx context.Context, id uuid.UUID) error {
 	return db.conn.WithContext(ctx).Where("id = ?", id).Delete(&models.Operator{}).Error
 }
 
-// CreateOperator ...
-func (db *DB) CreateOperator(ctx context.Context, operator *models.Operator) error {
-	return db.conn.WithContext(ctx).Create(operator).Error
+// CreateOperator is a method to create an operator in the database.
+func (db *DB) CreateOperator(ctx context.Context, op *models.Operator) error {
+	return db.conn.WithContext(ctx).Create(op).Error
 }
 
 // UpdateOperator ...
-func (db *DB) UpdateOperator(ctx context.Context, operator *models.Operator) error {
-	return db.conn.Session(&gorm.Session{FullSaveAssociations: true}).WithContext(ctx).Save(operator).Error
+func (db *DB) UpdateOperator(ctx context.Context, op *models.Operator) error {
+	return db.conn.Session(&gorm.Session{FullSaveAssociations: true}).WithContext(ctx).Save(op).Error
 }
 
 // ListOperators ...

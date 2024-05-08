@@ -6,8 +6,8 @@ import (
 	authz "github.com/zeiss/fiber-authz"
 	"github.com/zeiss/typhoon/internal/api/adapters"
 	"github.com/zeiss/typhoon/internal/api/adapters/db"
+	"github.com/zeiss/typhoon/internal/api/adapters/handlers"
 	"github.com/zeiss/typhoon/internal/api/controllers"
-	"github.com/zeiss/typhoon/internal/api/services"
 	"github.com/zeiss/typhoon/internal/utils"
 	openapi "github.com/zeiss/typhoon/pkg/apis"
 
@@ -108,7 +108,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		ac := controllers.NewAccountsController(db)
 		uc := controllers.NewUsersController(db)
 
-		handlers := services.NewApiHandlers(sc, tc, vc, oc, ac, uc)
+		handlers := handlers.NewApiHandlers(sc, tc, vc, oc, ac, uc)
 
 		handler := openapi.NewStrictHandler(handlers, nil)
 		openapi.RegisterHandlers(app, handler)
