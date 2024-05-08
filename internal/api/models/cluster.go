@@ -4,11 +4,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	openapi "github.com/zeiss/typhoon/pkg/apis"
 	"gorm.io/gorm"
 )
-
-var _ ToAPI[openapi.Cluster] = (*Cluster)(nil)
 
 // Cluster ...
 type Cluster struct {
@@ -28,13 +25,4 @@ type Cluster struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	// DeletedAt is the time the cluster was deleted.
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
-}
-
-// ToAPI converts the database model to the API model.
-func (c *Cluster) ToAPI() *openapi.Cluster {
-	return &openapi.Cluster{
-		Name:        c.Name,
-		Description: &c.Description,
-		ServerURL:   c.ServerURL,
-	}
 }

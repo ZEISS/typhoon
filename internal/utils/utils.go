@@ -11,6 +11,15 @@ func PtrInt(i int) *int {
 	return &i
 }
 
+// IntPtr returns a pointer to an int.
+func IntPtr(i *int) int {
+	if i == nil {
+		return 0
+	}
+
+	return *i
+}
+
 // PtrUUID returns a pointer to a UUID.
 func PtrUUID(u uuid.UUID) *uuid.UUID {
 	return &u
@@ -44,7 +53,7 @@ func TimePtr(t *time.Time) time.Time {
 	return *t
 }
 
-// PtrUUID returns a pointer to a UUID.
-func UUIDPtr(u uuid.UUID) *uuid.UUID {
-	return &u
+// UUIDPtr returns a pointer to a UUID.
+func UUIDPtr(u *uuid.UUID) uuid.UUID {
+	return *u
 }

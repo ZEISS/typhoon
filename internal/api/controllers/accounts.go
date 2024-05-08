@@ -6,26 +6,38 @@ import (
 	"github.com/google/uuid"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/api/ports"
-
-	openapi "github.com/zeiss/typhoon/pkg/apis"
 )
 
 // AccountsController is the interface that wraps the methods to access accounts.
 type AccountsController interface {
 	// CreateAccount creates a new account.
 	CreateAccount(ctx context.Context, name string, operatorID uuid.UUID) (*models.Account, error)
-	// UpdateAccount updates an account.
-	UpdateAccount(ctx context.Context, req UpdateOperatorAccountRequestObject) (*models.Account, error)
 	// DeleteToken deletes a token.
 	DeleteToken(ctx context.Context, accountID uuid.UUID) error
 	// CreateSigningKeyGroup creates a new signing key group.
 	CreateSigningKeyGroup(ctx context.Context) (*models.Account, error)
 	// ListSigningKeys of an account.
 	ListSigningKeys(ctx context.Context, accountID uuid.UUID, pagination models.Pagination[models.NKey]) (models.Pagination[models.NKey], error)
+	// ListAccounts ...
+	ListAccounts(ctx context.Context, input ListAccountsInput) (ListAccountsOutput, error)
 }
 
-// CreateOperatorAccountRequestObject ...
-type UpdateOperatorAccountRequestObject = openapi.UpdateOperatorAccountRequestObject
+// ListAccountsInput ...
+type ListAccountsInput struct {
+	SystemID uuid.UUID
+	Limit    int
+	Offset   int
+}
+
+// ListAccountsOutput ...
+type ListAccountsOutput struct {
+	Accounts []models.Account
+	Total    int
+	Offset   int
+	Limit    int
+}
+
+var _ AccountsController = (*accountsController)(nil)
 
 type accountsController struct {
 	db ports.Repositories
@@ -122,60 +134,9 @@ func (c *accountsController) CreateAccount(ctx context.Context, name string, ope
 	// return account, nil
 }
 
-// UpdateAccount ...
-func (c *accountsController) UpdateAccount(ctx context.Context, req UpdateOperatorAccountRequestObject) (*models.Account, error) {
-	return nil, nil
-	// account, err := c.db.GetAccount(ctx, req.AccountId)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// // TODO: support multiple signing keys
-	// if len(account.Operator.SigningKeys) < 1 {
-	// 	return nil, fmt.Errorf("operator %s has no signing keys", account.Operator.KeyID)
-	// }
-
-	// osk, err := nkeys.FromSeed(account.Operator.SigningKeys[0].Seed)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// ac, err := jwt.DecodeAccountClaims(account.Token.Token)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// ac.Exports = make([]*jwt.Export, 0)
-
-	// if len(*req.Body.Claims.Exports) > 0 {
-	// 	for _, e := range *req.Body.Claims.Exports {
-	// 		export := &jwt.Export{
-	// 			Name:                 utils.PtrStr(e.Name),
-	// 			Subject:              jwt.Subject(utils.PtrStr(e.Subject)),
-	// 			Type:                 jwt.ExportType(*e.Type),
-	// 			ResponseType:         jwt.ResponseType(*e.ResponseType),
-	// 			AccountTokenPosition: *e.AccountTokenPosition,
-	// 			Info: jwt.Info{
-	// 				Description: utils.PtrStr(e.Info.Description),
-	// 				InfoURL:     utils.PtrStr(e.Info.InfoUrl),
-	// 			},
-	// 		}
-
-	// 		ac.Exports.Add(export)
-	// 	}
-	// }
-
-	// token, err := ac.Encode(osk)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// account.Token.Token = token
-
-	// err = c.db.UpdateAccount(ctx, account)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// return account, nil
+// ListAccounts ...
+func (c *accountsController) ListAccounts(ctx context.Context, input ListAccountsInput) (ListAccountsOutput, error) {
+	return ListAccountsOutput{}, nil
 }
 
 // DeleteToken ...

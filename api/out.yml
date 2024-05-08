@@ -236,19 +236,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /operators/{operatorId}/accounts:
+  /accounts:
     get:
-      summary: List all accounts for an operator
-      operationId: listOperatorAccounts
+      summary: List all accounts
+      operationId: listAccounts
       tags:
-        - Operator
+        - Account
       parameters:
-        - $ref: '#/components/parameters/operatorId'
         - $ref: '#/components/parameters/offsetParam'
         - $ref: '#/components/parameters/limitParam'
       security:
-        - bearerAuth:
-            - read:accounts
+        - bearerAuth: []
+        - apiKey: []
+      requestBody:
+        $ref: '#/components/requestBodies/ListAccounts'
       responses:
         '200':
           description: Successfull response
@@ -271,11 +272,9 @@ paths:
                 $ref: '#/components/schemas/Error'
     post:
       summary: Creates a new account
-      operationId: createOperatorAccount
+      operationId: createAccount
       tags:
-        - Operator
-      parameters:
-        - $ref: '#/components/parameters/operatorId'
+        - Account
       requestBody:
         $ref: '#/components/requestBodies/CreateAccount'
       responses:
@@ -291,12 +290,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /operators/{operatorId}/accounts/{accountId}:
+  /accounts/{accountId}:
     get:
       summary: Gets an account by ID
-      operationId: getOperatorAccount
+      operationId: getAccount
       parameters:
-        - $ref: '#/components/parameters/operatorId'
         - $ref: '#/components/parameters/accountId'
       responses:
         '200':
@@ -313,12 +311,14 @@ paths:
                 $ref: '#/components/schemas/Error'
     put:
       summary: Updates an account by ID
-      operationId: updateOperatorAccount
+      operationId: updateAccount
       parameters:
-        - $ref: '#/components/parameters/operatorId'
         - $ref: '#/components/parameters/accountId'
       requestBody:
-        $ref: '#/components/requestBodies/UpdateAccount'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account'
       responses:
         '200':
           description: Successful
@@ -334,9 +334,8 @@ paths:
                 $ref: '#/components/schemas/Error'
     delete:
       summary: Deletes an account by ID
-      operationId: deleteOperatorAccount
+      operationId: deleteAccount
       parameters:
-        - $ref: '#/components/parameters/operatorId'
         - $ref: '#/components/parameters/accountId'
       responses:
         '204':
@@ -347,55 +346,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /operators/{operatorId}/accounts/{accountId}/token:
+  /accounts/{accountId}/groups:
     get:
-      summary: Gets a token for an account
-      operationId: getOperatorAccountToken
-      parameters:
-        - $ref: '#/components/parameters/operatorId'
-        - $ref: '#/components/parameters/accountId'
-      responses:
-        '200':
-          description: Successful
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/JWTToken'
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-    delete:
-      summary: Deletes a token for an account
-      operationId: deleteOperatorAccountToken
-      parameters:
-        - $ref: '#/components/parameters/operatorId'
-        - $ref: '#/components/parameters/accountId'
-      responses:
-        '204':
-          description: Successful
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /operators/{operatorId}/accounts/{accountId}/users:
-    get:
-      summary: List all users for an account
-      operationId: listOperatorAccountUsers
+      summary: List all signing key groups for an account
+      operationId: listAccountSigningKeyGroups
       tags:
-        - Operator
+        - Account
       parameters:
-        - $ref: '#/components/parameters/operatorId'
         - $ref: '#/components/parameters/accountId'
         - $ref: '#/components/parameters/offsetParam'
         - $ref: '#/components/parameters/limitParam'
       security:
         - bearerAuth:
-            - read:users
+            - read:groups
       responses:
         '200':
           description: Successfull response
@@ -409,7 +372,7 @@ paths:
                       results:
                         type: array
                         items:
-                          $ref: '#/components/schemas/User'
+                          $ref: '#/components/schemas/SigningKeyGroup'
         default:
           description: An error occurred
           content:
@@ -417,90 +380,38 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
     post:
-      summary: Creates a new user
-      operationId: createOperatorAccountUser
+      summary: Creates a new signing key group
+      operationId: createAccountSigningKeyGroup
       tags:
-        - Operator
+        - Account
       parameters:
-        - $ref: '#/components/parameters/operatorId'
         - $ref: '#/components/parameters/accountId'
       requestBody:
-        $ref: '#/components/requestBodies/CreateOperatorAccountUser'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SigningKeyGroup'
       responses:
         '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/SigningKeyGroup'
         default:
           description: An error occurred
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /operators/{operatorId}/accounts/{accountId}/users/{userId}:
-    get:
-      summary: Gets a user by ID
-      operationId: getOperatorAccountUser
+    delete:
+      summary: Deletes a signing key group by ID
+      operationId: deleteAccountSigningKeyGroup
       parameters:
-        - $ref: '#/components/parameters/operatorId'
         - $ref: '#/components/parameters/accountId'
-        - in: path
-          name: userId
-          required: true
-          schema:
-            type: string
-            format: uuid
       responses:
-        '200':
+        '204':
           description: Successful
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /operators/{operatorId}/accounts/{accountId}/users/{userId}/token:
-    get:
-      summary: Gets a token for a user
-      operationId: getOperatorAccountUserToken
-      parameters:
-        - $ref: '#/components/parameters/operatorId'
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/userId'
-      responses:
-        '200':
-          description: Successful
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/JWTToken'
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /operators/{operatorId}/accounts/{accountId}/users/{userId}/credentials:
-    get:
-      summary: Gets the credentials for a user
-      operationId: getOperatorAccountUserCredentials
-      parameters:
-        - $ref: '#/components/parameters/operatorId'
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/userId'
-      responses:
-        '200':
-          description: Successful
-          content:
-            application/octet-stream:
-              schema:
-                $ref: '#/components/schemas/Credentials'
         default:
           description: An error occurred
           content:
@@ -659,280 +570,6 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/Account'
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /teams/{teamId}/accounts/{accountId}:
-    get:
-      summary: Gets an account by ID
-      operationId: getAccount
-      parameters:
-        - in: path
-          name: teamId
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - in: path
-          name: accountId
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: Successful
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Account'
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /teams/{teamId}/accounts/{accountId}/groups:
-    get:
-      summary: List all signing key groups for an account
-      operationId: listGroups
-      tags:
-        - Team
-      parameters:
-        - $ref: '#/components/parameters/teamId'
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/offsetParam'
-        - $ref: '#/components/parameters/limitParam'
-      security:
-        - bearerAuth:
-            - read:groups
-      responses:
-        '200':
-          description: Successfull response
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/PaginatedResult'
-                  - type: object
-                    properties:
-                      results:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/SigningKeyGroup'
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-    post:
-      summary: Creates a new signing key group
-      operationId: createGroup
-      tags:
-        - Team
-      parameters:
-        - $ref: '#/components/parameters/teamId'
-        - $ref: '#/components/parameters/accountId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SigningKeyGroup'
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SigningKeyGroup'
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /teams/{teamId}/accounts/{accountId}/groups/{groupId}:
-    get:
-      summary: Gets a signing key group by ID
-      operationId: getGroup
-      parameters:
-        - $ref: '#/components/parameters/teamId'
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/groupId'
-      responses:
-        '200':
-          description: Successful
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SigningKeyGroup'
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-    put:
-      summary: Updates a signing key group by ID
-      operationId: updateGroup
-      parameters:
-        - $ref: '#/components/parameters/teamId'
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/groupId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SigningKeyGroup'
-      responses:
-        '200':
-          description: Successful
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SigningKeyGroup'
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-    delete:
-      summary: Deletes a signing key group by ID
-      operationId: deleteSigningKeyGroup
-      parameters:
-        - $ref: '#/components/parameters/teamId'
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/groupId'
-      responses:
-        '204':
-          description: Successful
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /teams/{teamId}/accounts/{accountId}/users:
-    get:
-      summary: List all users for an account
-      operationId: listUsers
-      tags:
-        - Team
-      parameters:
-        - $ref: '#/components/parameters/teamId'
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/offsetParam'
-        - $ref: '#/components/parameters/limitParam'
-      security:
-        - bearerAuth:
-            - read:users
-      responses:
-        '200':
-          description: Successfull response
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/PaginatedResult'
-                  - type: object
-                    properties:
-                      results:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/User'
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-    post:
-      summary: Creates a new user
-      operationId: createUser
-      tags:
-        - Team
-      parameters:
-        - $ref: '#/components/parameters/teamId'
-        - $ref: '#/components/parameters/accountId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /teams/{teamId}/accounts/{accountId}/users/{userId}:
-    get:
-      summary: Gets a user by ID
-      operationId: getUser
-      parameters:
-        - $ref: '#/components/parameters/teamId'
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/userId'
-      responses:
-        '200':
-          description: Successful
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-    put:
-      summary: Updates a user by ID
-      operationId: updateUser
-      parameters:
-        - $ref: '#/components/parameters/teamId'
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/userId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        '200':
-          description: Successful
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-    delete:
-      summary: Deletes a user by ID
-      operationId: deleteTeamAccountUser
-      parameters:
-        - $ref: '#/components/parameters/teamId'
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/userId'
-      responses:
-        '204':
-          description: Successful
         default:
           description: An error occurred
           content:
@@ -1226,6 +863,15 @@ components:
                 items:
                   $ref: '#/components/schemas/Cluster'
                 description: A list of clusters the system is part of.
+    ListAccounts:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              systemId:
+                type: string
+                format: uuid
     UpdateSystemOperator:
       content:
         application/json:

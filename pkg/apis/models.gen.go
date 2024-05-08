@@ -331,6 +331,11 @@ type CreateTeam struct {
 	Name        string  `json:"name"`
 }
 
+// ListAccounts defines model for ListAccounts.
+type ListAccounts struct {
+	SystemId *openapi_types.UUID `json:"systemId,omitempty"`
+}
+
 // UpdateAccount defines model for UpdateAccount.
 type UpdateAccount struct {
 	Claims      *JWTAccountClaims `json:"claims,omitempty"`
@@ -341,6 +346,35 @@ type UpdateAccount struct {
 // UpdateSystemOperator defines model for UpdateSystemOperator.
 type UpdateSystemOperator struct {
 	OperatorId openapi_types.UUID `json:"operatorId"`
+}
+
+// ListAccountsJSONBody defines parameters for ListAccounts.
+type ListAccountsJSONBody struct {
+	SystemId *openapi_types.UUID `json:"systemId,omitempty"`
+}
+
+// ListAccountsParams defines parameters for ListAccounts.
+type ListAccountsParams struct {
+	// Offset The number of items to skip before starting to collect the result set.
+	Offset *OffsetParam `form:"offset,omitempty" json:"offset,omitempty"`
+
+	// Limit The numbers of items to return.
+	Limit *LimitParam `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// CreateAccountJSONBody defines parameters for CreateAccount.
+type CreateAccountJSONBody struct {
+	Description *string `json:"description,omitempty"`
+	Name        string  `json:"name"`
+}
+
+// ListAccountSigningKeyGroupsParams defines parameters for ListAccountSigningKeyGroups.
+type ListAccountSigningKeyGroupsParams struct {
+	// Offset The number of items to skip before starting to collect the result set.
+	Offset *OffsetParam `form:"offset,omitempty" json:"offset,omitempty"`
+
+	// Limit The numbers of items to return.
+	Limit *LimitParam `form:"limit,omitempty" json:"limit,omitempty"`
 }
 
 // ListOperatorsParams defines parameters for ListOperators.
@@ -357,43 +391,6 @@ type CreateOperatorJSONBody struct {
 	ContactEmail *string `json:"contactEmail,omitempty"`
 	Description  *string `json:"description,omitempty"`
 	Name         string  `json:"name"`
-}
-
-// ListOperatorAccountsParams defines parameters for ListOperatorAccounts.
-type ListOperatorAccountsParams struct {
-	// Offset The number of items to skip before starting to collect the result set.
-	Offset *OffsetParam `form:"offset,omitempty" json:"offset,omitempty"`
-
-	// Limit The numbers of items to return.
-	Limit *LimitParam `form:"limit,omitempty" json:"limit,omitempty"`
-}
-
-// CreateOperatorAccountJSONBody defines parameters for CreateOperatorAccount.
-type CreateOperatorAccountJSONBody struct {
-	Description *string `json:"description,omitempty"`
-	Name        string  `json:"name"`
-}
-
-// UpdateOperatorAccountJSONBody defines parameters for UpdateOperatorAccount.
-type UpdateOperatorAccountJSONBody struct {
-	Claims      *JWTAccountClaims `json:"claims,omitempty"`
-	Description *string           `json:"description,omitempty"`
-	Name        string            `json:"name"`
-}
-
-// ListOperatorAccountUsersParams defines parameters for ListOperatorAccountUsers.
-type ListOperatorAccountUsersParams struct {
-	// Offset The number of items to skip before starting to collect the result set.
-	Offset *OffsetParam `form:"offset,omitempty" json:"offset,omitempty"`
-
-	// Limit The numbers of items to return.
-	Limit *LimitParam `form:"limit,omitempty" json:"limit,omitempty"`
-}
-
-// CreateOperatorAccountUserJSONBody defines parameters for CreateOperatorAccountUser.
-type CreateOperatorAccountUserJSONBody struct {
-	Email *string `json:"email,omitempty"`
-	Name  string  `json:"name"`
 }
 
 // ListOperatorSigningKeyGroupsParams defines parameters for ListOperatorSigningKeyGroups.
@@ -447,24 +444,6 @@ type ListTeamAccountsParams struct {
 	Limit *LimitParam `form:"limit,omitempty" json:"limit,omitempty"`
 }
 
-// ListGroupsParams defines parameters for ListGroups.
-type ListGroupsParams struct {
-	// Offset The number of items to skip before starting to collect the result set.
-	Offset *OffsetParam `form:"offset,omitempty" json:"offset,omitempty"`
-
-	// Limit The numbers of items to return.
-	Limit *LimitParam `form:"limit,omitempty" json:"limit,omitempty"`
-}
-
-// ListUsersParams defines parameters for ListUsers.
-type ListUsersParams struct {
-	// Offset The number of items to skip before starting to collect the result set.
-	Offset *OffsetParam `form:"offset,omitempty" json:"offset,omitempty"`
-
-	// Limit The numbers of items to return.
-	Limit *LimitParam `form:"limit,omitempty" json:"limit,omitempty"`
-}
-
 // ListTeamSystemsParams defines parameters for ListTeamSystems.
 type ListTeamSystemsParams struct {
 	// Offset The number of items to skip before starting to collect the result set.
@@ -474,20 +453,23 @@ type ListTeamSystemsParams struct {
 	Limit *LimitParam `form:"limit,omitempty" json:"limit,omitempty"`
 }
 
+// ListAccountsJSONRequestBody defines body for ListAccounts for application/json ContentType.
+type ListAccountsJSONRequestBody ListAccountsJSONBody
+
+// CreateAccountJSONRequestBody defines body for CreateAccount for application/json ContentType.
+type CreateAccountJSONRequestBody CreateAccountJSONBody
+
+// UpdateAccountJSONRequestBody defines body for UpdateAccount for application/json ContentType.
+type UpdateAccountJSONRequestBody = Account
+
+// CreateAccountSigningKeyGroupJSONRequestBody defines body for CreateAccountSigningKeyGroup for application/json ContentType.
+type CreateAccountSigningKeyGroupJSONRequestBody = SigningKeyGroup
+
 // CreateOperatorJSONRequestBody defines body for CreateOperator for application/json ContentType.
 type CreateOperatorJSONRequestBody CreateOperatorJSONBody
 
 // UpdateOperatorJSONRequestBody defines body for UpdateOperator for application/json ContentType.
 type UpdateOperatorJSONRequestBody = Operator
-
-// CreateOperatorAccountJSONRequestBody defines body for CreateOperatorAccount for application/json ContentType.
-type CreateOperatorAccountJSONRequestBody CreateOperatorAccountJSONBody
-
-// UpdateOperatorAccountJSONRequestBody defines body for UpdateOperatorAccount for application/json ContentType.
-type UpdateOperatorAccountJSONRequestBody UpdateOperatorAccountJSONBody
-
-// CreateOperatorAccountUserJSONRequestBody defines body for CreateOperatorAccountUser for application/json ContentType.
-type CreateOperatorAccountUserJSONRequestBody CreateOperatorAccountUserJSONBody
 
 // CreateOperatorSigningKeyGroupJSONRequestBody defines body for CreateOperatorSigningKeyGroup for application/json ContentType.
 type CreateOperatorSigningKeyGroupJSONRequestBody = SigningKeyGroup
@@ -504,77 +486,59 @@ type UpdateSystemOperatorJSONRequestBody UpdateSystemOperatorJSONBody
 // CreateTeamJSONRequestBody defines body for CreateTeam for application/json ContentType.
 type CreateTeamJSONRequestBody CreateTeamJSONBody
 
-// CreateGroupJSONRequestBody defines body for CreateGroup for application/json ContentType.
-type CreateGroupJSONRequestBody = SigningKeyGroup
-
-// UpdateGroupJSONRequestBody defines body for UpdateGroup for application/json ContentType.
-type UpdateGroupJSONRequestBody = SigningKeyGroup
-
-// CreateUserJSONRequestBody defines body for CreateUser for application/json ContentType.
-type CreateUserJSONRequestBody = User
-
-// UpdateUserJSONRequestBody defines body for UpdateUser for application/json ContentType.
-type UpdateUserJSONRequestBody = User
-
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

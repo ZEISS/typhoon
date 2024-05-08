@@ -14,7 +14,6 @@ import (
 	"strings"
 
 	"github.com/oapi-codegen/runtime"
-	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
@@ -90,6 +89,38 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
+	// ListAccountsWithBody request with any body
+	ListAccountsWithBody(ctx context.Context, params *ListAccountsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	ListAccounts(ctx context.Context, params *ListAccountsParams, body ListAccountsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateAccountWithBody request with any body
+	CreateAccountWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateAccount(ctx context.Context, body CreateAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteAccount request
+	DeleteAccount(ctx context.Context, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetAccount request
+	GetAccount(ctx context.Context, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateAccountWithBody request with any body
+	UpdateAccountWithBody(ctx context.Context, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateAccount(ctx context.Context, accountId AccountId, body UpdateAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteAccountSigningKeyGroup request
+	DeleteAccountSigningKeyGroup(ctx context.Context, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListAccountSigningKeyGroups request
+	ListAccountSigningKeyGroups(ctx context.Context, accountId AccountId, params *ListAccountSigningKeyGroupsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateAccountSigningKeyGroupWithBody request with any body
+	CreateAccountSigningKeyGroupWithBody(ctx context.Context, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateAccountSigningKeyGroup(ctx context.Context, accountId AccountId, body CreateAccountSigningKeyGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListOperators request
 	ListOperators(ctx context.Context, params *ListOperatorsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -108,48 +139,6 @@ type ClientInterface interface {
 	UpdateOperatorWithBody(ctx context.Context, operatorId OperatorId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	UpdateOperator(ctx context.Context, operatorId OperatorId, body UpdateOperatorJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// ListOperatorAccounts request
-	ListOperatorAccounts(ctx context.Context, operatorId OperatorId, params *ListOperatorAccountsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateOperatorAccountWithBody request with any body
-	CreateOperatorAccountWithBody(ctx context.Context, operatorId OperatorId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	CreateOperatorAccount(ctx context.Context, operatorId OperatorId, body CreateOperatorAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// DeleteOperatorAccount request
-	DeleteOperatorAccount(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetOperatorAccount request
-	GetOperatorAccount(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// UpdateOperatorAccountWithBody request with any body
-	UpdateOperatorAccountWithBody(ctx context.Context, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	UpdateOperatorAccount(ctx context.Context, operatorId OperatorId, accountId AccountId, body UpdateOperatorAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// DeleteOperatorAccountToken request
-	DeleteOperatorAccountToken(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetOperatorAccountToken request
-	GetOperatorAccountToken(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// ListOperatorAccountUsers request
-	ListOperatorAccountUsers(ctx context.Context, operatorId OperatorId, accountId AccountId, params *ListOperatorAccountUsersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateOperatorAccountUserWithBody request with any body
-	CreateOperatorAccountUserWithBody(ctx context.Context, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	CreateOperatorAccountUser(ctx context.Context, operatorId OperatorId, accountId AccountId, body CreateOperatorAccountUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetOperatorAccountUser request
-	GetOperatorAccountUser(ctx context.Context, operatorId OperatorId, accountId AccountId, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetOperatorAccountUserCredentials request
-	GetOperatorAccountUserCredentials(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetOperatorAccountUserToken request
-	GetOperatorAccountUserToken(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ListOperatorSigningKeyGroups request
 	ListOperatorSigningKeyGroups(ctx context.Context, operatorId OperatorId, params *ListOperatorSigningKeyGroupsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -209,52 +198,155 @@ type ClientInterface interface {
 	// ListTeamAccounts request
 	ListTeamAccounts(ctx context.Context, teamId TeamId, params *ListTeamAccountsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetAccount request
-	GetAccount(ctx context.Context, teamId openapi_types.UUID, accountId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// ListGroups request
-	ListGroups(ctx context.Context, teamId TeamId, accountId AccountId, params *ListGroupsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateGroupWithBody request with any body
-	CreateGroupWithBody(ctx context.Context, teamId TeamId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	CreateGroup(ctx context.Context, teamId TeamId, accountId AccountId, body CreateGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// DeleteSigningKeyGroup request
-	DeleteSigningKeyGroup(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetGroup request
-	GetGroup(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// UpdateGroupWithBody request with any body
-	UpdateGroupWithBody(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	UpdateGroup(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, body UpdateGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// ListUsers request
-	ListUsers(ctx context.Context, teamId TeamId, accountId AccountId, params *ListUsersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateUserWithBody request with any body
-	CreateUserWithBody(ctx context.Context, teamId TeamId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	CreateUser(ctx context.Context, teamId TeamId, accountId AccountId, body CreateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// DeleteTeamAccountUser request
-	DeleteTeamAccountUser(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetUser request
-	GetUser(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// UpdateUserWithBody request with any body
-	UpdateUserWithBody(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	UpdateUser(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
 	// ListTeamSystems request
 	ListTeamSystems(ctx context.Context, teamId TeamId, params *ListTeamSystemsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// Version request
 	Version(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+func (c *Client) ListAccountsWithBody(ctx context.Context, params *ListAccountsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListAccountsRequestWithBody(c.Server, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListAccounts(ctx context.Context, params *ListAccountsParams, body ListAccountsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListAccountsRequest(c.Server, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateAccountWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateAccountRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateAccount(ctx context.Context, body CreateAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateAccountRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteAccount(ctx context.Context, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteAccountRequest(c.Server, accountId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetAccount(ctx context.Context, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAccountRequest(c.Server, accountId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateAccountWithBody(ctx context.Context, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateAccountRequestWithBody(c.Server, accountId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateAccount(ctx context.Context, accountId AccountId, body UpdateAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateAccountRequest(c.Server, accountId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteAccountSigningKeyGroup(ctx context.Context, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteAccountSigningKeyGroupRequest(c.Server, accountId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListAccountSigningKeyGroups(ctx context.Context, accountId AccountId, params *ListAccountSigningKeyGroupsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListAccountSigningKeyGroupsRequest(c.Server, accountId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateAccountSigningKeyGroupWithBody(ctx context.Context, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateAccountSigningKeyGroupRequestWithBody(c.Server, accountId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateAccountSigningKeyGroup(ctx context.Context, accountId AccountId, body CreateAccountSigningKeyGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateAccountSigningKeyGroupRequest(c.Server, accountId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
 }
 
 func (c *Client) ListOperators(ctx context.Context, params *ListOperatorsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -331,186 +423,6 @@ func (c *Client) UpdateOperatorWithBody(ctx context.Context, operatorId Operator
 
 func (c *Client) UpdateOperator(ctx context.Context, operatorId OperatorId, body UpdateOperatorJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateOperatorRequest(c.Server, operatorId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) ListOperatorAccounts(ctx context.Context, operatorId OperatorId, params *ListOperatorAccountsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListOperatorAccountsRequest(c.Server, operatorId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateOperatorAccountWithBody(ctx context.Context, operatorId OperatorId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateOperatorAccountRequestWithBody(c.Server, operatorId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateOperatorAccount(ctx context.Context, operatorId OperatorId, body CreateOperatorAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateOperatorAccountRequest(c.Server, operatorId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) DeleteOperatorAccount(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteOperatorAccountRequest(c.Server, operatorId, accountId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetOperatorAccount(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetOperatorAccountRequest(c.Server, operatorId, accountId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) UpdateOperatorAccountWithBody(ctx context.Context, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateOperatorAccountRequestWithBody(c.Server, operatorId, accountId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) UpdateOperatorAccount(ctx context.Context, operatorId OperatorId, accountId AccountId, body UpdateOperatorAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateOperatorAccountRequest(c.Server, operatorId, accountId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) DeleteOperatorAccountToken(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteOperatorAccountTokenRequest(c.Server, operatorId, accountId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetOperatorAccountToken(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetOperatorAccountTokenRequest(c.Server, operatorId, accountId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) ListOperatorAccountUsers(ctx context.Context, operatorId OperatorId, accountId AccountId, params *ListOperatorAccountUsersParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListOperatorAccountUsersRequest(c.Server, operatorId, accountId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateOperatorAccountUserWithBody(ctx context.Context, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateOperatorAccountUserRequestWithBody(c.Server, operatorId, accountId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateOperatorAccountUser(ctx context.Context, operatorId OperatorId, accountId AccountId, body CreateOperatorAccountUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateOperatorAccountUserRequest(c.Server, operatorId, accountId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetOperatorAccountUser(ctx context.Context, operatorId OperatorId, accountId AccountId, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetOperatorAccountUserRequest(c.Server, operatorId, accountId, userId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetOperatorAccountUserCredentials(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetOperatorAccountUserCredentialsRequest(c.Server, operatorId, accountId, userId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetOperatorAccountUserToken(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetOperatorAccountUserTokenRequest(c.Server, operatorId, accountId, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -773,186 +685,6 @@ func (c *Client) ListTeamAccounts(ctx context.Context, teamId TeamId, params *Li
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetAccount(ctx context.Context, teamId openapi_types.UUID, accountId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetAccountRequest(c.Server, teamId, accountId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) ListGroups(ctx context.Context, teamId TeamId, accountId AccountId, params *ListGroupsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListGroupsRequest(c.Server, teamId, accountId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateGroupWithBody(ctx context.Context, teamId TeamId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateGroupRequestWithBody(c.Server, teamId, accountId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateGroup(ctx context.Context, teamId TeamId, accountId AccountId, body CreateGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateGroupRequest(c.Server, teamId, accountId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) DeleteSigningKeyGroup(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteSigningKeyGroupRequest(c.Server, teamId, accountId, groupId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetGroup(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetGroupRequest(c.Server, teamId, accountId, groupId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) UpdateGroupWithBody(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateGroupRequestWithBody(c.Server, teamId, accountId, groupId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) UpdateGroup(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, body UpdateGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateGroupRequest(c.Server, teamId, accountId, groupId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) ListUsers(ctx context.Context, teamId TeamId, accountId AccountId, params *ListUsersParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListUsersRequest(c.Server, teamId, accountId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateUserWithBody(ctx context.Context, teamId TeamId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateUserRequestWithBody(c.Server, teamId, accountId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateUser(ctx context.Context, teamId TeamId, accountId AccountId, body CreateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateUserRequest(c.Server, teamId, accountId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) DeleteTeamAccountUser(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteTeamAccountUserRequest(c.Server, teamId, accountId, userId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetUser(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetUserRequest(c.Server, teamId, accountId, userId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) UpdateUserWithBody(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateUserRequestWithBody(c.Server, teamId, accountId, userId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) UpdateUser(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateUserRequest(c.Server, teamId, accountId, userId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
 func (c *Client) ListTeamSystems(ctx context.Context, teamId TeamId, params *ListTeamSystemsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListTeamSystemsRequest(c.Server, teamId, params)
 	if err != nil {
@@ -975,6 +707,392 @@ func (c *Client) Version(ctx context.Context, reqEditors ...RequestEditorFn) (*h
 		return nil, err
 	}
 	return c.Client.Do(req)
+}
+
+// NewListAccountsRequest calls the generic ListAccounts builder with application/json body
+func NewListAccountsRequest(server string, params *ListAccountsParams, body ListAccountsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewListAccountsRequestWithBody(server, params, "application/json", bodyReader)
+}
+
+// NewListAccountsRequestWithBody generates requests for ListAccounts with any type of body
+func NewListAccountsRequestWithBody(server string, params *ListAccountsParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/accounts")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Offset != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewCreateAccountRequest calls the generic CreateAccount builder with application/json body
+func NewCreateAccountRequest(server string, body CreateAccountJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateAccountRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateAccountRequestWithBody generates requests for CreateAccount with any type of body
+func NewCreateAccountRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/accounts")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteAccountRequest generates requests for DeleteAccount
+func NewDeleteAccountRequest(server string, accountId AccountId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/accounts/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetAccountRequest generates requests for GetAccount
+func NewGetAccountRequest(server string, accountId AccountId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/accounts/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateAccountRequest calls the generic UpdateAccount builder with application/json body
+func NewUpdateAccountRequest(server string, accountId AccountId, body UpdateAccountJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateAccountRequestWithBody(server, accountId, "application/json", bodyReader)
+}
+
+// NewUpdateAccountRequestWithBody generates requests for UpdateAccount with any type of body
+func NewUpdateAccountRequestWithBody(server string, accountId AccountId, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/accounts/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteAccountSigningKeyGroupRequest generates requests for DeleteAccountSigningKeyGroup
+func NewDeleteAccountSigningKeyGroupRequest(server string, accountId AccountId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/accounts/%s/groups", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListAccountSigningKeyGroupsRequest generates requests for ListAccountSigningKeyGroups
+func NewListAccountSigningKeyGroupsRequest(server string, accountId AccountId, params *ListAccountSigningKeyGroupsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/accounts/%s/groups", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Offset != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateAccountSigningKeyGroupRequest calls the generic CreateAccountSigningKeyGroup builder with application/json body
+func NewCreateAccountSigningKeyGroupRequest(server string, accountId AccountId, body CreateAccountSigningKeyGroupJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateAccountSigningKeyGroupRequestWithBody(server, accountId, "application/json", bodyReader)
+}
+
+// NewCreateAccountSigningKeyGroupRequestWithBody generates requests for CreateAccountSigningKeyGroup with any type of body
+func NewCreateAccountSigningKeyGroupRequestWithBody(server string, accountId AccountId, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/accounts/%s/groups", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
 }
 
 // NewListOperatorsRequest generates requests for ListOperators
@@ -1193,620 +1311,6 @@ func NewUpdateOperatorRequestWithBody(server string, operatorId OperatorId, cont
 	}
 
 	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewListOperatorAccountsRequest generates requests for ListOperatorAccounts
-func NewListOperatorAccountsRequest(server string, operatorId OperatorId, params *ListOperatorAccountsParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/accounts", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := queryURL.Query()
-
-		if params.Offset != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.Limit != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		queryURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewCreateOperatorAccountRequest calls the generic CreateOperatorAccount builder with application/json body
-func NewCreateOperatorAccountRequest(server string, operatorId OperatorId, body CreateOperatorAccountJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewCreateOperatorAccountRequestWithBody(server, operatorId, "application/json", bodyReader)
-}
-
-// NewCreateOperatorAccountRequestWithBody generates requests for CreateOperatorAccount with any type of body
-func NewCreateOperatorAccountRequestWithBody(server string, operatorId OperatorId, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/accounts", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewDeleteOperatorAccountRequest generates requests for DeleteOperatorAccount
-func NewDeleteOperatorAccountRequest(server string, operatorId OperatorId, accountId AccountId) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/accounts/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetOperatorAccountRequest generates requests for GetOperatorAccount
-func NewGetOperatorAccountRequest(server string, operatorId OperatorId, accountId AccountId) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/accounts/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewUpdateOperatorAccountRequest calls the generic UpdateOperatorAccount builder with application/json body
-func NewUpdateOperatorAccountRequest(server string, operatorId OperatorId, accountId AccountId, body UpdateOperatorAccountJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewUpdateOperatorAccountRequestWithBody(server, operatorId, accountId, "application/json", bodyReader)
-}
-
-// NewUpdateOperatorAccountRequestWithBody generates requests for UpdateOperatorAccount with any type of body
-func NewUpdateOperatorAccountRequestWithBody(server string, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/accounts/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PUT", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewDeleteOperatorAccountTokenRequest generates requests for DeleteOperatorAccountToken
-func NewDeleteOperatorAccountTokenRequest(server string, operatorId OperatorId, accountId AccountId) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/accounts/%s/token", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetOperatorAccountTokenRequest generates requests for GetOperatorAccountToken
-func NewGetOperatorAccountTokenRequest(server string, operatorId OperatorId, accountId AccountId) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/accounts/%s/token", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewListOperatorAccountUsersRequest generates requests for ListOperatorAccountUsers
-func NewListOperatorAccountUsersRequest(server string, operatorId OperatorId, accountId AccountId, params *ListOperatorAccountUsersParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/accounts/%s/users", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := queryURL.Query()
-
-		if params.Offset != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.Limit != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		queryURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewCreateOperatorAccountUserRequest calls the generic CreateOperatorAccountUser builder with application/json body
-func NewCreateOperatorAccountUserRequest(server string, operatorId OperatorId, accountId AccountId, body CreateOperatorAccountUserJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewCreateOperatorAccountUserRequestWithBody(server, operatorId, accountId, "application/json", bodyReader)
-}
-
-// NewCreateOperatorAccountUserRequestWithBody generates requests for CreateOperatorAccountUser with any type of body
-func NewCreateOperatorAccountUserRequestWithBody(server string, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/accounts/%s/users", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewGetOperatorAccountUserRequest generates requests for GetOperatorAccountUser
-func NewGetOperatorAccountUserRequest(server string, operatorId OperatorId, accountId AccountId, userId openapi_types.UUID) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "userId", runtime.ParamLocationPath, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/accounts/%s/users/%s", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetOperatorAccountUserCredentialsRequest generates requests for GetOperatorAccountUserCredentials
-func NewGetOperatorAccountUserCredentialsRequest(server string, operatorId OperatorId, accountId AccountId, userId UserId) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "userId", runtime.ParamLocationPath, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/accounts/%s/users/%s/credentials", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetOperatorAccountUserTokenRequest generates requests for GetOperatorAccountUserToken
-func NewGetOperatorAccountUserTokenRequest(server string, operatorId OperatorId, accountId AccountId, userId UserId) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "userId", runtime.ParamLocationPath, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/operators/%s/accounts/%s/users/%s/token", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
 
 	return req, nil
 }
@@ -2506,627 +2010,6 @@ func NewListTeamAccountsRequest(server string, teamId TeamId, params *ListTeamAc
 	return req, nil
 }
 
-// NewGetAccountRequest generates requests for GetAccount
-func NewGetAccountRequest(server string, teamId openapi_types.UUID, accountId openapi_types.UUID) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/teams/%s/accounts/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewListGroupsRequest generates requests for ListGroups
-func NewListGroupsRequest(server string, teamId TeamId, accountId AccountId, params *ListGroupsParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/teams/%s/accounts/%s/groups", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := queryURL.Query()
-
-		if params.Offset != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.Limit != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		queryURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewCreateGroupRequest calls the generic CreateGroup builder with application/json body
-func NewCreateGroupRequest(server string, teamId TeamId, accountId AccountId, body CreateGroupJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewCreateGroupRequestWithBody(server, teamId, accountId, "application/json", bodyReader)
-}
-
-// NewCreateGroupRequestWithBody generates requests for CreateGroup with any type of body
-func NewCreateGroupRequestWithBody(server string, teamId TeamId, accountId AccountId, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/teams/%s/accounts/%s/groups", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewDeleteSigningKeyGroupRequest generates requests for DeleteSigningKeyGroup
-func NewDeleteSigningKeyGroupRequest(server string, teamId TeamId, accountId AccountId, groupId GroupId) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "groupId", runtime.ParamLocationPath, groupId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/teams/%s/accounts/%s/groups/%s", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetGroupRequest generates requests for GetGroup
-func NewGetGroupRequest(server string, teamId TeamId, accountId AccountId, groupId GroupId) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "groupId", runtime.ParamLocationPath, groupId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/teams/%s/accounts/%s/groups/%s", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewUpdateGroupRequest calls the generic UpdateGroup builder with application/json body
-func NewUpdateGroupRequest(server string, teamId TeamId, accountId AccountId, groupId GroupId, body UpdateGroupJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewUpdateGroupRequestWithBody(server, teamId, accountId, groupId, "application/json", bodyReader)
-}
-
-// NewUpdateGroupRequestWithBody generates requests for UpdateGroup with any type of body
-func NewUpdateGroupRequestWithBody(server string, teamId TeamId, accountId AccountId, groupId GroupId, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "groupId", runtime.ParamLocationPath, groupId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/teams/%s/accounts/%s/groups/%s", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PUT", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewListUsersRequest generates requests for ListUsers
-func NewListUsersRequest(server string, teamId TeamId, accountId AccountId, params *ListUsersParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/teams/%s/accounts/%s/users", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := queryURL.Query()
-
-		if params.Offset != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.Limit != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		queryURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewCreateUserRequest calls the generic CreateUser builder with application/json body
-func NewCreateUserRequest(server string, teamId TeamId, accountId AccountId, body CreateUserJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewCreateUserRequestWithBody(server, teamId, accountId, "application/json", bodyReader)
-}
-
-// NewCreateUserRequestWithBody generates requests for CreateUser with any type of body
-func NewCreateUserRequestWithBody(server string, teamId TeamId, accountId AccountId, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/teams/%s/accounts/%s/users", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewDeleteTeamAccountUserRequest generates requests for DeleteTeamAccountUser
-func NewDeleteTeamAccountUserRequest(server string, teamId TeamId, accountId AccountId, userId UserId) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "userId", runtime.ParamLocationPath, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/teams/%s/accounts/%s/users/%s", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetUserRequest generates requests for GetUser
-func NewGetUserRequest(server string, teamId TeamId, accountId AccountId, userId UserId) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "userId", runtime.ParamLocationPath, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/teams/%s/accounts/%s/users/%s", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewUpdateUserRequest calls the generic UpdateUser builder with application/json body
-func NewUpdateUserRequest(server string, teamId TeamId, accountId AccountId, userId UserId, body UpdateUserJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewUpdateUserRequestWithBody(server, teamId, accountId, userId, "application/json", bodyReader)
-}
-
-// NewUpdateUserRequestWithBody generates requests for UpdateUser with any type of body
-func NewUpdateUserRequestWithBody(server string, teamId TeamId, accountId AccountId, userId UserId, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "teamId", runtime.ParamLocationPath, teamId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "userId", runtime.ParamLocationPath, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/teams/%s/accounts/%s/users/%s", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PUT", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
 // NewListTeamSystemsRequest generates requests for ListTeamSystems
 func NewListTeamSystemsRequest(server string, teamId TeamId, params *ListTeamSystemsParams) (*http.Request, error) {
 	var err error
@@ -3269,6 +2152,38 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
+	// ListAccountsWithBodyWithResponse request with any body
+	ListAccountsWithBodyWithResponse(ctx context.Context, params *ListAccountsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ListAccountsResponse, error)
+
+	ListAccountsWithResponse(ctx context.Context, params *ListAccountsParams, body ListAccountsJSONRequestBody, reqEditors ...RequestEditorFn) (*ListAccountsResponse, error)
+
+	// CreateAccountWithBodyWithResponse request with any body
+	CreateAccountWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAccountResponse, error)
+
+	CreateAccountWithResponse(ctx context.Context, body CreateAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAccountResponse, error)
+
+	// DeleteAccountWithResponse request
+	DeleteAccountWithResponse(ctx context.Context, accountId AccountId, reqEditors ...RequestEditorFn) (*DeleteAccountResponse, error)
+
+	// GetAccountWithResponse request
+	GetAccountWithResponse(ctx context.Context, accountId AccountId, reqEditors ...RequestEditorFn) (*GetAccountResponse, error)
+
+	// UpdateAccountWithBodyWithResponse request with any body
+	UpdateAccountWithBodyWithResponse(ctx context.Context, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateAccountResponse, error)
+
+	UpdateAccountWithResponse(ctx context.Context, accountId AccountId, body UpdateAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateAccountResponse, error)
+
+	// DeleteAccountSigningKeyGroupWithResponse request
+	DeleteAccountSigningKeyGroupWithResponse(ctx context.Context, accountId AccountId, reqEditors ...RequestEditorFn) (*DeleteAccountSigningKeyGroupResponse, error)
+
+	// ListAccountSigningKeyGroupsWithResponse request
+	ListAccountSigningKeyGroupsWithResponse(ctx context.Context, accountId AccountId, params *ListAccountSigningKeyGroupsParams, reqEditors ...RequestEditorFn) (*ListAccountSigningKeyGroupsResponse, error)
+
+	// CreateAccountSigningKeyGroupWithBodyWithResponse request with any body
+	CreateAccountSigningKeyGroupWithBodyWithResponse(ctx context.Context, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAccountSigningKeyGroupResponse, error)
+
+	CreateAccountSigningKeyGroupWithResponse(ctx context.Context, accountId AccountId, body CreateAccountSigningKeyGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAccountSigningKeyGroupResponse, error)
+
 	// ListOperatorsWithResponse request
 	ListOperatorsWithResponse(ctx context.Context, params *ListOperatorsParams, reqEditors ...RequestEditorFn) (*ListOperatorsResponse, error)
 
@@ -3287,48 +2202,6 @@ type ClientWithResponsesInterface interface {
 	UpdateOperatorWithBodyWithResponse(ctx context.Context, operatorId OperatorId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateOperatorResponse, error)
 
 	UpdateOperatorWithResponse(ctx context.Context, operatorId OperatorId, body UpdateOperatorJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateOperatorResponse, error)
-
-	// ListOperatorAccountsWithResponse request
-	ListOperatorAccountsWithResponse(ctx context.Context, operatorId OperatorId, params *ListOperatorAccountsParams, reqEditors ...RequestEditorFn) (*ListOperatorAccountsResponse, error)
-
-	// CreateOperatorAccountWithBodyWithResponse request with any body
-	CreateOperatorAccountWithBodyWithResponse(ctx context.Context, operatorId OperatorId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOperatorAccountResponse, error)
-
-	CreateOperatorAccountWithResponse(ctx context.Context, operatorId OperatorId, body CreateOperatorAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOperatorAccountResponse, error)
-
-	// DeleteOperatorAccountWithResponse request
-	DeleteOperatorAccountWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*DeleteOperatorAccountResponse, error)
-
-	// GetOperatorAccountWithResponse request
-	GetOperatorAccountWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*GetOperatorAccountResponse, error)
-
-	// UpdateOperatorAccountWithBodyWithResponse request with any body
-	UpdateOperatorAccountWithBodyWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateOperatorAccountResponse, error)
-
-	UpdateOperatorAccountWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, body UpdateOperatorAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateOperatorAccountResponse, error)
-
-	// DeleteOperatorAccountTokenWithResponse request
-	DeleteOperatorAccountTokenWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*DeleteOperatorAccountTokenResponse, error)
-
-	// GetOperatorAccountTokenWithResponse request
-	GetOperatorAccountTokenWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*GetOperatorAccountTokenResponse, error)
-
-	// ListOperatorAccountUsersWithResponse request
-	ListOperatorAccountUsersWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, params *ListOperatorAccountUsersParams, reqEditors ...RequestEditorFn) (*ListOperatorAccountUsersResponse, error)
-
-	// CreateOperatorAccountUserWithBodyWithResponse request with any body
-	CreateOperatorAccountUserWithBodyWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOperatorAccountUserResponse, error)
-
-	CreateOperatorAccountUserWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, body CreateOperatorAccountUserJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOperatorAccountUserResponse, error)
-
-	// GetOperatorAccountUserWithResponse request
-	GetOperatorAccountUserWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetOperatorAccountUserResponse, error)
-
-	// GetOperatorAccountUserCredentialsWithResponse request
-	GetOperatorAccountUserCredentialsWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*GetOperatorAccountUserCredentialsResponse, error)
-
-	// GetOperatorAccountUserTokenWithResponse request
-	GetOperatorAccountUserTokenWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*GetOperatorAccountUserTokenResponse, error)
 
 	// ListOperatorSigningKeyGroupsWithResponse request
 	ListOperatorSigningKeyGroupsWithResponse(ctx context.Context, operatorId OperatorId, params *ListOperatorSigningKeyGroupsParams, reqEditors ...RequestEditorFn) (*ListOperatorSigningKeyGroupsResponse, error)
@@ -3388,52 +2261,203 @@ type ClientWithResponsesInterface interface {
 	// ListTeamAccountsWithResponse request
 	ListTeamAccountsWithResponse(ctx context.Context, teamId TeamId, params *ListTeamAccountsParams, reqEditors ...RequestEditorFn) (*ListTeamAccountsResponse, error)
 
-	// GetAccountWithResponse request
-	GetAccountWithResponse(ctx context.Context, teamId openapi_types.UUID, accountId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetAccountResponse, error)
-
-	// ListGroupsWithResponse request
-	ListGroupsWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, params *ListGroupsParams, reqEditors ...RequestEditorFn) (*ListGroupsResponse, error)
-
-	// CreateGroupWithBodyWithResponse request with any body
-	CreateGroupWithBodyWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateGroupResponse, error)
-
-	CreateGroupWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, body CreateGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGroupResponse, error)
-
-	// DeleteSigningKeyGroupWithResponse request
-	DeleteSigningKeyGroupWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, reqEditors ...RequestEditorFn) (*DeleteSigningKeyGroupResponse, error)
-
-	// GetGroupWithResponse request
-	GetGroupWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, reqEditors ...RequestEditorFn) (*GetGroupResponse, error)
-
-	// UpdateGroupWithBodyWithResponse request with any body
-	UpdateGroupWithBodyWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateGroupResponse, error)
-
-	UpdateGroupWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, body UpdateGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateGroupResponse, error)
-
-	// ListUsersWithResponse request
-	ListUsersWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, params *ListUsersParams, reqEditors ...RequestEditorFn) (*ListUsersResponse, error)
-
-	// CreateUserWithBodyWithResponse request with any body
-	CreateUserWithBodyWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateUserResponse, error)
-
-	CreateUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, body CreateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateUserResponse, error)
-
-	// DeleteTeamAccountUserWithResponse request
-	DeleteTeamAccountUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*DeleteTeamAccountUserResponse, error)
-
-	// GetUserWithResponse request
-	GetUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*GetUserResponse, error)
-
-	// UpdateUserWithBodyWithResponse request with any body
-	UpdateUserWithBodyWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error)
-
-	UpdateUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error)
-
 	// ListTeamSystemsWithResponse request
 	ListTeamSystemsWithResponse(ctx context.Context, teamId TeamId, params *ListTeamSystemsParams, reqEditors ...RequestEditorFn) (*ListTeamSystemsResponse, error)
 
 	// VersionWithResponse request
 	VersionWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*VersionResponse, error)
+}
+
+type ListAccountsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Limit   *int       `json:"limit,omitempty"`
+		Offset  *int       `json:"offset,omitempty"`
+		Results *[]Account `json:"results,omitempty"`
+		Total   *int       `json:"total,omitempty"`
+	}
+	JSONDefault *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r ListAccountsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListAccountsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateAccountResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *Account
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateAccountResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateAccountResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteAccountResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteAccountResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteAccountResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetAccountResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Account
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAccountResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAccountResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateAccountResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Account
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateAccountResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateAccountResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteAccountSigningKeyGroupResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteAccountSigningKeyGroupResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteAccountSigningKeyGroupResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListAccountSigningKeyGroupsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Limit   *int               `json:"limit,omitempty"`
+		Offset  *int               `json:"offset,omitempty"`
+		Results *[]SigningKeyGroup `json:"results,omitempty"`
+		Total   *int               `json:"total,omitempty"`
+	}
+	JSONDefault *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r ListAccountSigningKeyGroupsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListAccountSigningKeyGroupsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateAccountSigningKeyGroupResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *SigningKeyGroup
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateAccountSigningKeyGroupResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateAccountSigningKeyGroupResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
 }
 
 type ListOperatorsResponse struct {
@@ -3549,289 +2573,6 @@ func (r UpdateOperatorResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r UpdateOperatorResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ListOperatorAccountsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		Limit   *int       `json:"limit,omitempty"`
-		Offset  *int       `json:"offset,omitempty"`
-		Results *[]Account `json:"results,omitempty"`
-		Total   *int       `json:"total,omitempty"`
-	}
-	JSONDefault *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r ListOperatorAccountsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ListOperatorAccountsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateOperatorAccountResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *Account
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateOperatorAccountResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateOperatorAccountResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type DeleteOperatorAccountResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r DeleteOperatorAccountResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r DeleteOperatorAccountResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetOperatorAccountResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Account
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r GetOperatorAccountResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetOperatorAccountResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type UpdateOperatorAccountResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Account
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r UpdateOperatorAccountResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UpdateOperatorAccountResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type DeleteOperatorAccountTokenResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r DeleteOperatorAccountTokenResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r DeleteOperatorAccountTokenResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetOperatorAccountTokenResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *JWTToken
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r GetOperatorAccountTokenResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetOperatorAccountTokenResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ListOperatorAccountUsersResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		Limit   *int    `json:"limit,omitempty"`
-		Offset  *int    `json:"offset,omitempty"`
-		Results *[]User `json:"results,omitempty"`
-		Total   *int    `json:"total,omitempty"`
-	}
-	JSONDefault *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r ListOperatorAccountUsersResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ListOperatorAccountUsersResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateOperatorAccountUserResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *User
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateOperatorAccountUserResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateOperatorAccountUserResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetOperatorAccountUserResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *User
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r GetOperatorAccountUserResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetOperatorAccountUserResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetOperatorAccountUserCredentialsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r GetOperatorAccountUserCredentialsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetOperatorAccountUserCredentialsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetOperatorAccountUserTokenResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *JWTToken
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r GetOperatorAccountUserTokenResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetOperatorAccountUserTokenResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4223,267 +2964,6 @@ func (r ListTeamAccountsResponse) StatusCode() int {
 	return 0
 }
 
-type GetAccountResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Account
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r GetAccountResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetAccountResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ListGroupsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		Limit   *int               `json:"limit,omitempty"`
-		Offset  *int               `json:"offset,omitempty"`
-		Results *[]SigningKeyGroup `json:"results,omitempty"`
-		Total   *int               `json:"total,omitempty"`
-	}
-	JSONDefault *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r ListGroupsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ListGroupsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateGroupResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *SigningKeyGroup
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateGroupResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateGroupResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type DeleteSigningKeyGroupResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r DeleteSigningKeyGroupResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r DeleteSigningKeyGroupResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetGroupResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *SigningKeyGroup
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r GetGroupResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetGroupResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type UpdateGroupResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *SigningKeyGroup
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r UpdateGroupResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UpdateGroupResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ListUsersResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		Limit   *int    `json:"limit,omitempty"`
-		Offset  *int    `json:"offset,omitempty"`
-		Results *[]User `json:"results,omitempty"`
-		Total   *int    `json:"total,omitempty"`
-	}
-	JSONDefault *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r ListUsersResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ListUsersResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateUserResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *User
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateUserResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateUserResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type DeleteTeamAccountUserResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r DeleteTeamAccountUserResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r DeleteTeamAccountUserResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetUserResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *User
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r GetUserResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetUserResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type UpdateUserResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *User
-	JSONDefault  *Error
-}
-
-// Status returns HTTPResponse.Status
-func (r UpdateUserResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UpdateUserResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
 type ListTeamSystemsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -4533,6 +3013,110 @@ func (r VersionResponse) StatusCode() int {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
+}
+
+// ListAccountsWithBodyWithResponse request with arbitrary body returning *ListAccountsResponse
+func (c *ClientWithResponses) ListAccountsWithBodyWithResponse(ctx context.Context, params *ListAccountsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ListAccountsResponse, error) {
+	rsp, err := c.ListAccountsWithBody(ctx, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListAccountsResponse(rsp)
+}
+
+func (c *ClientWithResponses) ListAccountsWithResponse(ctx context.Context, params *ListAccountsParams, body ListAccountsJSONRequestBody, reqEditors ...RequestEditorFn) (*ListAccountsResponse, error) {
+	rsp, err := c.ListAccounts(ctx, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListAccountsResponse(rsp)
+}
+
+// CreateAccountWithBodyWithResponse request with arbitrary body returning *CreateAccountResponse
+func (c *ClientWithResponses) CreateAccountWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAccountResponse, error) {
+	rsp, err := c.CreateAccountWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateAccountResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateAccountWithResponse(ctx context.Context, body CreateAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAccountResponse, error) {
+	rsp, err := c.CreateAccount(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateAccountResponse(rsp)
+}
+
+// DeleteAccountWithResponse request returning *DeleteAccountResponse
+func (c *ClientWithResponses) DeleteAccountWithResponse(ctx context.Context, accountId AccountId, reqEditors ...RequestEditorFn) (*DeleteAccountResponse, error) {
+	rsp, err := c.DeleteAccount(ctx, accountId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteAccountResponse(rsp)
+}
+
+// GetAccountWithResponse request returning *GetAccountResponse
+func (c *ClientWithResponses) GetAccountWithResponse(ctx context.Context, accountId AccountId, reqEditors ...RequestEditorFn) (*GetAccountResponse, error) {
+	rsp, err := c.GetAccount(ctx, accountId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetAccountResponse(rsp)
+}
+
+// UpdateAccountWithBodyWithResponse request with arbitrary body returning *UpdateAccountResponse
+func (c *ClientWithResponses) UpdateAccountWithBodyWithResponse(ctx context.Context, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateAccountResponse, error) {
+	rsp, err := c.UpdateAccountWithBody(ctx, accountId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateAccountResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateAccountWithResponse(ctx context.Context, accountId AccountId, body UpdateAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateAccountResponse, error) {
+	rsp, err := c.UpdateAccount(ctx, accountId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateAccountResponse(rsp)
+}
+
+// DeleteAccountSigningKeyGroupWithResponse request returning *DeleteAccountSigningKeyGroupResponse
+func (c *ClientWithResponses) DeleteAccountSigningKeyGroupWithResponse(ctx context.Context, accountId AccountId, reqEditors ...RequestEditorFn) (*DeleteAccountSigningKeyGroupResponse, error) {
+	rsp, err := c.DeleteAccountSigningKeyGroup(ctx, accountId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteAccountSigningKeyGroupResponse(rsp)
+}
+
+// ListAccountSigningKeyGroupsWithResponse request returning *ListAccountSigningKeyGroupsResponse
+func (c *ClientWithResponses) ListAccountSigningKeyGroupsWithResponse(ctx context.Context, accountId AccountId, params *ListAccountSigningKeyGroupsParams, reqEditors ...RequestEditorFn) (*ListAccountSigningKeyGroupsResponse, error) {
+	rsp, err := c.ListAccountSigningKeyGroups(ctx, accountId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListAccountSigningKeyGroupsResponse(rsp)
+}
+
+// CreateAccountSigningKeyGroupWithBodyWithResponse request with arbitrary body returning *CreateAccountSigningKeyGroupResponse
+func (c *ClientWithResponses) CreateAccountSigningKeyGroupWithBodyWithResponse(ctx context.Context, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAccountSigningKeyGroupResponse, error) {
+	rsp, err := c.CreateAccountSigningKeyGroupWithBody(ctx, accountId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateAccountSigningKeyGroupResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateAccountSigningKeyGroupWithResponse(ctx context.Context, accountId AccountId, body CreateAccountSigningKeyGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAccountSigningKeyGroupResponse, error) {
+	rsp, err := c.CreateAccountSigningKeyGroup(ctx, accountId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateAccountSigningKeyGroupResponse(rsp)
 }
 
 // ListOperatorsWithResponse request returning *ListOperatorsResponse
@@ -4594,138 +3178,6 @@ func (c *ClientWithResponses) UpdateOperatorWithResponse(ctx context.Context, op
 		return nil, err
 	}
 	return ParseUpdateOperatorResponse(rsp)
-}
-
-// ListOperatorAccountsWithResponse request returning *ListOperatorAccountsResponse
-func (c *ClientWithResponses) ListOperatorAccountsWithResponse(ctx context.Context, operatorId OperatorId, params *ListOperatorAccountsParams, reqEditors ...RequestEditorFn) (*ListOperatorAccountsResponse, error) {
-	rsp, err := c.ListOperatorAccounts(ctx, operatorId, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseListOperatorAccountsResponse(rsp)
-}
-
-// CreateOperatorAccountWithBodyWithResponse request with arbitrary body returning *CreateOperatorAccountResponse
-func (c *ClientWithResponses) CreateOperatorAccountWithBodyWithResponse(ctx context.Context, operatorId OperatorId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOperatorAccountResponse, error) {
-	rsp, err := c.CreateOperatorAccountWithBody(ctx, operatorId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateOperatorAccountResponse(rsp)
-}
-
-func (c *ClientWithResponses) CreateOperatorAccountWithResponse(ctx context.Context, operatorId OperatorId, body CreateOperatorAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOperatorAccountResponse, error) {
-	rsp, err := c.CreateOperatorAccount(ctx, operatorId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateOperatorAccountResponse(rsp)
-}
-
-// DeleteOperatorAccountWithResponse request returning *DeleteOperatorAccountResponse
-func (c *ClientWithResponses) DeleteOperatorAccountWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*DeleteOperatorAccountResponse, error) {
-	rsp, err := c.DeleteOperatorAccount(ctx, operatorId, accountId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseDeleteOperatorAccountResponse(rsp)
-}
-
-// GetOperatorAccountWithResponse request returning *GetOperatorAccountResponse
-func (c *ClientWithResponses) GetOperatorAccountWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*GetOperatorAccountResponse, error) {
-	rsp, err := c.GetOperatorAccount(ctx, operatorId, accountId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetOperatorAccountResponse(rsp)
-}
-
-// UpdateOperatorAccountWithBodyWithResponse request with arbitrary body returning *UpdateOperatorAccountResponse
-func (c *ClientWithResponses) UpdateOperatorAccountWithBodyWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateOperatorAccountResponse, error) {
-	rsp, err := c.UpdateOperatorAccountWithBody(ctx, operatorId, accountId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseUpdateOperatorAccountResponse(rsp)
-}
-
-func (c *ClientWithResponses) UpdateOperatorAccountWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, body UpdateOperatorAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateOperatorAccountResponse, error) {
-	rsp, err := c.UpdateOperatorAccount(ctx, operatorId, accountId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseUpdateOperatorAccountResponse(rsp)
-}
-
-// DeleteOperatorAccountTokenWithResponse request returning *DeleteOperatorAccountTokenResponse
-func (c *ClientWithResponses) DeleteOperatorAccountTokenWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*DeleteOperatorAccountTokenResponse, error) {
-	rsp, err := c.DeleteOperatorAccountToken(ctx, operatorId, accountId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseDeleteOperatorAccountTokenResponse(rsp)
-}
-
-// GetOperatorAccountTokenWithResponse request returning *GetOperatorAccountTokenResponse
-func (c *ClientWithResponses) GetOperatorAccountTokenWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, reqEditors ...RequestEditorFn) (*GetOperatorAccountTokenResponse, error) {
-	rsp, err := c.GetOperatorAccountToken(ctx, operatorId, accountId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetOperatorAccountTokenResponse(rsp)
-}
-
-// ListOperatorAccountUsersWithResponse request returning *ListOperatorAccountUsersResponse
-func (c *ClientWithResponses) ListOperatorAccountUsersWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, params *ListOperatorAccountUsersParams, reqEditors ...RequestEditorFn) (*ListOperatorAccountUsersResponse, error) {
-	rsp, err := c.ListOperatorAccountUsers(ctx, operatorId, accountId, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseListOperatorAccountUsersResponse(rsp)
-}
-
-// CreateOperatorAccountUserWithBodyWithResponse request with arbitrary body returning *CreateOperatorAccountUserResponse
-func (c *ClientWithResponses) CreateOperatorAccountUserWithBodyWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOperatorAccountUserResponse, error) {
-	rsp, err := c.CreateOperatorAccountUserWithBody(ctx, operatorId, accountId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateOperatorAccountUserResponse(rsp)
-}
-
-func (c *ClientWithResponses) CreateOperatorAccountUserWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, body CreateOperatorAccountUserJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOperatorAccountUserResponse, error) {
-	rsp, err := c.CreateOperatorAccountUser(ctx, operatorId, accountId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateOperatorAccountUserResponse(rsp)
-}
-
-// GetOperatorAccountUserWithResponse request returning *GetOperatorAccountUserResponse
-func (c *ClientWithResponses) GetOperatorAccountUserWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetOperatorAccountUserResponse, error) {
-	rsp, err := c.GetOperatorAccountUser(ctx, operatorId, accountId, userId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetOperatorAccountUserResponse(rsp)
-}
-
-// GetOperatorAccountUserCredentialsWithResponse request returning *GetOperatorAccountUserCredentialsResponse
-func (c *ClientWithResponses) GetOperatorAccountUserCredentialsWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*GetOperatorAccountUserCredentialsResponse, error) {
-	rsp, err := c.GetOperatorAccountUserCredentials(ctx, operatorId, accountId, userId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetOperatorAccountUserCredentialsResponse(rsp)
-}
-
-// GetOperatorAccountUserTokenWithResponse request returning *GetOperatorAccountUserTokenResponse
-func (c *ClientWithResponses) GetOperatorAccountUserTokenWithResponse(ctx context.Context, operatorId OperatorId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*GetOperatorAccountUserTokenResponse, error) {
-	rsp, err := c.GetOperatorAccountUserToken(ctx, operatorId, accountId, userId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetOperatorAccountUserTokenResponse(rsp)
 }
 
 // ListOperatorSigningKeyGroupsWithResponse request returning *ListOperatorSigningKeyGroupsResponse
@@ -4912,137 +3364,6 @@ func (c *ClientWithResponses) ListTeamAccountsWithResponse(ctx context.Context, 
 	return ParseListTeamAccountsResponse(rsp)
 }
 
-// GetAccountWithResponse request returning *GetAccountResponse
-func (c *ClientWithResponses) GetAccountWithResponse(ctx context.Context, teamId openapi_types.UUID, accountId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetAccountResponse, error) {
-	rsp, err := c.GetAccount(ctx, teamId, accountId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetAccountResponse(rsp)
-}
-
-// ListGroupsWithResponse request returning *ListGroupsResponse
-func (c *ClientWithResponses) ListGroupsWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, params *ListGroupsParams, reqEditors ...RequestEditorFn) (*ListGroupsResponse, error) {
-	rsp, err := c.ListGroups(ctx, teamId, accountId, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseListGroupsResponse(rsp)
-}
-
-// CreateGroupWithBodyWithResponse request with arbitrary body returning *CreateGroupResponse
-func (c *ClientWithResponses) CreateGroupWithBodyWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateGroupResponse, error) {
-	rsp, err := c.CreateGroupWithBody(ctx, teamId, accountId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateGroupResponse(rsp)
-}
-
-func (c *ClientWithResponses) CreateGroupWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, body CreateGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGroupResponse, error) {
-	rsp, err := c.CreateGroup(ctx, teamId, accountId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateGroupResponse(rsp)
-}
-
-// DeleteSigningKeyGroupWithResponse request returning *DeleteSigningKeyGroupResponse
-func (c *ClientWithResponses) DeleteSigningKeyGroupWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, reqEditors ...RequestEditorFn) (*DeleteSigningKeyGroupResponse, error) {
-	rsp, err := c.DeleteSigningKeyGroup(ctx, teamId, accountId, groupId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseDeleteSigningKeyGroupResponse(rsp)
-}
-
-// GetGroupWithResponse request returning *GetGroupResponse
-func (c *ClientWithResponses) GetGroupWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, reqEditors ...RequestEditorFn) (*GetGroupResponse, error) {
-	rsp, err := c.GetGroup(ctx, teamId, accountId, groupId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetGroupResponse(rsp)
-}
-
-// UpdateGroupWithBodyWithResponse request with arbitrary body returning *UpdateGroupResponse
-func (c *ClientWithResponses) UpdateGroupWithBodyWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateGroupResponse, error) {
-	rsp, err := c.UpdateGroupWithBody(ctx, teamId, accountId, groupId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseUpdateGroupResponse(rsp)
-}
-
-func (c *ClientWithResponses) UpdateGroupWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, groupId GroupId, body UpdateGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateGroupResponse, error) {
-	rsp, err := c.UpdateGroup(ctx, teamId, accountId, groupId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseUpdateGroupResponse(rsp)
-}
-
-// ListUsersWithResponse request returning *ListUsersResponse
-func (c *ClientWithResponses) ListUsersWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, params *ListUsersParams, reqEditors ...RequestEditorFn) (*ListUsersResponse, error) {
-	rsp, err := c.ListUsers(ctx, teamId, accountId, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseListUsersResponse(rsp)
-}
-
-// CreateUserWithBodyWithResponse request with arbitrary body returning *CreateUserResponse
-func (c *ClientWithResponses) CreateUserWithBodyWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateUserResponse, error) {
-	rsp, err := c.CreateUserWithBody(ctx, teamId, accountId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateUserResponse(rsp)
-}
-
-func (c *ClientWithResponses) CreateUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, body CreateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateUserResponse, error) {
-	rsp, err := c.CreateUser(ctx, teamId, accountId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateUserResponse(rsp)
-}
-
-// DeleteTeamAccountUserWithResponse request returning *DeleteTeamAccountUserResponse
-func (c *ClientWithResponses) DeleteTeamAccountUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*DeleteTeamAccountUserResponse, error) {
-	rsp, err := c.DeleteTeamAccountUser(ctx, teamId, accountId, userId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseDeleteTeamAccountUserResponse(rsp)
-}
-
-// GetUserWithResponse request returning *GetUserResponse
-func (c *ClientWithResponses) GetUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, reqEditors ...RequestEditorFn) (*GetUserResponse, error) {
-	rsp, err := c.GetUser(ctx, teamId, accountId, userId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetUserResponse(rsp)
-}
-
-// UpdateUserWithBodyWithResponse request with arbitrary body returning *UpdateUserResponse
-func (c *ClientWithResponses) UpdateUserWithBodyWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error) {
-	rsp, err := c.UpdateUserWithBody(ctx, teamId, accountId, userId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseUpdateUserResponse(rsp)
-}
-
-func (c *ClientWithResponses) UpdateUserWithResponse(ctx context.Context, teamId TeamId, accountId AccountId, userId UserId, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error) {
-	rsp, err := c.UpdateUser(ctx, teamId, accountId, userId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseUpdateUserResponse(rsp)
-}
-
 // ListTeamSystemsWithResponse request returning *ListTeamSystemsResponse
 func (c *ClientWithResponses) ListTeamSystemsWithResponse(ctx context.Context, teamId TeamId, params *ListTeamSystemsParams, reqEditors ...RequestEditorFn) (*ListTeamSystemsResponse, error) {
 	rsp, err := c.ListTeamSystems(ctx, teamId, params, reqEditors...)
@@ -5059,6 +3380,266 @@ func (c *ClientWithResponses) VersionWithResponse(ctx context.Context, reqEditor
 		return nil, err
 	}
 	return ParseVersionResponse(rsp)
+}
+
+// ParseListAccountsResponse parses an HTTP response from a ListAccountsWithResponse call
+func ParseListAccountsResponse(rsp *http.Response) (*ListAccountsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListAccountsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Limit   *int       `json:"limit,omitempty"`
+			Offset  *int       `json:"offset,omitempty"`
+			Results *[]Account `json:"results,omitempty"`
+			Total   *int       `json:"total,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateAccountResponse parses an HTTP response from a CreateAccountWithResponse call
+func ParseCreateAccountResponse(rsp *http.Response) (*CreateAccountResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateAccountResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Account
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteAccountResponse parses an HTTP response from a DeleteAccountWithResponse call
+func ParseDeleteAccountResponse(rsp *http.Response) (*DeleteAccountResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteAccountResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetAccountResponse parses an HTTP response from a GetAccountWithResponse call
+func ParseGetAccountResponse(rsp *http.Response) (*GetAccountResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetAccountResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Account
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateAccountResponse parses an HTTP response from a UpdateAccountWithResponse call
+func ParseUpdateAccountResponse(rsp *http.Response) (*UpdateAccountResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateAccountResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Account
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteAccountSigningKeyGroupResponse parses an HTTP response from a DeleteAccountSigningKeyGroupWithResponse call
+func ParseDeleteAccountSigningKeyGroupResponse(rsp *http.Response) (*DeleteAccountSigningKeyGroupResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteAccountSigningKeyGroupResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListAccountSigningKeyGroupsResponse parses an HTTP response from a ListAccountSigningKeyGroupsWithResponse call
+func ParseListAccountSigningKeyGroupsResponse(rsp *http.Response) (*ListAccountSigningKeyGroupsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListAccountSigningKeyGroupsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Limit   *int               `json:"limit,omitempty"`
+			Offset  *int               `json:"offset,omitempty"`
+			Results *[]SigningKeyGroup `json:"results,omitempty"`
+			Total   *int               `json:"total,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateAccountSigningKeyGroupResponse parses an HTTP response from a CreateAccountSigningKeyGroupWithResponse call
+func ParseCreateAccountSigningKeyGroupResponse(rsp *http.Response) (*CreateAccountSigningKeyGroupResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateAccountSigningKeyGroupResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest SigningKeyGroup
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
 }
 
 // ParseListOperatorsResponse parses an HTTP response from a ListOperatorsWithResponse call
@@ -5207,391 +3788,6 @@ func ParseUpdateOperatorResponse(rsp *http.Response) (*UpdateOperatorResponse, e
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest Operator
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseListOperatorAccountsResponse parses an HTTP response from a ListOperatorAccountsWithResponse call
-func ParseListOperatorAccountsResponse(rsp *http.Response) (*ListOperatorAccountsResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ListOperatorAccountsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Limit   *int       `json:"limit,omitempty"`
-			Offset  *int       `json:"offset,omitempty"`
-			Results *[]Account `json:"results,omitempty"`
-			Total   *int       `json:"total,omitempty"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseCreateOperatorAccountResponse parses an HTTP response from a CreateOperatorAccountWithResponse call
-func ParseCreateOperatorAccountResponse(rsp *http.Response) (*CreateOperatorAccountResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateOperatorAccountResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest Account
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseDeleteOperatorAccountResponse parses an HTTP response from a DeleteOperatorAccountWithResponse call
-func ParseDeleteOperatorAccountResponse(rsp *http.Response) (*DeleteOperatorAccountResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DeleteOperatorAccountResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetOperatorAccountResponse parses an HTTP response from a GetOperatorAccountWithResponse call
-func ParseGetOperatorAccountResponse(rsp *http.Response) (*GetOperatorAccountResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetOperatorAccountResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Account
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseUpdateOperatorAccountResponse parses an HTTP response from a UpdateOperatorAccountWithResponse call
-func ParseUpdateOperatorAccountResponse(rsp *http.Response) (*UpdateOperatorAccountResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &UpdateOperatorAccountResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Account
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseDeleteOperatorAccountTokenResponse parses an HTTP response from a DeleteOperatorAccountTokenWithResponse call
-func ParseDeleteOperatorAccountTokenResponse(rsp *http.Response) (*DeleteOperatorAccountTokenResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DeleteOperatorAccountTokenResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetOperatorAccountTokenResponse parses an HTTP response from a GetOperatorAccountTokenWithResponse call
-func ParseGetOperatorAccountTokenResponse(rsp *http.Response) (*GetOperatorAccountTokenResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetOperatorAccountTokenResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest JWTToken
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseListOperatorAccountUsersResponse parses an HTTP response from a ListOperatorAccountUsersWithResponse call
-func ParseListOperatorAccountUsersResponse(rsp *http.Response) (*ListOperatorAccountUsersResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ListOperatorAccountUsersResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Limit   *int    `json:"limit,omitempty"`
-			Offset  *int    `json:"offset,omitempty"`
-			Results *[]User `json:"results,omitempty"`
-			Total   *int    `json:"total,omitempty"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseCreateOperatorAccountUserResponse parses an HTTP response from a CreateOperatorAccountUserWithResponse call
-func ParseCreateOperatorAccountUserResponse(rsp *http.Response) (*CreateOperatorAccountUserResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateOperatorAccountUserResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest User
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetOperatorAccountUserResponse parses an HTTP response from a GetOperatorAccountUserWithResponse call
-func ParseGetOperatorAccountUserResponse(rsp *http.Response) (*GetOperatorAccountUserResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetOperatorAccountUserResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest User
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetOperatorAccountUserCredentialsResponse parses an HTTP response from a GetOperatorAccountUserCredentialsWithResponse call
-func ParseGetOperatorAccountUserCredentialsResponse(rsp *http.Response) (*GetOperatorAccountUserCredentialsResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetOperatorAccountUserCredentialsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetOperatorAccountUserTokenResponse parses an HTTP response from a GetOperatorAccountUserTokenWithResponse call
-func ParseGetOperatorAccountUserTokenResponse(rsp *http.Response) (*GetOperatorAccountUserTokenResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetOperatorAccountUserTokenResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest JWTToken
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -6119,365 +4315,6 @@ func ParseListTeamAccountsResponse(rsp *http.Response) (*ListTeamAccountsRespons
 			Results *[]Account `json:"results,omitempty"`
 			Total   *int       `json:"total,omitempty"`
 		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetAccountResponse parses an HTTP response from a GetAccountWithResponse call
-func ParseGetAccountResponse(rsp *http.Response) (*GetAccountResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetAccountResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Account
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseListGroupsResponse parses an HTTP response from a ListGroupsWithResponse call
-func ParseListGroupsResponse(rsp *http.Response) (*ListGroupsResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ListGroupsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Limit   *int               `json:"limit,omitempty"`
-			Offset  *int               `json:"offset,omitempty"`
-			Results *[]SigningKeyGroup `json:"results,omitempty"`
-			Total   *int               `json:"total,omitempty"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseCreateGroupResponse parses an HTTP response from a CreateGroupWithResponse call
-func ParseCreateGroupResponse(rsp *http.Response) (*CreateGroupResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateGroupResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest SigningKeyGroup
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseDeleteSigningKeyGroupResponse parses an HTTP response from a DeleteSigningKeyGroupWithResponse call
-func ParseDeleteSigningKeyGroupResponse(rsp *http.Response) (*DeleteSigningKeyGroupResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DeleteSigningKeyGroupResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetGroupResponse parses an HTTP response from a GetGroupWithResponse call
-func ParseGetGroupResponse(rsp *http.Response) (*GetGroupResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetGroupResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest SigningKeyGroup
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseUpdateGroupResponse parses an HTTP response from a UpdateGroupWithResponse call
-func ParseUpdateGroupResponse(rsp *http.Response) (*UpdateGroupResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &UpdateGroupResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest SigningKeyGroup
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseListUsersResponse parses an HTTP response from a ListUsersWithResponse call
-func ParseListUsersResponse(rsp *http.Response) (*ListUsersResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ListUsersResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Limit   *int    `json:"limit,omitempty"`
-			Offset  *int    `json:"offset,omitempty"`
-			Results *[]User `json:"results,omitempty"`
-			Total   *int    `json:"total,omitempty"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseCreateUserResponse parses an HTTP response from a CreateUserWithResponse call
-func ParseCreateUserResponse(rsp *http.Response) (*CreateUserResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateUserResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest User
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseDeleteTeamAccountUserResponse parses an HTTP response from a DeleteTeamAccountUserWithResponse call
-func ParseDeleteTeamAccountUserResponse(rsp *http.Response) (*DeleteTeamAccountUserResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DeleteTeamAccountUserResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetUserResponse parses an HTTP response from a GetUserWithResponse call
-func ParseGetUserResponse(rsp *http.Response) (*GetUserResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetUserResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest User
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseUpdateUserResponse parses an HTTP response from a UpdateUserWithResponse call
-func ParseUpdateUserResponse(rsp *http.Response) (*UpdateUserResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &UpdateUserResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest User
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

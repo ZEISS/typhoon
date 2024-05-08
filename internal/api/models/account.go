@@ -7,6 +7,9 @@ import (
 	"gorm.io/gorm"
 )
 
+// AccountPagination is the pagination for operators.
+type AccountPagination Pagination[Operator]
+
 // Account ...
 type Account struct {
 	// ID is the unique identifier for the account.

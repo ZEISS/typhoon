@@ -1,7 +1,6 @@
 package services
 
 import (
-	"bytes"
 	"context"
 
 	"github.com/zeiss/typhoon/internal/api/controllers"
@@ -48,16 +47,6 @@ func (a *ApiHandlers) DeleteSystem(ctx context.Context, req openapi.DeleteSystem
 	return openapi.DeleteSystem204Response(openapi.DeleteSystem204Response{}), nil
 }
 
-// DeleteOperatorAccountToken ...
-func (a *ApiHandlers) DeleteOperatorAccountToken(ctx context.Context, req openapi.DeleteOperatorAccountTokenRequestObject) (openapi.DeleteOperatorAccountTokenResponseObject, error) {
-	err := a.accounts.DeleteToken(ctx, req.AccountId)
-	if err != nil {
-		return nil, err
-	}
-
-	return openapi.DeleteOperatorAccountToken204Response(openapi.DeleteOperatorAccountToken204Response{}), nil
-}
-
 // CreateOperatorSigningKeyGroup ...
 func (a *ApiHandlers) CreateOperatorSigningKeyGroup(ctx context.Context, req openapi.CreateOperatorSigningKeyGroupRequestObject) (openapi.CreateOperatorSigningKeyGroupResponseObject, error) {
 	key, err := a.operators.CreateOperatorSigningKeyGroup(ctx, req.OperatorId, req.Body.Name, utils.PtrStr(req.Body.Description))
@@ -94,58 +83,6 @@ func (a *ApiHandlers) CreateOperator(ctx context.Context, req openapi.CreateOper
 	}
 
 	return openapi.CreateOperator201JSONResponse(openapi.Operator{Id: &operator.ID, Name: operator.Name}), nil
-}
-
-// CreateOperatorAccount ...
-func (a *ApiHandlers) CreateOperatorAccount(ctx context.Context, req openapi.CreateOperatorAccountRequestObject) (openapi.CreateOperatorAccountResponseObject, error) {
-	account, err := a.accounts.CreateAccount(ctx, req.Body.Name, req.OperatorId)
-	if err != nil {
-		return nil, err
-	}
-
-	resp := openapi.CreateOperatorAccount201JSONResponse(
-		openapi.Account{
-			Id:        &account.ID,
-			Name:      account.Name,
-			CreatedAt: &account.CreatedAt,
-			UpdatedAt: &account.UpdatedAt,
-			DeletedAt: &account.DeletedAt.Time,
-		},
-	)
-
-	return openapi.CreateOperatorAccount201JSONResponse(resp), nil
-}
-
-// CreateOperatorAccountUser ...
-func (a *ApiHandlers) CreateOperatorAccountUser(ctx context.Context, req openapi.CreateOperatorAccountUserRequestObject) (openapi.CreateOperatorAccountUserResponseObject, error) {
-	user, err := a.users.CreateUser(ctx, req.Body.Name, req.AccountId)
-	if err != nil {
-		return nil, err
-	}
-
-	return openapi.CreateOperatorAccountUser201JSONResponse(openapi.User{Id: &user.ID, Name: user.Name}), nil
-}
-
-// GetOperatorAccountUserCredentials ...
-func (a *ApiHandlers) GetOperatorAccountUserCredentials(ctx context.Context, req openapi.GetOperatorAccountUserCredentialsRequestObject) (openapi.GetOperatorAccountUserCredentialsResponseObject, error) {
-	credentials, err := a.users.GetCredentials(ctx, req.UserId)
-	if err != nil {
-		return nil, err
-	}
-
-	body := bytes.NewReader(credentials)
-
-	return openapi.GetOperatorAccountUserCredentials200ApplicationoctetStreamResponse(openapi.GetOperatorAccountUserCredentials200ApplicationoctetStreamResponse{Body: body, ContentLength: int64(body.Len())}), nil
-}
-
-// UpdateOperatorAccount ...
-func (a *ApiHandlers) UpdateOperatorAccount(ctx context.Context, req openapi.UpdateOperatorAccountRequestObject) (openapi.UpdateOperatorAccountResponseObject, error) {
-	account, err := a.accounts.UpdateAccount(ctx, controllers.UpdateOperatorAccountRequestObject(req))
-	if err != nil {
-		return nil, err
-	}
-
-	return openapi.UpdateOperatorAccount200JSONResponse(openapi.Account{Name: account.Name}), nil
 }
 
 // // GetOperator ...

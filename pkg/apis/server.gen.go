@@ -6,16 +6,38 @@ package apis
 import (
 	"context"
 	"fmt"
-	"io"
 	"net/url"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/oapi-codegen/runtime"
-	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// List all accounts
+	// (GET /accounts)
+	ListAccounts(c *fiber.Ctx, params ListAccountsParams) error
+	// Creates a new account
+	// (POST /accounts)
+	CreateAccount(c *fiber.Ctx) error
+	// Deletes an account by ID
+	// (DELETE /accounts/{accountId})
+	DeleteAccount(c *fiber.Ctx, accountId AccountId) error
+	// Gets an account by ID
+	// (GET /accounts/{accountId})
+	GetAccount(c *fiber.Ctx, accountId AccountId) error
+	// Updates an account by ID
+	// (PUT /accounts/{accountId})
+	UpdateAccount(c *fiber.Ctx, accountId AccountId) error
+	// Deletes a signing key group by ID
+	// (DELETE /accounts/{accountId}/groups)
+	DeleteAccountSigningKeyGroup(c *fiber.Ctx, accountId AccountId) error
+	// List all signing key groups for an account
+	// (GET /accounts/{accountId}/groups)
+	ListAccountSigningKeyGroups(c *fiber.Ctx, accountId AccountId, params ListAccountSigningKeyGroupsParams) error
+	// Creates a new signing key group
+	// (POST /accounts/{accountId}/groups)
+	CreateAccountSigningKeyGroup(c *fiber.Ctx, accountId AccountId) error
 	// List all operators
 	// (GET /operators)
 	ListOperators(c *fiber.Ctx, params ListOperatorsParams) error
@@ -31,42 +53,6 @@ type ServerInterface interface {
 	// Updates an operator by ID
 	// (PUT /operators/{operatorId})
 	UpdateOperator(c *fiber.Ctx, operatorId OperatorId) error
-	// List all accounts for an operator
-	// (GET /operators/{operatorId}/accounts)
-	ListOperatorAccounts(c *fiber.Ctx, operatorId OperatorId, params ListOperatorAccountsParams) error
-	// Creates a new account
-	// (POST /operators/{operatorId}/accounts)
-	CreateOperatorAccount(c *fiber.Ctx, operatorId OperatorId) error
-	// Deletes an account by ID
-	// (DELETE /operators/{operatorId}/accounts/{accountId})
-	DeleteOperatorAccount(c *fiber.Ctx, operatorId OperatorId, accountId AccountId) error
-	// Gets an account by ID
-	// (GET /operators/{operatorId}/accounts/{accountId})
-	GetOperatorAccount(c *fiber.Ctx, operatorId OperatorId, accountId AccountId) error
-	// Updates an account by ID
-	// (PUT /operators/{operatorId}/accounts/{accountId})
-	UpdateOperatorAccount(c *fiber.Ctx, operatorId OperatorId, accountId AccountId) error
-	// Deletes a token for an account
-	// (DELETE /operators/{operatorId}/accounts/{accountId}/token)
-	DeleteOperatorAccountToken(c *fiber.Ctx, operatorId OperatorId, accountId AccountId) error
-	// Gets a token for an account
-	// (GET /operators/{operatorId}/accounts/{accountId}/token)
-	GetOperatorAccountToken(c *fiber.Ctx, operatorId OperatorId, accountId AccountId) error
-	// List all users for an account
-	// (GET /operators/{operatorId}/accounts/{accountId}/users)
-	ListOperatorAccountUsers(c *fiber.Ctx, operatorId OperatorId, accountId AccountId, params ListOperatorAccountUsersParams) error
-	// Creates a new user
-	// (POST /operators/{operatorId}/accounts/{accountId}/users)
-	CreateOperatorAccountUser(c *fiber.Ctx, operatorId OperatorId, accountId AccountId) error
-	// Gets a user by ID
-	// (GET /operators/{operatorId}/accounts/{accountId}/users/{userId})
-	GetOperatorAccountUser(c *fiber.Ctx, operatorId OperatorId, accountId AccountId, userId openapi_types.UUID) error
-	// Gets the credentials for a user
-	// (GET /operators/{operatorId}/accounts/{accountId}/users/{userId}/credentials)
-	GetOperatorAccountUserCredentials(c *fiber.Ctx, operatorId OperatorId, accountId AccountId, userId UserId) error
-	// Gets a token for a user
-	// (GET /operators/{operatorId}/accounts/{accountId}/users/{userId}/token)
-	GetOperatorAccountUserToken(c *fiber.Ctx, operatorId OperatorId, accountId AccountId, userId UserId) error
 	// List all signing key groups for an operator
 	// (GET /operators/{operatorId}/groups)
 	ListOperatorSigningKeyGroups(c *fiber.Ctx, operatorId OperatorId, params ListOperatorSigningKeyGroupsParams) error
@@ -115,39 +101,6 @@ type ServerInterface interface {
 	// List all accounts for a team
 	// (GET /teams/{teamId}/accounts)
 	ListTeamAccounts(c *fiber.Ctx, teamId TeamId, params ListTeamAccountsParams) error
-	// Gets an account by ID
-	// (GET /teams/{teamId}/accounts/{accountId})
-	GetAccount(c *fiber.Ctx, teamId openapi_types.UUID, accountId openapi_types.UUID) error
-	// List all signing key groups for an account
-	// (GET /teams/{teamId}/accounts/{accountId}/groups)
-	ListGroups(c *fiber.Ctx, teamId TeamId, accountId AccountId, params ListGroupsParams) error
-	// Creates a new signing key group
-	// (POST /teams/{teamId}/accounts/{accountId}/groups)
-	CreateGroup(c *fiber.Ctx, teamId TeamId, accountId AccountId) error
-	// Deletes a signing key group by ID
-	// (DELETE /teams/{teamId}/accounts/{accountId}/groups/{groupId})
-	DeleteSigningKeyGroup(c *fiber.Ctx, teamId TeamId, accountId AccountId, groupId GroupId) error
-	// Gets a signing key group by ID
-	// (GET /teams/{teamId}/accounts/{accountId}/groups/{groupId})
-	GetGroup(c *fiber.Ctx, teamId TeamId, accountId AccountId, groupId GroupId) error
-	// Updates a signing key group by ID
-	// (PUT /teams/{teamId}/accounts/{accountId}/groups/{groupId})
-	UpdateGroup(c *fiber.Ctx, teamId TeamId, accountId AccountId, groupId GroupId) error
-	// List all users for an account
-	// (GET /teams/{teamId}/accounts/{accountId}/users)
-	ListUsers(c *fiber.Ctx, teamId TeamId, accountId AccountId, params ListUsersParams) error
-	// Creates a new user
-	// (POST /teams/{teamId}/accounts/{accountId}/users)
-	CreateUser(c *fiber.Ctx, teamId TeamId, accountId AccountId) error
-	// Deletes a user by ID
-	// (DELETE /teams/{teamId}/accounts/{accountId}/users/{userId})
-	DeleteTeamAccountUser(c *fiber.Ctx, teamId TeamId, accountId AccountId, userId UserId) error
-	// Gets a user by ID
-	// (GET /teams/{teamId}/accounts/{accountId}/users/{userId})
-	GetUser(c *fiber.Ctx, teamId TeamId, accountId AccountId, userId UserId) error
-	// Updates a user by ID
-	// (PUT /teams/{teamId}/accounts/{accountId}/users/{userId})
-	UpdateUser(c *fiber.Ctx, teamId TeamId, accountId AccountId, userId UserId) error
 	// List all systems for a team
 	// (GET /teams/{teamId}/systems)
 	ListTeamSystems(c *fiber.Ctx, teamId TeamId, params ListTeamSystemsParams) error
@@ -162,6 +115,192 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc fiber.Handler
+
+// ListAccounts operation middleware
+func (siw *ServerInterfaceWrapper) ListAccounts(c *fiber.Ctx) error {
+
+	var err error
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListAccountsParams
+
+	var query url.Values
+	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
+	}
+
+	// ------------- Optional query parameter "offset" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "offset", query, &params.Offset)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter offset: %w", err).Error())
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", query, &params.Limit)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter limit: %w", err).Error())
+	}
+
+	return siw.Handler.ListAccounts(c, params)
+}
+
+// CreateAccount operation middleware
+func (siw *ServerInterfaceWrapper) CreateAccount(c *fiber.Ctx) error {
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
+
+	return siw.Handler.CreateAccount(c)
+}
+
+// DeleteAccount operation middleware
+func (siw *ServerInterfaceWrapper) DeleteAccount(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "accountId" -------------
+	var accountId AccountId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
+
+	return siw.Handler.DeleteAccount(c, accountId)
+}
+
+// GetAccount operation middleware
+func (siw *ServerInterfaceWrapper) GetAccount(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "accountId" -------------
+	var accountId AccountId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
+
+	return siw.Handler.GetAccount(c, accountId)
+}
+
+// UpdateAccount operation middleware
+func (siw *ServerInterfaceWrapper) UpdateAccount(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "accountId" -------------
+	var accountId AccountId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
+
+	return siw.Handler.UpdateAccount(c, accountId)
+}
+
+// DeleteAccountSigningKeyGroup operation middleware
+func (siw *ServerInterfaceWrapper) DeleteAccountSigningKeyGroup(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "accountId" -------------
+	var accountId AccountId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
+
+	return siw.Handler.DeleteAccountSigningKeyGroup(c, accountId)
+}
+
+// ListAccountSigningKeyGroups operation middleware
+func (siw *ServerInterfaceWrapper) ListAccountSigningKeyGroups(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "accountId" -------------
+	var accountId AccountId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{"read:groups"})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListAccountSigningKeyGroupsParams
+
+	var query url.Values
+	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
+	}
+
+	// ------------- Optional query parameter "offset" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "offset", query, &params.Offset)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter offset: %w", err).Error())
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", query, &params.Limit)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter limit: %w", err).Error())
+	}
+
+	return siw.Handler.ListAccountSigningKeyGroups(c, accountId, params)
+}
+
+// CreateAccountSigningKeyGroup operation middleware
+func (siw *ServerInterfaceWrapper) CreateAccountSigningKeyGroup(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "accountId" -------------
+	var accountId AccountId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
+
+	return siw.Handler.CreateAccountSigningKeyGroup(c, accountId)
+}
 
 // ListOperators operation middleware
 func (siw *ServerInterfaceWrapper) ListOperators(c *fiber.Ctx) error {
@@ -266,392 +405,6 @@ func (siw *ServerInterfaceWrapper) UpdateOperator(c *fiber.Ctx) error {
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.UpdateOperator(c, operatorId)
-}
-
-// ListOperatorAccounts operation middleware
-func (siw *ServerInterfaceWrapper) ListOperatorAccounts(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "operatorId" -------------
-	var operatorId OperatorId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "operatorId", c.Params("operatorId"), &operatorId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{"read:accounts"})
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params ListOperatorAccountsParams
-
-	var query url.Values
-	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
-	}
-
-	// ------------- Optional query parameter "offset" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "offset", query, &params.Offset)
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter offset: %w", err).Error())
-	}
-
-	// ------------- Optional query parameter "limit" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "limit", query, &params.Limit)
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter limit: %w", err).Error())
-	}
-
-	return siw.Handler.ListOperatorAccounts(c, operatorId, params)
-}
-
-// CreateOperatorAccount operation middleware
-func (siw *ServerInterfaceWrapper) CreateOperatorAccount(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "operatorId" -------------
-	var operatorId OperatorId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "operatorId", c.Params("operatorId"), &operatorId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.CreateOperatorAccount(c, operatorId)
-}
-
-// DeleteOperatorAccount operation middleware
-func (siw *ServerInterfaceWrapper) DeleteOperatorAccount(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "operatorId" -------------
-	var operatorId OperatorId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "operatorId", c.Params("operatorId"), &operatorId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.DeleteOperatorAccount(c, operatorId, accountId)
-}
-
-// GetOperatorAccount operation middleware
-func (siw *ServerInterfaceWrapper) GetOperatorAccount(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "operatorId" -------------
-	var operatorId OperatorId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "operatorId", c.Params("operatorId"), &operatorId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.GetOperatorAccount(c, operatorId, accountId)
-}
-
-// UpdateOperatorAccount operation middleware
-func (siw *ServerInterfaceWrapper) UpdateOperatorAccount(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "operatorId" -------------
-	var operatorId OperatorId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "operatorId", c.Params("operatorId"), &operatorId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.UpdateOperatorAccount(c, operatorId, accountId)
-}
-
-// DeleteOperatorAccountToken operation middleware
-func (siw *ServerInterfaceWrapper) DeleteOperatorAccountToken(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "operatorId" -------------
-	var operatorId OperatorId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "operatorId", c.Params("operatorId"), &operatorId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.DeleteOperatorAccountToken(c, operatorId, accountId)
-}
-
-// GetOperatorAccountToken operation middleware
-func (siw *ServerInterfaceWrapper) GetOperatorAccountToken(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "operatorId" -------------
-	var operatorId OperatorId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "operatorId", c.Params("operatorId"), &operatorId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.GetOperatorAccountToken(c, operatorId, accountId)
-}
-
-// ListOperatorAccountUsers operation middleware
-func (siw *ServerInterfaceWrapper) ListOperatorAccountUsers(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "operatorId" -------------
-	var operatorId OperatorId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "operatorId", c.Params("operatorId"), &operatorId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{"read:users"})
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params ListOperatorAccountUsersParams
-
-	var query url.Values
-	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
-	}
-
-	// ------------- Optional query parameter "offset" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "offset", query, &params.Offset)
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter offset: %w", err).Error())
-	}
-
-	// ------------- Optional query parameter "limit" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "limit", query, &params.Limit)
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter limit: %w", err).Error())
-	}
-
-	return siw.Handler.ListOperatorAccountUsers(c, operatorId, accountId, params)
-}
-
-// CreateOperatorAccountUser operation middleware
-func (siw *ServerInterfaceWrapper) CreateOperatorAccountUser(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "operatorId" -------------
-	var operatorId OperatorId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "operatorId", c.Params("operatorId"), &operatorId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.CreateOperatorAccountUser(c, operatorId, accountId)
-}
-
-// GetOperatorAccountUser operation middleware
-func (siw *ServerInterfaceWrapper) GetOperatorAccountUser(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "operatorId" -------------
-	var operatorId OperatorId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "operatorId", c.Params("operatorId"), &operatorId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "userId" -------------
-	var userId openapi_types.UUID
-
-	err = runtime.BindStyledParameterWithOptions("simple", "userId", c.Params("userId"), &userId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.GetOperatorAccountUser(c, operatorId, accountId, userId)
-}
-
-// GetOperatorAccountUserCredentials operation middleware
-func (siw *ServerInterfaceWrapper) GetOperatorAccountUserCredentials(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "operatorId" -------------
-	var operatorId OperatorId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "operatorId", c.Params("operatorId"), &operatorId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "userId" -------------
-	var userId UserId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "userId", c.Params("userId"), &userId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.GetOperatorAccountUserCredentials(c, operatorId, accountId, userId)
-}
-
-// GetOperatorAccountUserToken operation middleware
-func (siw *ServerInterfaceWrapper) GetOperatorAccountUserToken(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "operatorId" -------------
-	var operatorId OperatorId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "operatorId", c.Params("operatorId"), &operatorId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "userId" -------------
-	var userId UserId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "userId", c.Params("userId"), &userId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.GetOperatorAccountUserToken(c, operatorId, accountId, userId)
 }
 
 // ListOperatorSigningKeyGroups operation middleware
@@ -1003,404 +756,6 @@ func (siw *ServerInterfaceWrapper) ListTeamAccounts(c *fiber.Ctx) error {
 	return siw.Handler.ListTeamAccounts(c, teamId, params)
 }
 
-// GetAccount operation middleware
-func (siw *ServerInterfaceWrapper) GetAccount(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "teamId" -------------
-	var teamId openapi_types.UUID
-
-	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId openapi_types.UUID
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.GetAccount(c, teamId, accountId)
-}
-
-// ListGroups operation middleware
-func (siw *ServerInterfaceWrapper) ListGroups(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "teamId" -------------
-	var teamId TeamId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{"read:groups"})
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params ListGroupsParams
-
-	var query url.Values
-	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
-	}
-
-	// ------------- Optional query parameter "offset" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "offset", query, &params.Offset)
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter offset: %w", err).Error())
-	}
-
-	// ------------- Optional query parameter "limit" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "limit", query, &params.Limit)
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter limit: %w", err).Error())
-	}
-
-	return siw.Handler.ListGroups(c, teamId, accountId, params)
-}
-
-// CreateGroup operation middleware
-func (siw *ServerInterfaceWrapper) CreateGroup(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "teamId" -------------
-	var teamId TeamId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.CreateGroup(c, teamId, accountId)
-}
-
-// DeleteSigningKeyGroup operation middleware
-func (siw *ServerInterfaceWrapper) DeleteSigningKeyGroup(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "teamId" -------------
-	var teamId TeamId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "groupId" -------------
-	var groupId GroupId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "groupId", c.Params("groupId"), &groupId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter groupId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.DeleteSigningKeyGroup(c, teamId, accountId, groupId)
-}
-
-// GetGroup operation middleware
-func (siw *ServerInterfaceWrapper) GetGroup(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "teamId" -------------
-	var teamId TeamId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "groupId" -------------
-	var groupId GroupId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "groupId", c.Params("groupId"), &groupId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter groupId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.GetGroup(c, teamId, accountId, groupId)
-}
-
-// UpdateGroup operation middleware
-func (siw *ServerInterfaceWrapper) UpdateGroup(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "teamId" -------------
-	var teamId TeamId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "groupId" -------------
-	var groupId GroupId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "groupId", c.Params("groupId"), &groupId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter groupId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.UpdateGroup(c, teamId, accountId, groupId)
-}
-
-// ListUsers operation middleware
-func (siw *ServerInterfaceWrapper) ListUsers(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "teamId" -------------
-	var teamId TeamId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{"read:users"})
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params ListUsersParams
-
-	var query url.Values
-	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
-	}
-
-	// ------------- Optional query parameter "offset" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "offset", query, &params.Offset)
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter offset: %w", err).Error())
-	}
-
-	// ------------- Optional query parameter "limit" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "limit", query, &params.Limit)
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter limit: %w", err).Error())
-	}
-
-	return siw.Handler.ListUsers(c, teamId, accountId, params)
-}
-
-// CreateUser operation middleware
-func (siw *ServerInterfaceWrapper) CreateUser(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "teamId" -------------
-	var teamId TeamId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.CreateUser(c, teamId, accountId)
-}
-
-// DeleteTeamAccountUser operation middleware
-func (siw *ServerInterfaceWrapper) DeleteTeamAccountUser(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "teamId" -------------
-	var teamId TeamId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "userId" -------------
-	var userId UserId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "userId", c.Params("userId"), &userId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.DeleteTeamAccountUser(c, teamId, accountId, userId)
-}
-
-// GetUser operation middleware
-func (siw *ServerInterfaceWrapper) GetUser(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "teamId" -------------
-	var teamId TeamId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "userId" -------------
-	var userId UserId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "userId", c.Params("userId"), &userId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.GetUser(c, teamId, accountId, userId)
-}
-
-// UpdateUser operation middleware
-func (siw *ServerInterfaceWrapper) UpdateUser(c *fiber.Ctx) error {
-
-	var err error
-
-	// ------------- Path parameter "teamId" -------------
-	var teamId TeamId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "teamId", c.Params("teamId"), &teamId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter teamId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "accountId" -------------
-	var accountId AccountId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
-	}
-
-	// ------------- Path parameter "userId" -------------
-	var userId UserId
-
-	err = runtime.BindStyledParameterWithOptions("simple", "userId", c.Params("userId"), &userId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
-	}
-
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
-
-	return siw.Handler.UpdateUser(c, teamId, accountId, userId)
-}
-
 // ListTeamSystems operation middleware
 func (siw *ServerInterfaceWrapper) ListTeamSystems(c *fiber.Ctx) error {
 
@@ -1473,6 +828,22 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 		router.Use(m)
 	}
 
+	router.Get(options.BaseURL+"/accounts", wrapper.ListAccounts)
+
+	router.Post(options.BaseURL+"/accounts", wrapper.CreateAccount)
+
+	router.Delete(options.BaseURL+"/accounts/:accountId", wrapper.DeleteAccount)
+
+	router.Get(options.BaseURL+"/accounts/:accountId", wrapper.GetAccount)
+
+	router.Put(options.BaseURL+"/accounts/:accountId", wrapper.UpdateAccount)
+
+	router.Delete(options.BaseURL+"/accounts/:accountId/groups", wrapper.DeleteAccountSigningKeyGroup)
+
+	router.Get(options.BaseURL+"/accounts/:accountId/groups", wrapper.ListAccountSigningKeyGroups)
+
+	router.Post(options.BaseURL+"/accounts/:accountId/groups", wrapper.CreateAccountSigningKeyGroup)
+
 	router.Get(options.BaseURL+"/operators", wrapper.ListOperators)
 
 	router.Post(options.BaseURL+"/operators", wrapper.CreateOperator)
@@ -1482,30 +853,6 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 	router.Get(options.BaseURL+"/operators/:operatorId", wrapper.GetOperator)
 
 	router.Put(options.BaseURL+"/operators/:operatorId", wrapper.UpdateOperator)
-
-	router.Get(options.BaseURL+"/operators/:operatorId/accounts", wrapper.ListOperatorAccounts)
-
-	router.Post(options.BaseURL+"/operators/:operatorId/accounts", wrapper.CreateOperatorAccount)
-
-	router.Delete(options.BaseURL+"/operators/:operatorId/accounts/:accountId", wrapper.DeleteOperatorAccount)
-
-	router.Get(options.BaseURL+"/operators/:operatorId/accounts/:accountId", wrapper.GetOperatorAccount)
-
-	router.Put(options.BaseURL+"/operators/:operatorId/accounts/:accountId", wrapper.UpdateOperatorAccount)
-
-	router.Delete(options.BaseURL+"/operators/:operatorId/accounts/:accountId/token", wrapper.DeleteOperatorAccountToken)
-
-	router.Get(options.BaseURL+"/operators/:operatorId/accounts/:accountId/token", wrapper.GetOperatorAccountToken)
-
-	router.Get(options.BaseURL+"/operators/:operatorId/accounts/:accountId/users", wrapper.ListOperatorAccountUsers)
-
-	router.Post(options.BaseURL+"/operators/:operatorId/accounts/:accountId/users", wrapper.CreateOperatorAccountUser)
-
-	router.Get(options.BaseURL+"/operators/:operatorId/accounts/:accountId/users/:userId", wrapper.GetOperatorAccountUser)
-
-	router.Get(options.BaseURL+"/operators/:operatorId/accounts/:accountId/users/:userId/credentials", wrapper.GetOperatorAccountUserCredentials)
-
-	router.Get(options.BaseURL+"/operators/:operatorId/accounts/:accountId/users/:userId/token", wrapper.GetOperatorAccountUserToken)
 
 	router.Get(options.BaseURL+"/operators/:operatorId/groups", wrapper.ListOperatorSigningKeyGroups)
 
@@ -1539,28 +886,6 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Get(options.BaseURL+"/teams/:teamId/accounts", wrapper.ListTeamAccounts)
 
-	router.Get(options.BaseURL+"/teams/:teamId/accounts/:accountId", wrapper.GetAccount)
-
-	router.Get(options.BaseURL+"/teams/:teamId/accounts/:accountId/groups", wrapper.ListGroups)
-
-	router.Post(options.BaseURL+"/teams/:teamId/accounts/:accountId/groups", wrapper.CreateGroup)
-
-	router.Delete(options.BaseURL+"/teams/:teamId/accounts/:accountId/groups/:groupId", wrapper.DeleteSigningKeyGroup)
-
-	router.Get(options.BaseURL+"/teams/:teamId/accounts/:accountId/groups/:groupId", wrapper.GetGroup)
-
-	router.Put(options.BaseURL+"/teams/:teamId/accounts/:accountId/groups/:groupId", wrapper.UpdateGroup)
-
-	router.Get(options.BaseURL+"/teams/:teamId/accounts/:accountId/users", wrapper.ListUsers)
-
-	router.Post(options.BaseURL+"/teams/:teamId/accounts/:accountId/users", wrapper.CreateUser)
-
-	router.Delete(options.BaseURL+"/teams/:teamId/accounts/:accountId/users/:userId", wrapper.DeleteTeamAccountUser)
-
-	router.Get(options.BaseURL+"/teams/:teamId/accounts/:accountId/users/:userId", wrapper.GetUser)
-
-	router.Put(options.BaseURL+"/teams/:teamId/accounts/:accountId/users/:userId", wrapper.UpdateUser)
-
 	router.Get(options.BaseURL+"/teams/:teamId/systems", wrapper.ListTeamSystems)
 
 	router.Get(options.BaseURL+"/version", wrapper.Version)
@@ -1578,6 +903,250 @@ type NotFoundJSONResponse Error
 type UnauthorizedJSONResponse Error
 
 type UnimplementedJSONResponse Error
+
+type ListAccountsRequestObject struct {
+	Params ListAccountsParams
+	Body   *ListAccountsJSONRequestBody
+}
+
+type ListAccountsResponseObject interface {
+	VisitListAccountsResponse(ctx *fiber.Ctx) error
+}
+
+type ListAccounts200JSONResponse struct {
+	Limit   *int       `json:"limit,omitempty"`
+	Offset  *int       `json:"offset,omitempty"`
+	Results *[]Account `json:"results,omitempty"`
+	Total   *int       `json:"total,omitempty"`
+}
+
+func (response ListAccounts200JSONResponse) VisitListAccountsResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type ListAccountsdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response ListAccountsdefaultJSONResponse) VisitListAccountsResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
+type CreateAccountRequestObject struct {
+	Body *CreateAccountJSONRequestBody
+}
+
+type CreateAccountResponseObject interface {
+	VisitCreateAccountResponse(ctx *fiber.Ctx) error
+}
+
+type CreateAccount201JSONResponse Account
+
+func (response CreateAccount201JSONResponse) VisitCreateAccountResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(201)
+
+	return ctx.JSON(&response)
+}
+
+type CreateAccountdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response CreateAccountdefaultJSONResponse) VisitCreateAccountResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
+type DeleteAccountRequestObject struct {
+	AccountId AccountId `json:"accountId"`
+}
+
+type DeleteAccountResponseObject interface {
+	VisitDeleteAccountResponse(ctx *fiber.Ctx) error
+}
+
+type DeleteAccount204Response struct {
+}
+
+func (response DeleteAccount204Response) VisitDeleteAccountResponse(ctx *fiber.Ctx) error {
+	ctx.Status(204)
+	return nil
+}
+
+type DeleteAccountdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response DeleteAccountdefaultJSONResponse) VisitDeleteAccountResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
+type GetAccountRequestObject struct {
+	AccountId AccountId `json:"accountId"`
+}
+
+type GetAccountResponseObject interface {
+	VisitGetAccountResponse(ctx *fiber.Ctx) error
+}
+
+type GetAccount200JSONResponse Account
+
+func (response GetAccount200JSONResponse) VisitGetAccountResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type GetAccountdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response GetAccountdefaultJSONResponse) VisitGetAccountResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
+type UpdateAccountRequestObject struct {
+	AccountId AccountId `json:"accountId"`
+	Body      *UpdateAccountJSONRequestBody
+}
+
+type UpdateAccountResponseObject interface {
+	VisitUpdateAccountResponse(ctx *fiber.Ctx) error
+}
+
+type UpdateAccount200JSONResponse Account
+
+func (response UpdateAccount200JSONResponse) VisitUpdateAccountResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type UpdateAccountdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response UpdateAccountdefaultJSONResponse) VisitUpdateAccountResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
+type DeleteAccountSigningKeyGroupRequestObject struct {
+	AccountId AccountId `json:"accountId"`
+}
+
+type DeleteAccountSigningKeyGroupResponseObject interface {
+	VisitDeleteAccountSigningKeyGroupResponse(ctx *fiber.Ctx) error
+}
+
+type DeleteAccountSigningKeyGroup204Response struct {
+}
+
+func (response DeleteAccountSigningKeyGroup204Response) VisitDeleteAccountSigningKeyGroupResponse(ctx *fiber.Ctx) error {
+	ctx.Status(204)
+	return nil
+}
+
+type DeleteAccountSigningKeyGroupdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response DeleteAccountSigningKeyGroupdefaultJSONResponse) VisitDeleteAccountSigningKeyGroupResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
+type ListAccountSigningKeyGroupsRequestObject struct {
+	AccountId AccountId `json:"accountId"`
+	Params    ListAccountSigningKeyGroupsParams
+}
+
+type ListAccountSigningKeyGroupsResponseObject interface {
+	VisitListAccountSigningKeyGroupsResponse(ctx *fiber.Ctx) error
+}
+
+type ListAccountSigningKeyGroups200JSONResponse struct {
+	Limit   *int               `json:"limit,omitempty"`
+	Offset  *int               `json:"offset,omitempty"`
+	Results *[]SigningKeyGroup `json:"results,omitempty"`
+	Total   *int               `json:"total,omitempty"`
+}
+
+func (response ListAccountSigningKeyGroups200JSONResponse) VisitListAccountSigningKeyGroupsResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type ListAccountSigningKeyGroupsdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response ListAccountSigningKeyGroupsdefaultJSONResponse) VisitListAccountSigningKeyGroupsResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
+type CreateAccountSigningKeyGroupRequestObject struct {
+	AccountId AccountId `json:"accountId"`
+	Body      *CreateAccountSigningKeyGroupJSONRequestBody
+}
+
+type CreateAccountSigningKeyGroupResponseObject interface {
+	VisitCreateAccountSigningKeyGroupResponse(ctx *fiber.Ctx) error
+}
+
+type CreateAccountSigningKeyGroup201JSONResponse SigningKeyGroup
+
+func (response CreateAccountSigningKeyGroup201JSONResponse) VisitCreateAccountSigningKeyGroupResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(201)
+
+	return ctx.JSON(&response)
+}
+
+type CreateAccountSigningKeyGroupdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response CreateAccountSigningKeyGroupdefaultJSONResponse) VisitCreateAccountSigningKeyGroupResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
 
 type ListOperatorsRequestObject struct {
 	Params ListOperatorsParams
@@ -1723,390 +1292,6 @@ type UpdateOperatordefaultJSONResponse struct {
 }
 
 func (response UpdateOperatordefaultJSONResponse) VisitUpdateOperatorResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type ListOperatorAccountsRequestObject struct {
-	OperatorId OperatorId `json:"operatorId"`
-	Params     ListOperatorAccountsParams
-}
-
-type ListOperatorAccountsResponseObject interface {
-	VisitListOperatorAccountsResponse(ctx *fiber.Ctx) error
-}
-
-type ListOperatorAccounts200JSONResponse struct {
-	Limit   *int       `json:"limit,omitempty"`
-	Offset  *int       `json:"offset,omitempty"`
-	Results *[]Account `json:"results,omitempty"`
-	Total   *int       `json:"total,omitempty"`
-}
-
-func (response ListOperatorAccounts200JSONResponse) VisitListOperatorAccountsResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type ListOperatorAccountsdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response ListOperatorAccountsdefaultJSONResponse) VisitListOperatorAccountsResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type CreateOperatorAccountRequestObject struct {
-	OperatorId OperatorId `json:"operatorId"`
-	Body       *CreateOperatorAccountJSONRequestBody
-}
-
-type CreateOperatorAccountResponseObject interface {
-	VisitCreateOperatorAccountResponse(ctx *fiber.Ctx) error
-}
-
-type CreateOperatorAccount201JSONResponse Account
-
-func (response CreateOperatorAccount201JSONResponse) VisitCreateOperatorAccountResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(201)
-
-	return ctx.JSON(&response)
-}
-
-type CreateOperatorAccountdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response CreateOperatorAccountdefaultJSONResponse) VisitCreateOperatorAccountResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type DeleteOperatorAccountRequestObject struct {
-	OperatorId OperatorId `json:"operatorId"`
-	AccountId  AccountId  `json:"accountId"`
-}
-
-type DeleteOperatorAccountResponseObject interface {
-	VisitDeleteOperatorAccountResponse(ctx *fiber.Ctx) error
-}
-
-type DeleteOperatorAccount204Response struct {
-}
-
-func (response DeleteOperatorAccount204Response) VisitDeleteOperatorAccountResponse(ctx *fiber.Ctx) error {
-	ctx.Status(204)
-	return nil
-}
-
-type DeleteOperatorAccountdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response DeleteOperatorAccountdefaultJSONResponse) VisitDeleteOperatorAccountResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type GetOperatorAccountRequestObject struct {
-	OperatorId OperatorId `json:"operatorId"`
-	AccountId  AccountId  `json:"accountId"`
-}
-
-type GetOperatorAccountResponseObject interface {
-	VisitGetOperatorAccountResponse(ctx *fiber.Ctx) error
-}
-
-type GetOperatorAccount200JSONResponse Account
-
-func (response GetOperatorAccount200JSONResponse) VisitGetOperatorAccountResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type GetOperatorAccountdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response GetOperatorAccountdefaultJSONResponse) VisitGetOperatorAccountResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type UpdateOperatorAccountRequestObject struct {
-	OperatorId OperatorId `json:"operatorId"`
-	AccountId  AccountId  `json:"accountId"`
-	Body       *UpdateOperatorAccountJSONRequestBody
-}
-
-type UpdateOperatorAccountResponseObject interface {
-	VisitUpdateOperatorAccountResponse(ctx *fiber.Ctx) error
-}
-
-type UpdateOperatorAccount200JSONResponse Account
-
-func (response UpdateOperatorAccount200JSONResponse) VisitUpdateOperatorAccountResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type UpdateOperatorAccountdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response UpdateOperatorAccountdefaultJSONResponse) VisitUpdateOperatorAccountResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type DeleteOperatorAccountTokenRequestObject struct {
-	OperatorId OperatorId `json:"operatorId"`
-	AccountId  AccountId  `json:"accountId"`
-}
-
-type DeleteOperatorAccountTokenResponseObject interface {
-	VisitDeleteOperatorAccountTokenResponse(ctx *fiber.Ctx) error
-}
-
-type DeleteOperatorAccountToken204Response struct {
-}
-
-func (response DeleteOperatorAccountToken204Response) VisitDeleteOperatorAccountTokenResponse(ctx *fiber.Ctx) error {
-	ctx.Status(204)
-	return nil
-}
-
-type DeleteOperatorAccountTokendefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response DeleteOperatorAccountTokendefaultJSONResponse) VisitDeleteOperatorAccountTokenResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type GetOperatorAccountTokenRequestObject struct {
-	OperatorId OperatorId `json:"operatorId"`
-	AccountId  AccountId  `json:"accountId"`
-}
-
-type GetOperatorAccountTokenResponseObject interface {
-	VisitGetOperatorAccountTokenResponse(ctx *fiber.Ctx) error
-}
-
-type GetOperatorAccountToken200JSONResponse JWTToken
-
-func (response GetOperatorAccountToken200JSONResponse) VisitGetOperatorAccountTokenResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type GetOperatorAccountTokendefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response GetOperatorAccountTokendefaultJSONResponse) VisitGetOperatorAccountTokenResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type ListOperatorAccountUsersRequestObject struct {
-	OperatorId OperatorId `json:"operatorId"`
-	AccountId  AccountId  `json:"accountId"`
-	Params     ListOperatorAccountUsersParams
-}
-
-type ListOperatorAccountUsersResponseObject interface {
-	VisitListOperatorAccountUsersResponse(ctx *fiber.Ctx) error
-}
-
-type ListOperatorAccountUsers200JSONResponse struct {
-	Limit   *int    `json:"limit,omitempty"`
-	Offset  *int    `json:"offset,omitempty"`
-	Results *[]User `json:"results,omitempty"`
-	Total   *int    `json:"total,omitempty"`
-}
-
-func (response ListOperatorAccountUsers200JSONResponse) VisitListOperatorAccountUsersResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type ListOperatorAccountUsersdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response ListOperatorAccountUsersdefaultJSONResponse) VisitListOperatorAccountUsersResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type CreateOperatorAccountUserRequestObject struct {
-	OperatorId OperatorId `json:"operatorId"`
-	AccountId  AccountId  `json:"accountId"`
-	Body       *CreateOperatorAccountUserJSONRequestBody
-}
-
-type CreateOperatorAccountUserResponseObject interface {
-	VisitCreateOperatorAccountUserResponse(ctx *fiber.Ctx) error
-}
-
-type CreateOperatorAccountUser201JSONResponse User
-
-func (response CreateOperatorAccountUser201JSONResponse) VisitCreateOperatorAccountUserResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(201)
-
-	return ctx.JSON(&response)
-}
-
-type CreateOperatorAccountUserdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response CreateOperatorAccountUserdefaultJSONResponse) VisitCreateOperatorAccountUserResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type GetOperatorAccountUserRequestObject struct {
-	OperatorId OperatorId         `json:"operatorId"`
-	AccountId  AccountId          `json:"accountId"`
-	UserId     openapi_types.UUID `json:"userId"`
-}
-
-type GetOperatorAccountUserResponseObject interface {
-	VisitGetOperatorAccountUserResponse(ctx *fiber.Ctx) error
-}
-
-type GetOperatorAccountUser200JSONResponse User
-
-func (response GetOperatorAccountUser200JSONResponse) VisitGetOperatorAccountUserResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type GetOperatorAccountUserdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response GetOperatorAccountUserdefaultJSONResponse) VisitGetOperatorAccountUserResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type GetOperatorAccountUserCredentialsRequestObject struct {
-	OperatorId OperatorId `json:"operatorId"`
-	AccountId  AccountId  `json:"accountId"`
-	UserId     UserId     `json:"userId"`
-}
-
-type GetOperatorAccountUserCredentialsResponseObject interface {
-	VisitGetOperatorAccountUserCredentialsResponse(ctx *fiber.Ctx) error
-}
-
-type GetOperatorAccountUserCredentials200ApplicationoctetStreamResponse struct {
-	Body          io.Reader
-	ContentLength int64
-}
-
-func (response GetOperatorAccountUserCredentials200ApplicationoctetStreamResponse) VisitGetOperatorAccountUserCredentialsResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/octet-stream")
-	if response.ContentLength != 0 {
-		ctx.Response().Header.Set("Content-Length", fmt.Sprint(response.ContentLength))
-	}
-	ctx.Status(200)
-
-	if closer, ok := response.Body.(io.ReadCloser); ok {
-		defer closer.Close()
-	}
-	_, err := io.Copy(ctx.Response().BodyWriter(), response.Body)
-	return err
-}
-
-type GetOperatorAccountUserCredentialsdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response GetOperatorAccountUserCredentialsdefaultJSONResponse) VisitGetOperatorAccountUserCredentialsResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type GetOperatorAccountUserTokenRequestObject struct {
-	OperatorId OperatorId `json:"operatorId"`
-	AccountId  AccountId  `json:"accountId"`
-	UserId     UserId     `json:"userId"`
-}
-
-type GetOperatorAccountUserTokenResponseObject interface {
-	VisitGetOperatorAccountUserTokenResponse(ctx *fiber.Ctx) error
-}
-
-type GetOperatorAccountUserToken200JSONResponse JWTToken
-
-func (response GetOperatorAccountUserToken200JSONResponse) VisitGetOperatorAccountUserTokenResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type GetOperatorAccountUserTokendefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response GetOperatorAccountUserTokendefaultJSONResponse) VisitGetOperatorAccountUserTokenResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
 	ctx.Status(response.StatusCode)
 
@@ -2598,356 +1783,6 @@ func (response ListTeamAccountsdefaultJSONResponse) VisitListTeamAccountsRespons
 	return ctx.JSON(&response.Body)
 }
 
-type GetAccountRequestObject struct {
-	TeamId    openapi_types.UUID `json:"teamId"`
-	AccountId openapi_types.UUID `json:"accountId"`
-}
-
-type GetAccountResponseObject interface {
-	VisitGetAccountResponse(ctx *fiber.Ctx) error
-}
-
-type GetAccount200JSONResponse Account
-
-func (response GetAccount200JSONResponse) VisitGetAccountResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type GetAccountdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response GetAccountdefaultJSONResponse) VisitGetAccountResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type ListGroupsRequestObject struct {
-	TeamId    TeamId    `json:"teamId"`
-	AccountId AccountId `json:"accountId"`
-	Params    ListGroupsParams
-}
-
-type ListGroupsResponseObject interface {
-	VisitListGroupsResponse(ctx *fiber.Ctx) error
-}
-
-type ListGroups200JSONResponse struct {
-	Limit   *int               `json:"limit,omitempty"`
-	Offset  *int               `json:"offset,omitempty"`
-	Results *[]SigningKeyGroup `json:"results,omitempty"`
-	Total   *int               `json:"total,omitempty"`
-}
-
-func (response ListGroups200JSONResponse) VisitListGroupsResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type ListGroupsdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response ListGroupsdefaultJSONResponse) VisitListGroupsResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type CreateGroupRequestObject struct {
-	TeamId    TeamId    `json:"teamId"`
-	AccountId AccountId `json:"accountId"`
-	Body      *CreateGroupJSONRequestBody
-}
-
-type CreateGroupResponseObject interface {
-	VisitCreateGroupResponse(ctx *fiber.Ctx) error
-}
-
-type CreateGroup201JSONResponse SigningKeyGroup
-
-func (response CreateGroup201JSONResponse) VisitCreateGroupResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(201)
-
-	return ctx.JSON(&response)
-}
-
-type CreateGroupdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response CreateGroupdefaultJSONResponse) VisitCreateGroupResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type DeleteSigningKeyGroupRequestObject struct {
-	TeamId    TeamId    `json:"teamId"`
-	AccountId AccountId `json:"accountId"`
-	GroupId   GroupId   `json:"groupId"`
-}
-
-type DeleteSigningKeyGroupResponseObject interface {
-	VisitDeleteSigningKeyGroupResponse(ctx *fiber.Ctx) error
-}
-
-type DeleteSigningKeyGroup204Response struct {
-}
-
-func (response DeleteSigningKeyGroup204Response) VisitDeleteSigningKeyGroupResponse(ctx *fiber.Ctx) error {
-	ctx.Status(204)
-	return nil
-}
-
-type DeleteSigningKeyGroupdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response DeleteSigningKeyGroupdefaultJSONResponse) VisitDeleteSigningKeyGroupResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type GetGroupRequestObject struct {
-	TeamId    TeamId    `json:"teamId"`
-	AccountId AccountId `json:"accountId"`
-	GroupId   GroupId   `json:"groupId"`
-}
-
-type GetGroupResponseObject interface {
-	VisitGetGroupResponse(ctx *fiber.Ctx) error
-}
-
-type GetGroup200JSONResponse SigningKeyGroup
-
-func (response GetGroup200JSONResponse) VisitGetGroupResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type GetGroupdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response GetGroupdefaultJSONResponse) VisitGetGroupResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type UpdateGroupRequestObject struct {
-	TeamId    TeamId    `json:"teamId"`
-	AccountId AccountId `json:"accountId"`
-	GroupId   GroupId   `json:"groupId"`
-	Body      *UpdateGroupJSONRequestBody
-}
-
-type UpdateGroupResponseObject interface {
-	VisitUpdateGroupResponse(ctx *fiber.Ctx) error
-}
-
-type UpdateGroup200JSONResponse SigningKeyGroup
-
-func (response UpdateGroup200JSONResponse) VisitUpdateGroupResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type UpdateGroupdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response UpdateGroupdefaultJSONResponse) VisitUpdateGroupResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type ListUsersRequestObject struct {
-	TeamId    TeamId    `json:"teamId"`
-	AccountId AccountId `json:"accountId"`
-	Params    ListUsersParams
-}
-
-type ListUsersResponseObject interface {
-	VisitListUsersResponse(ctx *fiber.Ctx) error
-}
-
-type ListUsers200JSONResponse struct {
-	Limit   *int    `json:"limit,omitempty"`
-	Offset  *int    `json:"offset,omitempty"`
-	Results *[]User `json:"results,omitempty"`
-	Total   *int    `json:"total,omitempty"`
-}
-
-func (response ListUsers200JSONResponse) VisitListUsersResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type ListUsersdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response ListUsersdefaultJSONResponse) VisitListUsersResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type CreateUserRequestObject struct {
-	TeamId    TeamId    `json:"teamId"`
-	AccountId AccountId `json:"accountId"`
-	Body      *CreateUserJSONRequestBody
-}
-
-type CreateUserResponseObject interface {
-	VisitCreateUserResponse(ctx *fiber.Ctx) error
-}
-
-type CreateUser201JSONResponse User
-
-func (response CreateUser201JSONResponse) VisitCreateUserResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(201)
-
-	return ctx.JSON(&response)
-}
-
-type CreateUserdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response CreateUserdefaultJSONResponse) VisitCreateUserResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type DeleteTeamAccountUserRequestObject struct {
-	TeamId    TeamId    `json:"teamId"`
-	AccountId AccountId `json:"accountId"`
-	UserId    UserId    `json:"userId"`
-}
-
-type DeleteTeamAccountUserResponseObject interface {
-	VisitDeleteTeamAccountUserResponse(ctx *fiber.Ctx) error
-}
-
-type DeleteTeamAccountUser204Response struct {
-}
-
-func (response DeleteTeamAccountUser204Response) VisitDeleteTeamAccountUserResponse(ctx *fiber.Ctx) error {
-	ctx.Status(204)
-	return nil
-}
-
-type DeleteTeamAccountUserdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response DeleteTeamAccountUserdefaultJSONResponse) VisitDeleteTeamAccountUserResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type GetUserRequestObject struct {
-	TeamId    TeamId    `json:"teamId"`
-	AccountId AccountId `json:"accountId"`
-	UserId    UserId    `json:"userId"`
-}
-
-type GetUserResponseObject interface {
-	VisitGetUserResponse(ctx *fiber.Ctx) error
-}
-
-type GetUser200JSONResponse User
-
-func (response GetUser200JSONResponse) VisitGetUserResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type GetUserdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response GetUserdefaultJSONResponse) VisitGetUserResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
-type UpdateUserRequestObject struct {
-	TeamId    TeamId    `json:"teamId"`
-	AccountId AccountId `json:"accountId"`
-	UserId    UserId    `json:"userId"`
-	Body      *UpdateUserJSONRequestBody
-}
-
-type UpdateUserResponseObject interface {
-	VisitUpdateUserResponse(ctx *fiber.Ctx) error
-}
-
-type UpdateUser200JSONResponse User
-
-func (response UpdateUser200JSONResponse) VisitUpdateUserResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(200)
-
-	return ctx.JSON(&response)
-}
-
-type UpdateUserdefaultJSONResponse struct {
-	Body       Error
-	StatusCode int
-}
-
-func (response UpdateUserdefaultJSONResponse) VisitUpdateUserResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
-	ctx.Status(response.StatusCode)
-
-	return ctx.JSON(&response.Body)
-}
-
 type ListTeamSystemsRequestObject struct {
 	TeamId TeamId `json:"teamId"`
 	Params ListTeamSystemsParams
@@ -3013,6 +1848,30 @@ func (response VersiondefaultJSONResponse) VisitVersionResponse(ctx *fiber.Ctx) 
 
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
+	// List all accounts
+	// (GET /accounts)
+	ListAccounts(ctx context.Context, request ListAccountsRequestObject) (ListAccountsResponseObject, error)
+	// Creates a new account
+	// (POST /accounts)
+	CreateAccount(ctx context.Context, request CreateAccountRequestObject) (CreateAccountResponseObject, error)
+	// Deletes an account by ID
+	// (DELETE /accounts/{accountId})
+	DeleteAccount(ctx context.Context, request DeleteAccountRequestObject) (DeleteAccountResponseObject, error)
+	// Gets an account by ID
+	// (GET /accounts/{accountId})
+	GetAccount(ctx context.Context, request GetAccountRequestObject) (GetAccountResponseObject, error)
+	// Updates an account by ID
+	// (PUT /accounts/{accountId})
+	UpdateAccount(ctx context.Context, request UpdateAccountRequestObject) (UpdateAccountResponseObject, error)
+	// Deletes a signing key group by ID
+	// (DELETE /accounts/{accountId}/groups)
+	DeleteAccountSigningKeyGroup(ctx context.Context, request DeleteAccountSigningKeyGroupRequestObject) (DeleteAccountSigningKeyGroupResponseObject, error)
+	// List all signing key groups for an account
+	// (GET /accounts/{accountId}/groups)
+	ListAccountSigningKeyGroups(ctx context.Context, request ListAccountSigningKeyGroupsRequestObject) (ListAccountSigningKeyGroupsResponseObject, error)
+	// Creates a new signing key group
+	// (POST /accounts/{accountId}/groups)
+	CreateAccountSigningKeyGroup(ctx context.Context, request CreateAccountSigningKeyGroupRequestObject) (CreateAccountSigningKeyGroupResponseObject, error)
 	// List all operators
 	// (GET /operators)
 	ListOperators(ctx context.Context, request ListOperatorsRequestObject) (ListOperatorsResponseObject, error)
@@ -3028,42 +1887,6 @@ type StrictServerInterface interface {
 	// Updates an operator by ID
 	// (PUT /operators/{operatorId})
 	UpdateOperator(ctx context.Context, request UpdateOperatorRequestObject) (UpdateOperatorResponseObject, error)
-	// List all accounts for an operator
-	// (GET /operators/{operatorId}/accounts)
-	ListOperatorAccounts(ctx context.Context, request ListOperatorAccountsRequestObject) (ListOperatorAccountsResponseObject, error)
-	// Creates a new account
-	// (POST /operators/{operatorId}/accounts)
-	CreateOperatorAccount(ctx context.Context, request CreateOperatorAccountRequestObject) (CreateOperatorAccountResponseObject, error)
-	// Deletes an account by ID
-	// (DELETE /operators/{operatorId}/accounts/{accountId})
-	DeleteOperatorAccount(ctx context.Context, request DeleteOperatorAccountRequestObject) (DeleteOperatorAccountResponseObject, error)
-	// Gets an account by ID
-	// (GET /operators/{operatorId}/accounts/{accountId})
-	GetOperatorAccount(ctx context.Context, request GetOperatorAccountRequestObject) (GetOperatorAccountResponseObject, error)
-	// Updates an account by ID
-	// (PUT /operators/{operatorId}/accounts/{accountId})
-	UpdateOperatorAccount(ctx context.Context, request UpdateOperatorAccountRequestObject) (UpdateOperatorAccountResponseObject, error)
-	// Deletes a token for an account
-	// (DELETE /operators/{operatorId}/accounts/{accountId}/token)
-	DeleteOperatorAccountToken(ctx context.Context, request DeleteOperatorAccountTokenRequestObject) (DeleteOperatorAccountTokenResponseObject, error)
-	// Gets a token for an account
-	// (GET /operators/{operatorId}/accounts/{accountId}/token)
-	GetOperatorAccountToken(ctx context.Context, request GetOperatorAccountTokenRequestObject) (GetOperatorAccountTokenResponseObject, error)
-	// List all users for an account
-	// (GET /operators/{operatorId}/accounts/{accountId}/users)
-	ListOperatorAccountUsers(ctx context.Context, request ListOperatorAccountUsersRequestObject) (ListOperatorAccountUsersResponseObject, error)
-	// Creates a new user
-	// (POST /operators/{operatorId}/accounts/{accountId}/users)
-	CreateOperatorAccountUser(ctx context.Context, request CreateOperatorAccountUserRequestObject) (CreateOperatorAccountUserResponseObject, error)
-	// Gets a user by ID
-	// (GET /operators/{operatorId}/accounts/{accountId}/users/{userId})
-	GetOperatorAccountUser(ctx context.Context, request GetOperatorAccountUserRequestObject) (GetOperatorAccountUserResponseObject, error)
-	// Gets the credentials for a user
-	// (GET /operators/{operatorId}/accounts/{accountId}/users/{userId}/credentials)
-	GetOperatorAccountUserCredentials(ctx context.Context, request GetOperatorAccountUserCredentialsRequestObject) (GetOperatorAccountUserCredentialsResponseObject, error)
-	// Gets a token for a user
-	// (GET /operators/{operatorId}/accounts/{accountId}/users/{userId}/token)
-	GetOperatorAccountUserToken(ctx context.Context, request GetOperatorAccountUserTokenRequestObject) (GetOperatorAccountUserTokenResponseObject, error)
 	// List all signing key groups for an operator
 	// (GET /operators/{operatorId}/groups)
 	ListOperatorSigningKeyGroups(ctx context.Context, request ListOperatorSigningKeyGroupsRequestObject) (ListOperatorSigningKeyGroupsResponseObject, error)
@@ -3112,39 +1935,6 @@ type StrictServerInterface interface {
 	// List all accounts for a team
 	// (GET /teams/{teamId}/accounts)
 	ListTeamAccounts(ctx context.Context, request ListTeamAccountsRequestObject) (ListTeamAccountsResponseObject, error)
-	// Gets an account by ID
-	// (GET /teams/{teamId}/accounts/{accountId})
-	GetAccount(ctx context.Context, request GetAccountRequestObject) (GetAccountResponseObject, error)
-	// List all signing key groups for an account
-	// (GET /teams/{teamId}/accounts/{accountId}/groups)
-	ListGroups(ctx context.Context, request ListGroupsRequestObject) (ListGroupsResponseObject, error)
-	// Creates a new signing key group
-	// (POST /teams/{teamId}/accounts/{accountId}/groups)
-	CreateGroup(ctx context.Context, request CreateGroupRequestObject) (CreateGroupResponseObject, error)
-	// Deletes a signing key group by ID
-	// (DELETE /teams/{teamId}/accounts/{accountId}/groups/{groupId})
-	DeleteSigningKeyGroup(ctx context.Context, request DeleteSigningKeyGroupRequestObject) (DeleteSigningKeyGroupResponseObject, error)
-	// Gets a signing key group by ID
-	// (GET /teams/{teamId}/accounts/{accountId}/groups/{groupId})
-	GetGroup(ctx context.Context, request GetGroupRequestObject) (GetGroupResponseObject, error)
-	// Updates a signing key group by ID
-	// (PUT /teams/{teamId}/accounts/{accountId}/groups/{groupId})
-	UpdateGroup(ctx context.Context, request UpdateGroupRequestObject) (UpdateGroupResponseObject, error)
-	// List all users for an account
-	// (GET /teams/{teamId}/accounts/{accountId}/users)
-	ListUsers(ctx context.Context, request ListUsersRequestObject) (ListUsersResponseObject, error)
-	// Creates a new user
-	// (POST /teams/{teamId}/accounts/{accountId}/users)
-	CreateUser(ctx context.Context, request CreateUserRequestObject) (CreateUserResponseObject, error)
-	// Deletes a user by ID
-	// (DELETE /teams/{teamId}/accounts/{accountId}/users/{userId})
-	DeleteTeamAccountUser(ctx context.Context, request DeleteTeamAccountUserRequestObject) (DeleteTeamAccountUserResponseObject, error)
-	// Gets a user by ID
-	// (GET /teams/{teamId}/accounts/{accountId}/users/{userId})
-	GetUser(ctx context.Context, request GetUserRequestObject) (GetUserResponseObject, error)
-	// Updates a user by ID
-	// (PUT /teams/{teamId}/accounts/{accountId}/users/{userId})
-	UpdateUser(ctx context.Context, request UpdateUserRequestObject) (UpdateUserResponseObject, error)
 	// List all systems for a team
 	// (GET /teams/{teamId}/systems)
 	ListTeamSystems(ctx context.Context, request ListTeamSystemsRequestObject) (ListTeamSystemsResponseObject, error)
@@ -3164,6 +1954,245 @@ func NewStrictHandler(ssi StrictServerInterface, middlewares []StrictMiddlewareF
 type strictHandler struct {
 	ssi         StrictServerInterface
 	middlewares []StrictMiddlewareFunc
+}
+
+// ListAccounts operation middleware
+func (sh *strictHandler) ListAccounts(ctx *fiber.Ctx, params ListAccountsParams) error {
+	var request ListAccountsRequestObject
+
+	request.Params = params
+
+	var body ListAccountsJSONRequestBody
+	if err := ctx.BodyParser(&body); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	request.Body = &body
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.ListAccounts(ctx.UserContext(), request.(ListAccountsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListAccounts")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(ListAccountsResponseObject); ok {
+		if err := validResponse.VisitListAccountsResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// CreateAccount operation middleware
+func (sh *strictHandler) CreateAccount(ctx *fiber.Ctx) error {
+	var request CreateAccountRequestObject
+
+	var body CreateAccountJSONRequestBody
+	if err := ctx.BodyParser(&body); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	request.Body = &body
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateAccount(ctx.UserContext(), request.(CreateAccountRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateAccount")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(CreateAccountResponseObject); ok {
+		if err := validResponse.VisitCreateAccountResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// DeleteAccount operation middleware
+func (sh *strictHandler) DeleteAccount(ctx *fiber.Ctx, accountId AccountId) error {
+	var request DeleteAccountRequestObject
+
+	request.AccountId = accountId
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteAccount(ctx.UserContext(), request.(DeleteAccountRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteAccount")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(DeleteAccountResponseObject); ok {
+		if err := validResponse.VisitDeleteAccountResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// GetAccount operation middleware
+func (sh *strictHandler) GetAccount(ctx *fiber.Ctx, accountId AccountId) error {
+	var request GetAccountRequestObject
+
+	request.AccountId = accountId
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.GetAccount(ctx.UserContext(), request.(GetAccountRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetAccount")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(GetAccountResponseObject); ok {
+		if err := validResponse.VisitGetAccountResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// UpdateAccount operation middleware
+func (sh *strictHandler) UpdateAccount(ctx *fiber.Ctx, accountId AccountId) error {
+	var request UpdateAccountRequestObject
+
+	request.AccountId = accountId
+
+	var body UpdateAccountJSONRequestBody
+	if err := ctx.BodyParser(&body); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	request.Body = &body
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.UpdateAccount(ctx.UserContext(), request.(UpdateAccountRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpdateAccount")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(UpdateAccountResponseObject); ok {
+		if err := validResponse.VisitUpdateAccountResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// DeleteAccountSigningKeyGroup operation middleware
+func (sh *strictHandler) DeleteAccountSigningKeyGroup(ctx *fiber.Ctx, accountId AccountId) error {
+	var request DeleteAccountSigningKeyGroupRequestObject
+
+	request.AccountId = accountId
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteAccountSigningKeyGroup(ctx.UserContext(), request.(DeleteAccountSigningKeyGroupRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteAccountSigningKeyGroup")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(DeleteAccountSigningKeyGroupResponseObject); ok {
+		if err := validResponse.VisitDeleteAccountSigningKeyGroupResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// ListAccountSigningKeyGroups operation middleware
+func (sh *strictHandler) ListAccountSigningKeyGroups(ctx *fiber.Ctx, accountId AccountId, params ListAccountSigningKeyGroupsParams) error {
+	var request ListAccountSigningKeyGroupsRequestObject
+
+	request.AccountId = accountId
+	request.Params = params
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.ListAccountSigningKeyGroups(ctx.UserContext(), request.(ListAccountSigningKeyGroupsRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListAccountSigningKeyGroups")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(ListAccountSigningKeyGroupsResponseObject); ok {
+		if err := validResponse.VisitListAccountSigningKeyGroupsResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// CreateAccountSigningKeyGroup operation middleware
+func (sh *strictHandler) CreateAccountSigningKeyGroup(ctx *fiber.Ctx, accountId AccountId) error {
+	var request CreateAccountSigningKeyGroupRequestObject
+
+	request.AccountId = accountId
+
+	var body CreateAccountSigningKeyGroupJSONRequestBody
+	if err := ctx.BodyParser(&body); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+	request.Body = &body
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.CreateAccountSigningKeyGroup(ctx.UserContext(), request.(CreateAccountSigningKeyGroupRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "CreateAccountSigningKeyGroup")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(CreateAccountSigningKeyGroupResponseObject); ok {
+		if err := validResponse.VisitCreateAccountSigningKeyGroupResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
 }
 
 // ListOperators operation middleware
@@ -3303,363 +2332,6 @@ func (sh *strictHandler) UpdateOperator(ctx *fiber.Ctx, operatorId OperatorId) e
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	} else if validResponse, ok := response.(UpdateOperatorResponseObject); ok {
 		if err := validResponse.VisitUpdateOperatorResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// ListOperatorAccounts operation middleware
-func (sh *strictHandler) ListOperatorAccounts(ctx *fiber.Ctx, operatorId OperatorId, params ListOperatorAccountsParams) error {
-	var request ListOperatorAccountsRequestObject
-
-	request.OperatorId = operatorId
-	request.Params = params
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.ListOperatorAccounts(ctx.UserContext(), request.(ListOperatorAccountsRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "ListOperatorAccounts")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(ListOperatorAccountsResponseObject); ok {
-		if err := validResponse.VisitListOperatorAccountsResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// CreateOperatorAccount operation middleware
-func (sh *strictHandler) CreateOperatorAccount(ctx *fiber.Ctx, operatorId OperatorId) error {
-	var request CreateOperatorAccountRequestObject
-
-	request.OperatorId = operatorId
-
-	var body CreateOperatorAccountJSONRequestBody
-	if err := ctx.BodyParser(&body); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-	request.Body = &body
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.CreateOperatorAccount(ctx.UserContext(), request.(CreateOperatorAccountRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "CreateOperatorAccount")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(CreateOperatorAccountResponseObject); ok {
-		if err := validResponse.VisitCreateOperatorAccountResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// DeleteOperatorAccount operation middleware
-func (sh *strictHandler) DeleteOperatorAccount(ctx *fiber.Ctx, operatorId OperatorId, accountId AccountId) error {
-	var request DeleteOperatorAccountRequestObject
-
-	request.OperatorId = operatorId
-	request.AccountId = accountId
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.DeleteOperatorAccount(ctx.UserContext(), request.(DeleteOperatorAccountRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "DeleteOperatorAccount")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(DeleteOperatorAccountResponseObject); ok {
-		if err := validResponse.VisitDeleteOperatorAccountResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// GetOperatorAccount operation middleware
-func (sh *strictHandler) GetOperatorAccount(ctx *fiber.Ctx, operatorId OperatorId, accountId AccountId) error {
-	var request GetOperatorAccountRequestObject
-
-	request.OperatorId = operatorId
-	request.AccountId = accountId
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.GetOperatorAccount(ctx.UserContext(), request.(GetOperatorAccountRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetOperatorAccount")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(GetOperatorAccountResponseObject); ok {
-		if err := validResponse.VisitGetOperatorAccountResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// UpdateOperatorAccount operation middleware
-func (sh *strictHandler) UpdateOperatorAccount(ctx *fiber.Ctx, operatorId OperatorId, accountId AccountId) error {
-	var request UpdateOperatorAccountRequestObject
-
-	request.OperatorId = operatorId
-	request.AccountId = accountId
-
-	var body UpdateOperatorAccountJSONRequestBody
-	if err := ctx.BodyParser(&body); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-	request.Body = &body
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.UpdateOperatorAccount(ctx.UserContext(), request.(UpdateOperatorAccountRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "UpdateOperatorAccount")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(UpdateOperatorAccountResponseObject); ok {
-		if err := validResponse.VisitUpdateOperatorAccountResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// DeleteOperatorAccountToken operation middleware
-func (sh *strictHandler) DeleteOperatorAccountToken(ctx *fiber.Ctx, operatorId OperatorId, accountId AccountId) error {
-	var request DeleteOperatorAccountTokenRequestObject
-
-	request.OperatorId = operatorId
-	request.AccountId = accountId
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.DeleteOperatorAccountToken(ctx.UserContext(), request.(DeleteOperatorAccountTokenRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "DeleteOperatorAccountToken")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(DeleteOperatorAccountTokenResponseObject); ok {
-		if err := validResponse.VisitDeleteOperatorAccountTokenResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// GetOperatorAccountToken operation middleware
-func (sh *strictHandler) GetOperatorAccountToken(ctx *fiber.Ctx, operatorId OperatorId, accountId AccountId) error {
-	var request GetOperatorAccountTokenRequestObject
-
-	request.OperatorId = operatorId
-	request.AccountId = accountId
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.GetOperatorAccountToken(ctx.UserContext(), request.(GetOperatorAccountTokenRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetOperatorAccountToken")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(GetOperatorAccountTokenResponseObject); ok {
-		if err := validResponse.VisitGetOperatorAccountTokenResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// ListOperatorAccountUsers operation middleware
-func (sh *strictHandler) ListOperatorAccountUsers(ctx *fiber.Ctx, operatorId OperatorId, accountId AccountId, params ListOperatorAccountUsersParams) error {
-	var request ListOperatorAccountUsersRequestObject
-
-	request.OperatorId = operatorId
-	request.AccountId = accountId
-	request.Params = params
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.ListOperatorAccountUsers(ctx.UserContext(), request.(ListOperatorAccountUsersRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "ListOperatorAccountUsers")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(ListOperatorAccountUsersResponseObject); ok {
-		if err := validResponse.VisitListOperatorAccountUsersResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// CreateOperatorAccountUser operation middleware
-func (sh *strictHandler) CreateOperatorAccountUser(ctx *fiber.Ctx, operatorId OperatorId, accountId AccountId) error {
-	var request CreateOperatorAccountUserRequestObject
-
-	request.OperatorId = operatorId
-	request.AccountId = accountId
-
-	var body CreateOperatorAccountUserJSONRequestBody
-	if err := ctx.BodyParser(&body); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-	request.Body = &body
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.CreateOperatorAccountUser(ctx.UserContext(), request.(CreateOperatorAccountUserRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "CreateOperatorAccountUser")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(CreateOperatorAccountUserResponseObject); ok {
-		if err := validResponse.VisitCreateOperatorAccountUserResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// GetOperatorAccountUser operation middleware
-func (sh *strictHandler) GetOperatorAccountUser(ctx *fiber.Ctx, operatorId OperatorId, accountId AccountId, userId openapi_types.UUID) error {
-	var request GetOperatorAccountUserRequestObject
-
-	request.OperatorId = operatorId
-	request.AccountId = accountId
-	request.UserId = userId
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.GetOperatorAccountUser(ctx.UserContext(), request.(GetOperatorAccountUserRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetOperatorAccountUser")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(GetOperatorAccountUserResponseObject); ok {
-		if err := validResponse.VisitGetOperatorAccountUserResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// GetOperatorAccountUserCredentials operation middleware
-func (sh *strictHandler) GetOperatorAccountUserCredentials(ctx *fiber.Ctx, operatorId OperatorId, accountId AccountId, userId UserId) error {
-	var request GetOperatorAccountUserCredentialsRequestObject
-
-	request.OperatorId = operatorId
-	request.AccountId = accountId
-	request.UserId = userId
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.GetOperatorAccountUserCredentials(ctx.UserContext(), request.(GetOperatorAccountUserCredentialsRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetOperatorAccountUserCredentials")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(GetOperatorAccountUserCredentialsResponseObject); ok {
-		if err := validResponse.VisitGetOperatorAccountUserCredentialsResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// GetOperatorAccountUserToken operation middleware
-func (sh *strictHandler) GetOperatorAccountUserToken(ctx *fiber.Ctx, operatorId OperatorId, accountId AccountId, userId UserId) error {
-	var request GetOperatorAccountUserTokenRequestObject
-
-	request.OperatorId = operatorId
-	request.AccountId = accountId
-	request.UserId = userId
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.GetOperatorAccountUserToken(ctx.UserContext(), request.(GetOperatorAccountUserTokenRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetOperatorAccountUserToken")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(GetOperatorAccountUserTokenResponseObject); ok {
-		if err := validResponse.VisitGetOperatorAccountUserTokenResponse(ctx); err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 	} else if response != nil {
@@ -4118,346 +2790,6 @@ func (sh *strictHandler) ListTeamAccounts(ctx *fiber.Ctx, teamId TeamId, params 
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	} else if validResponse, ok := response.(ListTeamAccountsResponseObject); ok {
 		if err := validResponse.VisitListTeamAccountsResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// GetAccount operation middleware
-func (sh *strictHandler) GetAccount(ctx *fiber.Ctx, teamId openapi_types.UUID, accountId openapi_types.UUID) error {
-	var request GetAccountRequestObject
-
-	request.TeamId = teamId
-	request.AccountId = accountId
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.GetAccount(ctx.UserContext(), request.(GetAccountRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetAccount")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(GetAccountResponseObject); ok {
-		if err := validResponse.VisitGetAccountResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// ListGroups operation middleware
-func (sh *strictHandler) ListGroups(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, params ListGroupsParams) error {
-	var request ListGroupsRequestObject
-
-	request.TeamId = teamId
-	request.AccountId = accountId
-	request.Params = params
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.ListGroups(ctx.UserContext(), request.(ListGroupsRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "ListGroups")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(ListGroupsResponseObject); ok {
-		if err := validResponse.VisitListGroupsResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// CreateGroup operation middleware
-func (sh *strictHandler) CreateGroup(ctx *fiber.Ctx, teamId TeamId, accountId AccountId) error {
-	var request CreateGroupRequestObject
-
-	request.TeamId = teamId
-	request.AccountId = accountId
-
-	var body CreateGroupJSONRequestBody
-	if err := ctx.BodyParser(&body); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-	request.Body = &body
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.CreateGroup(ctx.UserContext(), request.(CreateGroupRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "CreateGroup")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(CreateGroupResponseObject); ok {
-		if err := validResponse.VisitCreateGroupResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// DeleteSigningKeyGroup operation middleware
-func (sh *strictHandler) DeleteSigningKeyGroup(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, groupId GroupId) error {
-	var request DeleteSigningKeyGroupRequestObject
-
-	request.TeamId = teamId
-	request.AccountId = accountId
-	request.GroupId = groupId
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.DeleteSigningKeyGroup(ctx.UserContext(), request.(DeleteSigningKeyGroupRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "DeleteSigningKeyGroup")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(DeleteSigningKeyGroupResponseObject); ok {
-		if err := validResponse.VisitDeleteSigningKeyGroupResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// GetGroup operation middleware
-func (sh *strictHandler) GetGroup(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, groupId GroupId) error {
-	var request GetGroupRequestObject
-
-	request.TeamId = teamId
-	request.AccountId = accountId
-	request.GroupId = groupId
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.GetGroup(ctx.UserContext(), request.(GetGroupRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetGroup")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(GetGroupResponseObject); ok {
-		if err := validResponse.VisitGetGroupResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// UpdateGroup operation middleware
-func (sh *strictHandler) UpdateGroup(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, groupId GroupId) error {
-	var request UpdateGroupRequestObject
-
-	request.TeamId = teamId
-	request.AccountId = accountId
-	request.GroupId = groupId
-
-	var body UpdateGroupJSONRequestBody
-	if err := ctx.BodyParser(&body); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-	request.Body = &body
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.UpdateGroup(ctx.UserContext(), request.(UpdateGroupRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "UpdateGroup")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(UpdateGroupResponseObject); ok {
-		if err := validResponse.VisitUpdateGroupResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// ListUsers operation middleware
-func (sh *strictHandler) ListUsers(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, params ListUsersParams) error {
-	var request ListUsersRequestObject
-
-	request.TeamId = teamId
-	request.AccountId = accountId
-	request.Params = params
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.ListUsers(ctx.UserContext(), request.(ListUsersRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "ListUsers")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(ListUsersResponseObject); ok {
-		if err := validResponse.VisitListUsersResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// CreateUser operation middleware
-func (sh *strictHandler) CreateUser(ctx *fiber.Ctx, teamId TeamId, accountId AccountId) error {
-	var request CreateUserRequestObject
-
-	request.TeamId = teamId
-	request.AccountId = accountId
-
-	var body CreateUserJSONRequestBody
-	if err := ctx.BodyParser(&body); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-	request.Body = &body
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.CreateUser(ctx.UserContext(), request.(CreateUserRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "CreateUser")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(CreateUserResponseObject); ok {
-		if err := validResponse.VisitCreateUserResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// DeleteTeamAccountUser operation middleware
-func (sh *strictHandler) DeleteTeamAccountUser(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, userId UserId) error {
-	var request DeleteTeamAccountUserRequestObject
-
-	request.TeamId = teamId
-	request.AccountId = accountId
-	request.UserId = userId
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.DeleteTeamAccountUser(ctx.UserContext(), request.(DeleteTeamAccountUserRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "DeleteTeamAccountUser")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(DeleteTeamAccountUserResponseObject); ok {
-		if err := validResponse.VisitDeleteTeamAccountUserResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// GetUser operation middleware
-func (sh *strictHandler) GetUser(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, userId UserId) error {
-	var request GetUserRequestObject
-
-	request.TeamId = teamId
-	request.AccountId = accountId
-	request.UserId = userId
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.GetUser(ctx.UserContext(), request.(GetUserRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetUser")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(GetUserResponseObject); ok {
-		if err := validResponse.VisitGetUserResponse(ctx); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
-		}
-	} else if response != nil {
-		return fmt.Errorf("unexpected response type: %T", response)
-	}
-	return nil
-}
-
-// UpdateUser operation middleware
-func (sh *strictHandler) UpdateUser(ctx *fiber.Ctx, teamId TeamId, accountId AccountId, userId UserId) error {
-	var request UpdateUserRequestObject
-
-	request.TeamId = teamId
-	request.AccountId = accountId
-	request.UserId = userId
-
-	var body UpdateUserJSONRequestBody
-	if err := ctx.BodyParser(&body); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-	request.Body = &body
-
-	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
-		return sh.ssi.UpdateUser(ctx.UserContext(), request.(UpdateUserRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "UpdateUser")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	} else if validResponse, ok := response.(UpdateUserResponseObject); ok {
-		if err := validResponse.VisitUpdateUserResponse(ctx); err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 	} else if response != nil {

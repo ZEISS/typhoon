@@ -24,5 +24,5 @@ func (a *ApiHandlers) GetTeam(ctx context.Context, req openapi.GetTeamRequestObj
 		return openapi.GetTeamdefaultJSONResponse{}, nil
 	}
 
-	return openapi.GetTeam200JSONResponse(openapi.Team{Id: utils.UUIDPtr(team.ID), Name: team.Name, Description: team.Description, CreatedAt: utils.PtrTime(team.CreatedAt), UpdatedAt: utils.PtrTime(team.UpdatedAt), DeletedAt: utils.PtrTime(team.DeletedAt.Time)}), nil
+	return openapi.GetTeam200JSONResponse(openapi.Team{Id: utils.PtrUUID(team.ID), Name: team.Name, Description: team.Description, CreatedAt: utils.PtrTime(team.CreatedAt), UpdatedAt: utils.PtrTime(team.UpdatedAt), DeletedAt: utils.PtrTime(team.DeletedAt.Time)}), nil
 }

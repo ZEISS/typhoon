@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	openapi "github.com/zeiss/typhoon/pkg/apis"
 	"gorm.io/gorm"
 )
 
@@ -54,20 +53,4 @@ type System struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	// DeletedAt is the time the system was deleted.
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
-}
-
-// FromAPI converts the API model to the database model.
-func (s *System) FromAPI(api *openapi.System) {
-	s.Name = api.Name
-	s.Description = *api.Description
-
-	for _, cluster := range api.Clusters {
-		c := Cluster{
-			Name:        cluster.Name,
-			Description: *cluster.Description,
-			ServerURL:   cluster.ServerURL,
-		}
-
-		s.Clusters = append(s.Clusters, c)
-	}
 }
