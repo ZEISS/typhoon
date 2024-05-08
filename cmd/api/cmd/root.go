@@ -8,6 +8,7 @@ import (
 	"github.com/zeiss/typhoon/internal/api/adapters/db"
 	"github.com/zeiss/typhoon/internal/api/controllers"
 	"github.com/zeiss/typhoon/internal/api/services"
+	"github.com/zeiss/typhoon/internal/utils"
 	openapi "github.com/zeiss/typhoon/pkg/apis"
 
 	"github.com/gofiber/fiber/v2"
@@ -18,10 +19,12 @@ import (
 	"github.com/spf13/cobra"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 func init() {
 	Root.PersistentFlags().StringVar(&cfg.Flags.Addr, "addr", ":8080", "addr")
+	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Addr, "db-addr", cfg.Flags.DB.Addr, "Database address")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Database, "db-database", cfg.Flags.DB.Database, "Database name")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Username, "db-username", cfg.Flags.DB.Username, "Database user")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Password, "db-password", cfg.Flags.DB.Password, "Database password")
@@ -56,8 +59,11 @@ func NewWebSrv(cfg *Config) *WebSrv {
 // Start starts the server.
 func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.RunFunc) func() error {
 	return func() error {
-		dsn := "host=host.docker.internal user=example password=example dbname=example port=5432 sslmode=disable"
-		conn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		conn, err := gorm.Open(postgres.Open(cfg.DSN()), &gorm.Config{
+			NamingStrategy: schema.NamingStrategy{
+				TablePrefix: "typhoon_",
+			},
+		})
 		if err != nil {
 			return err
 		}
@@ -81,7 +87,11 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		}
 		swagger.Servers = nil
 
-		app := fiber.New()
+		c := fiber.Config{
+			ErrorHandler: utils.DefaultErrorHandler,
+		}
+
+		app := fiber.New(c)
 		app.Use(requestid.New())
 		app.Use(logger.New())
 

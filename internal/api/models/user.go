@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/nats-io/jwt"
 	"gorm.io/gorm"
 )
 
@@ -37,4 +38,14 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	// DeletedAt is the time the user was deleted.
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
+}
+
+// Credentials returns the user's credentials.
+func (u *User) Credentials() ([]byte, error) {
+	creds, err := jwt.FormatUserConfig(u.Token.Token, u.Key.Seed)
+	if err != nil {
+		return nil, err
+	}
+
+	return creds, nil
 }

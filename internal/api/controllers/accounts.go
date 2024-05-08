@@ -14,21 +14,34 @@ import (
 	openapi "github.com/zeiss/typhoon/pkg/apis"
 )
 
+// AccountsController is the interface that wraps the methods to access accounts.
+type AccountsController interface {
+	// CreateAccount creates a new account.
+	CreateAccount(ctx context.Context, name string, operatorID uuid.UUID) (*models.Account, error)
+	// UpdateAccount updates an account.
+	UpdateAccount(ctx context.Context, req UpdateOperatorAccountRequestObject) (*models.Account, error)
+	// DeleteToken deletes a token.
+	DeleteToken(ctx context.Context, accountID uuid.UUID) error
+	// CreateSigningKeyGroup creates a new signing key group.
+	CreateSigningKeyGroup(ctx context.Context) (*models.Account, error)
+	// ListSigningKeys of an account.
+	ListSigningKeys(ctx context.Context, accountID uuid.UUID, pagination models.Pagination[models.NKey]) (models.Pagination[models.NKey], error)
+}
+
 // CreateOperatorAccountRequestObject ...
 type UpdateOperatorAccountRequestObject = openapi.UpdateOperatorAccountRequestObject
 
-// AccountsController ...
-type AccountsController struct {
+type accountsController struct {
 	db ports.Repositories
 }
 
 // NewAccountsController ...
-func NewAccountsController(db ports.Repositories) *AccountsController {
-	return &AccountsController{db}
+func NewAccountsController(db ports.Repositories) *accountsController {
+	return &accountsController{db}
 }
 
 // CreateAccount ...
-func (c *AccountsController) CreateAccount(ctx context.Context, name string, operatorID uuid.UUID) (*models.Account, error) {
+func (c *accountsController) CreateAccount(ctx context.Context, name string, operatorID uuid.UUID) (*models.Account, error) {
 	operator, err := c.db.GetOperator(ctx, operatorID)
 	if err != nil {
 		return nil, err
@@ -75,17 +88,17 @@ func (c *AccountsController) CreateAccount(ctx context.Context, name string, ope
 	}
 
 	// Create a token for the account
-	oc := jwt.NewAccountClaims(id)
-	oc.Name = name
-	oc.Issuer = operator.KeyID
-	oc.SigningKeys.Add(spk)
+	ac := jwt.NewAccountClaims(id)
+	ac.Name = name
+	ac.Issuer = operator.KeyID
+	ac.SigningKeys.Add(spk)
 
-	token, err := oc.Encode(osk)
+	token, err := ac.Encode(osk)
 	if err != nil {
 		return nil, err
 	}
 
-	ac := &models.Account{
+	account := &models.Account{
 		Name:       name,
 		OperatorID: operatorID,
 		Key: models.NKey{
@@ -104,16 +117,16 @@ func (c *AccountsController) CreateAccount(ctx context.Context, name string, ope
 		},
 	}
 
-	err = c.db.CreateAccount(ctx, ac)
+	err = c.db.CreateAccount(ctx, account)
 	if err != nil {
 		return nil, err
 	}
 
-	return ac, nil
+	return account, nil
 }
 
 // UpdateAccount ...
-func (c *AccountsController) UpdateAccount(ctx context.Context, req UpdateOperatorAccountRequestObject) (*models.Account, error) {
+func (c *accountsController) UpdateAccount(ctx context.Context, req UpdateOperatorAccountRequestObject) (*models.Account, error) {
 	account, err := c.db.GetAccount(ctx, req.AccountId)
 	if err != nil {
 		return nil, err
@@ -168,7 +181,7 @@ func (c *AccountsController) UpdateAccount(ctx context.Context, req UpdateOperat
 }
 
 // DeleteToken ...
-func (c *AccountsController) DeleteToken(ctx context.Context, accountID uuid.UUID) error {
+func (c *accountsController) DeleteToken(ctx context.Context, accountID uuid.UUID) error {
 	account, err := c.db.GetAccount(ctx, accountID)
 	if err != nil {
 		return err
@@ -209,4 +222,14 @@ func (c *AccountsController) DeleteToken(ctx context.Context, accountID uuid.UUI
 	}
 
 	return nil
+}
+
+// CreateSigningKeyGroup ...
+func (c *accountsController) CreateSigningKeyGroup(ctx context.Context) (*models.Account, error) {
+	return nil, nil
+}
+
+// ListSigningKeys ...
+func (c *accountsController) ListSigningKeys(ctx context.Context, accountID uuid.UUID, pagination models.Pagination[models.NKey]) (models.Pagination[models.NKey], error) {
+	return c.db.ListSigningKeys(ctx, accountID, pagination)
 }

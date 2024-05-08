@@ -357,6 +357,9 @@ paths:
   /operators/{operatorId}/accounts/{accountId}/signing-keys:
     get:
       summary: List all signing keys for an account
+      description: |-
+        Returns a list of signing keys for an account.
+        These keys are used to sign users.
       operationId: listOperatorAccountSigningKeys
       tags:
         - Operator
@@ -366,8 +369,8 @@ paths:
         - $ref: '#/components/parameters/offsetParam'
         - $ref: '#/components/parameters/limitParam'
       security:
-        - bearerAuth:
-            - read:signing-keys
+        - bearerAuth: []
+        - apiKey: []
       responses:
         '200':
           description: Successfull response
@@ -1550,11 +1553,16 @@ components:
           format: uuid
           readOnly: true
         name:
+          description: >
+            The name of the signing key group. This is used to identify the
+            group.
           type: string
         description:
+          description: |
+            A description of the signing key group.
           type: string
         scope:
-          $ref: '#/components/schemas/SigningKeyGroupScope'
+          $ref: '#/components/schemas/SigningKeyGroupLimits'
         is_scoped:
           type: boolean
           default: false
@@ -1726,6 +1734,95 @@ components:
           type: string
         date:
           type: string
+    SigningKeyGroupLimits:
+      description: |
+        A Signing Key Group Limits is a set of rules that define
+        what a user that is signed with this key can do.
+      type: object
+      properties:
+        pub:
+          type: object
+          properties:
+            allow:
+              type: array
+              items:
+                type: string
+            deny:
+              type: array
+              items:
+                type: string
+        resp:
+          type: object
+          properties:
+            max:
+              type: integer
+              default: 0
+            ttl:
+              type: integer
+              default: 0
+        sub:
+          type: object
+          properties:
+            allow:
+              type: array
+              items:
+                type: string
+            deny:
+              type: array
+              items:
+                type: string
+        src:
+          description: |
+            The list of allowed sources.
+          type: array
+          items:
+            type: string
+        times:
+          description: |
+            The times that the key is allowed to be used.
+          type: object
+          properties:
+            start:
+              type: string
+              format: date-time
+            end:
+              type: string
+              format: date-time
+        times_locations:
+          type: string
+        data:
+          description: |
+            The maximum size of the data in bytes.
+          type: integer
+          default: 0
+        payload:
+          description: |
+            The maximum size of the payload in bytes.
+          type: integer
+          default: 0
+        subs:
+          description: |
+            The maximum number of subscriptions.
+          type: integer
+          default: 0
+        allowed_connection_types:
+          description: |
+            The allowed connection types.
+          type: array
+          items:
+            type: string
+        bearer_token:
+          description: |
+            The bearer token that is required to use this key.
+          type: boolean
+          default: false
+        tags:
+          description: |
+            Tags are a way to group keys together. This can be used
+            to apply a policy to a group of keys.
+          type: array
+          items:
+            type: string
 security:
   - bearerAuth: []
   - apiKey: []

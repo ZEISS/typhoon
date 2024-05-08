@@ -440,7 +440,9 @@ func (siw *ServerInterfaceWrapper) ListOperatorAccountSigningKeys(c *fiber.Ctx) 
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{"read:signing-keys"})
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	// Parameter object where we will unmarshal all parameters from the context
 	var params ListOperatorAccountSigningKeysParams

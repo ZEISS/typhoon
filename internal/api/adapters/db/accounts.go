@@ -46,3 +46,21 @@ func (db *DB) ListAccounts(ctx context.Context, pagination models.Pagination[*mo
 
 	return &models.Pagination[*models.Account]{Rows: accounts}, nil
 }
+
+// ListSigningKeys ...
+func (db *DB) ListSigningKeys(ctx context.Context, accountID uuid.UUID, pagination models.Pagination[models.NKey]) (models.Pagination[models.NKey], error) {
+	keys := []models.NKey{}
+
+	account := &models.Account{}
+	err := db.conn.
+		Where("id = ?", accountID).
+		Preload("SigningKeys").
+		First(account).Error
+	if err != nil {
+		return models.Pagination[models.NKey]{}, err
+	}
+
+	pagination.Rows = keys
+
+	return pagination, nil
+}

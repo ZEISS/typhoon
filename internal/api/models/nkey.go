@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 
+	"github.com/nats-io/nkeys"
 	"gorm.io/gorm"
 )
 
@@ -18,4 +19,34 @@ type NKey struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	// DeletedAt is the timestamp the key was deleted
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
+}
+
+// KeyPair is a pair of NKeys.
+func (n *NKey) KeyPair() (nkeys.KeyPair, error) {
+	kp, err := nkeys.FromSeed(n.Seed)
+	if err != nil {
+		return nil, err
+	}
+
+	return kp, nil
+}
+
+// PublicKey returns the public key portion of the NKey.
+func (n *NKey) PublicKey() (string, error) {
+	kp, err := n.KeyPair()
+	if err != nil {
+		return "", err
+	}
+
+	return kp.PublicKey()
+}
+
+// PrivateKey returns the private key portion of the NKey.
+func (n *NKey) PrivateKey() ([]byte, error) {
+	kp, err := n.KeyPair()
+	if err != nil {
+		return nil, err
+	}
+
+	return kp.PrivateKey()
 }
