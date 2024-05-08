@@ -97,7 +97,9 @@ type JWTInfo struct {
 }
 
 // JWTToken A JWT token is a JSON Web Token.
-type JWTToken = string
+type JWTToken struct {
+	Token *string `json:"token,omitempty"`
+}
 
 // KeyPair defines model for KeyPair.
 type KeyPair struct {
@@ -146,68 +148,16 @@ type SigningKeyGroup struct {
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
 
 	// DeletedAt Creation date and time
-	DeletedAt *time.Time `json:"deletedAt,omitempty"`
-
-	// Description A description of the signing key group.
-	Description *string             `json:"description,omitempty"`
-	Disabled    *bool               `json:"disabled,omitempty"`
-	Id          *openapi_types.UUID `json:"id,omitempty"`
-	IsScoped    *bool               `json:"is_scoped,omitempty"`
-
-	// Name The name of the signing key group. This is used to identify the group.
-	Name string `json:"name"`
-
-	// Scope A Signing Key Group Limits is a set of rules that define
-	// what a user that is signed with this key can do.
-	Scope *SigningKeyGroupLimits `json:"scope,omitempty"`
+	DeletedAt   *time.Time            `json:"deletedAt,omitempty"`
+	Description *string               `json:"description,omitempty"`
+	Disabled    *bool                 `json:"disabled,omitempty"`
+	Id          *openapi_types.UUID   `json:"id,omitempty"`
+	IsScoped    *bool                 `json:"is_scoped,omitempty"`
+	Name        string                `json:"name"`
+	Scope       *SigningKeyGroupScope `json:"scope,omitempty"`
 
 	// UpdatedAt Creation date and time
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
-}
-
-// SigningKeyGroupLimits A Signing Key Group Limits is a set of rules that define
-// what a user that is signed with this key can do.
-type SigningKeyGroupLimits struct {
-	// AllowedConnectionTypes The allowed connection types.
-	AllowedConnectionTypes *[]string `json:"allowed_connection_types,omitempty"`
-
-	// BearerToken The bearer token that is required to use this key.
-	BearerToken *bool `json:"bearer_token,omitempty"`
-
-	// Data The maximum size of the data in bytes.
-	Data *int `json:"data,omitempty"`
-
-	// Payload The maximum size of the payload in bytes.
-	Payload *int `json:"payload,omitempty"`
-	Pub     *struct {
-		Allow *[]string `json:"allow,omitempty"`
-		Deny  *[]string `json:"deny,omitempty"`
-	} `json:"pub,omitempty"`
-	Resp *struct {
-		Max *int `json:"max,omitempty"`
-		Ttl *int `json:"ttl,omitempty"`
-	} `json:"resp,omitempty"`
-
-	// Src The list of allowed sources.
-	Src *[]string `json:"src,omitempty"`
-	Sub *struct {
-		Allow *[]string `json:"allow,omitempty"`
-		Deny  *[]string `json:"deny,omitempty"`
-	} `json:"sub,omitempty"`
-
-	// Subs The maximum number of subscriptions.
-	Subs *int `json:"subs,omitempty"`
-
-	// Tags Tags are a way to group keys together. This can be used
-	// to apply a policy to a group of keys.
-	Tags *[]string `json:"tags,omitempty"`
-
-	// Times The times that the key is allowed to be used.
-	Times *struct {
-		End   *time.Time `json:"end,omitempty"`
-		Start *time.Time `json:"start,omitempty"`
-	} `json:"times,omitempty"`
-	TimesLocations *string `json:"times_locations,omitempty"`
 }
 
 // SigningKeyGroupScope defines model for SigningKeyGroupScope.
@@ -363,7 +313,17 @@ type CreateOperatorAccountUser struct {
 }
 
 // CreateSystem defines model for CreateSystem.
-type CreateSystem = System
+type CreateSystem struct {
+	// Clusters A list of clusters the system is part of.
+	Clusters []Cluster `json:"clusters"`
+
+	// Description A description of the system.
+	Description *string `json:"description,omitempty"`
+
+	// Name Name of the system
+	Name       string             `json:"name"`
+	OperatorId openapi_types.UUID `json:"operatorId"`
+}
 
 // CreateTeam defines model for CreateTeam.
 type CreateTeam struct {
@@ -383,8 +343,8 @@ type UpdateSystemOperator struct {
 	OperatorId openapi_types.UUID `json:"operatorId"`
 }
 
-// ListOperatorParams defines parameters for ListOperator.
-type ListOperatorParams struct {
+// ListOperatorsParams defines parameters for ListOperators.
+type ListOperatorsParams struct {
 	// Offset The number of items to skip before starting to collect the result set.
 	Offset *OffsetParam `form:"offset,omitempty" json:"offset,omitempty"`
 
@@ -421,15 +381,6 @@ type UpdateOperatorAccountJSONBody struct {
 	Name        string            `json:"name"`
 }
 
-// ListOperatorAccountSigningKeysParams defines parameters for ListOperatorAccountSigningKeys.
-type ListOperatorAccountSigningKeysParams struct {
-	// Offset The number of items to skip before starting to collect the result set.
-	Offset *OffsetParam `form:"offset,omitempty" json:"offset,omitempty"`
-
-	// Limit The numbers of items to return.
-	Limit *LimitParam `form:"limit,omitempty" json:"limit,omitempty"`
-}
-
 // ListOperatorAccountUsersParams defines parameters for ListOperatorAccountUsers.
 type ListOperatorAccountUsersParams struct {
 	// Offset The number of items to skip before starting to collect the result set.
@@ -445,13 +396,26 @@ type CreateOperatorAccountUserJSONBody struct {
 	Name  string  `json:"name"`
 }
 
-// ListOperatorSigningKeysParams defines parameters for ListOperatorSigningKeys.
-type ListOperatorSigningKeysParams struct {
+// ListOperatorSigningKeyGroupsParams defines parameters for ListOperatorSigningKeyGroups.
+type ListOperatorSigningKeyGroupsParams struct {
 	// Offset The number of items to skip before starting to collect the result set.
 	Offset *OffsetParam `form:"offset,omitempty" json:"offset,omitempty"`
 
 	// Limit The numbers of items to return.
 	Limit *LimitParam `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// CreateSystemJSONBody defines parameters for CreateSystem.
+type CreateSystemJSONBody struct {
+	// Clusters A list of clusters the system is part of.
+	Clusters []Cluster `json:"clusters"`
+
+	// Description A description of the system.
+	Description *string `json:"description,omitempty"`
+
+	// Name Name of the system
+	Name       string             `json:"name"`
+	OperatorId openapi_types.UUID `json:"operatorId"`
 }
 
 // UpdateSystemOperatorJSONBody defines parameters for UpdateSystemOperator.
@@ -525,8 +489,11 @@ type UpdateOperatorAccountJSONRequestBody UpdateOperatorAccountJSONBody
 // CreateOperatorAccountUserJSONRequestBody defines body for CreateOperatorAccountUser for application/json ContentType.
 type CreateOperatorAccountUserJSONRequestBody CreateOperatorAccountUserJSONBody
 
+// CreateOperatorSigningKeyGroupJSONRequestBody defines body for CreateOperatorSigningKeyGroup for application/json ContentType.
+type CreateOperatorSigningKeyGroupJSONRequestBody = SigningKeyGroup
+
 // CreateSystemJSONRequestBody defines body for CreateSystem for application/json ContentType.
-type CreateSystemJSONRequestBody = System
+type CreateSystemJSONRequestBody CreateSystemJSONBody
 
 // UpdateSystemJSONRequestBody defines body for UpdateSystem for application/json ContentType.
 type UpdateSystemJSONRequestBody = System
@@ -552,68 +519,62 @@ type UpdateUserJSONRequestBody = User
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
-	"BBqYr4sI9dMxvu2qIPE/AQAA//8lZBlDhpYAAA==",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

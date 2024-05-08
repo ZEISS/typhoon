@@ -56,7 +56,17 @@ func (a *ApiHandlers) ListSystems(ctx context.Context, req openapi.ListSystemsRe
 // CreateSystem ...
 func (a *ApiHandlers) CreateSystem(ctx context.Context, req openapi.CreateSystemRequestObject) (openapi.CreateSystemResponseObject, error) {
 	system := &models.System{}
-	system.FromAPI(req.Body)
+	system.Name = req.Body.Name
+	system.OperatorID = utils.PtrUUID(req.Body.OperatorId)
+	system.Clusters = []models.Cluster{}
+
+	for _, cluster := range req.Body.Clusters {
+		system.Clusters = append(system.Clusters, models.Cluster{
+			Name:        cluster.Name,
+			Description: utils.PtrStr(cluster.Description),
+			ServerURL:   cluster.ServerURL,
+		})
+	}
 
 	system, err := a.systems.CreateSystem(ctx, system)
 	if err != nil {

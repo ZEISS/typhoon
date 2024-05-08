@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 
+	"github.com/nats-io/jwt"
 	"gorm.io/gorm"
 )
 
@@ -19,4 +20,35 @@ type Token struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	// DeletedAt is the time the token was deleted.
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
+}
+
+// DeepCopy returns a deep copy of the token.
+func (t *Token) DeepCopy() Token {
+	return Token{
+		ID:        t.ID,
+		Token:     t.Token,
+		CreatedAt: t.CreatedAt,
+		UpdatedAt: t.UpdatedAt,
+		DeletedAt: t.DeletedAt,
+	}
+}
+
+// PublicKey returns the public key of the token.
+func (t *Token) PublicKey() (string, error) {
+	claim, err := t.Claim()
+	if err != nil {
+		return "", err
+	}
+
+	return claim.Subject, nil
+}
+
+// Claim is returning the claim of the token.
+func (t *Token) Claim() (*jwt.GenericClaims, error) {
+	claim, err := jwt.DecodeGeneric(t.Token)
+	if err != nil {
+		return nil, err
+	}
+
+	return claim, nil
 }

@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/nats-io/jwt"
 	"github.com/nats-io/nkeys"
 	"github.com/zeiss/typhoon/internal/api/models"
@@ -10,17 +11,45 @@ import (
 )
 
 // OperatorsController ...
-type OperatorsController struct {
+type OperatorsController interface {
+	// CreateOperator creates a new operator.
+	CreateOperator(ctx context.Context, name string) (*models.Operator, error)
+	// CreateOperatorSigningKeyGroup creates a new signing key group.
+	CreateOperatorSigningKeyGroup(ctx context.Context, operatorID uuid.UUID, name string, description string) (*models.SigningKeyGroup, error)
+	// GetOperator gets an operator.
+	GetOperator(ctx context.Context, id uuid.UUID) (*models.Operator, error)
+	// GetOperatorToken gets an operator token.
+	GetOperatorToken(ctx context.Context, operatorID uuid.UUID) (models.Token, error)
+}
+
+var _ OperatorsController = (*operatorsController)(nil)
+
+type operatorsController struct {
 	db ports.Operators
 }
 
 // NewOperatorsController ...
-func NewOperatorsController(db ports.Operators) *OperatorsController {
-	return &OperatorsController{db}
+func NewOperatorsController(db ports.Operators) *operatorsController {
+	return &operatorsController{db}
+}
+
+// GetOperator ...
+func (c *operatorsController) GetOperator(ctx context.Context, id uuid.UUID) (*models.Operator, error) {
+	return c.db.GetOperator(ctx, id)
+}
+
+// GetOperatorToken ...
+func (c *operatorsController) GetOperatorToken(ctx context.Context, operatorID uuid.UUID) (models.Token, error) {
+	o, err := c.db.GetOperator(ctx, operatorID)
+	if err != nil {
+		return models.Token{}, err
+	}
+
+	return o.Token, nil
 }
 
 // CreateOperator ...
-func (c *OperatorsController) CreateOperator(ctx context.Context, name string) (*models.Operator, error) {
+func (c *operatorsController) CreateOperator(ctx context.Context, name string) (*models.Operator, error) {
 	pk, err := nkeys.CreateOperator()
 	if err != nil {
 		return nil, err
@@ -36,26 +65,26 @@ func (c *OperatorsController) CreateOperator(ctx context.Context, name string) (
 		return nil, err
 	}
 
-	// Create a signing key for the operator
-	sk, err := nkeys.CreateOperator()
-	if err != nil {
-		return nil, err
-	}
+	// // Create a signing key for the operator
+	// sk, err := nkeys.CreateOperator()
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	spk, err := sk.PublicKey()
-	if err != nil {
-		return nil, err
-	}
+	// spk, err := sk.PublicKey()
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	skSeed, err := sk.Seed()
-	if err != nil {
-		return nil, err
-	}
+	// skSeed, err := sk.Seed()
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	// Create a token for the operator
 	oc := jwt.NewOperatorClaims(id)
 	oc.Name = name
-	oc.SigningKeys.Add(spk)
+	// oc.SigningKeys.Add(spk)
 
 	token, err := oc.Encode(pk)
 	if err != nil {
@@ -67,12 +96,6 @@ func (c *OperatorsController) CreateOperator(ctx context.Context, name string) (
 		Key: models.NKey{
 			ID:   id,
 			Seed: seed,
-		},
-		SigningKeys: []models.NKey{
-			{
-				ID:   spk,
-				Seed: skSeed,
-			},
 		},
 		Token: models.Token{
 			ID:    id,
@@ -86,6 +109,63 @@ func (c *OperatorsController) CreateOperator(ctx context.Context, name string) (
 	}
 
 	return op, nil
+}
+
+// CreateOperatorSigningKeyGroup ...
+func (c *operatorsController) CreateOperatorSigningKeyGroup(ctx context.Context, operatorID uuid.UUID, name string, description string) (*models.SigningKeyGroup, error) {
+	operator, err := c.db.GetOperator(ctx, operatorID)
+	if err != nil {
+		return nil, err
+	}
+
+	pk, err := nkeys.CreateOperator()
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := pk.PublicKey()
+	if err != nil {
+		return nil, err
+	}
+
+	seed, err := pk.Seed()
+	if err != nil {
+		return nil, err
+	}
+
+	skg := models.SigningKeyGroup{
+		Name:        name,
+		Description: description,
+		Key: models.NKey{
+			ID:   id,
+			Seed: seed,
+		},
+	}
+
+	operator.SigningKeyGroups = append(operator.SigningKeyGroups, skg)
+
+	oc := jwt.NewOperatorClaims(id)
+	oc.Name = operator.Name
+
+	for _, sk := range operator.SigningKeyGroups {
+		oc.SigningKeys.Add(sk.Key.ID, sk.Key.ID, sk.Key.ID)
+	}
+
+	token, err := oc.Encode(pk)
+	if err != nil {
+		return nil, err
+	}
+	operator.Token = models.Token{
+		ID:    id,
+		Token: token,
+	}
+
+	err = c.db.UpdateOperator(ctx, operator)
+	if err != nil {
+		return nil, err
+	}
+
+	return &skg, nil
 }
 
 // CreateOperatorAccount ...
@@ -341,10 +421,10 @@ func (c *OperatorsController) CreateOperator(ctx context.Context, name string) (
 // 	return c.db.GetOperator(ctx, id)
 // }
 
-// // ListOperator ...
-// func (c *OperatorsController) ListOperator(ctx context.Context, pagination models.Pagination[*models.Operator]) (*models.Pagination[*models.Operator], error) {
-// 	return c.db.ListOperator(ctx, pagination)
-// }
+// ListOperators ...
+func (c *operatorsController) ListOperators(ctx context.Context, pagination models.OperatorPagination) (models.OperatorPagination, error) {
+	return c.db.ListOperators(ctx, pagination)
+}
 
 // // CreateOperatorAccountSigningKey ...
 // func (c *OperatorsController) CreateOperatorAccountSigningKey(ctx context.Context, accountID uuid.UUID) (*models.NKey, error) {

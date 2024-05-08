@@ -2,11 +2,9 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/nats-io/jwt"
-	"github.com/nats-io/nkeys"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/api/ports"
 )
@@ -23,70 +21,72 @@ func NewUsersController(db ports.Repositories) *UsersController {
 
 // CreateUser ...
 func (c *UsersController) CreateUser(ctx context.Context, name string, accountId uuid.UUID) (*models.User, error) {
-	pk, err := nkeys.CreateUser()
-	if err != nil {
-		return nil, err
-	}
+	return nil, nil
 
-	id, err := pk.PublicKey()
-	if err != nil {
-		return nil, err
-	}
+	// pk, err := nkeys.CreateUser()
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	seed, err := pk.Seed()
-	if err != nil {
-		return nil, err
-	}
+	// id, err := pk.PublicKey()
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	ac, err := c.db.GetAccount(ctx, accountId)
-	if err != nil {
-		return nil, err
-	}
+	// seed, err := pk.Seed()
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	if len(ac.SigningKeys) < 1 {
-		return nil, fmt.Errorf("account %s has no signing keys", ac.ID)
-	}
+	// ac, err := c.db.GetAccount(ctx, accountId)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	ask, err := nkeys.FromSeed(ac.SigningKeys[0].Seed)
-	if err != nil {
-		return nil, err
-	}
+	// if len(ac.SigningKeys) < 1 {
+	// 	return nil, fmt.Errorf("account %s has no signing keys", ac.ID)
+	// }
 
-	askpk, err := ask.PublicKey()
-	if err != nil {
-		return nil, err
-	}
+	// ask, err := nkeys.FromSeed(ac.SigningKeys[0].Seed)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	// Create a token for the user
-	u := jwt.NewUserClaims(id)
-	u.Name = name
-	u.IssuerAccount = ac.KeyID
-	u.Issuer = askpk
+	// askpk, err := ask.PublicKey()
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	token, err := u.Encode(ask)
-	if err != nil {
-		return nil, err
-	}
+	// // Create a token for the user
+	// u := jwt.NewUserClaims(id)
+	// u.Name = name
+	// u.IssuerAccount = ac.KeyID
+	// u.Issuer = askpk
 
-	user := &models.User{
-		Name:      name,
-		AccountID: accountId,
-		Key: models.NKey{
-			ID:   id,
-			Seed: seed,
-		},
-		Token: models.Token{
-			ID:    id,
-			Token: token,
-		},
-	}
+	// token, err := u.Encode(ask)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	err = c.db.CreateUser(ctx, user)
-	if err != nil {
-		return nil, err
-	}
+	// user := &models.User{
+	// 	Name: name,
+	// 	// SigningKeyGroupID: ac.SigningKeys[0].ID,
+	// 	Key: models.NKey{
+	// 		ID:   id,
+	// 		Seed: seed,
+	// 	},
+	// 	Token: models.Token{
+	// 		ID:    id,
+	// 		Token: token,
+	// 	},
+	// }
 
-	return user, nil
+	// err = c.db.CreateUser(ctx, user)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// return user, nil
 }
 
 // GetCredentials ...

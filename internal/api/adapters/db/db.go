@@ -39,5 +39,7 @@ func (db *DB) RunMigrations() error {
 		&models.Ownership{},
 		&models.Allow{},
 		&models.Cluster{},
+		&models.SigningKeyGroup{},
+		&models.Signature{},
 	)
 }

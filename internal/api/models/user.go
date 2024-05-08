@@ -16,22 +16,18 @@ type User struct {
 	Name string `json:"name" validate:"required,min=3,max=128"`
 	// Description is the description of the user.
 	Description string `json:"description" validate:"max=1024"`
-
-	// Account is the account that created the user.
-	Account   Account   `json:"account"`
-	AccountID uuid.UUID `json:"account_id" gorm:"foreignKey:ID"`
-
 	// Key is the issuer key identifier.
-	Key   NKey   `json:"key"`
+	Key NKey `json:"key"`
+	// KeyID is the foreign key for the key.
 	KeyID string `json:"key_id" gorm:"foreignKey:ID"`
-
+	// SigningKeyGroup is the group that signed the user.
+	SigningKeyGroup SigningKeyGroup `json:"signing_key_group"`
+	// SigningKeyGroupID is the foreign key for the signing key group.
+	SigningKeyGroupID uuid.UUID `json:"signing_key_group_id" gorm:"foreignKey:ID"`
 	// Token is the JWT token used to authenticate the account.
-	Token   Token  `json:"token" gorm:"foreignKey:TokenID"`
+	Token Token `json:"token" gorm:"foreignKey:TokenID"`
+	// TokenID is the foreign key for the token.
 	TokenID string `json:"token_id"`
-
-	// OwnedBy is the owner of the account. This is usually a team.
-	OwnedBy Ownership `json:"owner" gorm:"polymorphic:Ownable;polymorphicValue:user;"`
-
 	// CreatedAt is the time the user was created.
 	CreatedAt time.Time `json:"created_at"`
 	// UpdatedAt is the time the user was updated.

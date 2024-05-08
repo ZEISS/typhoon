@@ -3,8 +3,9 @@ package db
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/zeiss/typhoon/internal/api/models"
+
+	"github.com/google/uuid"
 )
 
 // CreateTeam creates a new team.
@@ -19,7 +20,9 @@ func (db *DB) CreateTeam(ctx context.Context, team models.Team) (models.Team, er
 // GetTeam retrieves a team by its ID.
 func (db *DB) GetTeam(ctx context.Context, id uuid.UUID) (models.Team, error) {
 	team := models.Team{}
-	if err := db.conn.WithContext(ctx).Where("id = ?", id).First(&team).Error; err != nil {
+
+	err := db.conn.WithContext(ctx).Where("id = ?", id).First(&team).Error
+	if err != nil {
 		return models.Team{}, err
 	}
 

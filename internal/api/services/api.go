@@ -14,7 +14,7 @@ var _ openapi.StrictServerInterface = (*ApiHandlers)(nil)
 // ApiHandlers ...
 type ApiHandlers struct {
 	accounts  controllers.AccountsController
-	operators *controllers.OperatorsController
+	operators controllers.OperatorsController
 	systems   controllers.SystemsController
 	teams     controllers.TeamsController
 	users     *controllers.UsersController
@@ -24,7 +24,7 @@ type ApiHandlers struct {
 }
 
 // NewApiHandlers ...
-func NewApiHandlers(systems controllers.SystemsController, teams controllers.TeamsController, version *controllers.VersionController, operators *controllers.OperatorsController, accounts controllers.AccountsController, users *controllers.UsersController) *ApiHandlers {
+func NewApiHandlers(systems controllers.SystemsController, teams controllers.TeamsController, version *controllers.VersionController, operators controllers.OperatorsController, accounts controllers.AccountsController, users *controllers.UsersController) *ApiHandlers {
 	return &ApiHandlers{systems: systems, teams: teams, version: version, operators: operators, accounts: accounts, users: users}
 }
 
@@ -56,6 +56,24 @@ func (a *ApiHandlers) DeleteOperatorAccountToken(ctx context.Context, req openap
 	}
 
 	return openapi.DeleteOperatorAccountToken204Response(openapi.DeleteOperatorAccountToken204Response{}), nil
+}
+
+// CreateOperatorSigningKeyGroup ...
+func (a *ApiHandlers) CreateOperatorSigningKeyGroup(ctx context.Context, req openapi.CreateOperatorSigningKeyGroupRequestObject) (openapi.CreateOperatorSigningKeyGroupResponseObject, error) {
+	key, err := a.operators.CreateOperatorSigningKeyGroup(ctx, req.OperatorId, req.Body.Name, utils.PtrStr(req.Body.Description))
+	if err != nil {
+		return nil, err
+	}
+
+	res := openapi.SigningKeyGroup{
+		Id:        &key.ID,
+		Name:      key.Name,
+		UpdatedAt: utils.PtrTime(key.UpdatedAt),
+		CreatedAt: utils.PtrTime(key.CreatedAt),
+		DeletedAt: utils.PtrTime(key.DeletedAt.Time),
+	}
+
+	return openapi.CreateOperatorSigningKeyGroup201JSONResponse(openapi.CreateOperatorSigningKeyGroup201JSONResponse(res)), nil
 }
 
 // // UpdateSystemOperator ...

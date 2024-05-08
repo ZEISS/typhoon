@@ -1,1 +1,1745 @@
-µ
+# yaml-language-server: $schema=https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.1/schema.json
+openapi: 3.1.0
+
+info:
+  version: 1.0.0
+  title: Typhoon API
+  summary: |-
+    Typhoon is an event bridge built on top of an event mesh,
+    with a powerful API and beautiful experience.
+  contact:
+    name: Sebastian Doell
+    email: sebastian@katallaxie.dev
+  description: |
+    # Introduction
+
+    Typhoon is an event bridge for applications and services.
+  license:
+    name: Apache 2.0
+    identifier: Apache-2.0
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Development server
+
+tags:
+  - name: Server
+    description: |-
+      These are administrative operations.
+  - name: Teams
+    description: |-
+      These are the teams that manage Typhoon.
+  - name: Users
+    description: |-
+      These are the users that manage Typhonn.
+  - name: System
+    description: |-
+      These are the system managed by Typhoon.
+  - name: Team
+    description: |-
+      These are the teams that are using Typhoon.
+  - name: Triggers
+    description: |-
+      These are the triggers that are used to send events to Typhoon.
+
+paths:
+  /version:
+    get:
+      summary: Returns the current version of the API.
+      operationId: version
+      tags:
+        - Server
+      security:
+        - bearerAuth: [] # no scopes required
+        - apiKey: [] # no scopes required
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/version.yml#/components/schemas/Version"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+  /operators:
+    get:
+      summary: List all operators
+      operationId: listOperators
+      tags:
+        - Operator
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: ["read:operators"]
+        - apiKey: ["superadmin"]
+      responses:
+        200:
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - $ref: "#/components/schemas/Operators"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    post:
+      summary: Creates a new operator
+      operationId: createOperator
+      tags:
+        - Operator
+      requestBody:
+        $ref: "#/components/requestBodies/CreateOperator"
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Operator"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /operators/{operatorId}:
+    get:
+      summary: Gets an operator by ID
+      operationId: getOperator
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Operator"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    put:
+      summary: Updates an operator by ID
+      operationId: updateOperator
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Operator"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Operator"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    delete:
+      summary: Deletes an operator by ID
+      operationId: deleteOperator
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+      responses:
+        204:
+          description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /operators/{operatorId}/groups:
+    get:
+      summary: List all signing key groups for an operator
+      operationId: listOperatorSigningKeyGroups
+      tags:
+        - Operator
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: []
+        - apiKey: []
+      responses:
+        200:
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/SigningKeyGroup"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    post:
+      summary: Creates a new signing key group
+      operationId: createOperatorSigningKeyGroup
+      tags:
+        - Operator
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SigningKeyGroup"
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SigningKeyGroup"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /operators/{operatorId}/token:
+    get:
+      summary: Gets a token for an operator
+      operationId: getOperatorToken
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JWTToken"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /operators/{operatorId}/accounts:
+    get:
+      summary: List all accounts for an operator
+      operationId: listOperatorAccounts
+      tags:
+        - Operator
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: ["read:accounts"]
+      responses:
+        200:
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Account"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    post:
+      summary: Creates a new account
+      operationId: createOperatorAccount
+      tags:
+        - Operator
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+      requestBody:
+        $ref: "#/components/requestBodies/CreateAccount"
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /operators/{operatorId}/accounts/{accountId}:
+    get:
+      summary: Gets an account by ID
+      operationId: getOperatorAccount
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+    put:
+      summary: Updates an account by ID
+      operationId: updateOperatorAccount
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateAccount"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+    delete:
+      summary: Deletes an account by ID
+      operationId: deleteOperatorAccount
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+      responses:
+        204:
+          description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /operators/{operatorId}/accounts/{accountId}/token:
+    get:
+      summary: Gets a token for an account
+      operationId: getOperatorAccountToken
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JWTToken"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    delete:
+      summary: Deletes a token for an account
+      operationId: deleteOperatorAccountToken
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+      responses:
+        204:
+          description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /operators/{operatorId}/accounts/{accountId}/users:
+    get:
+      summary: List all users for an account
+      operationId: listOperatorAccountUsers
+      tags:
+        - Operator
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: ["read:users"]
+      responses:
+        200:
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/User"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    post:
+      summary: Creates a new user
+      operationId: createOperatorAccountUser
+      tags:
+        - Operator
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+      requestBody:
+        $ref: "#/components/requestBodies/CreateOperatorAccountUser"
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /operators/{operatorId}/accounts/{accountId}/users/{userId}:
+    get:
+      summary: Gets a user by ID
+      operationId: getOperatorAccountUser
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /operators/{operatorId}/accounts/{accountId}/users/{userId}/token:
+    get:
+      summary: Gets a token for a user
+      operationId: getOperatorAccountUserToken
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/userId"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JWTToken"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /operators/{operatorId}/accounts/{accountId}/users/{userId}/credentials:
+    get:
+      summary: Gets the credentials for a user
+      operationId: getOperatorAccountUserCredentials
+      parameters:
+        - $ref: "#/components/parameters/operatorId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/userId"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/octet-stream:
+              schema:
+                $ref: "#/components/schemas/Credentials"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+  /teams:
+    get:
+      summary: List all teams
+      operationId: listTeams
+      tags:
+        - Team
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: ["read:teams"]
+        - apiKey: ["superadmin"]
+      responses:
+        200:
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - $ref: "#/components/schemas/Teams"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+    post:
+      summary: Creates a new team
+      operationId: createTeam
+      tags:
+        - Team
+      requestBody:
+        $ref: "#/components/requestBodies/CreateTeam"
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Team"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /teams/{teamId}:
+    get:
+      summary: Gets a team by ID
+      operationId: getTeam
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+      security:
+        - bearerAuth: ["superadmin"]
+        - apiKey: ["superadmin"]
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Team"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    delete:
+      summary: Deletes a team by ID
+      operationId: deleteTeam
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+      security:
+        - bearerAuth: ["delete"]
+        - apiKey: ["delete"]
+      responses:
+        204:
+          description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /teams/{teamId}/systems:
+    get:
+      summary: List all systems for a team
+      operationId: listTeamSystems
+      tags:
+        - Team
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: ["read:systems"]
+      responses:
+        200:
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/System"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /teams/{teamId}/accounts:
+    get:
+      summary: List all accounts for a team
+      operationId: listTeamAccounts
+      tags:
+        - Team
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: ["read:accounts"]
+      responses:
+        200:
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Account"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /teams/{teamId}/accounts/{accountId}:
+    get:
+      summary: Gets an account by ID
+      operationId: getAccount
+      parameters:
+        - in: path
+          name: teamId
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /teams/{teamId}/accounts/{accountId}/groups:
+    get:
+      summary: List all signing key groups for an account
+      operationId: listGroups
+      tags:
+        - Team
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: ["read:groups"]
+      responses:
+        200:
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/SigningKeyGroup"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    post:
+      summary: Creates a new signing key group
+      operationId: createGroup
+      tags:
+        - Team
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SigningKeyGroup"
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SigningKeyGroup"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /teams/{teamId}/accounts/{accountId}/groups/{groupId}:
+    get:
+      summary: Gets a signing key group by ID
+      operationId: getGroup
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/groupId"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SigningKeyGroup"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    put:
+      summary: Updates a signing key group by ID
+      operationId: updateGroup
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/groupId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SigningKeyGroup"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SigningKeyGroup"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    delete:
+      summary: Deletes a signing key group by ID
+      operationId: deleteSigningKeyGroup
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/groupId"
+      responses:
+        204:
+          description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /teams/{teamId}/accounts/{accountId}/users:
+    get:
+      summary: List all users for an account
+      operationId: listUsers
+      tags:
+        - Team
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      security:
+        - bearerAuth: ["read:users"]
+      responses:
+        200:
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/User"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    post:
+      summary: Creates a new user
+      operationId: createUser
+      tags:
+        - Team
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /teams/{teamId}/accounts/{accountId}/users/{userId}:
+    get:
+      summary: Gets a user by ID
+      operationId: getUser
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/userId"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    put:
+      summary: Updates a user by ID
+      operationId: updateUser
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/userId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    delete:
+      summary: Deletes a user by ID
+      operationId: deleteTeamAccountUser
+      parameters:
+        - $ref: "#/components/parameters/teamId"
+        - $ref: "#/components/parameters/accountId"
+        - $ref: "#/components/parameters/userId"
+      responses:
+        204:
+          description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /systems:
+    get:
+      summary: List all managed systems.
+      operationId: listSystems
+      tags:
+        - System
+      description: |-
+        Returns a list of managed systems.
+      responses:
+        200:
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/System"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    post:
+      summary: Creates a new system
+      operationId: createSystem
+      tags:
+        - System
+      requestBody:
+        $ref: "#/components/requestBodies/CreateSystem"
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/System"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /systems/{systemId}:
+    get:
+      summary: Gets a system by ID
+      operationId: getSystem
+      parameters:
+        - $ref: "#/components/parameters/systemId"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/System"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    put:
+      summary: Updates a system by ID
+      operationId: updateSystem
+      parameters:
+        - $ref: "#/components/parameters/systemId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/System"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/System"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+    delete:
+      summary: Deletes a system by ID
+      operationId: deleteSystem
+      parameters:
+        - $ref: "#/components/parameters/systemId"
+      responses:
+        204:
+          description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /systems/{systemId}/operator:
+    get:
+      summary: Gets the operator for a system
+      operationId: getSystemOperator
+      parameters:
+        - $ref: "#/components/parameters/systemId"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Operator"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    put:
+      summary: Updates the operator for a system
+      operationId: updateSystemOperator
+      parameters:
+        - $ref: "#/components/parameters/systemId"
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateSystemOperator"
+      responses:
+        201:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Operator"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    delete:
+      summary: Deletes the operator for a system
+      operationId: deleteSystemOperator
+      parameters:
+        - $ref: "#/components/parameters/systemId"
+      responses:
+        204:
+          description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+components:
+  parameters:
+    systemId:
+      in: path
+      name: systemId
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The id of the system to retrieve.
+    teamId:
+      in: path
+      name: teamId
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The id of the team to retrieve.
+    groupId:
+      in: path
+      name: groupId
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The id of the group to retrieve.
+    accountId:
+      in: path
+      name: accountId
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The id of the account to retrieve.
+    userId:
+      in: path
+      name: userId
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The id of the user to retrieve.
+    offsetParam:
+      in: query
+      name: offset
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: The number of items to skip before starting to collect the result set.
+    limitParam:
+      in: query
+      name: limit
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 50
+        default: 20
+      description: The numbers of items to return.
+    operatorId:
+      in: path
+      name: operatorId
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The id of the operator to retrieve.
+
+  responses:
+    InternalError:
+      description: An internal error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas/error.yml#/components/schemas/Error"
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas/error.yml#/components/schemas/Error"
+    Unauthorized:
+      description: The request was not authorized.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas/error.yml#/components/schemas/Error"
+    BadRequest:
+      description: The request was not valid.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas/error.yml#/components/schemas/Error"
+    Unimplemented:
+      description: The requested resource was not implemented.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas/error.yml#/components/schemas/Error"
+    Duplicate:
+      description: The requested resource was a duplicate.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  requestBodies:
+    # Body for creating a system
+    CreateSystem:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+              - operatorId
+              - clusters
+            properties:
+              operatorId:
+                type: string
+                format: uuid
+              name:
+                type: string
+                description: Name of the system
+              description:
+                type: string
+                description: A description of the system.
+              clusters:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Cluster"
+                description: A list of clusters the system is part of.
+
+    # Body for updating an operator
+    UpdateSystemOperator:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - operatorId
+            properties:
+              operatorId:
+                type: string
+                format: uuid
+    # Body for creating a team
+    CreateTeam:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+    # Body for creating an operator
+    CreateOperator:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              contactEmail:
+                type: string
+    # Body for creating an account
+    CreateAccount:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+
+    # Body for updating an account
+    UpdateAccount:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              claims:
+                $ref: "#/components/schemas/JWTAccountClaims"
+    # Body for creating an operator account user
+    CreateOperatorAccountUser:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+              email:
+                type: string
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+  schemas:
+    NKey:
+      description: |
+        An NKey is the private key of a NATS account.
+      type: string
+      format: base32
+
+    JWTToken:
+      description: |
+        A JWT token is a JSON Web Token.
+      type: object
+      properties:
+        token:
+          type: string
+          format: JWT
+
+    KeyPair:
+      descriptio: |
+        A KeyPair is a public/private key pair.
+      required:
+        - publicKey
+      type: object
+      properties:
+        publicKey:
+          type: string
+          format: base32
+        privateKey:
+          type: string
+          format: base32
+
+    Credentials:
+      type: string
+      format: binary
+
+    PaginatedResult:
+      type: object
+      properties:
+        total:
+          type: integer
+        offset:
+          type: integer
+        limit:
+          type: integer
+        results:
+          type: array
+          items:
+
+    System:
+      type: object
+      required:
+        - name
+        - clusters
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          description: Name of the system
+          example: "eu-west-1"
+        description:
+          type: string
+          description: A description of the system.
+        operator:
+          $ref: "#/components/schemas/Operator"
+        clusters:
+          $ref: "#/components/schemas/Clusters"
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        deletedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+
+    Operator:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+        key:
+          $ref: "#/components/schemas/KeyPair"
+        signingKeys:
+          type: array
+          items:
+            $ref: "#/components/schemas/KeyPair"
+        description:
+          type: string
+        contactEmail:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        deletedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+
+    Team:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+        description:
+          type: string
+        contactEmail:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        deletedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+
+    Cluster:
+      type: object
+      required:
+        - name
+        - serverURL
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+        description:
+          type: string
+        serverURL:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Update date and time
+          example: "2021-01-30T08:30:00Z"
+        deletedAt:
+          type: string
+          format: date-time
+          description: Delete date and time
+          example: "2021-01-30T08:30:00Z"
+
+    Account:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+        description:
+          type: string
+        contactEmail:
+          type: string
+        key:
+          $ref: "#/components/schemas/KeyPair"
+        signingKeys:
+          type: array
+          items:
+            $ref: "#/components/schemas/KeyPair"
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        deletedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+
+    SigningKeyGroup:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+        description:
+          type: string
+        scope:
+          $ref: "#/components/schemas/SigningKeyGroupScope"
+        is_scoped:
+          type: boolean
+          default: false
+        disabled:
+          type: boolean
+          default: false
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        deletedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+
+    SigningKeyGroupScope:
+      type: object
+      properties:
+        publish:
+          $ref: "#/components/schemas/SigningKeyGroupScopePublish"
+        subscribe:
+          $ref: "#/components/schemas/SigningKeyGroupScopeSubscribe"
+        subscriptions:
+          type: integer
+          default: 0
+        payload:
+          type: integer
+          default: 0
+        data:
+          type: integer
+          default: 0
+
+    SigningKeyGroupScopePublish:
+      type: object
+      properties:
+        allow:
+          type: array
+          items:
+            type: string
+        deny:
+          type: array
+          items:
+            type: string
+
+    SigningKeyGroupScopeSubscribe:
+      type: object
+      properties:
+        allow:
+          type: array
+          items:
+            type: string
+        deny:
+          type: array
+          items:
+            type: string
+
+    User:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+        email:
+          type: string
+        jwt:
+          type: string
+        key:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        deletedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+
+    JWTInfo:
+      type: object
+      properties:
+        description:
+          type: string
+        info_url:
+          type: string
+
+    JWTExport:
+      type: object
+      properties:
+        name:
+          type: string
+        subject:
+          type: string
+        type:
+          type: integer
+        response_type:
+          type: string
+        account_token_position:
+          type: integer
+          x-go-type: "uint"
+        info:
+          $ref: "#/components/schemas/JWTInfo"
+
+    JWTAccountClaims:
+      type: object
+      properties:
+        exports:
+          type: array
+          items:
+            $ref: "#/components/schemas/JWTExport"
+
+    Clusters:
+      type: array
+      maxItems: 100
+      items:
+        $ref: "#/components/schemas/Cluster"
+
+    Systems:
+      type: array
+      maxItems: 100
+      items:
+        $ref: "#/components/schemas/System"
+
+    Operators:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/Operator"
+
+    Teams:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/Team"
+
+security:
+  - bearerAuth: []
+  - apiKey: []

@@ -57,7 +57,7 @@ paths:
   /operators:
     get:
       summary: List all operators
-      operationId: listOperator
+      operationId: listOperators
       tags:
         - Operator
       parameters:
@@ -159,61 +159,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /operators/{operatorId}/token:
+  /operators/{operatorId}/groups:
     get:
-      summary: Gets a token for an operator
-      operationId: getOperatorToken
-      parameters:
-        - $ref: '#/components/parameters/operatorId'
-      responses:
-        '200':
-          description: Successful
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/JWTToken'
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-    put:
-      summary: Updates a token for an operator
-      operationId: updateOperatorToken
-      parameters:
-        - $ref: '#/components/parameters/operatorId'
-      responses:
-        '200':
-          description: Successful
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/JWTToken'
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-    delete:
-      summary: Deletes a token for an operator
-      operationId: deleteOperatorToken
-      parameters:
-        - $ref: '#/components/parameters/operatorId'
-      responses:
-        '204':
-          description: Successful
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /operators/{operatorId}/signing-keys:
-    get:
-      summary: List all signing keys for an operator
-      operationId: listOperatorSigningKeys
+      summary: List all signing key groups for an operator
+      operationId: listOperatorSigningKeyGroups
       tags:
         - Operator
       parameters:
@@ -221,8 +170,8 @@ paths:
         - $ref: '#/components/parameters/offsetParam'
         - $ref: '#/components/parameters/limitParam'
       security:
-        - bearerAuth:
-            - read:signing-keys
+        - bearerAuth: []
+        - apiKey: []
       responses:
         '200':
           description: Successfull response
@@ -236,7 +185,51 @@ paths:
                       results:
                         type: array
                         items:
-                          $ref: '#/components/schemas/KeyPair'
+                          $ref: '#/components/schemas/SigningKeyGroup'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Creates a new signing key group
+      operationId: createOperatorSigningKeyGroup
+      tags:
+        - Operator
+      parameters:
+        - $ref: '#/components/parameters/operatorId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SigningKeyGroup'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SigningKeyGroup'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /operators/{operatorId}/token:
+    get:
+      summary: Gets a token for an operator
+      operationId: getOperatorToken
+      parameters:
+        - $ref: '#/components/parameters/operatorId'
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWTToken'
         default:
           description: An error occurred
           content:
@@ -348,43 +341,6 @@ paths:
       responses:
         '204':
           description: Successful
-        default:
-          description: An error occurred
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /operators/{operatorId}/accounts/{accountId}/signing-keys:
-    get:
-      summary: List all signing keys for an account
-      description: |-
-        Returns a list of signing keys for an account.
-        These keys are used to sign users.
-      operationId: listOperatorAccountSigningKeys
-      tags:
-        - Operator
-      parameters:
-        - $ref: '#/components/parameters/operatorId'
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/offsetParam'
-        - $ref: '#/components/parameters/limitParam'
-      security:
-        - bearerAuth: []
-        - apiKey: []
-      responses:
-        '200':
-          description: Successfull response
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/PaginatedResult'
-                  - type: object
-                    properties:
-                      results:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/KeyPair'
         default:
           description: An error occurred
           content:
@@ -1250,7 +1206,26 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/System'
+            type: object
+            required:
+              - name
+              - operatorId
+              - clusters
+            properties:
+              operatorId:
+                type: string
+                format: uuid
+              name:
+                type: string
+                description: Name of the system
+              description:
+                type: string
+                description: A description of the system.
+              clusters:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cluster'
+                description: A list of clusters the system is part of.
     UpdateSystemOperator:
       content:
         application/json:
@@ -1344,8 +1319,11 @@ components:
     JWTToken:
       description: |
         A JWT token is a JSON Web Token.
-      type: string
-      format: JWT
+      type: object
+      properties:
+        token:
+          type: string
+          format: JWT
     KeyPair:
       descriptio: |
         A KeyPair is a public/private key pair.
@@ -1553,16 +1531,11 @@ components:
           format: uuid
           readOnly: true
         name:
-          description: >
-            The name of the signing key group. This is used to identify the
-            group.
           type: string
         description:
-          description: |
-            A description of the signing key group.
           type: string
         scope:
-          $ref: '#/components/schemas/SigningKeyGroupLimits'
+          $ref: '#/components/schemas/SigningKeyGroupScope'
         is_scoped:
           type: boolean
           default: false
@@ -1734,95 +1707,6 @@ components:
           type: string
         date:
           type: string
-    SigningKeyGroupLimits:
-      description: |
-        A Signing Key Group Limits is a set of rules that define
-        what a user that is signed with this key can do.
-      type: object
-      properties:
-        pub:
-          type: object
-          properties:
-            allow:
-              type: array
-              items:
-                type: string
-            deny:
-              type: array
-              items:
-                type: string
-        resp:
-          type: object
-          properties:
-            max:
-              type: integer
-              default: 0
-            ttl:
-              type: integer
-              default: 0
-        sub:
-          type: object
-          properties:
-            allow:
-              type: array
-              items:
-                type: string
-            deny:
-              type: array
-              items:
-                type: string
-        src:
-          description: |
-            The list of allowed sources.
-          type: array
-          items:
-            type: string
-        times:
-          description: |
-            The times that the key is allowed to be used.
-          type: object
-          properties:
-            start:
-              type: string
-              format: date-time
-            end:
-              type: string
-              format: date-time
-        times_locations:
-          type: string
-        data:
-          description: |
-            The maximum size of the data in bytes.
-          type: integer
-          default: 0
-        payload:
-          description: |
-            The maximum size of the payload in bytes.
-          type: integer
-          default: 0
-        subs:
-          description: |
-            The maximum number of subscriptions.
-          type: integer
-          default: 0
-        allowed_connection_types:
-          description: |
-            The allowed connection types.
-          type: array
-          items:
-            type: string
-        bearer_token:
-          description: |
-            The bearer token that is required to use this key.
-          type: boolean
-          default: false
-        tags:
-          description: |
-            Tags are a way to group keys together. This can be used
-            to apply a policy to a group of keys.
-          type: array
-          items:
-            type: string
 security:
   - bearerAuth: []
   - apiKey: []
