@@ -7,7 +7,7 @@ import (
 	"github.com/zeiss/typhoon/pkg/apis/dto"
 )
 
-// CreateOperator ...
+// CreateOperator handles the request to create a new operator.
 func (a *ApiHandlers) CreateOperator(ctx context.Context, req openapi.CreateOperatorRequestObject) (openapi.CreateOperatorResponseObject, error) {
 	cmd := dto.FromCreateOperatorRequest(req)
 
@@ -19,7 +19,7 @@ func (a *ApiHandlers) CreateOperator(ctx context.Context, req openapi.CreateOper
 	return dto.ToCreateOperatorResponse(operator), nil
 }
 
-// GetOperator ...
+// GetOperator handles the request to get an operator.
 func (a *ApiHandlers) GetOperator(ctx context.Context, req openapi.GetOperatorRequestObject) (openapi.GetOperatorResponseObject, error) {
 	query := dto.FromGetOperatorRequest(req)
 
@@ -31,7 +31,19 @@ func (a *ApiHandlers) GetOperator(ctx context.Context, req openapi.GetOperatorRe
 	return dto.ToGetOperatorResponse(result), nil
 }
 
-// GetOperatorToken ...
+// ListOperators handles the request to list operators.
+func (a *ApiHandlers) ListOperators(ctx context.Context, req openapi.ListOperatorsRequestObject) (openapi.ListOperatorsResponseObject, error) {
+	query := dto.FromListOperatorsRequest(req)
+
+	result, err := a.operators.ListOperators(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return dto.ToListOperatorsResponse(result), nil
+}
+
+// GetOperatorToken handles the request to get a token for an operator.
 func (a *ApiHandlers) GetOperatorToken(ctx context.Context, req openapi.GetOperatorTokenRequestObject) (openapi.GetOperatorTokenResponseObject, error) {
 	query := dto.FromGetOperatorTokenRequest(req)
 
@@ -41,9 +53,4 @@ func (a *ApiHandlers) GetOperatorToken(ctx context.Context, req openapi.GetOpera
 	}
 
 	return dto.ToGetOperatorTokenResponse(result), nil
-}
-
-// ListOperators ...
-func (a *ApiHandlers) ListOperators(ctx context.Context, req openapi.ListOperatorsRequestObject) (openapi.ListOperatorsResponseObject, error) {
-	return nil, nil
 }

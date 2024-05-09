@@ -39,14 +39,11 @@ func (db *DB) UpdateOperator(ctx context.Context, op *models.Operator) error {
 }
 
 // ListOperators ...
-func (db *DB) ListOperators(ctx context.Context, pagination models.OperatorPagination) (models.OperatorPagination, error) {
-	operators := []models.Operator{}
-
-	err := db.conn.WithContext(ctx).Find(&operators).Error
+func (db *DB) ListOperators(ctx context.Context, pagination *models.Pagination[models.Operator]) error {
+	err := db.conn.WithContext(ctx).Scopes(models.Paginate(&pagination.Rows, pagination, db.conn)).Find(&pagination.Rows).Error
 	if err != nil {
-		return pagination, err
+		return err
 	}
-	pagination.Rows = operators
 
-	return pagination, nil
+	return nil
 }

@@ -35,6 +35,14 @@ type GetOperatorTokenQuery struct {
 	ID uuid.UUID `json:"id" validate:"required"`
 }
 
+// ListOperatorsQuery ...
+type ListOperatorsQuery struct {
+	Limit  int    `json:"limit" validate:"required"`
+	Offset int    `json:"offset" validate:"required"`
+	Search string `json:"search"`
+	Sort   string `json:"sort"`
+}
+
 // OperatorsController is the interface that wraps the methods to access operators.
 type OperatorsController interface {
 	// CreateOperator creates a new operator.
@@ -45,6 +53,8 @@ type OperatorsController interface {
 	CreateOperatorSigningKeyGroup(ctx context.Context, cmd CreateOperatorSigningKeyGroupCommand) (models.SigningKeyGroup, error)
 	// GetOperatorToken gets an operator token.
 	GetOperatorToken(ctx context.Context, query GetOperatorTokenQuery) (models.Token, error)
+	// ListOperators lists operators.
+	ListOperators(ctx context.Context, query ListOperatorsQuery) (models.Pagination[models.Operator], error)
 }
 
 // OperatorsControllerImpl is the controller for operators.
@@ -122,6 +132,22 @@ func (c *OperatorsControllerImpl) GetOperator(ctx context.Context, query GetOper
 	}
 
 	return op, nil
+}
+
+// ListOperators is the method to list operators.
+func (c *OperatorsControllerImpl) ListOperators(ctx context.Context, query ListOperatorsQuery) (models.Pagination[models.Operator], error) {
+	ops := models.Pagination[models.Operator]{}
+
+	ops.Limit = query.Limit
+	ops.Offset = query.Offset
+	ops.Search = query.Search
+
+	err := c.db.ListOperators(ctx, &ops)
+	if err != nil {
+		return ops, err
+	}
+
+	return ops, nil
 }
 
 // GetOperatorToken ...
@@ -440,11 +466,6 @@ func (c *OperatorsControllerImpl) CreateOperatorSigningKeyGroup(ctx context.Cont
 // func (c *OperatorsController) GetOperator(ctx context.Context, id uuid.UUID) (*models.Operator, error) {
 // 	return c.db.GetOperator(ctx, id)
 // }
-
-// ListOperators ...
-func (c *OperatorsControllerImpl) ListOperators(ctx context.Context, pagination models.OperatorPagination) (models.OperatorPagination, error) {
-	return c.db.ListOperators(ctx, pagination)
-}
 
 // // CreateOperatorAccountSigningKey ...
 // func (c *OperatorsController) CreateOperatorAccountSigningKey(ctx context.Context, accountID uuid.UUID) (*models.NKey, error) {
