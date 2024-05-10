@@ -64,7 +64,7 @@ type ServerInterface interface {
 	GetOperatorToken(c *fiber.Ctx, operatorId OperatorId) error
 	// List all managed systems.
 	// (GET /systems)
-	ListSystems(c *fiber.Ctx) error
+	ListSystems(c *fiber.Ctx, params ListSystemsParams) error
 	// Creates a new system
 	// (POST /systems)
 	CreateSystem(c *fiber.Ctx) error
@@ -493,11 +493,36 @@ func (siw *ServerInterfaceWrapper) GetOperatorToken(c *fiber.Ctx) error {
 // ListSystems operation middleware
 func (siw *ServerInterfaceWrapper) ListSystems(c *fiber.Ctx) error {
 
+	var err error
+
 	c.Context().SetUserValue(BearerAuthScopes, []string{})
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
-	return siw.Handler.ListSystems(c)
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListSystemsParams
+
+	var query url.Values
+	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
+	}
+
+	// ------------- Optional query parameter "offset" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "offset", query, &params.Offset)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter offset: %w", err).Error())
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", query, &params.Limit)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter limit: %w", err).Error())
+	}
+
+	return siw.Handler.ListSystems(c, params)
 }
 
 // CreateSystem operation middleware
@@ -1393,6 +1418,7 @@ func (response GetOperatorTokendefaultJSONResponse) VisitGetOperatorTokenRespons
 }
 
 type ListSystemsRequestObject struct {
+	Params ListSystemsParams
 }
 
 type ListSystemsResponseObject interface {
@@ -2429,8 +2455,10 @@ func (sh *strictHandler) GetOperatorToken(ctx *fiber.Ctx, operatorId OperatorId)
 }
 
 // ListSystems operation middleware
-func (sh *strictHandler) ListSystems(ctx *fiber.Ctx) error {
+func (sh *strictHandler) ListSystems(ctx *fiber.Ctx, params ListSystemsParams) error {
 	var request ListSystemsRequestObject
+
+	request.Params = params
 
 	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
 		return sh.ssi.ListSystems(ctx.UserContext(), request.(ListSystemsRequestObject))

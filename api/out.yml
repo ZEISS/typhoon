@@ -21,6 +21,10 @@ servers:
 tags:
   - name: Server
     description: These are administrative operations.
+  - name: Operator
+    description: These are the operators that manage Typhoon.
+  - name: Account
+    description: These are the accounts that manage Typhoon.
   - name: Teams
     description: These are the teams that manage Typhoon.
   - name: Users
@@ -580,6 +584,9 @@ paths:
     get:
       summary: List all managed systems.
       operationId: listSystems
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
       tags:
         - System
       description: Returns a list of managed systems.
@@ -895,20 +902,6 @@ components:
                 type: string
               description:
                 type: string
-    CreateOperator:
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - name
-            properties:
-              name:
-                type: string
-              description:
-                type: string
-              contactEmail:
-                type: string
     CreateAccount:
       content:
         application/json:
@@ -947,6 +940,20 @@ components:
                 type: string
               email:
                 type: string
+    CreateOperator:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              contactEmail:
+                type: string
   securitySchemes:
     bearerAuth:
       type: http
@@ -970,19 +977,6 @@ components:
         token:
           type: string
           format: JWT
-    KeyPair:
-      descriptio: |
-        A KeyPair is a public/private key pair.
-      required:
-        - publicKey
-      type: object
-      properties:
-        publicKey:
-          type: string
-          format: base32
-        privateKey:
-          type: string
-          format: base32
     Credentials:
       type: string
       format: binary
@@ -1019,42 +1013,6 @@ components:
           $ref: '#/components/schemas/Operator'
         clusters:
           $ref: '#/components/schemas/Clusters'
-        createdAt:
-          type: string
-          format: date-time
-          description: Creation date and time
-          example: '2021-01-30T08:30:00Z'
-        updatedAt:
-          type: string
-          format: date-time
-          description: Creation date and time
-          example: '2021-01-30T08:30:00Z'
-        deletedAt:
-          type: string
-          format: date-time
-          description: Creation date and time
-          example: '2021-01-30T08:30:00Z'
-    Operator:
-      type: object
-      required:
-        - name
-      properties:
-        id:
-          type: string
-          format: uuid
-          readOnly: true
-        name:
-          type: string
-        key:
-          $ref: '#/components/schemas/KeyPair'
-        signingKeys:
-          type: array
-          items:
-            $ref: '#/components/schemas/KeyPair'
-        description:
-          type: string
-        contactEmail:
-          type: string
         createdAt:
           type: string
           format: date-time
@@ -1353,6 +1311,55 @@ components:
           type: string
         date:
           type: string
+    KeyPair:
+      descriptio: |
+        A KeyPair is a public/private key pair.
+      required:
+        - publicKey
+      type: object
+      properties:
+        publicKey:
+          type: string
+          format: base32
+        privateKey:
+          type: string
+          format: base32
+    Operator:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+        key:
+          $ref: '#/components/schemas/KeyPair'
+        signingKeys:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeyPair'
+        description:
+          type: string
+        contactEmail:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: '2021-01-30T08:30:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: '2021-01-30T08:30:00Z'
+        deletedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: '2021-01-30T08:30:00Z'
 security:
   - bearerAuth: []
   - apiKey: []

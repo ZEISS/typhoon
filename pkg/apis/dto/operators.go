@@ -17,10 +17,10 @@ func FromListOperatorsRequest(req openapi.ListOperatorsRequestObject) controller
 
 // ToListOperatorsResponse ...
 func ToListOperatorsResponse(ops models.Pagination[models.Operator]) openapi.ListOperators200JSONResponse {
-	response := openapi.ListOperators200JSONResponse{}
-	response.Limit = utils.PtrInt(ops.Limit)
-	response.Offset = utils.PtrInt(ops.Offset)
-	response.Total = utils.PtrInt(ops.TotalRows)
+	res := openapi.ListOperators200JSONResponse{}
+	res.Limit = utils.PtrInt(ops.Limit)
+	res.Offset = utils.PtrInt(ops.Offset)
+	res.Total = utils.PtrInt(ops.TotalRows)
 
 	operators := make([]openapi.Operator, 0, len(ops.Rows))
 	for _, op := range ops.Rows {
@@ -32,9 +32,9 @@ func ToListOperatorsResponse(ops models.Pagination[models.Operator]) openapi.Lis
 			DeletedAt: utils.PtrTime(op.DeletedAt.Time),
 		})
 	}
-	response.Results = &operators
+	res.Results = &operators
 
-	return response
+	return res
 }
 
 // FromGetOperatorRequest ...
@@ -46,16 +46,16 @@ func FromGetOperatorRequest(req openapi.GetOperatorRequestObject) controllers.Ge
 
 // ToGetOperatorResponse ...
 func ToGetOperatorResponse(op models.Operator) openapi.GetOperator200JSONResponse {
-	response := openapi.GetOperator200JSONResponse{}
+	res := openapi.GetOperator200JSONResponse{}
 
-	response.Id = utils.PtrUUID(op.ID)
-	response.Name = op.Name
-	response.Description = utils.StrPtr(op.Description)
-	response.CreatedAt = utils.PtrTime(op.CreatedAt)
-	response.UpdatedAt = utils.PtrTime(op.UpdatedAt)
-	response.DeletedAt = utils.PtrTime(op.DeletedAt.Time)
+	res.Id = utils.PtrUUID(op.ID)
+	res.Name = op.Name
+	res.Description = utils.StrPtr(op.Description)
+	res.CreatedAt = utils.PtrTime(op.CreatedAt)
+	res.UpdatedAt = utils.PtrTime(op.UpdatedAt)
+	res.DeletedAt = utils.PtrTime(op.DeletedAt.Time)
 
-	return response
+	return res
 }
 
 // FromGetOperatorTokenRequest ...
@@ -67,11 +67,11 @@ func FromGetOperatorTokenRequest(req openapi.GetOperatorTokenRequestObject) cont
 
 // ToGetOperatorTokenResponse ...
 func ToGetOperatorTokenResponse(token models.Token) openapi.GetOperatorToken200JSONResponse {
-	response := openapi.GetOperatorToken200JSONResponse{}
+	res := openapi.GetOperatorToken200JSONResponse{}
 
-	response.Token = utils.StrPtr(token.Token)
+	res.Token = utils.StrPtr(token.Token)
 
-	return response
+	return res
 }
 
 // FromCreateOperatorRequest ...
@@ -84,14 +84,14 @@ func FromCreateOperatorRequest(req openapi.CreateOperatorRequestObject) controll
 
 // ToCreateOperatorResponse ...
 func ToCreateOperatorResponse(op models.Operator) openapi.CreateOperator201JSONResponse {
-	response := openapi.CreateOperator201JSONResponse{}
+	res := openapi.CreateOperator201JSONResponse{}
 
-	response.Id = utils.PtrUUID(op.ID)
-	response.Name = op.Name
-	response.Description = utils.StrPtr(op.Description)
-	response.CreatedAt = utils.PtrTime(op.CreatedAt)
-	response.UpdatedAt = utils.PtrTime(op.UpdatedAt)
-	response.DeletedAt = utils.PtrTime(op.DeletedAt.Time)
+	res.Id = utils.PtrUUID(op.ID)
+	res.Name = op.Name
+	res.Description = utils.StrPtr(op.Description)
+	res.CreatedAt = utils.PtrTime(op.CreatedAt)
+	res.UpdatedAt = utils.PtrTime(op.UpdatedAt)
+	res.DeletedAt = utils.PtrTime(op.DeletedAt.Time)
 
-	return response
+	return res
 }

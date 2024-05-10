@@ -7,18 +7,17 @@ import (
 	"github.com/zeiss/typhoon/internal/api/models"
 )
 
-// GetSystem ...
-func (db *DB) GetSystem(ctx context.Context, id uuid.UUID) (*models.System, error) {
-	system := &models.System{}
-	err := db.conn.Where("id = ?", id).
+// GetSystem is returning a system by its ID.
+func (db *DB) GetSystem(ctx context.Context, system *models.System) error {
+	err := db.conn.
 		Preload("Clusters").
 		Preload("Operator").
-		First(system).Error
+		First(&system).Error
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return system, nil
+	return nil
 }
 
 // CreateSystem ...
@@ -27,22 +26,13 @@ func (db *DB) CreateSystem(ctx context.Context, system *models.System) error {
 }
 
 // ListSystems ...
-func (db *DB) ListSystems(ctx context.Context, pagination models.Pagination[models.System]) (models.Pagination[models.System], error) {
-	systems := []models.System{}
-
-	err := db.conn.WithContext(ctx).
-		Scopes(models.Paginate(&systems, &pagination, db.conn)).
-		Preload("Clusters").
-		Preload("Operator").
-		Limit(pagination.Limit).
-		Offset(pagination.Offset).
-		Find(&systems).Error
+func (db *DB) ListSystems(ctx context.Context, pagination *models.Pagination[models.System]) error {
+	err := db.conn.WithContext(ctx).Scopes(models.Paginate(&pagination.Rows, pagination, db.conn)).Find(&pagination.Rows).Error
 	if err != nil {
-		return pagination, err
+		return err
 	}
-	pagination.Rows = systems
 
-	return pagination, nil
+	return nil
 }
 
 // DeleteSystem ...

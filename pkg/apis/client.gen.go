@@ -152,7 +152,7 @@ type ClientInterface interface {
 	GetOperatorToken(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ListSystems request
-	ListSystems(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	ListSystems(ctx context.Context, params *ListSystemsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateSystemWithBody request with any body
 	CreateSystemWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -481,8 +481,8 @@ func (c *Client) GetOperatorToken(ctx context.Context, operatorId OperatorId, re
 	return c.Client.Do(req)
 }
 
-func (c *Client) ListSystems(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListSystemsRequest(c.Server)
+func (c *Client) ListSystems(ctx context.Context, params *ListSystemsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListSystemsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -1469,7 +1469,7 @@ func NewGetOperatorTokenRequest(server string, operatorId OperatorId) (*http.Req
 }
 
 // NewListSystemsRequest generates requests for ListSystems
-func NewListSystemsRequest(server string) (*http.Request, error) {
+func NewListSystemsRequest(server string, params *ListSystemsParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1485,6 +1485,44 @@ func NewListSystemsRequest(server string) (*http.Request, error) {
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Offset != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
@@ -2215,7 +2253,7 @@ type ClientWithResponsesInterface interface {
 	GetOperatorTokenWithResponse(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*GetOperatorTokenResponse, error)
 
 	// ListSystemsWithResponse request
-	ListSystemsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListSystemsResponse, error)
+	ListSystemsWithResponse(ctx context.Context, params *ListSystemsParams, reqEditors ...RequestEditorFn) (*ListSystemsResponse, error)
 
 	// CreateSystemWithBodyWithResponse request with any body
 	CreateSystemWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSystemResponse, error)
@@ -3216,8 +3254,8 @@ func (c *ClientWithResponses) GetOperatorTokenWithResponse(ctx context.Context, 
 }
 
 // ListSystemsWithResponse request returning *ListSystemsResponse
-func (c *ClientWithResponses) ListSystemsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListSystemsResponse, error) {
-	rsp, err := c.ListSystems(ctx, reqEditors...)
+func (c *ClientWithResponses) ListSystemsWithResponse(ctx context.Context, params *ListSystemsParams, reqEditors ...RequestEditorFn) (*ListSystemsResponse, error) {
+	rsp, err := c.ListSystems(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}

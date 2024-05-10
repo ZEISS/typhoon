@@ -8,11 +8,11 @@ import (
 
 // ToListAccountResponse ...
 func ToListAccountResponse(output controllers.ListAccountsResponse) openapi.ListAccounts200JSONResponse {
-	response := openapi.ListAccounts200JSONResponse{}
+	res := openapi.ListAccounts200JSONResponse{}
 
-	response.Limit = utils.PtrInt(output.Limit)
-	response.Offset = utils.PtrInt(output.Offset)
-	response.Total = utils.PtrInt(output.Total)
+	res.Limit = utils.PtrInt(output.Limit)
+	res.Offset = utils.PtrInt(output.Offset)
+	res.Total = utils.PtrInt(output.Total)
 
 	results := make([]openapi.Account, 0, len(output.Accounts))
 
@@ -27,9 +27,9 @@ func ToListAccountResponse(output controllers.ListAccountsResponse) openapi.List
 		results = append(results, row)
 	}
 
-	response.Results = &results
+	res.Results = &results
 
-	return response
+	return res
 }
 
 // FromListAccountRequest ...

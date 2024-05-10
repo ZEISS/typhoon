@@ -26,6 +26,12 @@ tags:
   - name: Server
     description: |-
       These are administrative operations.
+  - name: Operator
+    description: |-
+      These are the operators that manage Typhoon.
+  - name: Account
+    description: |-
+      These are the accounts that manage Typhoon.
   - name: Teams
     description: |-
       These are the teams that manage Typhoon.
@@ -98,14 +104,14 @@ paths:
       tags:
         - Operator
       requestBody:
-        $ref: "#/components/requestBodies/CreateOperator"
+        $ref: "./requests/createOperator.yml#/components/requestBodies/CreateOperator"
       responses:
         201:
           description: Created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Operator"
+                $ref: "./schemas/operator.yml#/components/schemas/Operator"
         default:
           description: An error occurred
           content:
@@ -125,7 +131,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Operator"
+                $ref: "./schemas/operator.yml#/components/schemas/Operator"
         default:
           description: An error occurred
           content:
@@ -141,14 +147,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Operator"
+              $ref: "./schemas/operator.yml#/components/schemas/Operator"
       responses:
         200:
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Operator"
+                $ref: "./schemas/operator.yml#/components/schemas/Operator"
         default:
           description: An error occurred
           content:
@@ -592,6 +598,9 @@ paths:
     get:
       summary: List all managed systems.
       operationId: listSystems
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
       tags:
         - System
       description: |-
@@ -707,7 +716,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Operator"
+                $ref: "./schemas/operator.yml#/components/schemas/Operator"
         default:
           description: An error occurred
           content:
@@ -727,7 +736,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Operator"
+                $ref: "./schemas/operator.yml#/components/schemas/Operator"
         default:
           description: An error occurred
           content:
@@ -919,21 +928,6 @@ components:
                 type: string
               description:
                 type: string
-    # Body for creating an operator
-    CreateOperator:
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - name
-            properties:
-              name:
-                type: string
-              description:
-                type: string
-              contactEmail:
-                type: string
     # Body for creating an account
     CreateAccount:
       content:
@@ -1003,20 +997,6 @@ components:
           type: string
           format: JWT
 
-    KeyPair:
-      descriptio: |
-        A KeyPair is a public/private key pair.
-      required:
-        - publicKey
-      type: object
-      properties:
-        publicKey:
-          type: string
-          format: base32
-        privateKey:
-          type: string
-          format: base32
-
     Credentials:
       type: string
       format: binary
@@ -1052,46 +1032,9 @@ components:
           type: string
           description: A description of the system.
         operator:
-          $ref: "#/components/schemas/Operator"
+          $ref: "./schemas/operator.yml#/components/schemas/Operator"
         clusters:
           $ref: "#/components/schemas/Clusters"
-        createdAt:
-          type: string
-          format: date-time
-          description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
-        updatedAt:
-          type: string
-          format: date-time
-          description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
-        deletedAt:
-          type: string
-          format: date-time
-          description: Creation date and time
-          example: "2021-01-30T08:30:00Z"
-
-    Operator:
-      type: object
-      required:
-        - name
-      properties:
-        id:
-          type: string
-          format: uuid
-          readOnly: true
-        name:
-          type: string
-        key:
-          $ref: "#/components/schemas/KeyPair"
-        signingKeys:
-          type: array
-          items:
-            $ref: "#/components/schemas/KeyPair"
-        description:
-          type: string
-        contactEmail:
-          type: string
         createdAt:
           type: string
           format: date-time
@@ -1187,11 +1130,11 @@ components:
         contactEmail:
           type: string
         key:
-          $ref: "#/components/schemas/KeyPair"
+          $ref: "./schemas/keypair.yml#/components/schemas/KeyPair"
         signingKeys:
           type: array
           items:
-            $ref: "#/components/schemas/KeyPair"
+            $ref: "./schemas/keypair.yml#/components/schemas/KeyPair"
         createdAt:
           type: string
           format: date-time
@@ -1370,7 +1313,7 @@ components:
         results:
           type: array
           items:
-            $ref: "#/components/schemas/Operator"
+            $ref: "./schemas/operator.yml#/components/schemas/Operator"
 
     Teams:
       type: object

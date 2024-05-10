@@ -1,0 +1,15 @@
+components:
+  schemas:
+    KeyPair:
+      descriptio: |
+        A KeyPair is a public/private key pair.
+      required:
+        - publicKey
+      type: object
+      properties:
+        publicKey:
+          type: string
+          format: base32
+        privateKey:
+          type: string
+          format: base32

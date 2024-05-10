@@ -3,80 +3,54 @@ package handlers
 import (
 	"context"
 
-	"github.com/zeiss/typhoon/internal/api/models"
-	"github.com/zeiss/typhoon/internal/utils"
 	openapi "github.com/zeiss/typhoon/pkg/apis"
+	"github.com/zeiss/typhoon/pkg/apis/dto"
 )
 
-// ListSystems ...
-func (a *ApiHandlers) ListSystems(ctx context.Context, req openapi.ListSystemsRequestObject) (openapi.ListSystemsResponseObject, error) {
-	pagination := models.Pagination[models.System]{}
+// GetSystem ...
+func (a *ApiHandlers) GetSystem(ctx context.Context, req openapi.GetSystemRequestObject) (openapi.GetSystemResponseObject, error) {
+	query := dto.FromGetSystemRequest(req)
 
-	result, err := a.systems.ListSystems(ctx, pagination)
+	system, err := a.systems.GetSystem(ctx, query)
 	if err != nil {
 		return nil, err
 	}
 
-	res := openapi.ListSystems200JSONResponse{
-		Limit:  utils.PtrInt(result.Limit),
-		Offset: utils.PtrInt(result.Offset),
-		Total:  utils.PtrInt(result.TotalRows),
+	return dto.ToGetSystemResponse(system), nil
+}
+
+// DeleteSystem ...
+func (a *ApiHandlers) DeleteSystem(ctx context.Context, req openapi.DeleteSystemRequestObject) (openapi.DeleteSystemResponseObject, error) {
+	cmd := dto.FromDeleteSystemRequest(req)
+
+	err := a.systems.DeleteSystem(ctx, cmd)
+	if err != nil {
+		return nil, err
 	}
 
-	systems := []openapi.System{}
-	for _, system := range result.Rows {
-		sys := openapi.System{
-			Id:          &system.ID,
-			Name:        system.Name,
-			Description: utils.StrPtr(system.Description),
-			CreatedAt:   &system.CreatedAt,
-			UpdatedAt:   &system.UpdatedAt,
-			DeletedAt:   &system.DeletedAt.Time,
-		}
+	return dto.ToDeleteSystemResponse(), nil
+}
 
-		for _, cluster := range system.Clusters {
-			sys.Clusters = append(sys.Clusters, openapi.Cluster{
-				Name:        cluster.Name,
-				Description: &cluster.Description,
-				ServerURL:   cluster.ServerURL,
-				CreatedAt:   utils.PtrTime(cluster.CreatedAt),
-				DeletedAt:   utils.PtrTime(cluster.DeletedAt.Time),
-				UpdatedAt:   utils.PtrTime(cluster.UpdatedAt),
-			})
-		}
+// ListSystems ...
+func (a *ApiHandlers) ListSystems(ctx context.Context, req openapi.ListSystemsRequestObject) (openapi.ListSystemsResponseObject, error) {
+	query := dto.FromListSystemsRequest(req)
 
-		systems = append(systems, sys)
+	result, err := a.systems.ListSystems(ctx, query)
+	if err != nil {
+		return nil, err
 	}
-	res.Results = &systems
 
-	return openapi.ListSystems200JSONResponse(res), nil
+	return dto.ToListSystemsResponse(result), nil
 }
 
 // CreateSystem ...
 func (a *ApiHandlers) CreateSystem(ctx context.Context, req openapi.CreateSystemRequestObject) (openapi.CreateSystemResponseObject, error) {
-	system := &models.System{}
-	system.Name = req.Body.Name
-	system.OperatorID = utils.PtrUUID(req.Body.OperatorId)
-	system.Clusters = []models.Cluster{}
+	cmd := dto.FromCreateSystemRequest(req)
 
-	for _, cluster := range req.Body.Clusters {
-		system.Clusters = append(system.Clusters, models.Cluster{
-			Name:        cluster.Name,
-			Description: utils.PtrStr(cluster.Description),
-			ServerURL:   cluster.ServerURL,
-		})
-	}
-
-	system, err := a.systems.CreateSystem(ctx, system)
+	system, err := a.systems.CreateSystem(ctx, cmd)
 	if err != nil {
 		return nil, err
 	}
 
-	res := openapi.System{
-		Id:          utils.PtrUUID(system.ID),
-		Name:        system.Name,
-		Description: utils.StrPtr(system.Description),
-	}
-
-	return openapi.CreateSystem201JSONResponse(res), nil
+	return dto.ToCreateSystemResponse(system), nil
 }

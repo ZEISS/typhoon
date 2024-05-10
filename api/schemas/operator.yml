@@ -1,0 +1,38 @@
+components:
+  schemas:
+    Operator:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+        key:
+          $ref: "./keypair.yml#/components/schemas/KeyPair"
+        signingKeys:
+          type: array
+          items:
+            $ref: "./keypair.yml#/components/schemas/KeyPair"
+        description:
+          type: string
+        contactEmail:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"
+        deletedAt:
+          type: string
+          format: date-time
+          description: Creation date and time
+          example: "2021-01-30T08:30:00Z"

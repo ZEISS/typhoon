@@ -1,10 +1,7 @@
 package handlers
 
 import (
-	"context"
-
 	"github.com/zeiss/typhoon/internal/api/controllers"
-	"github.com/zeiss/typhoon/internal/utils"
 	openapi "github.com/zeiss/typhoon/pkg/apis"
 )
 
@@ -25,26 +22,6 @@ type ApiHandlers struct {
 // NewApiHandlers ...
 func NewApiHandlers(systems controllers.SystemsController, teams controllers.TeamsController, version *controllers.VersionController, operators controllers.OperatorsController, accounts controllers.AccountsController, users controllers.UsersController) *ApiHandlers {
 	return &ApiHandlers{systems: systems, teams: teams, version: version, operators: operators, accounts: accounts, users: users}
-}
-
-// GetSystem ...
-func (a *ApiHandlers) GetSystem(ctx context.Context, req openapi.GetSystemRequestObject) (openapi.GetSystemResponseObject, error) {
-	system, err := a.systems.GetSystem(ctx, req.SystemId)
-	if err != nil {
-		return nil, err
-	}
-
-	return openapi.GetSystem200JSONResponse(openapi.System{Id: &system.ID, Name: system.Name, Description: utils.StrPtr(system.Description), Operator: &openapi.Operator{Id: system.OperatorID}}), nil
-}
-
-// DeleteSystem ...
-func (a *ApiHandlers) DeleteSystem(ctx context.Context, req openapi.DeleteSystemRequestObject) (openapi.DeleteSystemResponseObject, error) {
-	err := a.systems.DeleteSystem(ctx, req.SystemId)
-	if err != nil {
-		return nil, err
-	}
-
-	return openapi.DeleteSystem204Response(openapi.DeleteSystem204Response{}), nil
 }
 
 // CreateOperatorSigningKeyGroup ...
