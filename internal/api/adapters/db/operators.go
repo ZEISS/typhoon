@@ -10,17 +10,7 @@ import (
 
 // GetOperator is a method to get an operator from the database.
 func (db *DB) GetOperator(ctx context.Context, op *models.Operator) error {
-	err := db.conn.
-		Preload("SigningKeyGroups").
-		Preload("SigningKeyGroups.Key").
-		Preload("Token").
-		Preload("Key").
-		First(&op).Error
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return db.conn.WithContext(ctx).Preload("SigningKeyGroups").Preload("SigningKeyGroups.Key").Preload("Token").Preload("Key").First(&op).Error
 }
 
 // DeleteOperator ...
@@ -40,10 +30,5 @@ func (db *DB) UpdateOperator(ctx context.Context, op *models.Operator) error {
 
 // ListOperators ...
 func (db *DB) ListOperators(ctx context.Context, pagination *models.Pagination[models.Operator]) error {
-	err := db.conn.WithContext(ctx).Scopes(models.Paginate(&pagination.Rows, pagination, db.conn)).Find(&pagination.Rows).Error
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return db.conn.WithContext(ctx).Scopes(models.Paginate(&pagination.Rows, pagination, db.conn)).Find(&pagination.Rows).Error
 }

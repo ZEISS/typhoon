@@ -9,15 +9,7 @@ import (
 
 // GetSystem is returning a system by its ID.
 func (db *DB) GetSystem(ctx context.Context, system *models.System) error {
-	err := db.conn.
-		Preload("Clusters").
-		Preload("Operator").
-		First(&system).Error
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return db.conn.WithContext(ctx).Preload("Clusters").Preload("Operator").First(&system).Error
 }
 
 // CreateSystem ...
@@ -27,12 +19,7 @@ func (db *DB) CreateSystem(ctx context.Context, system *models.System) error {
 
 // ListSystems ...
 func (db *DB) ListSystems(ctx context.Context, pagination *models.Pagination[models.System]) error {
-	err := db.conn.WithContext(ctx).Scopes(models.Paginate(&pagination.Rows, pagination, db.conn)).Find(&pagination.Rows).Error
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return db.conn.WithContext(ctx).Scopes(models.Paginate(&pagination.Rows, pagination, db.conn)).Find(&pagination.Rows).Error
 }
 
 // DeleteSystem ...
