@@ -12,7 +12,7 @@ type Systems interface {
 	// CreateSystem creates a new system.
 	CreateSystem(ctx context.Context, system *models.System) error
 	// UpdateSystem updates a system.
-	UpdateSystem(ctx context.Context, system *models.System) (*models.System, error)
+	UpdateSystem(ctx context.Context, system *models.System) error
 	// GetSystem retrieves a system by its ID.
 	GetSystem(ctx context.Context, system *models.System) error
 	// ListSystems retrieves all systems.

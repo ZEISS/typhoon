@@ -103,16 +103,20 @@ func (s *SystemsControllerImpl) ListSystems(ctx context.Context, query ListSyste
 }
 
 // UpdateSystemOperator ...
-func (s *SystemsControllerImpl) UpdateSystemOperator(ctx context.Context, systemId, operatorID uuid.UUID) (*models.System, error) {
+func (s *SystemsControllerImpl) UpdateSystemOperator(ctx context.Context, systemId, operatorID uuid.UUID) (models.System, error) {
 	system := models.System{}
 	system.ID = systemId
 
 	err := s.db.GetSystem(ctx, &system)
 	if err != nil {
-		return nil, err
+		return system, err
 	}
 
 	system.OperatorID = &operatorID
 
-	return s.db.UpdateSystem(ctx, &system)
+	if err := s.db.UpdateSystem(ctx, &system); err != nil {
+		return system, err
+	}
+
+	return system, nil
 }

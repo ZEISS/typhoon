@@ -41,10 +41,6 @@ func (db *DB) DeleteSystem(ctx context.Context, id uuid.UUID) error {
 }
 
 // UpdateSystem ...
-func (db *DB) UpdateSystem(ctx context.Context, system *models.System) (*models.System, error) {
-	if err := db.conn.WithContext(ctx).Save(system).Error; err != nil {
-		return nil, err
-	}
-
-	return system, nil
+func (db *DB) UpdateSystem(ctx context.Context, system *models.System) error {
+	return db.conn.WithContext(ctx).Save(system).Error
 }
