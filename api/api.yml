@@ -295,7 +295,7 @@ paths:
       tags:
         - Account
       requestBody:
-        $ref: "#/components/requestBodies/CreateAccount"
+        $ref: "./requests/createAccount.yml#/components/requestBodies/CreateAccount"
       responses:
         201:
           description: Created
@@ -917,19 +917,6 @@ components:
                 format: uuid
     # Body for creating a team
     CreateTeam:
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - name
-            properties:
-              name:
-                type: string
-              description:
-                type: string
-    # Body for creating an account
-    CreateAccount:
       content:
         application/json:
           schema:

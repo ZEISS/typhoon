@@ -8,19 +8,31 @@ import (
 	"github.com/zeiss/typhoon/internal/api/ports"
 )
 
+// CreateAccountRequest ...
+type CreateAccountRequest struct {
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	SystemID    uuid.UUID `json:"system_id"`
+}
+
+// CreateAccountResponse ...
+type CreateAccountResponse struct {
+	Account models.Account `json:"account"`
+}
+
 // ListAccountsRequest ...
 type ListAccountsRequest struct {
-	SystemID uuid.UUID
-	Limit    int
-	Offset   int
+	SystemID uuid.UUID `json:"system_id"`
+	Limit    int       `json:"limit"`
+	Offset   int       `json:"offset"`
 }
 
 // ListAccountsResponse ...
 type ListAccountsResponse struct {
-	Accounts []models.Account
-	Total    int
-	Offset   int
-	Limit    int
+	Accounts []models.Account `json:"accounts"`
+	Total    int              `json:"total"`
+	Offset   int              `json:"offset"`
+	Limit    int              `json:"limit"`
 }
 
 // AccountsController is the interface that wraps the methods to access accounts.

@@ -112,7 +112,7 @@ func (s *SystemsControllerImpl) UpdateSystemOperator(ctx context.Context, system
 		return system, err
 	}
 
-	system.OperatorID = &operatorID
+	system.OperatorID = operatorID
 
 	if err := s.db.UpdateSystem(ctx, &system); err != nil {
 		return system, err

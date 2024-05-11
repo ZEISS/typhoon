@@ -16,12 +16,18 @@ type Account struct {
 	ID uuid.UUID `json:"id" gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
 	// Name is the name of the account.
 	Name string `json:"name"`
+	// Description is the description of the account.
+	Description *string `json:"description"`
 	// Key is the issuer key identifier.
 	Key   NKey   `json:"key"`
 	KeyID string `json:"key_id" gorm:"foreignKey:ID"`
 	// Token is the JWT token used to authenticate the account.
 	Token   Token  `json:"token" gorm:"foreignKey:TokenID"`
 	TokenID string `json:"token_id"`
+	// System is the system the account belongs to.
+	System *System `json:"system" gorm:"foreignKey:SystemID"`
+	// SystemID is the system the account belongs to.
+	SystemID uuid.UUID `json:"system_id"`
 	// SigningKeyGroups is the list of signing key groups the account has.
 	SigningKeyGroups []SigningKeyGroup `json:"signing_key_groups" gorm:"many2many:account_signing_key_groups;foreignKey:ID;joinForeignKey:AccountID;joinReferences:SigningKeyGroupID"`
 	// SignedBy is the entity that signs this one.

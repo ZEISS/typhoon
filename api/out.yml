@@ -902,18 +902,6 @@ components:
                 type: string
               description:
                 type: string
-    CreateAccount:
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - name
-            properties:
-              name:
-                type: string
-              description:
-                type: string
     UpdateAccount:
       content:
         application/json:
@@ -953,6 +941,22 @@ components:
               description:
                 type: string
               contactEmail:
+                type: string
+    CreateAccount:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - systemId
+              - name
+            properties:
+              systemId:
+                type: string
+                format: uuid
+              name:
+                type: string
+              description:
                 type: string
   securitySchemes:
     bearerAuth:
