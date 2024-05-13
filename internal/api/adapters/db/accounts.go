@@ -9,22 +9,8 @@ import (
 )
 
 // GetAccount ...
-func (db *DB) GetAccount(ctx context.Context, id uuid.UUID) (*models.Account, error) {
-	account := &models.Account{}
-	err := db.conn.
-		Where("id = ?", id).
-		Preload("Token").
-		Preload("Operator").
-		Preload("Operator.Token").
-		Preload("Operator.SigningKeys").
-		Preload("SigningKeys").
-		Preload("Users").
-		First(account).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return account, nil
+func (db *DB) GetAccount(ctx context.Context, account *models.Account) error {
+	return db.conn.WithContext(ctx).Preload("Token").Preload("Operator").Preload("SigningKeyGroups").Preload("SigningKeyGroups.Key").Preload("Key").First(account).Error
 }
 
 // CreateAccount ...

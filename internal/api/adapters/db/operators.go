@@ -9,7 +9,7 @@ import (
 
 // GetOperator is a method to get an operator from the database.
 func (db *DB) GetOperator(ctx context.Context, op *models.Operator) error {
-	return db.conn.WithContext(ctx).Preload("SigningKeyGroups").Preload("SigningKeyGroups.Key").Preload("Token").Preload("Key").First(&op).Error
+	return db.conn.WithContext(ctx).Preload("SigningKeyGroups").Preload("SigningKeyGroups.Key").Preload("SystemAdminAccount").Preload("Token").Preload("Key").First(op).Error
 }
 
 // DeleteOperator ...

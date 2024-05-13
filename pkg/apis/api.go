@@ -48,6 +48,16 @@ func (u *Unimplemented) GetOperatorToken(ctx context.Context, request GetOperato
 	return nil, fiber.NewError(fiber.StatusNotImplemented, "not implemented")
 }
 
+// GetOperatorSystemAccount ...
+func (u *Unimplemented) GetOperatorSystemAccount(ctx context.Context, request GetOperatorSystemAccountRequestObject) (GetOperatorSystemAccountResponseObject, error) {
+	return nil, fiber.NewError(fiber.StatusNotImplemented, "not implemented")
+}
+
+// UpdateOperatorSystemAccount ...
+func (u *Unimplemented) UpdateOperatorSystemAccount(ctx context.Context, request UpdateOperatorSystemAccountRequestObject) (UpdateOperatorSystemAccountResponseObject, error) {
+	return nil, fiber.NewError(fiber.StatusNotImplemented, "not implemented")
+}
+
 // CreateAccount ...
 func (u *Unimplemented) CreateAccount(ctx context.Context, request CreateAccountRequestObject) (CreateAccountResponseObject, error) {
 	return nil, fiber.NewError(fiber.StatusNotImplemented, "not implemented")

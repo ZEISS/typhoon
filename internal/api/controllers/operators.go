@@ -8,6 +8,7 @@ import (
 	"github.com/nats-io/nkeys"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/api/ports"
+	"github.com/zeiss/typhoon/internal/utils"
 )
 
 var _ OperatorsController = (*OperatorsControllerImpl)(nil)
@@ -48,6 +49,17 @@ type ListOperatorsQuery struct {
 	Sort   string `json:"sort"`
 }
 
+// UpdateOperatorSystemAccountCommand ..,
+type UpdateOperatorSystemAccountCommand struct {
+	OperatorID uuid.UUID `json:"operator_id" validate:"required"`
+	AccountID  uuid.UUID `json:"system_id" validate:"required"`
+}
+
+// GetOperatorSystemAccountQuery ...
+type GetOperatorSystemAccountQuery struct {
+	OperatorID uuid.UUID `json:"operator_id" validate:"required"`
+}
+
 // OperatorsController is the interface that wraps the methods to access operators.
 type OperatorsController interface {
 	// CreateOperator creates a new operator.
@@ -62,15 +74,19 @@ type OperatorsController interface {
 	ListOperators(ctx context.Context, query ListOperatorsQuery) (models.Pagination[models.Operator], error)
 	// DeleteOperator deletes an operator.
 	DeleteOperator(ctx context.Context, cmd DeleteOperatorCommand) error
+	// UpdateOperatorSystemAccount ...
+	UpdateOperatorSystemAccount(ctx context.Context, cmd UpdateOperatorSystemAccountCommand) (models.Account, error)
+	// GetOperatorSystemAccount ...
+	GetOperatorSystemAccount(ctx context.Context, query GetOperatorSystemAccountQuery) (models.Account, error)
 }
 
 // OperatorsControllerImpl is the controller for operators.
 type OperatorsControllerImpl struct {
-	db ports.Operators
+	db ports.Repositories
 }
 
 // NewOperatorsController returns a new OperatorsController.
-func NewOperatorsController(db ports.Operators) *OperatorsControllerImpl {
+func NewOperatorsController(db ports.Repositories) *OperatorsControllerImpl {
 	return &OperatorsControllerImpl{db}
 }
 
@@ -213,6 +229,71 @@ func (c *OperatorsControllerImpl) CreateOperatorSigningKeyGroup(ctx context.Cont
 	}
 
 	return skg, nil
+}
+
+// GetOperatorSystemAccount ...
+func (c *OperatorsControllerImpl) GetOperatorSystemAccount(ctx context.Context, query GetOperatorSystemAccountQuery) (models.Account, error) {
+	op := models.Operator{ID: query.OperatorID}
+	ac := models.Account{}
+
+	err := c.db.GetOperator(ctx, &op)
+	if err != nil {
+		return ac, err
+	}
+
+	if op.SystemAdminAccount != nil {
+		ac = *op.SystemAdminAccount
+	}
+
+	return ac, nil
+}
+
+// UpdateOperatorSystemAccount ...
+func (c *OperatorsControllerImpl) UpdateOperatorSystemAccount(ctx context.Context, cmd UpdateOperatorSystemAccountCommand) (models.Account, error) {
+	op := models.Operator{ID: cmd.OperatorID}
+	ac := models.Account{ID: cmd.AccountID}
+
+	err := c.db.GetAccount(ctx, &ac)
+	if err != nil {
+		return ac, err
+	}
+
+	err = c.db.GetOperator(ctx, &op)
+	if err != nil {
+		return ac, err
+	}
+
+	op.SystemAdminAccountID = utils.PtrUUID(cmd.AccountID)
+
+	pk, err := nkeys.FromSeed(op.Key.Seed)
+	if err != nil {
+		return ac, err
+	}
+
+	oc := jwt.NewOperatorClaims(op.Key.ID)
+	oc.Name = op.Name
+	oc.SystemAccount = ac.Key.ID
+
+	for _, sk := range op.SigningKeyGroups {
+		oc.SigningKeys.Add(sk.Key.ID, sk.Key.ID, sk.Key.ID)
+	}
+
+	token, err := oc.Encode(pk)
+	if err != nil {
+		return ac, err
+	}
+
+	op.Token = models.Token{
+		ID:    op.Key.ID,
+		Token: token,
+	}
+
+	err = c.db.UpdateOperator(ctx, &op)
+	if err != nil {
+		return ac, err
+	}
+
+	return ac, nil
 }
 
 // CreateOperatorAccount ...

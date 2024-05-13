@@ -148,6 +148,14 @@ type ClientInterface interface {
 
 	CreateOperatorSigningKeyGroup(ctx context.Context, operatorId OperatorId, body CreateOperatorSigningKeyGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetOperatorSystemAccount request
+	GetOperatorSystemAccount(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateOperatorSystemAccountWithBody request with any body
+	UpdateOperatorSystemAccountWithBody(ctx context.Context, operatorId OperatorId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateOperatorSystemAccount(ctx context.Context, operatorId OperatorId, body UpdateOperatorSystemAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetOperatorToken request
 	GetOperatorToken(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -459,6 +467,42 @@ func (c *Client) CreateOperatorSigningKeyGroupWithBody(ctx context.Context, oper
 
 func (c *Client) CreateOperatorSigningKeyGroup(ctx context.Context, operatorId OperatorId, body CreateOperatorSigningKeyGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateOperatorSigningKeyGroupRequest(c.Server, operatorId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetOperatorSystemAccount(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetOperatorSystemAccountRequest(c.Server, operatorId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateOperatorSystemAccountWithBody(ctx context.Context, operatorId OperatorId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateOperatorSystemAccountRequestWithBody(c.Server, operatorId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateOperatorSystemAccount(ctx context.Context, operatorId OperatorId, body UpdateOperatorSystemAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateOperatorSystemAccountRequest(c.Server, operatorId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1434,6 +1478,87 @@ func NewCreateOperatorSigningKeyGroupRequestWithBody(server string, operatorId O
 	return req, nil
 }
 
+// NewGetOperatorSystemAccountRequest generates requests for GetOperatorSystemAccount
+func NewGetOperatorSystemAccountRequest(server string, operatorId OperatorId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/operators/%s/system-account", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateOperatorSystemAccountRequest calls the generic UpdateOperatorSystemAccount builder with application/json body
+func NewUpdateOperatorSystemAccountRequest(server string, operatorId OperatorId, body UpdateOperatorSystemAccountJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateOperatorSystemAccountRequestWithBody(server, operatorId, "application/json", bodyReader)
+}
+
+// NewUpdateOperatorSystemAccountRequestWithBody generates requests for UpdateOperatorSystemAccount with any type of body
+func NewUpdateOperatorSystemAccountRequestWithBody(server string, operatorId OperatorId, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "operatorId", runtime.ParamLocationPath, operatorId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/operators/%s/system-account", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewGetOperatorTokenRequest generates requests for GetOperatorToken
 func NewGetOperatorTokenRequest(server string, operatorId OperatorId) (*http.Request, error) {
 	var err error
@@ -2249,6 +2374,14 @@ type ClientWithResponsesInterface interface {
 
 	CreateOperatorSigningKeyGroupWithResponse(ctx context.Context, operatorId OperatorId, body CreateOperatorSigningKeyGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateOperatorSigningKeyGroupResponse, error)
 
+	// GetOperatorSystemAccountWithResponse request
+	GetOperatorSystemAccountWithResponse(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*GetOperatorSystemAccountResponse, error)
+
+	// UpdateOperatorSystemAccountWithBodyWithResponse request with any body
+	UpdateOperatorSystemAccountWithBodyWithResponse(ctx context.Context, operatorId OperatorId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateOperatorSystemAccountResponse, error)
+
+	UpdateOperatorSystemAccountWithResponse(ctx context.Context, operatorId OperatorId, body UpdateOperatorSystemAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateOperatorSystemAccountResponse, error)
+
 	// GetOperatorTokenWithResponse request
 	GetOperatorTokenWithResponse(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*GetOperatorTokenResponse, error)
 
@@ -2662,6 +2795,52 @@ func (r CreateOperatorSigningKeyGroupResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r CreateOperatorSigningKeyGroupResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetOperatorSystemAccountResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Account
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r GetOperatorSystemAccountResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetOperatorSystemAccountResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateOperatorSystemAccountResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *Account
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateOperatorSystemAccountResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateOperatorSystemAccountResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3242,6 +3421,32 @@ func (c *ClientWithResponses) CreateOperatorSigningKeyGroupWithResponse(ctx cont
 		return nil, err
 	}
 	return ParseCreateOperatorSigningKeyGroupResponse(rsp)
+}
+
+// GetOperatorSystemAccountWithResponse request returning *GetOperatorSystemAccountResponse
+func (c *ClientWithResponses) GetOperatorSystemAccountWithResponse(ctx context.Context, operatorId OperatorId, reqEditors ...RequestEditorFn) (*GetOperatorSystemAccountResponse, error) {
+	rsp, err := c.GetOperatorSystemAccount(ctx, operatorId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetOperatorSystemAccountResponse(rsp)
+}
+
+// UpdateOperatorSystemAccountWithBodyWithResponse request with arbitrary body returning *UpdateOperatorSystemAccountResponse
+func (c *ClientWithResponses) UpdateOperatorSystemAccountWithBodyWithResponse(ctx context.Context, operatorId OperatorId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateOperatorSystemAccountResponse, error) {
+	rsp, err := c.UpdateOperatorSystemAccountWithBody(ctx, operatorId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateOperatorSystemAccountResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateOperatorSystemAccountWithResponse(ctx context.Context, operatorId OperatorId, body UpdateOperatorSystemAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateOperatorSystemAccountResponse, error) {
+	rsp, err := c.UpdateOperatorSystemAccount(ctx, operatorId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateOperatorSystemAccountResponse(rsp)
 }
 
 // GetOperatorTokenWithResponse request returning *GetOperatorTokenResponse
@@ -3897,6 +4102,72 @@ func ParseCreateOperatorSigningKeyGroupResponse(rsp *http.Response) (*CreateOper
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
 		var dest SigningKeyGroup
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetOperatorSystemAccountResponse parses an HTTP response from a GetOperatorSystemAccountWithResponse call
+func ParseGetOperatorSystemAccountResponse(rsp *http.Response) (*GetOperatorSystemAccountResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetOperatorSystemAccountResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Account
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateOperatorSystemAccountResponse parses an HTTP response from a UpdateOperatorSystemAccountWithResponse call
+func ParseUpdateOperatorSystemAccountResponse(rsp *http.Response) (*UpdateOperatorSystemAccountResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateOperatorSystemAccountResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Account
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

@@ -221,6 +221,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /operators/{operatorId}/system-account:
+    get:
+      summary: Gets the system account for an operator
+      operationId: getOperatorSystemAccount
+      parameters:
+        - $ref: '#/components/parameters/operatorId'
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Updates the system account for an operator
+      operationId: updateOperatorSystemAccount
+      parameters:
+        - $ref: '#/components/parameters/operatorId'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateOperatorSystemAccount'
+      responses:
+        '201':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /operators/{operatorId}/token:
     get:
       summary: Gets a token for an operator
@@ -888,6 +927,17 @@ components:
               - operatorId
             properties:
               operatorId:
+                type: string
+                format: uuid
+    UpdateOperatorSystemAccount:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - accountId
+            properties:
+              accountId:
                 type: string
                 format: uuid
     CreateTeam:

@@ -78,3 +78,27 @@ func (a *ApiHandlers) DeleteOperator(ctx context.Context, req openapi.DeleteOper
 
 	return dto.ToDeleteOperatorResponse(), nil
 }
+
+// GetOperatorSystemAccount handles the request to get the system account for an operator.
+func (a *ApiHandlers) GetOperatorSystemAccount(ctx context.Context, req openapi.GetOperatorSystemAccountRequestObject) (openapi.GetOperatorSystemAccountResponseObject, error) {
+	query := dto.FromGetOperatorSystemAccountRequest(req)
+
+	result, err := a.operators.GetOperatorSystemAccount(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return dto.ToGetOperatorSystemAccountResponse(result), nil
+}
+
+// UpdateOperatorSystemAccount handles the request to update the system account for an operator.
+func (a *ApiHandlers) UpdateOperatorSystemAccount(ctx context.Context, req openapi.UpdateOperatorSystemAccountRequestObject) (openapi.UpdateOperatorSystemAccountResponseObject, error) {
+	cmd := dto.FromUpdateOperatorSystemAccountRequest(req)
+
+	result, err := a.operators.UpdateOperatorSystemAccount(ctx, cmd)
+	if err != nil {
+		return nil, err
+	}
+
+	return dto.ToUpdateOperatorSystemAccountResponse(result), nil
+}

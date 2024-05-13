@@ -132,3 +132,44 @@ func ToCreateOperatorSigningKeyGroupResponse(skg models.SigningKeyGroup) openapi
 
 	return res
 }
+
+// FromGetOperatorSystemAccountRequest ...
+func FromGetOperatorSystemAccountRequest(req openapi.GetOperatorSystemAccountRequestObject) controllers.GetOperatorSystemAccountQuery {
+	return controllers.GetOperatorSystemAccountQuery{
+		OperatorID: req.OperatorId,
+	}
+}
+
+// ToGetOperatorSystemAccountResponse ...
+func ToGetOperatorSystemAccountResponse(account models.Account) openapi.GetOperatorSystemAccount200JSONResponse {
+	res := openapi.GetOperatorSystemAccount200JSONResponse{}
+
+	res.Id = utils.PtrUUID(account.ID)
+	res.Name = account.Name
+	res.CreatedAt = utils.PtrTime(account.CreatedAt)
+	res.UpdatedAt = utils.PtrTime(account.UpdatedAt)
+	res.DeletedAt = utils.PtrTime(account.DeletedAt.Time)
+
+	return res
+}
+
+// FromUpdateOperatorSystemAccountRequest ...
+func FromUpdateOperatorSystemAccountRequest(req openapi.UpdateOperatorSystemAccountRequestObject) controllers.UpdateOperatorSystemAccountCommand {
+	return controllers.UpdateOperatorSystemAccountCommand{
+		OperatorID: req.OperatorId,
+		AccountID:  req.Body.AccountId,
+	}
+}
+
+// ToUpdateOperatorSystemAccountResponse ...
+func ToUpdateOperatorSystemAccountResponse(account models.Account) openapi.UpdateOperatorSystemAccount201JSONResponse {
+	res := openapi.UpdateOperatorSystemAccount201JSONResponse{}
+
+	res.Id = utils.PtrUUID(account.ID)
+	res.Name = account.Name
+	res.CreatedAt = utils.PtrTime(account.CreatedAt)
+	res.UpdatedAt = utils.PtrTime(account.UpdatedAt)
+	res.DeletedAt = utils.PtrTime(account.DeletedAt.Time)
+
+	return res
+}
