@@ -16,4 +16,6 @@ type Operators interface {
 	GetOperator(ctx context.Context, operator *models.Operator) error
 	// ListOperators returns a list of operators.
 	ListOperators(ctx context.Context, pagination *models.Pagination[models.Operator]) error
+	// DeleteOperator deletes the operator with the given ID.
+	DeleteOperator(ctx context.Context, operator *models.Operator) error
 }

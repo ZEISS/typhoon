@@ -10,7 +10,7 @@ import (
 // Cluster ...
 type Cluster struct {
 	// ID is the unique identifier for the cluster.
-	ID string `json:"id" gorm:"primaryKey,type:uuid;default:gen_random_uuid()"`
+	ID uuid.UUID `json:"id" gorm:"primaryKey,type:uuid;default:gen_random_uuid()"`
 	// Name is the name of the cluster.
 	Name string `json:"name" gorm:"unique" validate:"required,min=3,max=128"`
 	// Description is the description of the cluster.

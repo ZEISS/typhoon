@@ -27,6 +27,8 @@ type Operator struct {
 	TokenID string `json:"token_id"`
 	// Systems is the list of systems that the operator has.
 	Systems []System `json:"systems" gorm:"many2many:operator_systems;foreignKey:ID;joinForeignKey:OperatorID;joinReferences:SystemID"`
+	// Accounts is the list of accounts that the operator has.
+	Accounts []Account `json:"accounts" gorm:"many2many:operator_accounts;foreignKey:ID;joinForeignKey:OperatorID;joinReferences:AccountID"`
 	// SigningKeyGroups is the list of signing key groups the account has.
 	SigningKeyGroups []SigningKeyGroup `json:"signing_key_groups" gorm:"many2many:operator_signing_key_groups;foreignKey:ID;joinForeignKey:OperatorID;joinReferences:SigningKeyGroupID"`
 	// CreatedAt is the time the operator was created.

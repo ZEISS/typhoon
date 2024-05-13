@@ -33,11 +33,6 @@ type System struct {
 	Operator   *Operator `json:"operator" gorm:"foreignKey:OperatorID"`
 	OperatorID uuid.UUID `json:"operator_id"`
 
-	// SystemAccount is the account that is used to control the system.
-	// The system account needs to be signed by the operator.
-	SystemAccount   Account   `json:"system_account" gorm:"foreignKey:SystemAccountID"`
-	SystemAccountID uuid.UUID `json:"system_account_id"`
-
 	// Tags is the tags that are associated with the system.
 	Tags []*Tag `json:"tags" gorm:"polymorphic:Taggable;polymorphicValue:system;"`
 

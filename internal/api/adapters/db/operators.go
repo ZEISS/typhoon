@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"gorm.io/gorm"
 )
@@ -14,8 +13,8 @@ func (db *DB) GetOperator(ctx context.Context, op *models.Operator) error {
 }
 
 // DeleteOperator ...
-func (db *DB) DeleteOperator(ctx context.Context, id uuid.UUID) error {
-	return db.conn.WithContext(ctx).Where("id = ?", id).Delete(&models.Operator{}).Error
+func (db *DB) DeleteOperator(ctx context.Context, op *models.Operator) error {
+	return db.conn.WithContext(ctx).Delete(op).Error
 }
 
 // CreateOperator is a method to create an operator in the database.

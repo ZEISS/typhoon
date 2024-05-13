@@ -95,3 +95,17 @@ func ToCreateOperatorResponse(op models.Operator) openapi.CreateOperator201JSONR
 
 	return res
 }
+
+// FromDeleteOperatorRequest ...
+func FromDeleteOperatorRequest(req openapi.DeleteOperatorRequestObject) controllers.DeleteOperatorCommand {
+	return controllers.DeleteOperatorCommand{
+		ID: req.OperatorId,
+	}
+}
+
+// ToDeleteOperatorResponse ...
+func ToDeleteOperatorResponse() openapi.DeleteOperator204Response {
+	res := openapi.DeleteOperator204Response{}
+
+	return res
+}

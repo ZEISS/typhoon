@@ -54,3 +54,15 @@ func (a *ApiHandlers) GetOperatorToken(ctx context.Context, req openapi.GetOpera
 
 	return dto.ToGetOperatorTokenResponse(result), nil
 }
+
+// DeleteOperator handles the request to delete an operator.
+func (a *ApiHandlers) DeleteOperator(ctx context.Context, req openapi.DeleteOperatorRequestObject) (openapi.DeleteOperatorResponseObject, error) {
+	cmd := dto.FromDeleteOperatorRequest(req)
+
+	err := a.operators.DeleteOperator(ctx, cmd)
+	if err != nil {
+		return nil, err
+	}
+
+	return dto.ToDeleteOperatorResponse(), nil
+}

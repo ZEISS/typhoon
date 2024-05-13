@@ -10,8 +10,9 @@ import (
 
 // CreateSystemCommand ...
 type CreateSystemCommand struct {
-	Name        string `json:"name" validate:"required,min=3,max=255"`
-	Description string `json:"description" validate:"max=1024"`
+	Name        string    `json:"name" validate:"required,min=3,max=255"`
+	Description string    `json:"description" validate:"max=1024"`
+	OperatorID  uuid.UUID `json:"operator_id" validate:"required"`
 }
 
 // DeleteSystemCommand ...
@@ -61,6 +62,7 @@ func (s *SystemsControllerImpl) CreateSystem(ctx context.Context, cmd CreateSyst
 	system := models.System{}
 	system.Name = cmd.Name
 	system.Description = cmd.Description
+	system.OperatorID = cmd.OperatorID
 
 	if err := s.db.CreateSystem(ctx, &system); err != nil {
 		return system, err

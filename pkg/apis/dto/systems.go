@@ -12,6 +12,7 @@ func FromCreateSystemRequest(req openapi.CreateSystemRequestObject) controllers.
 	return controllers.CreateSystemCommand{
 		Name:        req.Body.Name,
 		Description: utils.PtrStr(req.Body.Description),
+		OperatorID:  req.Body.OperatorId,
 	}
 }
 
@@ -21,6 +22,17 @@ func ToCreateSystemResponse(system models.System) openapi.CreateSystem201JSONRes
 	res.Id = utils.PtrUUID(system.ID)
 	res.Name = system.Name
 	res.Description = utils.StrPtr(system.Description)
+
+	for _, cluster := range system.Clusters {
+		res.Clusters = append(res.Clusters, openapi.Cluster{
+			Id:          utils.PtrUUID(cluster.ID),
+			Name:        cluster.Name,
+			Description: utils.StrPtr(cluster.Description),
+			CreatedAt:   utils.PtrTime(cluster.CreatedAt),
+			UpdatedAt:   utils.PtrTime(cluster.UpdatedAt),
+			DeletedAt:   utils.PtrTime(cluster.DeletedAt.Time),
+		})
+	}
 
 	return res
 }

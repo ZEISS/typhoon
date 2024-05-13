@@ -35,6 +35,11 @@ type GetOperatorTokenQuery struct {
 	ID uuid.UUID `json:"id" validate:"required"`
 }
 
+// DeleteOperatorCommand ...
+type DeleteOperatorCommand struct {
+	ID uuid.UUID `json:"id" validate:"required"`
+}
+
 // ListOperatorsQuery ...
 type ListOperatorsQuery struct {
 	Limit  int    `json:"limit" validate:"required"`
@@ -55,6 +60,8 @@ type OperatorsController interface {
 	GetOperatorToken(ctx context.Context, query GetOperatorTokenQuery) (models.Token, error)
 	// ListOperators lists operators.
 	ListOperators(ctx context.Context, query ListOperatorsQuery) (models.Pagination[models.Operator], error)
+	// DeleteOperator deletes an operator.
+	DeleteOperator(ctx context.Context, cmd DeleteOperatorCommand) error
 }
 
 // OperatorsControllerImpl is the controller for operators.
@@ -69,7 +76,10 @@ func NewOperatorsController(db ports.Operators) *OperatorsControllerImpl {
 
 // CreateOperator is the method to create a new operator.
 func (c *OperatorsControllerImpl) CreateOperator(ctx context.Context, cmd CreateOperatorCommand) (models.Operator, error) {
-	op := models.Operator{}
+	op := models.Operator{
+		Name:        cmd.Name,
+		Description: cmd.Description,
+	}
 
 	pk, err := nkeys.CreateOperator()
 	if err != nil {
@@ -85,22 +95,6 @@ func (c *OperatorsControllerImpl) CreateOperator(ctx context.Context, cmd Create
 	if err != nil {
 		return op, err
 	}
-
-	// // Create a signing key for the operator
-	// sk, err := nkeys.CreateOperator()
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// spk, err := sk.PublicKey()
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// skSeed, err := sk.Seed()
-	// if err != nil {
-	// 	return nil, err
-	// }
 
 	// Create a token for the operator
 	oc := jwt.NewOperatorClaims(id)
@@ -160,6 +154,13 @@ func (c *OperatorsControllerImpl) GetOperatorToken(ctx context.Context, query Ge
 	}
 
 	return op.Token, nil
+}
+
+// DeleteOperator ...
+func (c *OperatorsControllerImpl) DeleteOperator(ctx context.Context, cmd DeleteOperatorCommand) error {
+	op := models.Operator{ID: cmd.ID}
+
+	return c.db.DeleteOperator(ctx, &op)
 }
 
 // CreateOperatorSigningKeyGroup ...
