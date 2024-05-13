@@ -8,9 +8,9 @@ import (
 )
 
 // FromCreateAccountRequest ...
-func FromCreateAccountRequest(req openapi.CreateAccountRequestObject) controllers.CreateAccountRequest {
-	return controllers.CreateAccountRequest{
-		SystemID:    req.Body.SystemId,
+func FromCreateAccountRequest(req openapi.CreateAccountRequestObject) controllers.CreateAccountCommand {
+	return controllers.CreateAccountCommand{
+		OperatorID:  req.Body.OperatorId,
 		Name:        req.Body.Name,
 		Description: utils.PtrStr(req.Body.Description),
 	}
@@ -58,7 +58,8 @@ func ToListAccountResponse(output controllers.ListAccountsResponse) openapi.List
 // FromListAccountRequest ...
 func FromListAccountRequest(req openapi.ListAccountsRequestObject) controllers.ListAccountsRequest {
 	return controllers.ListAccountsRequest{
-		Limit:  utils.IntPtr(req.Params.Limit),
-		Offset: utils.IntPtr(req.Params.Offset),
+		OperatorID: utils.UUIDPtr(req.Body.OperatorId),
+		Limit:      utils.IntPtr(req.Params.Limit),
+		Offset:     utils.IntPtr(req.Params.Offset),
 	}
 }

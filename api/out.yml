@@ -876,7 +876,7 @@ components:
           schema:
             type: object
             properties:
-              systemId:
+              operatorId:
                 type: string
                 format: uuid
     UpdateSystemOperator:
@@ -948,10 +948,10 @@ components:
           schema:
             type: object
             required:
-              - systemId
+              - operatorId
               - name
             properties:
-              systemId:
+              operatorId:
                 type: string
                 format: uuid
               name:

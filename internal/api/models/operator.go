@@ -25,6 +25,9 @@ type Operator struct {
 	// Token is the JWT token used to authenticate the account.
 	Token   Token  `json:"token" gorm:"foreignKey:TokenID"`
 	TokenID string `json:"token_id"`
+	// SystemAdminAccount is the account that is used to manage the systems.
+	SystemAdminAccount   *Account   `json:"system_admin_account" gorm:"foreignKey:SystemAdminAccountID"`
+	SystemAdminAccountID *uuid.UUID `json:"system_admin_account_id"`
 	// Systems is the list of systems that the operator has.
 	Systems []System `json:"systems" gorm:"many2many:operator_systems;foreignKey:ID;joinForeignKey:OperatorID;joinReferences:SystemID"`
 	// Accounts is the list of accounts that the operator has.

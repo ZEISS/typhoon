@@ -899,7 +899,7 @@ components:
           schema:
             type: object
             properties:
-              systemId:
+              operatorId:
                 type: string
                 format: uuid
 

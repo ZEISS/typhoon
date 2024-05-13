@@ -31,6 +31,18 @@ func (a *ApiHandlers) GetOperator(ctx context.Context, req openapi.GetOperatorRe
 	return dto.ToGetOperatorResponse(result), nil
 }
 
+// CreateOperatorSigningKeyGroup handles the request to create a new signing key group.
+func (a *ApiHandlers) CreateOperatorSigningKeyGroup(ctx context.Context, req openapi.CreateOperatorSigningKeyGroupRequestObject) (openapi.CreateOperatorSigningKeyGroupResponseObject, error) {
+	cmd := dto.FromCreateSigningKeyGroupRequest(req)
+
+	signingKeyGroup, err := a.operators.CreateOperatorSigningKeyGroup(ctx, cmd)
+	if err != nil {
+		return nil, err
+	}
+
+	return dto.ToCreateOperatorSigningKeyGroupResponse(signingKeyGroup), nil
+}
+
 // ListOperators handles the request to list operators.
 func (a *ApiHandlers) ListOperators(ctx context.Context, req openapi.ListOperatorsRequestObject) (openapi.ListOperatorsResponseObject, error) {
 	query := dto.FromListOperatorsRequest(req)

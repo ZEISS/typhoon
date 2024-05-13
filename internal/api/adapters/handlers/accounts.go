@@ -19,3 +19,15 @@ func (a *ApiHandlers) ListAccounts(ctx context.Context, request openapi.ListAcco
 
 	return dto.ToListAccountResponse(output), nil
 }
+
+// CreateAccount is the handler for createAccount operation.
+func (a *ApiHandlers) CreateAccount(ctx context.Context, request openapi.CreateAccountRequestObject) (openapi.CreateAccountResponseObject, error) {
+	cmd := dto.FromCreateAccountRequest(request)
+
+	account, err := a.accounts.CreateAccount(ctx, cmd)
+	if err != nil {
+		return nil, fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return dto.ToCreateAccountResponse(account), nil
+}

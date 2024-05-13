@@ -4,27 +4,25 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/nats-io/jwt"
+	"github.com/nats-io/nkeys"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/api/ports"
+	"github.com/zeiss/typhoon/internal/utils"
 )
 
-// CreateAccountRequest ...
-type CreateAccountRequest struct {
+// CreateAccountCommand ...
+type CreateAccountCommand struct {
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
-	SystemID    uuid.UUID `json:"system_id"`
-}
-
-// CreateAccountResponse ...
-type CreateAccountResponse struct {
-	Account models.Account `json:"account"`
+	OperatorID  uuid.UUID `json:"operator_id"`
 }
 
 // ListAccountsRequest ...
 type ListAccountsRequest struct {
-	SystemID uuid.UUID `json:"system_id"`
-	Limit    int       `json:"limit"`
-	Offset   int       `json:"offset"`
+	OperatorID uuid.UUID `json:"system_id"`
+	Limit      int       `json:"limit"`
+	Offset     int       `json:"offset"`
 }
 
 // ListAccountsResponse ...
@@ -38,7 +36,7 @@ type ListAccountsResponse struct {
 // AccountsController is the interface that wraps the methods to access accounts.
 type AccountsController interface {
 	// CreateAccount creates a new account.
-	CreateAccount(ctx context.Context, name string, operatorID uuid.UUID) (*models.Account, error)
+	CreateAccount(ctx context.Context, cmd CreateAccountCommand) (models.Account, error)
 	// DeleteToken deletes a token.
 	DeleteToken(ctx context.Context, accountID uuid.UUID) error
 	// CreateSigningKeyGroup creates a new signing key group.
@@ -61,89 +59,80 @@ func NewAccountsController(db ports.Repositories) *accountsController {
 }
 
 // CreateAccount ...
-func (c *accountsController) CreateAccount(ctx context.Context, name string, operatorID uuid.UUID) (*models.Account, error) {
-	return nil, nil
-	// operator, err := c.db.GetOperator(ctx, operatorID)
-	// if err != nil {
-	// 	return nil, err
-	// }
+func (c *accountsController) CreateAccount(ctx context.Context, cmd CreateAccountCommand) (models.Account, error) {
+	account := models.Account{
+		Name:        cmd.Name,
+		OperatorID:  cmd.OperatorID,
+		Description: utils.StrPtr(cmd.Description),
+	}
 
-	// pk, err := nkeys.CreateAccount()
-	// if err != nil {
-	// 	return nil, err
-	// }
+	operator := models.Operator{
+		ID: cmd.OperatorID,
+	}
+	err := c.db.GetOperator(ctx, &operator)
+	if err != nil {
+		return account, err
+	}
 
-	// id, err := pk.PublicKey()
-	// if err != nil {
-	// 	return nil, err
-	// }
+	pk, err := nkeys.CreateAccount()
+	if err != nil {
+		return account, err
+	}
 
-	// seed, err := pk.Seed()
-	// if err != nil {
-	// 	return nil, err
-	// }
+	id, err := pk.PublicKey()
+	if err != nil {
+		return account, err
+	}
 
-	// // Create a signing key for the account
-	// sk, err := nkeys.CreateAccount()
-	// if err != nil {
-	// 	return nil, err
-	// }
+	seed, err := pk.Seed()
+	if err != nil {
+		return account, err
+	}
+	account.Key = models.NKey{ID: id, Seed: seed}
 
-	// spk, err := sk.PublicKey()
-	// if err != nil {
-	// 	return nil, err
-	// }
+	skg := models.SigningKeyGroup{Name: "Default", Description: "Default signing key group"}
 
-	// skSeed, err := sk.Seed()
-	// if err != nil {
-	// 	return nil, err
-	// }
+	skgpk, err := nkeys.CreateOperator()
+	if err != nil {
+		return account, err
+	}
 
-	// if len(operator.SigningKeys) < 1 {
-	// 	return nil, fmt.Errorf("operator %s has no signing keys", operator.ID)
-	// }
+	skgid, err := skgpk.PublicKey()
+	if err != nil {
+		return account, err
+	}
 
-	// osk, err := nkeys.FromSeed(operator.SigningKeys[0].Seed)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	skgseed, err := skgpk.Seed()
+	if err != nil {
+		return account, err
+	}
+	skg.Key = models.NKey{ID: skgid, Seed: skgseed}
+	account.SigningKeyGroups = append(account.SigningKeyGroups, skg)
+
+	// @katallaxie: this is a bit weird, but I think it's a good idea to have a default signing key group
+	osk, err := nkeys.FromSeed(operator.SigningKeyGroups[0].Key.Seed)
+	if err != nil {
+		return account, err
+	}
 
 	// // Create a token for the account
-	// ac := jwt.NewAccountClaims(id)
-	// ac.Name = name
-	// ac.Issuer = operator.KeyID
-	// ac.SigningKeys.Add(spk)
+	ac := jwt.NewAccountClaims(id)
+	ac.Name = cmd.Name
+	ac.Issuer = operator.KeyID
+	ac.SigningKeys.Add(skg.KeyID)
 
-	// token, err := ac.Encode(osk)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	token, err := ac.Encode(osk)
+	if err != nil {
+		return account, err
+	}
+	account.Token = models.Token{Token: token}
 
-	// account := &models.Account{
-	// 	Name:       name,
-	// 	OperatorID: operatorID,
-	// 	Key: models.NKey{
-	// 		ID:   id,
-	// 		Seed: seed,
-	// 	},
-	// 	// SigningKeys: []models.NKey{
-	// 	// 	{
-	// 	// 		ID:   spk,
-	// 	// 		Seed: skSeed,
-	// 	// 	},
-	// 	// },
-	// 	Token: models.Token{
-	// 		ID:    id,
-	// 		Token: token,
-	// 	},
-	// }
+	err = c.db.CreateAccount(ctx, &account)
+	if err != nil {
+		return account, err
+	}
 
-	// err = c.db.CreateAccount(ctx, account)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// return account, nil
+	return account, nil
 }
 
 // ListAccounts ...

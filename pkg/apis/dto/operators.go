@@ -109,3 +109,26 @@ func ToDeleteOperatorResponse() openapi.DeleteOperator204Response {
 
 	return res
 }
+
+// FromCreateSigningKeyGroupRequest ...
+func FromCreateSigningKeyGroupRequest(req openapi.CreateOperatorSigningKeyGroupRequestObject) controllers.CreateOperatorSigningKeyGroupCommand {
+	return controllers.CreateOperatorSigningKeyGroupCommand{
+		OperatorID:  req.OperatorId,
+		Name:        req.Body.Name,
+		Description: utils.PtrStr(req.Body.Description),
+	}
+}
+
+// ToCreateOperatorSigningKeyGroupResponse ...
+func ToCreateOperatorSigningKeyGroupResponse(skg models.SigningKeyGroup) openapi.CreateOperatorSigningKeyGroup201JSONResponse {
+	res := openapi.CreateOperatorSigningKeyGroup201JSONResponse{}
+
+	res.Id = utils.PtrUUID(skg.ID)
+	res.Name = skg.Name
+	res.Description = utils.StrPtr(skg.Description)
+	res.CreatedAt = utils.PtrTime(skg.CreatedAt)
+	res.UpdatedAt = utils.PtrTime(skg.UpdatedAt)
+	res.DeletedAt = utils.PtrTime(skg.DeletedAt.Time)
+
+	return res
+}
