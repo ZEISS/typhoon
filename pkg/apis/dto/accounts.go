@@ -63,3 +63,39 @@ func FromListAccountRequest(req openapi.ListAccountsRequestObject) controllers.L
 		Offset:     utils.IntPtr(req.Params.Offset),
 	}
 }
+
+// FromGetAccountRequest ...
+func FromGetAccountRequest(req openapi.GetAccountRequestObject) controllers.GetAccountQuery {
+	return controllers.GetAccountQuery{
+		AccountID: req.AccountId,
+	}
+}
+
+// ToGetAccountResponse ...
+func ToGetAccountResponse(account models.Account) openapi.GetAccount200JSONResponse {
+	res := openapi.GetAccount200JSONResponse{}
+
+	res.Id = utils.PtrUUID(account.ID)
+	res.Name = account.Name
+	res.CreatedAt = utils.PtrTime(account.CreatedAt)
+	res.UpdatedAt = utils.PtrTime(account.UpdatedAt)
+	res.DeletedAt = utils.PtrTime(account.DeletedAt.Time)
+
+	return res
+}
+
+// FromGetAccountTokenRequest ...
+func FromGetAccountTokenRequest(req openapi.GetAccountTokenRequestObject) controllers.GetAccountTokenQuery {
+	return controllers.GetAccountTokenQuery{
+		AccountID: req.AccountId,
+	}
+}
+
+// ToGetAccountTokenResponse ...
+func ToGetAccountTokenResponse(token models.Token) openapi.GetAccountToken200JSONResponse {
+	res := openapi.GetAccountToken200JSONResponse{}
+
+	res.Token = utils.StrPtr(token.Token)
+
+	return res
+}

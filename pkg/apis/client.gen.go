@@ -121,6 +121,9 @@ type ClientInterface interface {
 
 	CreateAccountSigningKeyGroup(ctx context.Context, accountId AccountId, body CreateAccountSigningKeyGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetAccountToken request
+	GetAccountToken(ctx context.Context, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListOperators request
 	ListOperators(ctx context.Context, params *ListOperatorsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -347,6 +350,18 @@ func (c *Client) CreateAccountSigningKeyGroupWithBody(ctx context.Context, accou
 
 func (c *Client) CreateAccountSigningKeyGroup(ctx context.Context, accountId AccountId, body CreateAccountSigningKeyGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateAccountSigningKeyGroupRequest(c.Server, accountId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetAccountToken(ctx context.Context, accountId AccountId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAccountTokenRequest(c.Server, accountId)
 	if err != nil {
 		return nil, err
 	}
@@ -1135,6 +1150,40 @@ func NewCreateAccountSigningKeyGroupRequestWithBody(server string, accountId Acc
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetAccountTokenRequest generates requests for GetAccountToken
+func NewGetAccountTokenRequest(server string, accountId AccountId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/accounts/%s/token", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -2347,6 +2396,9 @@ type ClientWithResponsesInterface interface {
 
 	CreateAccountSigningKeyGroupWithResponse(ctx context.Context, accountId AccountId, body CreateAccountSigningKeyGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAccountSigningKeyGroupResponse, error)
 
+	// GetAccountTokenWithResponse request
+	GetAccountTokenWithResponse(ctx context.Context, accountId AccountId, reqEditors ...RequestEditorFn) (*GetAccountTokenResponse, error)
+
 	// ListOperatorsWithResponse request
 	ListOperatorsWithResponse(ctx context.Context, params *ListOperatorsParams, reqEditors ...RequestEditorFn) (*ListOperatorsResponse, error)
 
@@ -2625,6 +2677,29 @@ func (r CreateAccountSigningKeyGroupResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r CreateAccountSigningKeyGroupResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetAccountTokenResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *JWTToken
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAccountTokenResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAccountTokenResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3336,6 +3411,15 @@ func (c *ClientWithResponses) CreateAccountSigningKeyGroupWithResponse(ctx conte
 	return ParseCreateAccountSigningKeyGroupResponse(rsp)
 }
 
+// GetAccountTokenWithResponse request returning *GetAccountTokenResponse
+func (c *ClientWithResponses) GetAccountTokenWithResponse(ctx context.Context, accountId AccountId, reqEditors ...RequestEditorFn) (*GetAccountTokenResponse, error) {
+	rsp, err := c.GetAccountToken(ctx, accountId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetAccountTokenResponse(rsp)
+}
+
 // ListOperatorsWithResponse request returning *ListOperatorsResponse
 func (c *ClientWithResponses) ListOperatorsWithResponse(ctx context.Context, params *ListOperatorsParams, reqEditors ...RequestEditorFn) (*ListOperatorsResponse, error) {
 	rsp, err := c.ListOperators(ctx, params, reqEditors...)
@@ -3872,6 +3956,39 @@ func ParseCreateAccountSigningKeyGroupResponse(rsp *http.Response) (*CreateAccou
 			return nil, err
 		}
 		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetAccountTokenResponse parses an HTTP response from a GetAccountTokenWithResponse call
+func ParseGetAccountTokenResponse(rsp *http.Response) (*GetAccountTokenResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetAccountTokenResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest JWTToken
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest Error

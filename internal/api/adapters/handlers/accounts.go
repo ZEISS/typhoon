@@ -31,3 +31,27 @@ func (a *ApiHandlers) CreateAccount(ctx context.Context, request openapi.CreateA
 
 	return dto.ToCreateAccountResponse(account), nil
 }
+
+// GetAccount is the handler for getAccount operation.
+func (a *ApiHandlers) GetAccount(ctx context.Context, request openapi.GetAccountRequestObject) (openapi.GetAccountResponseObject, error) {
+	query := dto.FromGetAccountRequest(request)
+
+	account, err := a.accounts.GetAccount(ctx, query)
+	if err != nil {
+		return nil, fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return dto.ToGetAccountResponse(account), nil
+}
+
+// GetAccountToken is the handler for getAccountToken operation.
+func (a *ApiHandlers) GetAccountToken(ctx context.Context, request openapi.GetAccountTokenRequestObject) (openapi.GetAccountTokenResponseObject, error) {
+	query := dto.FromGetAccountTokenRequest(request)
+
+	token, err := a.accounts.GetAccountToken(ctx, query)
+	if err != nil {
+		return nil, fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return dto.ToGetAccountTokenResponse(token), nil
+}

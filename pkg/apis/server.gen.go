@@ -38,6 +38,9 @@ type ServerInterface interface {
 	// Creates a new signing key group
 	// (POST /accounts/{accountId}/groups)
 	CreateAccountSigningKeyGroup(c *fiber.Ctx, accountId AccountId) error
+	// Gets a token for an account
+	// (GET /accounts/{accountId}/token)
+	GetAccountToken(c *fiber.Ctx, accountId AccountId) error
 	// List all operators
 	// (GET /operators)
 	ListOperators(c *fiber.Ctx, params ListOperatorsParams) error
@@ -306,6 +309,26 @@ func (siw *ServerInterfaceWrapper) CreateAccountSigningKeyGroup(c *fiber.Ctx) er
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
 	return siw.Handler.CreateAccountSigningKeyGroup(c, accountId)
+}
+
+// GetAccountToken operation middleware
+func (siw *ServerInterfaceWrapper) GetAccountToken(c *fiber.Ctx) error {
+
+	var err error
+
+	// ------------- Path parameter "accountId" -------------
+	var accountId AccountId
+
+	err = runtime.BindStyledParameterWithOptions("simple", "accountId", c.Params("accountId"), &accountId, runtime.BindStyledParameterOptions{Explode: false, Required: true})
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
+	}
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
+
+	return siw.Handler.GetAccountToken(c, accountId)
 }
 
 // ListOperators operation middleware
@@ -915,6 +938,8 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Post(options.BaseURL+"/accounts/:accountId/groups", wrapper.CreateAccountSigningKeyGroup)
 
+	router.Get(options.BaseURL+"/accounts/:accountId/token", wrapper.GetAccountToken)
+
 	router.Get(options.BaseURL+"/operators", wrapper.ListOperators)
 
 	router.Post(options.BaseURL+"/operators", wrapper.CreateOperator)
@@ -1217,6 +1242,35 @@ type CreateAccountSigningKeyGroupdefaultJSONResponse struct {
 }
 
 func (response CreateAccountSigningKeyGroupdefaultJSONResponse) VisitCreateAccountSigningKeyGroupResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(response.StatusCode)
+
+	return ctx.JSON(&response.Body)
+}
+
+type GetAccountTokenRequestObject struct {
+	AccountId AccountId `json:"accountId"`
+}
+
+type GetAccountTokenResponseObject interface {
+	VisitGetAccountTokenResponse(ctx *fiber.Ctx) error
+}
+
+type GetAccountToken200JSONResponse JWTToken
+
+func (response GetAccountToken200JSONResponse) VisitGetAccountTokenResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type GetAccountTokendefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response GetAccountTokendefaultJSONResponse) VisitGetAccountTokenResponse(ctx *fiber.Ctx) error {
 	ctx.Response().Header.Set("Content-Type", "application/json")
 	ctx.Status(response.StatusCode)
 
@@ -2007,6 +2061,9 @@ type StrictServerInterface interface {
 	// Creates a new signing key group
 	// (POST /accounts/{accountId}/groups)
 	CreateAccountSigningKeyGroup(ctx context.Context, request CreateAccountSigningKeyGroupRequestObject) (CreateAccountSigningKeyGroupResponseObject, error)
+	// Gets a token for an account
+	// (GET /accounts/{accountId}/token)
+	GetAccountToken(ctx context.Context, request GetAccountTokenRequestObject) (GetAccountTokenResponseObject, error)
 	// List all operators
 	// (GET /operators)
 	ListOperators(ctx context.Context, request ListOperatorsRequestObject) (ListOperatorsResponseObject, error)
@@ -2328,6 +2385,33 @@ func (sh *strictHandler) CreateAccountSigningKeyGroup(ctx *fiber.Ctx, accountId 
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	} else if validResponse, ok := response.(CreateAccountSigningKeyGroupResponseObject); ok {
 		if err := validResponse.VisitCreateAccountSigningKeyGroupResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// GetAccountToken operation middleware
+func (sh *strictHandler) GetAccountToken(ctx *fiber.Ctx, accountId AccountId) error {
+	var request GetAccountTokenRequestObject
+
+	request.AccountId = accountId
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.GetAccountToken(ctx.UserContext(), request.(GetAccountTokenRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetAccountToken")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(GetAccountTokenResponseObject); ok {
+		if err := validResponse.VisitGetAccountTokenResponse(ctx); err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 	} else if response != nil {

@@ -63,6 +63,11 @@ func (u *Unimplemented) CreateAccount(ctx context.Context, request CreateAccount
 	return nil, fiber.NewError(fiber.StatusNotImplemented, "not implemented")
 }
 
+// GetAccountToken ...
+func (u *Unimplemented) GetAccountToken(ctx context.Context, request GetAccountTokenRequestObject) (GetAccountTokenResponseObject, error) {
+	return nil, fiber.NewError(fiber.StatusNotImplemented, "not implemented")
+}
+
 // DeleteAccount ...
 func (u *Unimplemented) DeleteAccount(ctx context.Context, request DeleteAccountRequestObject) (DeleteAccountResponseObject, error) {
 	return nil, fiber.NewError(fiber.StatusNotImplemented, "not implemented")

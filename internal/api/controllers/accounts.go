@@ -33,6 +33,16 @@ type ListAccountsResponse struct {
 	Limit    int              `json:"limit"`
 }
 
+// GetAccountQuery ...
+type GetAccountQuery struct {
+	AccountID uuid.UUID `json:"account_id"`
+}
+
+// GetAccountTokenQuery ...
+type GetAccountTokenQuery struct {
+	AccountID uuid.UUID `json:"account_id"`
+}
+
 // AccountsController is the interface that wraps the methods to access accounts.
 type AccountsController interface {
 	// CreateAccount creates a new account.
@@ -45,6 +55,10 @@ type AccountsController interface {
 	ListSigningKeys(ctx context.Context, accountID uuid.UUID, pagination models.Pagination[models.NKey]) (models.Pagination[models.NKey], error)
 	// ListAccounts ...
 	ListAccounts(ctx context.Context, req ListAccountsRequest) (ListAccountsResponse, error)
+	// GetAccount ...
+	GetAccount(ctx context.Context, query GetAccountQuery) (models.Account, error)
+	// GetAccountToken ...
+	GetAccountToken(ctx context.Context, query GetAccountTokenQuery) (models.Token, error)
 }
 
 var _ AccountsController = (*accountsController)(nil)
@@ -92,7 +106,7 @@ func (c *accountsController) CreateAccount(ctx context.Context, cmd CreateAccoun
 
 	skg := models.SigningKeyGroup{Name: "Default", Description: "Default signing key group"}
 
-	skgpk, err := nkeys.CreateOperator()
+	skgpk, err := nkeys.CreateAccount()
 	if err != nil {
 		return account, err
 	}
@@ -115,7 +129,6 @@ func (c *accountsController) CreateAccount(ctx context.Context, cmd CreateAccoun
 		return account, err
 	}
 
-	// // Create a token for the account
 	ac := jwt.NewAccountClaims(id)
 	ac.Name = cmd.Name
 	ac.Issuer = operator.KeyID
@@ -125,7 +138,7 @@ func (c *accountsController) CreateAccount(ctx context.Context, cmd CreateAccoun
 	if err != nil {
 		return account, err
 	}
-	account.Token = models.Token{Token: token}
+	account.Token = models.Token{ID: id, Token: token}
 
 	err = c.db.CreateAccount(ctx, &account)
 	if err != nil {
@@ -200,4 +213,28 @@ func (c *accountsController) CreateSigningKeyGroup(ctx context.Context) (*models
 // ListSigningKeys ...
 func (c *accountsController) ListSigningKeys(ctx context.Context, accountID uuid.UUID, pagination models.Pagination[models.NKey]) (models.Pagination[models.NKey], error) {
 	return c.db.ListSigningKeys(ctx, accountID, pagination)
+}
+
+// GetAccount ...
+func (c *accountsController) GetAccount(ctx context.Context, query GetAccountQuery) (models.Account, error) {
+	account := models.Account{ID: query.AccountID}
+
+	err := c.db.GetAccount(ctx, &account)
+	if err != nil {
+		return account, err
+	}
+
+	return account, nil
+}
+
+// GetAccountToken ...
+func (c *accountsController) GetAccountToken(ctx context.Context, query GetAccountTokenQuery) (models.Token, error) {
+	account := models.Account{ID: query.AccountID}
+
+	err := c.db.GetAccount(ctx, &account)
+	if err != nil {
+		return models.Token{}, err
+	}
+
+	return account.Token, nil
 }
