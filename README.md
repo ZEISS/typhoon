@@ -7,13 +7,54 @@
 [![Volkswagen](https://auchenberg.github.io/volkswagen/volkswargen_ci.svg?v=1)](https://github.com/auchenberg/volkswagen)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-An event bridge for applications and services.
+An event bridge for applications and services buil on an event mesh with a control plane.
 
 ## Overview
 
-Typhoon is a cloud native event bridge that connects applications and services. It is built on top of [Knative Eventing](https://knative.dev/docs/eventing/) and [Knative Serving](https://knative.dev/docs/serving/).
+Typhoon is built on top of [NATS.io](https://nats.io/) and [Knative Eventing](https://knative.dev/docs/eventing/). It provides a control plane for managing event sources, triggers, and targets. It also provides an API for managing the control plane.
 
-![Architecture](docs/architecture.png)
+```mermaid
+flowchart TB
+
+subgraph controlPlane [Control Plane]
+  subgraph api[API]
+    subgraph apiAccounting[Accounting]
+    end
+  end
+end
+
+subgraph "Knative Eventing"
+  subgraph triggers[Triggers]
+    subgraph sources[Sources]
+    end
+    subgraph transformers[Transformers]
+    end
+    subgraph targets[Targets]
+    end
+  end
+end
+
+triggers--Communicates via-->eventMesh[Event Mesh]
+apiAccounting--Stores data-->externalDatabase[External Database]
+apiAccounting--Provides authentication-->eventMesh[Event Mesh]
+controlPlane-->ssoProvider[SSO Provider]
+
+sources-->transformers
+transformers-->targets
+
+subgraph eventMesh[Event Mesh]
+  subgraph NATS
+  end
+end
+
+subgraph ssoProvider[SSO Provider]
+end
+
+subgraph externalDatabase[External Database]
+  subgraph PostgreSQL
+  end
+end
+```
 
 ## Helm
 
