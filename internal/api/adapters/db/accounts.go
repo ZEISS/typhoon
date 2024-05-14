@@ -10,7 +10,7 @@ import (
 
 // GetAccount ...
 func (db *DB) GetAccount(ctx context.Context, account *models.Account) error {
-	return db.conn.WithContext(ctx).Preload("Token").Preload("Operator").Preload("SigningKeyGroups").Preload("SigningKeyGroups.Key").Preload("Key").First(account).Error
+	return db.conn.WithContext(ctx).Preload("Token").Preload("SigningKeyGroups").Preload("SigningKeyGroups.Key").Preload("Key").First(account).Error
 }
 
 // CreateAccount ...

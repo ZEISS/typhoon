@@ -132,7 +132,7 @@ func (c *accountsController) CreateAccount(ctx context.Context, cmd CreateAccoun
 	ac := jwt.NewAccountClaims(id)
 	ac.Name = cmd.Name
 	ac.Issuer = operator.KeyID
-	ac.SigningKeys.Add(skg.KeyID)
+	ac.SigningKeys.Add(skg.Key.ID)
 
 	token, err := ac.Encode(osk)
 	if err != nil {

@@ -28,10 +28,8 @@ type Operator struct {
 	// SystemAdminAccount is the account that is used to manage the systems.
 	SystemAdminAccount   *Account   `json:"system_admin_account" gorm:"foreignKey:SystemAdminAccountID"`
 	SystemAdminAccountID *uuid.UUID `json:"system_admin_account_id"`
-	// Systems is the list of systems that the operator has.
-	Systems []System `json:"systems" gorm:"many2many:operator_systems;foreignKey:ID;joinForeignKey:OperatorID;joinReferences:SystemID"`
-	// Accounts is the list of accounts that the operator has.
-	Accounts []Account `json:"accounts" gorm:"many2many:operator_accounts;foreignKey:ID;joinForeignKey:OperatorID;joinReferences:AccountID"`
+	// Systems is the systems that are associated with the operator.
+	Systems []System `json:"systems" gorm:"foreignKey:OperatorID"`
 	// SigningKeyGroups is the list of signing key groups the account has.
 	SigningKeyGroups []SigningKeyGroup `json:"signing_key_groups" gorm:"many2many:operator_signing_key_groups;foreignKey:ID;joinForeignKey:OperatorID;joinReferences:SigningKeyGroupID"`
 	// CreatedAt is the time the operator was created.
