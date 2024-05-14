@@ -32,6 +32,18 @@ func (a *ApiHandlers) CreateUser(ctx context.Context, req openapi.CreateUserRequ
 	return dto.ToCreateUserResponse(user), nil
 }
 
+// GetUser ...
+func (a *ApiHandlers) GetUser(ctx context.Context, req openapi.GetUserRequestObject) (openapi.GetUserResponseObject, error) {
+	query := dto.FromGetUserRequest(req)
+
+	user, err := a.users.GetUser(ctx, query)
+	if err != nil {
+		return nil, fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return dto.ToGetUserResponse(user), nil
+}
+
 // GetUserCredentials ...
 func (a *ApiHandlers) GetUserCredentials(ctx context.Context, req openapi.GetUserCredentialsRequestObject) (openapi.GetUserCredentialsResponseObject, error) {
 	query := dto.FromGetUserCredentialsRequest(req)

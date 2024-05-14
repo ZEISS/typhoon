@@ -76,3 +76,23 @@ func ToGetUserCredentialsResponse(creds []byte) openapi.GetUserCredentials200App
 
 	return res
 }
+
+// FromGetUserRequest ...
+func FromGetUserRequest(req openapi.GetUserRequestObject) controllers.GetUserQuery {
+	return controllers.GetUserQuery{
+		UserID: req.UserId,
+	}
+}
+
+// ToGetUserResponse ...
+func ToGetUserResponse(user models.User) openapi.GetUser200JSONResponse {
+	res := openapi.GetUser200JSONResponse{}
+
+	res.Id = utils.PtrUUID(user.ID)
+	res.Name = user.Name
+	res.CreatedAt = utils.PtrTime(user.CreatedAt)
+	res.UpdatedAt = utils.PtrTime(user.UpdatedAt)
+	res.DeletedAt = utils.PtrTime(user.DeletedAt.Time)
+
+	return res
+}
