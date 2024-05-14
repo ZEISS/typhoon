@@ -3881,7 +3881,6 @@ func (r UpdateUserResponse) StatusCode() int {
 type GetUserCredentialsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Credentials
 	JSONDefault  *Error
 }
 
@@ -5700,13 +5699,6 @@ func ParseGetUserCredentialsResponse(rsp *http.Response) (*GetUserCredentialsRes
 	}
 
 	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Credentials
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {

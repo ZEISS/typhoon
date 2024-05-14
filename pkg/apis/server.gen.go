@@ -6,6 +6,7 @@ package apis
 import (
 	"context"
 	"fmt"
+	"io"
 	"net/url"
 
 	"github.com/gofiber/fiber/v2"
@@ -2346,13 +2347,23 @@ type GetUserCredentialsResponseObject interface {
 	VisitGetUserCredentialsResponse(ctx *fiber.Ctx) error
 }
 
-type GetUserCredentials200JSONResponse Credentials
+type GetUserCredentials200ApplicationoctetStreamResponse struct {
+	Body          io.Reader
+	ContentLength int64
+}
 
-func (response GetUserCredentials200JSONResponse) VisitGetUserCredentialsResponse(ctx *fiber.Ctx) error {
-	ctx.Response().Header.Set("Content-Type", "application/json")
+func (response GetUserCredentials200ApplicationoctetStreamResponse) VisitGetUserCredentialsResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/octet-stream")
+	if response.ContentLength != 0 {
+		ctx.Response().Header.Set("Content-Length", fmt.Sprint(response.ContentLength))
+	}
 	ctx.Status(200)
 
-	return ctx.JSON(&response)
+	if closer, ok := response.Body.(io.ReadCloser); ok {
+		defer closer.Close()
+	}
+	_, err := io.Copy(ctx.Response().BodyWriter(), response.Body)
+	return err
 }
 
 type GetUserCredentialsdefaultJSONResponse struct {

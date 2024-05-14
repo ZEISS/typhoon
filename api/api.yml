@@ -636,7 +636,7 @@ paths:
         200:
           description: Successful
           content:
-            application/json:
+            application/octet-stream:
               schema:
                 $ref: "#/components/schemas/Credentials"
         default:

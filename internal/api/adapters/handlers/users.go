@@ -31,3 +31,15 @@ func (a *ApiHandlers) CreateUser(ctx context.Context, req openapi.CreateUserRequ
 
 	return dto.ToCreateUserResponse(user), nil
 }
+
+// GetUserCredentials ...
+func (a *ApiHandlers) GetUserCredentials(ctx context.Context, req openapi.GetUserCredentialsRequestObject) (openapi.GetUserCredentialsResponseObject, error) {
+	query := dto.FromGetUserCredentialsRequest(req)
+
+	creds, err := a.users.GetCredentials(ctx, query)
+	if err != nil {
+		return nil, fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	return dto.ToGetUserCredentialsResponse(creds), nil
+}

@@ -8,7 +8,7 @@ import (
 
 // GetUser ...
 func (db *DB) GetUser(ctx context.Context, user *models.User) error {
-	return db.conn.WithContext(ctx).Preload("Key").Preload("Token").Preload("Account").Preload("Account.SigningKeys").First(user).Error
+	return db.conn.WithContext(ctx).Preload("Key").Preload("Token").Preload("Account").Preload("Account.SigningKeyGroups").First(user).Error
 }
 
 // CreateUser ...

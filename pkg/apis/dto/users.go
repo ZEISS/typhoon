@@ -1,6 +1,8 @@
 package dto
 
 import (
+	"bytes"
+
 	"github.com/zeiss/typhoon/internal/api/controllers"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/utils"
@@ -53,6 +55,24 @@ func ToListUsersResponse(pagination models.Pagination[models.User]) openapi.List
 	res.Offset = utils.PtrInt(pagination.Offset)
 	res.Total = utils.PtrInt(pagination.TotalRows)
 	res.Results = &results
+
+	return res
+}
+
+// FromGetUserCredentialsRequest ...
+func FromGetUserCredentialsRequest(req openapi.GetUserCredentialsRequestObject) controllers.GetUserCredentialsQuery {
+	return controllers.GetUserCredentialsQuery{
+		UserID: req.UserId,
+	}
+}
+
+// ToGetUserCredentialsResponse ...
+func ToGetUserCredentialsResponse(creds []byte) openapi.GetUserCredentials200ApplicationoctetStreamResponse {
+	res := openapi.GetUserCredentials200ApplicationoctetStreamResponse{}
+
+	body := bytes.NewReader(creds)
+	res.Body = body
+	res.ContentLength = int64(len(creds))
 
 	return res
 }
