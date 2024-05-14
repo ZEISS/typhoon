@@ -499,6 +499,153 @@ paths:
               schema:
                 $ref: "./schemas/error.yml#/components/schemas/Error"
 
+  /users:
+    get:
+      summary: List all users
+      operationId: listUsers
+      tags:
+        - Users
+      parameters:
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/limitParam"
+      requestBody:
+        $ref: "#/components/requestBodies/ListUsers"
+      security:
+        - bearerAuth: []
+        - apiKey: []
+      responses:
+        200:
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResult"
+                  - $ref: "#/components/schemas/Users"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    post:
+      summary: Creates a new user
+      operationId: createUser
+      tags:
+        - Users
+      requestBody:
+        $ref: "./requests/createUser.yml#/components/requestBodies/CreateUser"
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /users/{userId}:
+    get:
+      summary: Gets a user by ID
+      operationId: getUser
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    put:
+      summary: Updates a user by ID
+      operationId: updateUser
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+    delete:
+      summary: Deletes a user by ID
+      operationId: deleteUser
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      responses:
+        204:
+          description: Successful
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /users/{userId}/token:
+    get:
+      summary: Gets a token for a user
+      operationId: getUserToken
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JWTToken"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
+  /users/{userId}/credentials:
+    get:
+      summary: Gets the credentials for a user
+      operationId: getUserCredentials
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Credentials"
+        default:
+          description: An error occurred
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error.yml#/components/schemas/Error"
+
   /teams:
     get:
       summary: List all teams
@@ -963,6 +1110,17 @@ components:
                 type: string
                 format: uuid
 
+    # List users request body
+    ListUsers:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              accountId:
+                type: string
+                format: uuid
+
     # Body for updating an operator
     UpdateSystemOperator:
       content:
@@ -1322,6 +1480,14 @@ components:
           format: date-time
           description: Creation date and time
           example: "2021-01-30T08:30:00Z"
+
+    Users:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
 
     JWTInfo:
       type: object

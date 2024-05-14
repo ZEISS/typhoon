@@ -2,114 +2,158 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/nats-io/jwt"
+	"github.com/nats-io/nkeys"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/api/ports"
 )
+
+// CreateUserCommand ...
+type CreateUserCommand struct {
+	AccountID   uuid.UUID `json:"account_id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+}
+
+// GetUserCredentialsQuery ...
+type GetUserCredentialsQuery struct {
+	UserID uuid.UUID `json:"user_id"`
+}
+
+// GetUserQuery ...
+type GetUserQuery struct {
+	UserID uuid.UUID `json:"user_id"`
+}
+
+// ListUsersQuery ...
+type ListUsersQuery struct {
+	AccountID uuid.UUID `json:"account_id"`
+}
 
 var _ UsersController = (*UsersControllerImpl)(nil)
 
 // UsersController is the interface that wraps the methods to access users.
 type UsersController interface {
 	// CreateUser creates a new user.
-	CreateUser(ctx context.Context, name string, accountId uuid.UUID) (*models.User, error)
+	CreateUser(ctx context.Context, cmd CreateUserCommand) (models.User, error)
 	// GetCredentials returns the credentials for a user.
-	GetCredentials(ctx context.Context, id uuid.UUID) ([]byte, error)
+	GetCredentials(ctx context.Context, query GetUserCredentialsQuery) ([]byte, error)
+	// GetUser retrieves a user by its ID.
+	GetUser(ctx context.Context, query GetUserQuery) (models.User, error)
+	// ListUsers retrieves a list of users.
+	ListUsers(ctx context.Context, query ListUsersQuery) (models.Pagination[models.User], error)
 }
 
 type UsersControllerImpl struct {
-	db ports.Users
+	db ports.Repositories
 }
 
 // NewUsersController ...
-func NewUsersController(db ports.Users) *UsersControllerImpl {
+func NewUsersController(db ports.Repositories) *UsersControllerImpl {
 	return &UsersControllerImpl{db}
 }
 
 // CreateUser ...
-func (c *UsersControllerImpl) CreateUser(ctx context.Context, name string, accountId uuid.UUID) (*models.User, error) {
-	return nil, nil
+func (c *UsersControllerImpl) CreateUser(ctx context.Context, cmd CreateUserCommand) (models.User, error) {
+	user := models.User{Name: cmd.Name, Description: cmd.Description}
+	account := models.Account{ID: cmd.AccountID}
 
-	// pk, err := nkeys.CreateUser()
-	// if err != nil {
-	// 	return nil, err
-	// }
+	err := c.db.GetAccount(ctx, &account)
+	if err != nil {
+		return user, err
+	}
+	user.Account = account
 
-	// id, err := pk.PublicKey()
-	// if err != nil {
-	// 	return nil, err
-	// }
+	pk, err := nkeys.CreateUser()
+	if err != nil {
+		return user, err
+	}
 
-	// seed, err := pk.Seed()
-	// if err != nil {
-	// 	return nil, err
-	// }
+	id, err := pk.PublicKey()
+	if err != nil {
+		return user, err
+	}
 
-	// ac, err := c.db.GetAccount(ctx, accountId)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	seed, err := pk.Seed()
+	if err != nil {
+		return user, err
+	}
+	user.Key = models.NKey{ID: id, Seed: seed}
 
-	// if len(ac.SigningKeys) < 1 {
-	// 	return nil, fmt.Errorf("account %s has no signing keys", ac.ID)
-	// }
+	if len(account.SigningKeyGroups) < 1 {
+		return user, fmt.Errorf("account %s has no signing keys", account.ID)
+	}
 
-	// ask, err := nkeys.FromSeed(ac.SigningKeys[0].Seed)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	ask, err := nkeys.FromSeed(account.SigningKeyGroups[0].Key.Seed)
+	if err != nil {
+		return user, err
+	}
 
-	// askpk, err := ask.PublicKey()
-	// if err != nil {
-	// 	return nil, err
-	// }
+	askpk, err := ask.PublicKey()
+	if err != nil {
+		return user, err
+	}
 
 	// // Create a token for the user
-	// u := jwt.NewUserClaims(id)
-	// u.Name = name
-	// u.IssuerAccount = ac.KeyID
-	// u.Issuer = askpk
+	u := jwt.NewUserClaims(id)
+	u.Name = cmd.Name
+	u.IssuerAccount = account.Key.ID
+	u.Issuer = askpk
 
-	// token, err := u.Encode(ask)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	token, err := u.Encode(ask)
+	if err != nil {
+		return user, err
+	}
+	user.Token = models.Token{ID: id, Token: token}
 
-	// user := &models.User{
-	// 	Name: name,
-	// 	// SigningKeyGroupID: ac.SigningKeys[0].ID,
-	// 	Key: models.NKey{
-	// 		ID:   id,
-	// 		Seed: seed,
-	// 	},
-	// 	Token: models.Token{
-	// 		ID:    id,
-	// 		Token: token,
-	// 	},
-	// }
+	err = c.db.CreateUser(ctx, &user)
+	if err != nil {
+		return user, err
+	}
 
-	// err = c.db.CreateUser(ctx, user)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	return user, nil
+}
 
-	// return user, nil
+// GetUser ...
+func (c *UsersControllerImpl) GetUser(ctx context.Context, query GetUserQuery) (models.User, error) {
+	user := models.User{ID: query.UserID}
+
+	err := c.db.GetUser(ctx, &user)
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
 }
 
 // GetCredentials ...
-func (c *UsersControllerImpl) GetCredentials(ctx context.Context, id uuid.UUID) ([]byte, error) {
-	user, err := c.db.GetUser(ctx, id)
+func (c *UsersControllerImpl) GetCredentials(ctx context.Context, query GetUserCredentialsQuery) ([]byte, error) {
+	user := models.User{ID: query.UserID}
+
+	err := c.db.GetUser(ctx, &user)
 	if err != nil {
 		return nil, err
 	}
 
-	// generate a creds formatted file that can be used by a NATS client
 	creds, err := jwt.FormatUserConfig(user.Token.Token, user.Key.Seed)
 	if err != nil {
 		return nil, err
 	}
 
 	return creds, nil
+}
+
+// ListUsers ...
+func (c *UsersControllerImpl) ListUsers(ctx context.Context, query ListUsersQuery) (models.Pagination[models.User], error) {
+	results := models.Pagination[models.User]{}
+
+	results, err := c.db.ListUsers(ctx, results)
+	if err != nil {
+		return results, err
+	}
+
+	return results, nil
 }

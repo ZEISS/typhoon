@@ -20,14 +20,14 @@ type User struct {
 	Key NKey `json:"key"`
 	// KeyID is the foreign key for the key.
 	KeyID string `json:"key_id" gorm:"foreignKey:ID"`
-	// SigningKeyGroup is the group that signed the user.
-	SigningKeyGroup SigningKeyGroup `json:"signing_key_group"`
-	// SigningKeyGroupID is the foreign key for the signing key group.
-	SigningKeyGroupID uuid.UUID `json:"signing_key_group_id" gorm:"foreignKey:ID"`
 	// Token is the JWT token used to authenticate the account.
 	Token Token `json:"token" gorm:"foreignKey:TokenID"`
 	// TokenID is the foreign key for the token.
 	TokenID string `json:"token_id"`
+	// Account is the account that the user belongs to.
+	Account Account `json:"account" gorm:"foreignKey:AccountID"`
+	// AccountID is the foreign key for the account.
+	AccountID uuid.UUID `json:"account_id"`
 	// CreatedAt is the time the user was created.
 	CreatedAt time.Time `json:"created_at"`
 	// UpdatedAt is the time the user was updated.

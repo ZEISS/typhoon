@@ -177,3 +177,38 @@ func (u *Unimplemented) ListAccountSigningKeyGroups(ctx context.Context, request
 func (u *Unimplemented) DeleteAccountSigningKeyGroup(ctx context.Context, request DeleteAccountSigningKeyGroupRequestObject) (DeleteAccountSigningKeyGroupResponseObject, error) {
 	return nil, fiber.NewError(fiber.StatusNotImplemented, "not implemented")
 }
+
+// CreateUser ...
+func (u *Unimplemented) CreateUser(ctx context.Context, request CreateUserRequestObject) (CreateUserResponseObject, error) {
+	return nil, fiber.NewError(fiber.StatusNotImplemented, "not implemented")
+}
+
+// GetUser ...
+func (u *Unimplemented) GetUser(ctx context.Context, request GetUserRequestObject) (GetUserResponseObject, error) {
+	return nil, fiber.NewError(fiber.StatusNotImplemented, "not implemented")
+}
+
+// DeleteUser ...
+func (u *Unimplemented) DeleteUser(ctx context.Context, request DeleteUserRequestObject) (DeleteUserResponseObject, error) {
+	return nil, fiber.NewError(fiber.StatusNotImplemented, "not implemented")
+}
+
+// GetUserToken ...
+func (u *Unimplemented) GetUserToken(ctx context.Context, request GetUserTokenRequestObject) (GetUserTokenResponseObject, error) {
+	return nil, fiber.NewError(fiber.StatusNotImplemented, "not implemented")
+}
+
+// ListUsers ...
+func (u *Unimplemented) ListUsers(ctx context.Context, request ListUsersRequestObject) (ListUsersResponseObject, error) {
+	return nil, fiber.NewError(fiber.StatusNotImplemented, "not implemented")
+}
+
+// GetUserCredentials ...
+func (u *Unimplemented) GetUserCredentials(ctx context.Context, request GetUserCredentialsRequestObject) (GetUserCredentialsResponseObject, error) {
+	return nil, fiber.NewError(fiber.StatusNotImplemented, "not implemented")
+}
+
+// UpdateUser ...
+func (u *Unimplemented) UpdateUser(ctx context.Context, request UpdateUserRequestObject) (UpdateUserResponseObject, error) {
+	return nil, fiber.NewError(fiber.StatusNotImplemented, "not implemented")
+}
