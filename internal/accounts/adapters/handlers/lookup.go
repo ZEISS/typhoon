@@ -1,10 +1,9 @@
-package adapters
+package handlers
 
 import (
 	"context"
 
 	"github.com/zeiss/typhoon/internal/accounts/controllers"
-	"github.com/zeiss/typhoon/internal/accounts/models"
 )
 
 // AccountLookupRequestHandler ...
@@ -18,6 +17,13 @@ func NewAccountLookupRequestHandler(ctrl controllers.AccountsController) *Accoun
 }
 
 // HandleLookupRequest ...
-func (h *AccountLookupRequestHandler) HandleLookupRequest(ctx context.Context, accountPublicKey models.AccountPublicKey) (models.AccountToken, error) {
-	return h.ctrl.GetToken(ctx, accountPublicKey)
+func (h *AccountLookupRequestHandler) HandleLookupRequest(ctx context.Context, accountPublicKey string) (string, error) {
+	query := controllers.GetTokenQuery{AccountPublicKey: accountPublicKey}
+
+	result, err := h.ctrl.GetToken(ctx, query)
+	if err != nil {
+		return "", err
+	}
+
+	return result.Token, nil
 }

@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/zeiss/typhoon/internal/accounts/adapters"
+	"github.com/zeiss/typhoon/internal/accounts/adapters/handlers"
 	"github.com/zeiss/typhoon/internal/accounts/controllers"
-	"github.com/zeiss/typhoon/internal/accounts/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
@@ -71,7 +71,7 @@ func (s *AccountSrv) Start(ctx context.Context, ready server.ReadyFunc, run serv
 
 		db := adapters.NewDB(conn)
 		ac := controllers.NewAccountsController(db)
-		lh := adapters.NewAccountLookupRequestHandler(ac)
+		lh := handlers.NewAccountLookupRequestHandler(ac)
 
 		nc, err := nats.Connect(cfg.Flags.Nats.Url, nats.UserCredentials(cfg.Flags.Nats.Credentials))
 		if err != nil {
@@ -89,13 +89,13 @@ func (s *AccountSrv) Start(ctx context.Context, ready server.ReadyFunc, run serv
 				return err
 			}
 
-			accountId := strings.TrimSuffix(strings.TrimPrefix(msg.Subject, "$SYS.REQ.ACCOUNT."), ".CLAIMS.LOOKUP")
-			accountJWTToken, err := lh.HandleLookupRequest(ctx, models.AccountPublicKey(accountId))
+			apk := strings.TrimSuffix(strings.TrimPrefix(msg.Subject, "$SYS.REQ.ACCOUNT."), ".CLAIMS.LOOKUP")
+			jwt, err := lh.HandleLookupRequest(ctx, apk)
 			if err != nil {
 				return err
 			}
 
-			err = msg.Respond([]byte(accountJWTToken))
+			err = msg.Respond([]byte(jwt))
 			if err != nil {
 				return err
 			}

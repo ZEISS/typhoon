@@ -3,13 +3,18 @@ package controllers
 import (
 	"context"
 
-	"github.com/zeiss/typhoon/internal/accounts/models"
 	"github.com/zeiss/typhoon/internal/accounts/ports"
+	"github.com/zeiss/typhoon/internal/api/models"
 )
+
+// GetTokenQuery ...
+type GetTokenQuery struct {
+	AccountPublicKey string `json:"account_public_key" validate:"required"`
+}
 
 // AccountsController ...
 type AccountsController interface {
-	GetToken(ctx context.Context, accountPublicKey models.AccountPublicKey) (models.AccountToken, error)
+	GetToken(ctx context.Context, query GetTokenQuery) (models.Token, error)
 }
 
 // AccountsController ...
@@ -23,6 +28,13 @@ func NewAccountsController(db ports.Accounts) *accountsController {
 }
 
 // GetToken ...
-func (c *accountsController) GetToken(ctx context.Context, pubkey models.AccountPublicKey) (models.AccountToken, error) {
-	return c.db.GetToken(ctx, pubkey)
+func (c *accountsController) GetToken(ctx context.Context, query GetTokenQuery) (models.Token, error) {
+	token := models.Token{ID: query.AccountPublicKey}
+
+	err := c.db.GetToken(ctx, &token)
+	if err != nil {
+		return token, err
+	}
+
+	return token, nil
 }
