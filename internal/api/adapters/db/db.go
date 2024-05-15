@@ -40,6 +40,5 @@ func (db *DB) RunMigrations() error {
 		&models.Allow{},
 		&models.Cluster{},
 		&models.SigningKeyGroup{},
-		&models.Signature{},
 	)
 }

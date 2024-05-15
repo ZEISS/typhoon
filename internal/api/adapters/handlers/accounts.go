@@ -10,14 +10,14 @@ import (
 
 // ListAccounts ...
 func (a *ApiHandlers) ListAccounts(ctx context.Context, request openapi.ListAccountsRequestObject) (openapi.ListAccountsResponseObject, error) {
-	req := dto.FromListAccountRequest(request)
+	query := dto.FromListAccountRequest(request)
 
-	output, err := a.accounts.ListAccounts(ctx, req)
+	result, err := a.accounts.ListAccounts(ctx, query)
 	if err != nil {
-		return nil, fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		return nil, err
 	}
 
-	return dto.ToListAccountResponse(output), nil
+	return dto.ToListAccountResponse(result), nil
 }
 
 // CreateAccount is the handler for createAccount operation.

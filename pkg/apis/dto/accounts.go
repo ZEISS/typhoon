@@ -30,16 +30,16 @@ func ToCreateAccountResponse(account models.Account) openapi.CreateAccount201JSO
 }
 
 // ToListAccountResponse ...
-func ToListAccountResponse(output controllers.ListAccountsResponse) openapi.ListAccounts200JSONResponse {
+func ToListAccountResponse(accounts models.Pagination[models.Account]) openapi.ListAccounts200JSONResponse {
 	res := openapi.ListAccounts200JSONResponse{}
 
-	res.Limit = utils.PtrInt(output.Limit)
-	res.Offset = utils.PtrInt(output.Offset)
-	res.Total = utils.PtrInt(output.Total)
+	res.Limit = utils.PtrInt(accounts.Limit)
+	res.Offset = utils.PtrInt(accounts.Offset)
+	res.Total = utils.PtrInt(accounts.TotalRows)
 
-	results := make([]openapi.Account, 0, len(output.Accounts))
+	results := make([]openapi.Account, 0, len(accounts.Rows))
 
-	for _, account := range output.Accounts {
+	for _, account := range accounts.Rows {
 		row := openapi.Account{
 			Id:        utils.PtrUUID(account.ID),
 			Name:      account.Name,
@@ -56,8 +56,8 @@ func ToListAccountResponse(output controllers.ListAccountsResponse) openapi.List
 }
 
 // FromListAccountRequest ...
-func FromListAccountRequest(req openapi.ListAccountsRequestObject) controllers.ListAccountsRequest {
-	return controllers.ListAccountsRequest{
+func FromListAccountRequest(req openapi.ListAccountsRequestObject) controllers.ListAccountsQuery {
+	return controllers.ListAccountsQuery{
 		OperatorID: utils.UUIDPtr(req.Body.OperatorId),
 		Limit:      utils.IntPtr(req.Params.Limit),
 		Offset:     utils.IntPtr(req.Params.Offset),

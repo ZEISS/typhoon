@@ -24,12 +24,12 @@ type Account struct {
 	// Token is the JWT token used to authenticate the account.
 	Token   Token  `json:"token" gorm:"foreignKey:TokenID"`
 	TokenID string `json:"token_id"`
+	// Operator is the operator this account is associated with.
+	Operator Operator `json:"operator" gorm:"foreignKey:OperatorID"`
 	// OperatorID is the operator ID.
-	OperatorID uuid.UUID `json:"operator_id"`
+	OperatorID uuid.UUID `json:"operator_id" gorm:"foreignKey:ID"`
 	// SigningKeyGroups is the list of signing key groups the account has.
 	SigningKeyGroups []SigningKeyGroup `json:"signing_key_groups" gorm:"many2many:account_signing_key_groups;foreignKey:ID;joinForeignKey:AccountID;joinReferences:SigningKeyGroupID"`
-	// SignedBy is the entity that signs this one.
-	SignedBy Signature `json:"signed_by" gorm:"polymorphic:Signable;polymorphicValue:account;"`
 	// CreatedAt is the time the account was created.
 	CreatedAt time.Time `json:"created_at"`
 	// UpdatedAt is the time the account was updated.

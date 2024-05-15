@@ -29,5 +29,5 @@ func (db *DB) UpdateOperator(ctx context.Context, op *models.Operator) error {
 
 // ListOperators ...
 func (db *DB) ListOperators(ctx context.Context, pagination *models.Pagination[models.Operator]) error {
-	return db.conn.WithContext(ctx).Scopes(models.Paginate(&pagination.Rows, pagination, db.conn)).Find(&pagination.Rows).Error
+	return db.conn.WithContext(ctx).Scopes(models.Paginate(&pagination.Rows, pagination, db.conn)).Preload("SigningKeyGroups").Preload("SigningKeyGroups.Key").Preload("Key").Find(&pagination.Rows).Error
 }

@@ -138,12 +138,7 @@ func (c *UsersControllerImpl) GetCredentials(ctx context.Context, query GetUserC
 		return nil, err
 	}
 
-	creds, err := jwt.FormatUserConfig(user.Token.Token, user.Key.Seed)
-	if err != nil {
-		return nil, err
-	}
-
-	return creds, nil
+	return user.Credentials()
 }
 
 // ListUsers ...

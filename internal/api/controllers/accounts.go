@@ -18,19 +18,11 @@ type CreateAccountCommand struct {
 	OperatorID  uuid.UUID `json:"operator_id"`
 }
 
-// ListAccountsRequest ...
-type ListAccountsRequest struct {
+// ListAccountsQuery ...
+type ListAccountsQuery struct {
 	OperatorID uuid.UUID `json:"system_id"`
 	Limit      int       `json:"limit"`
 	Offset     int       `json:"offset"`
-}
-
-// ListAccountsResponse ...
-type ListAccountsResponse struct {
-	Accounts []models.Account `json:"accounts"`
-	Total    int              `json:"total"`
-	Offset   int              `json:"offset"`
-	Limit    int              `json:"limit"`
 }
 
 // GetAccountQuery ...
@@ -54,7 +46,7 @@ type AccountsController interface {
 	// ListSigningKeys of an account.
 	ListSigningKeys(ctx context.Context, accountID uuid.UUID, pagination models.Pagination[models.NKey]) (models.Pagination[models.NKey], error)
 	// ListAccounts ...
-	ListAccounts(ctx context.Context, req ListAccountsRequest) (ListAccountsResponse, error)
+	ListAccounts(ctx context.Context, req ListAccountsQuery) (models.Pagination[models.Account], error)
 	// GetAccount ...
 	GetAccount(ctx context.Context, query GetAccountQuery) (models.Account, error)
 	// GetAccountToken ...
@@ -149,15 +141,18 @@ func (c *accountsController) CreateAccount(ctx context.Context, cmd CreateAccoun
 }
 
 // ListAccounts ...
-func (c *accountsController) ListAccounts(ctx context.Context, input ListAccountsRequest) (ListAccountsResponse, error) {
-	results := models.Pagination[models.Account]{}
+func (c *accountsController) ListAccounts(ctx context.Context, query ListAccountsQuery) (models.Pagination[models.Account], error) {
+	accounts := models.Pagination[models.Account]{}
 
-	results, err := c.db.ListAccounts(ctx, results)
+	accounts.Limit = query.Limit
+	accounts.Offset = query.Offset
+
+	err := c.db.ListAccounts(ctx, &accounts)
 	if err != nil {
-		return ListAccountsResponse{}, err
+		return accounts, err
 	}
 
-	return ListAccountsResponse{Total: results.TotalRows, Limit: results.Limit, Offset: results.Limit, Accounts: results.Rows}, nil
+	return accounts, nil
 }
 
 // DeleteToken ...

@@ -18,19 +18,30 @@ func FromListOperatorsRequest(req openapi.ListOperatorsRequestObject) controller
 // ToListOperatorsResponse ...
 func ToListOperatorsResponse(ops models.Pagination[models.Operator]) openapi.ListOperators200JSONResponse {
 	res := openapi.ListOperators200JSONResponse{}
+
 	res.Limit = utils.PtrInt(ops.Limit)
 	res.Offset = utils.PtrInt(ops.Offset)
 	res.Total = utils.PtrInt(ops.TotalRows)
 
 	operators := make([]openapi.Operator, 0, len(ops.Rows))
 	for _, op := range ops.Rows {
-		operators = append(operators, openapi.Operator{
-			Id:        utils.PtrUUID(op.ID),
-			Name:      op.Name,
-			CreatedAt: utils.PtrTime(op.CreatedAt),
-			UpdatedAt: utils.PtrTime(op.UpdatedAt),
-			DeletedAt: utils.PtrTime(op.DeletedAt.Time),
-		})
+		operator := openapi.Operator{
+			Id:          utils.PtrUUID(op.ID),
+			Name:        op.Name,
+			Description: utils.StrPtr(op.Description),
+			CreatedAt:   utils.PtrTime(op.CreatedAt),
+			UpdatedAt:   utils.PtrTime(op.UpdatedAt),
+			DeletedAt:   utils.PtrTime(op.DeletedAt.Time),
+			Key:         &openapi.KeyPair{PublicKey: op.Key.ID},
+		}
+
+		skg := []openapi.KeyPair{}
+		for _, sk := range op.SigningKeyGroups {
+			skg = append(skg, openapi.KeyPair{PublicKey: sk.Key.ID})
+		}
+		operator.SigningKeys = &skg
+
+		operators = append(operators, operator)
 	}
 	res.Results = &operators
 

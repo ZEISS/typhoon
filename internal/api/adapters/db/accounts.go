@@ -10,7 +10,7 @@ import (
 
 // GetAccount ...
 func (db *DB) GetAccount(ctx context.Context, account *models.Account) error {
-	return db.conn.WithContext(ctx).Preload("Token").Preload("SigningKeyGroups").Preload("SigningKeyGroups.Key").Preload("Key").First(account).Error
+	return db.conn.WithContext(ctx).Preload("Operator").Preload("Token").Preload("SigningKeyGroups").Preload("SigningKeyGroups.Key").Preload("Key").First(account).Error
 }
 
 // CreateAccount ...
@@ -24,12 +24,8 @@ func (db *DB) UpdateAccount(ctx context.Context, account *models.Account) error 
 }
 
 // ListAccounts ...
-func (db *DB) ListAccounts(ctx context.Context, pagination models.Pagination[models.Account]) (models.Pagination[models.Account], error) {
-	if err := db.conn.WithContext(ctx).Find(&pagination.Rows).Error; err != nil {
-		return pagination, err
-	}
-
-	return pagination, nil
+func (db *DB) ListAccounts(ctx context.Context, pagination *models.Pagination[models.Account]) error {
+	return db.conn.WithContext(ctx).Scopes(models.Paginate(&pagination.Rows, pagination, db.conn)).Preload("Key").Find(&pagination.Rows).Error
 }
 
 // ListSigningKeys ...
