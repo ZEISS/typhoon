@@ -18,6 +18,11 @@ type CreateUserCommand struct {
 	Description string    `json:"description"`
 }
 
+// DeleteUserCommand ...
+type DeleteUserCommand struct {
+	UserID uuid.UUID `json:"user_id"`
+}
+
 // GetUserCredentialsQuery ...
 type GetUserCredentialsQuery struct {
 	UserID uuid.UUID `json:"user_id"`
@@ -45,6 +50,8 @@ type UsersController interface {
 	GetUser(ctx context.Context, query GetUserQuery) (models.User, error)
 	// ListUsers retrieves a list of users.
 	ListUsers(ctx context.Context, query ListUsersQuery) (models.Pagination[models.User], error)
+	// DeleteUser deletes a user by its ID.
+	DeleteUser(ctx context.Context, cmd DeleteUserCommand) error
 }
 
 type UsersControllerImpl struct {
@@ -151,4 +158,16 @@ func (c *UsersControllerImpl) ListUsers(ctx context.Context, query ListUsersQuer
 	}
 
 	return results, nil
+}
+
+// DeleteUser ...
+func (c *UsersControllerImpl) DeleteUser(ctx context.Context, cmd DeleteUserCommand) error {
+	user := models.User{ID: cmd.UserID}
+
+	err := c.db.DeleteUser(ctx, &user)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -4,32 +4,24 @@ import (
 	"context"
 
 	"github.com/zeiss/typhoon/internal/api/models"
-
-	"github.com/google/uuid"
 )
 
 // CreateTeam creates a new team.
-func (db *DB) CreateTeam(ctx context.Context, team models.Team) (models.Team, error) {
-	if err := db.conn.WithContext(ctx).Create(&team).Error; err != nil {
-		return models.Team{}, err
-	}
-
-	return team, nil
+func (db *DB) CreateTeam(ctx context.Context, team *models.Team) error {
+	return db.conn.WithContext(ctx).Create(team).Error
 }
 
 // GetTeam retrieves a team by its ID.
-func (db *DB) GetTeam(ctx context.Context, id uuid.UUID) (models.Team, error) {
-	team := models.Team{}
-
-	err := db.conn.WithContext(ctx).Where("id = ?", id).First(&team).Error
-	if err != nil {
-		return models.Team{}, err
-	}
-
-	return team, nil
+func (db *DB) GetTeam(ctx context.Context, team *models.Team) error {
+	return db.conn.WithContext(ctx).First(team).Error
 }
 
 // DeleteTeam deletes a team by its ID.
-func (db *DB) DeleteTeam(ctx context.Context, id uuid.UUID) error {
-	return db.conn.WithContext(ctx).Where("id = ?", id).Delete(&models.Team{}).Error
+func (db *DB) DeleteTeam(ctx context.Context, team *models.Team) error {
+	return db.conn.WithContext(ctx).Delete(team).Error
+}
+
+// ListTeams retrieves all teams.
+func (db *DB) ListTeams(ctx context.Context, pagination *models.Pagination[models.Team]) error {
+	return db.conn.WithContext(ctx).Scopes(models.Paginate(&pagination.Rows, pagination, db.conn)).Find(&pagination.Rows).Error
 }
