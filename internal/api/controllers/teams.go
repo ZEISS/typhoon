@@ -39,13 +39,13 @@ var _ TeamsController = (*teamsController)(nil)
 // TeamsController ...
 type TeamsController interface {
 	// CreateTeam ...
-	CreateTeam(ctx context.Context, cmd CreateTeamCommand) (models.Team, error)
+	CreateTeam(ctx context.Context, cmd CreateTeamCommand) (authz.Team, error)
 	// DeleteTeam ...
 	DeleteTeam(ctx context.Context, cmd DeleteTeamCommand) error
 	// GetTeam ...
-	GetTeam(ctx context.Context, query GetTeamQuery) (models.Team, error)
+	GetTeam(ctx context.Context, query GetTeamQuery) (authz.Team, error)
 	// ListTeams ...
-	ListTeams(ctx context.Context, query ListTeamsQuery) (models.Pagination[models.Team], error)
+	ListTeams(ctx context.Context, query ListTeamsQuery) (models.Pagination[authz.Team], error)
 }
 
 type teamsController struct {
@@ -58,12 +58,10 @@ func NewTeamsController(db ports.Teams) *teamsController {
 }
 
 // CreateTeam ...
-func (c *teamsController) CreateTeam(ctx context.Context, cmd CreateTeamCommand) (models.Team, error) {
-	team := models.Team{
-		Team: &authz.Team{
-			Name:        cmd.Name,
-			Description: utils.StrPtr(cmd.Description),
-		},
+func (c *teamsController) CreateTeam(ctx context.Context, cmd CreateTeamCommand) (authz.Team, error) {
+	team := authz.Team{
+		Name:        cmd.Name,
+		Description: utils.StrPtr(cmd.Description),
 	}
 
 	err := c.db.CreateTeam(ctx, &team)
@@ -76,21 +74,17 @@ func (c *teamsController) CreateTeam(ctx context.Context, cmd CreateTeamCommand)
 
 // DeleteTeam ...
 func (c *teamsController) DeleteTeam(ctx context.Context, cmd DeleteTeamCommand) error {
-	team := models.Team{
-		Team: &authz.Team{
-			ID: cmd.ID,
-		},
+	team := authz.Team{
+		ID: cmd.ID,
 	}
 
 	return c.db.DeleteTeam(ctx, &team)
 }
 
 // GetTeam ...
-func (c *teamsController) GetTeam(ctx context.Context, query GetTeamQuery) (models.Team, error) {
-	team := models.Team{
-		Team: &authz.Team{
-			ID: query.ID,
-		},
+func (c *teamsController) GetTeam(ctx context.Context, query GetTeamQuery) (authz.Team, error) {
+	team := authz.Team{
+		ID: query.ID,
 	}
 
 	err := c.db.GetTeam(ctx, &team)
@@ -102,8 +96,8 @@ func (c *teamsController) GetTeam(ctx context.Context, query GetTeamQuery) (mode
 }
 
 // ListTeams ...
-func (c *teamsController) ListTeams(ctx context.Context, query ListTeamsQuery) (models.Pagination[models.Team], error) {
-	pagination := models.Pagination[models.Team]{
+func (c *teamsController) ListTeams(ctx context.Context, query ListTeamsQuery) (models.Pagination[authz.Team], error) {
+	pagination := models.Pagination[authz.Team]{
 		Offset: query.Offset,
 		Limit:  query.Limit,
 		Search: query.Search,

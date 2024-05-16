@@ -25,23 +25,13 @@ type System struct {
 	Name string `json:"name" gorm:"unique" validate:"required,min=3,max=128"`
 	// Description is the description of the system.
 	Description string `json:"description" validate:"max=1024"`
-
 	// Clusters is the clusters that are associated with the system.
 	Clusters []Cluster `json:"clusters" gorm:"foreignKey:SystemID"`
-
 	// Operator is the operator this is associated with this system to operate.
 	Operator   Operator  `json:"operator" gorm:"foreignKey:OperatorID"`
 	OperatorID uuid.UUID `json:"operator_id"`
-
 	// Tags is the tags that are associated with the system.
 	Tags []*Tag `json:"tags" gorm:"polymorphic:Taggable;polymorphicValue:system;"`
-
-	// OwnedBy is the owner of the account. This is usually a team.
-	OwnedBy Ownership `json:"owned_by" gorm:"polymorphic:Ownable;polymorphicValue:system;"`
-
-	// AllowedBy is the allowed by of the account. This is usually a team.
-	AllowedBy []Allow `json:"allowed_by" gorm:"polymorphic:Allowable;polymorphicValue:system;"`
-
 	// CreatedAt is the time the system was created.
 	CreatedAt time.Time `json:"created_at"`
 	// UpdatedAt is the time the system was updated.

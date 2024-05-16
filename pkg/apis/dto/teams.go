@@ -1,6 +1,7 @@
 package dto
 
 import (
+	authz "github.com/zeiss/fiber-authz"
 	"github.com/zeiss/typhoon/internal/api/controllers"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/utils"
@@ -16,7 +17,7 @@ func FromCreateTeamRequest(req openapi.CreateTeamRequestObject) controllers.Crea
 }
 
 // ToCreateTeamResponse ...
-func ToCreateTeamResponse(team models.Team) openapi.CreateTeam201JSONResponse {
+func ToCreateTeamResponse(team authz.Team) openapi.CreateTeam201JSONResponse {
 	res := openapi.CreateTeam201JSONResponse{}
 	res.Id = utils.PtrUUID(team.ID)
 	res.Name = team.Name
@@ -35,7 +36,7 @@ func FromGetTeamRequest(req openapi.GetTeamRequestObject) controllers.GetTeamQue
 }
 
 // ToGetTeamResponse ...
-func ToGetTeamResponse(team models.Team) openapi.GetTeam200JSONResponse {
+func ToGetTeamResponse(team authz.Team) openapi.GetTeam200JSONResponse {
 	res := openapi.GetTeam200JSONResponse{}
 	res.Id = utils.PtrUUID(team.ID)
 	res.Name = team.Name
@@ -65,7 +66,7 @@ func FromListTeamsRequest(req openapi.ListTeamsRequestObject) controllers.ListTe
 }
 
 // ToListTeamsResponse ...
-func ToListTeamsResponse(pagination models.Pagination[models.Team]) openapi.ListTeams200JSONResponse {
+func ToListTeamsResponse(pagination models.Pagination[authz.Team]) openapi.ListTeams200JSONResponse {
 	res := openapi.ListTeams200JSONResponse{}
 	res.Limit = utils.PtrInt(pagination.Limit)
 	res.Offset = utils.PtrInt(pagination.Offset)

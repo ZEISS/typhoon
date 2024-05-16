@@ -24,7 +24,7 @@ func NewDB(conn *gorm.DB) *DB {
 // RunMigrations ...
 func (db *DB) RunMigrations() error {
 	return db.conn.AutoMigrate(
-		&models.Team{},
+		&authz.Team{},
 		&authz.User{},
 		&authz.Role{},
 		&authz.Permission{},
@@ -36,8 +36,6 @@ func (db *DB) RunMigrations() error {
 		&models.Account{},
 		&models.System{},
 		&models.Tag{},
-		&models.Ownership{},
-		&models.Allow{},
 		&models.Cluster{},
 		&models.SigningKeyGroup{},
 	)
