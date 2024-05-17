@@ -4,6 +4,14 @@
 ARG VARIANT="jammy"
 FROM mcr.microsoft.com/vscode/devcontainers/base:0-${VARIANT}
 
+# Install additional OS packages, if needed.
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends ca-certificates
+
+# zScaler certificate, for all busy engineers
+ADD zscaler.pem /usr/local/share/ca-certificates/zscaler.crt
+RUN sudo chmod 644 /usr/local/share/ca-certificates/zscaler.crt && sudo update-ca-certificates
+
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 #     && apt-get -y install protobuf-compiler

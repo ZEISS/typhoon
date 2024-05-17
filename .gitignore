@@ -1,5 +1,9 @@
-# Created by https://www.toptal.com/developers/gitignore/api/go,node,macos,intellij,webstorm,yarn,nextjs
-# Edit at https://www.toptal.com/developers/gitignore?templates=go,node,macos,intellij,webstorm,yarn,nextjs
+# Created by https://www.toptal.com/developers/gitignore/api/go,node,yarn,macos,intellij,webstorm
+# Edit at https://www.toptal.com/developers/gitignore?templates=go,node,yarn,macos,intellij,webstorm
+
+### Custom ###
+*.creds
+*.jwt
 
 ### Go ###
 # If you prefer the allow list template instead of the deny list, see community template:
@@ -15,14 +19,11 @@
 # Test binary, built with `go test -c`
 *.test
 
-# Output of the go coverage ctool, specifically when used with LiteIDE
+# Output of the go coverage tool, specifically when used with LiteIDE
 *.out
-*.creds
-*.jwt
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-tmp
 
 # Go workspace file
 go.work
@@ -173,46 +174,15 @@ Temporary Items
 # iCloud generated files
 *.icloud
 
-### NextJS ###
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# local env files
-.env*.local
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
 ### Node ###
 # Logs
 logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 lerna-debug.log*
+.pnpm-debug.log*
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
@@ -253,6 +223,7 @@ jspm_packages/
 web_modules/
 
 # TypeScript cache
+*.tsbuildinfo
 
 # Optional npm cache directory
 .npm
@@ -435,4 +406,4 @@ dist
 # and uncomment the following lines
 # .pnp.*
 
-# End of https://www.toptal.com/developers/gitignore/api/go,node,macos,intellij,webstorm,yarn,nextjs
+# End of https://www.toptal.com/developers/gitignore/api/go,node,yarn,macos,intellij,webstorm
