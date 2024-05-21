@@ -1,6 +1,7 @@
 package adapters
 
 import (
+	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/web/ports"
 
 	authz "github.com/zeiss/fiber-authz"
@@ -29,5 +30,12 @@ func (d *db) RunMigrations() error {
 		&authz.UserRole{},
 		&adapters.Account{},
 		&adapters.Session{},
+		&models.User{},
+		&models.Operator{},
+		&models.Account{},
+		&models.System{},
+		&models.Tag{},
+		&models.Cluster{},
+		&models.SigningKeyGroup{},
 	)
 }
