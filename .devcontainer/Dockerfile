@@ -12,6 +12,9 @@ RUN apt-get update \
 ADD zscaler.pem /usr/local/share/ca-certificates/zscaler.crt
 RUN sudo chmod 644 /usr/local/share/ca-certificates/zscaler.crt && sudo update-ca-certificates
 
+# Set the environment variable NODE_EXTRA_CA_CERTS to the zScaler certificate
+ENV NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/zscaler.crt
+
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 #     && apt-get -y install protobuf-compiler
