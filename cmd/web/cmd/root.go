@@ -21,6 +21,7 @@ import (
 	goth "github.com/zeiss/fiber-goth"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 func init() {
@@ -29,6 +30,7 @@ func init() {
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Username, "db-username", cfg.Flags.DB.Username, "Database user")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Password, "db-password", cfg.Flags.DB.Password, "Database password")
 	Root.PersistentFlags().IntVar(&cfg.Flags.DB.Port, "db-port", cfg.Flags.DB.Port, "Database port")
+	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Addr, "db-host", cfg.Flags.DB.Addr, "Database host")
 
 	Root.SilenceUsage = true
 }
@@ -59,10 +61,13 @@ func NewWebSrv(cfg *Config) *WebSrv {
 // Start starts the server.
 func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.RunFunc) func() error {
 	return func() error {
-		providers.RegisterProvider(github.New(os.Getenv("GITHUB_KEY"), os.Getenv("GITHUB_SECRET"), "http://localhost:8080/auth/github/callback"))
+		providers.RegisterProvider(github.New(os.Getenv("GITHUB_KEY"), os.Getenv("GITHUB_SECRET"), "http://localhost:3000/auth/github/callback"))
 
-		dsn := "host=host.docker.internal user=example password=example dbname=example port=5432 sslmode=disable"
-		conn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		conn, err := gorm.Open(postgres.Open(cfg.DSN()), &gorm.Config{
+			NamingStrategy: schema.NamingStrategy{
+				TablePrefix: "typhoon_",
+			},
+		})
 		if err != nil {
 			return err
 		}
@@ -84,7 +89,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 			},
 		}
 
-		handlers := services.NewHandlers()
+		handlers := services.NewHandlers(db)
 
 		app := fiber.New()
 		app.Use(requestid.New())

@@ -1,4 +1,6 @@
 package ports
 
 // Repository ...
-type Repository interface{}
+type Repository interface {
+	Users
+}

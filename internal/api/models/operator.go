@@ -26,7 +26,7 @@ type Operator struct {
 	Token   Token  `json:"token" gorm:"foreignKey:TokenID"`
 	TokenID string `json:"token_id"`
 	// SystemAdminAccount is the account that is used to manage the systems.
-	SystemAdminAccount   *Account   `json:"system_admin_account" gorm:"foreignKey:SystemAdminAccountID"`
+	SystemAdminAccount   *Account   `json:"system_admin_account" gorm:"many2many:operator_system_admin_accounts;foreignKey:ID;joinForeignKey:OperatorID;joinReferences:SystemAdminAccountID"`
 	SystemAdminAccountID *uuid.UUID `json:"system_admin_account_id"`
 	// Systems is the systems that are associated with the operator.
 	Systems []System `json:"systems" gorm:"foreignKey:OperatorID"`

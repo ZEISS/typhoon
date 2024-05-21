@@ -4,7 +4,6 @@ import (
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/web/ports"
 
-	authz "github.com/zeiss/fiber-authz"
 	"github.com/zeiss/fiber-goth/adapters"
 	"gorm.io/gorm"
 )
@@ -23,16 +22,13 @@ func NewDB(conn *gorm.DB) *db {
 // RunMigrations runs the database migrations.
 func (d *db) RunMigrations() error {
 	return d.conn.AutoMigrate(
-		&authz.Team{},
-		&authz.User{},
-		&authz.Role{},
-		&authz.Permission{},
-		&authz.UserRole{},
-		&adapters.Account{},
-		&adapters.Session{},
+		&adapters.GothUser{},
+		&adapters.GothAccount{},
+		&adapters.GothSession{},
+		&adapters.GothVerificationToken{},
 		&models.User{},
-		&models.Operator{},
 		&models.Account{},
+		&models.Operator{},
 		&models.System{},
 		&models.Tag{},
 		&models.Cluster{},

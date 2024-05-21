@@ -7,15 +7,18 @@ import (
 	"github.com/zeiss/typhoon/internal/web/controllers/login"
 	"github.com/zeiss/typhoon/internal/web/controllers/me"
 	"github.com/zeiss/typhoon/internal/web/ports"
+	"github.com/zeiss/typhoon/pkg/resolvers"
 )
 
 var _ ports.Handlers = (*handlers)(nil)
 
-type handlers struct{}
+type handlers struct {
+	db ports.Repository
+}
 
 // NewHandlers ...
-func NewHandlers() *handlers {
-	return &handlers{}
+func NewHandlers(db ports.Repository) *handlers {
+	return &handlers{db}
 }
 
 // Login ...
@@ -30,5 +33,5 @@ func (h *handlers) Dashboard() fiber.Handler {
 
 // Me ...
 func (h *handlers) Me() fiber.Handler {
-	return htmx.NewHxControllerHandler(me.NewMeController())
+	return htmx.NewHxControllerHandler(me.NewMeController(), htmx.Config{Resolvers: []htmx.ResolveFunc{resolvers.UserByID(h.db)}})
 }
