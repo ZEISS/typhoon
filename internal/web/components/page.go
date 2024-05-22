@@ -15,25 +15,28 @@ type PageProps struct {
 func Page(props PageProps, children ...htmx.Node) htmx.Node {
 	return htmx.HTML5(
 		htmx.HTML5Props{
-			Title:    props.Title,
+			Title:    "index",
 			Language: "en",
 			Attributes: []htmx.Node{
 				htmx.DataAttribute("theme", "light"),
 			},
 			Head: []htmx.Node{
 				htmx.Link(
-					htmx.Attribute("href", "/static/output.css"),
+					htmx.Attribute("href", "https://cdn.jsdelivr.net/npm/daisyui/dist/full.css"),
 					htmx.Attribute("rel", "stylesheet"),
 					htmx.Attribute("type", "text/css"),
 				),
 				htmx.Script(
-					htmx.Attribute("src", "/static/output.js"),
+					htmx.Attribute("src", "https://cdn.jsdelivr.net/npm/daisyui/dist/full.js"),
 					htmx.Attribute("type", "application/javascript"),
+				),
+				htmx.Script(
+					htmx.Attribute("src", "https://cdn.tailwindcss.com"),
 				),
 			},
 		},
 		htmx.Body(
-			// htmx.HxBoost(true),
+			htmx.HxBoost(true),
 			htmx.Group(children...),
 		),
 	)

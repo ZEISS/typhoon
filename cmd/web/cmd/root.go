@@ -7,8 +7,8 @@ import (
 
 	"github.com/zeiss/fiber-goth/providers"
 	"github.com/zeiss/fiber-goth/providers/github"
-	"github.com/zeiss/typhoon/internal/web/adapters"
-	"github.com/zeiss/typhoon/internal/web/services"
+	"github.com/zeiss/typhoon/internal/web/adapters/db"
+	"github.com/zeiss/typhoon/internal/web/adapters/handlers"
 	"github.com/zeiss/typhoon/static"
 
 	"github.com/gofiber/fiber/v2"
@@ -72,7 +72,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 			return err
 		}
 
-		db := adapters.NewDB(conn)
+		db := db.NewDB(conn)
 		err = db.RunMigrations()
 		if err != nil {
 			return err
@@ -89,7 +89,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 			},
 		}
 
-		handlers := services.NewHandlers(db)
+		handlers := handlers.NewHandlers(db)
 
 		app := fiber.New()
 		app.Use(requestid.New())

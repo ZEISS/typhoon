@@ -23,7 +23,8 @@ func (d *IndexDashboardController) Prepare() error {
 
 // Get ...
 func (l *IndexDashboardController) Get() error {
-	return l.Hx().RenderComp(
+	return htmx.RenderComp(
+		l.Ctx(),
 		components.Page(
 			components.PageProps{},
 			components.Layout(
