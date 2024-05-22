@@ -6,6 +6,7 @@ import (
 	"github.com/zeiss/typhoon/internal/web/controllers/dashboard"
 	"github.com/zeiss/typhoon/internal/web/controllers/login"
 	"github.com/zeiss/typhoon/internal/web/controllers/me"
+	"github.com/zeiss/typhoon/internal/web/controllers/operators"
 	"github.com/zeiss/typhoon/internal/web/ports"
 	"github.com/zeiss/typhoon/pkg/resolvers"
 )
@@ -34,4 +35,9 @@ func (h *handlers) Dashboard() fiber.Handler {
 // Me ...
 func (h *handlers) Me() fiber.Handler {
 	return htmx.NewHxControllerHandler(me.NewMeController(), htmx.Config{Resolvers: []htmx.ResolveFunc{resolvers.UserByID(h.db)}})
+}
+
+// ListOperators ...
+func (h *handlers) ListOperators() fiber.Handler {
+	return htmx.NewHxControllerHandler(operators.NewListOperatorsController(h.db))
 }

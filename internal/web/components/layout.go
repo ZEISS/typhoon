@@ -5,7 +5,6 @@ import (
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/avatars"
 	"github.com/zeiss/fiber-htmx/components/buttons"
-	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/dividers"
 	"github.com/zeiss/fiber-htmx/components/drawers"
 	"github.com/zeiss/fiber-htmx/components/dropdowns"
@@ -165,47 +164,8 @@ func Layout(p LayoutProps, children ...htmx.Node) htmx.Node {
 									),
 								),
 							),
-							htmx.Div(
-								htmx.ClassNames{
-									"p-8":            true,
-									"grid":           true,
-									"gap-6":          true,
-									"xl:grid-cols-2": true,
-								},
-								cards.CardBordered(
-									cards.CardProps{
-										ClassNames: htmx.ClassNames{
-											"shadow-xl": false,
-											"border":    true,
-											"rounded":   true,
-										},
-									},
-									cards.Body(
-										cards.BodyProps{},
-										cards.Title(
-											cards.TitleProps{},
-											htmx.Text("Hello, World!"),
-										),
-										htmx.Text("This is a card body."),
-									),
-								),
-								cards.Card(
-									cards.CardProps{
-										ClassNames: htmx.ClassNames{
-											"shadow-xl": false,
-											"border":    true,
-											"rounded":   true,
-										},
-									},
-									cards.Body(
-										cards.BodyProps{},
-										cards.Title(
-											cards.TitleProps{},
-											htmx.Text("Hello, World!"),
-										),
-										htmx.Text("This is a card body."),
-									),
-								),
+							htmx.Group(
+								children...,
 							),
 						),
 					),
@@ -236,7 +196,9 @@ func Layout(p LayoutProps, children ...htmx.Node) htmx.Node {
 								menus.MenuItem(
 									menus.MenuItemProps{},
 									menus.MenuLink(
-										menus.MenuLinkProps{},
+										menus.MenuLinkProps{
+											Href: "/",
+										},
 										htmx.Text("Dashboard"),
 									),
 								),
@@ -247,7 +209,9 @@ func Layout(p LayoutProps, children ...htmx.Node) htmx.Node {
 								menus.MenuItem(
 									menus.MenuItemProps{},
 									menus.MenuLink(
-										menus.MenuLinkProps{},
+										menus.MenuLinkProps{
+											Href: "/operators",
+										},
 										htmx.Text("Operators"),
 									),
 								),

@@ -10,4 +10,6 @@ type Handlers interface {
 	Dashboard() fiber.Handler
 	// Me ...
 	Me() fiber.Handler
+	// ListOperators ...
+	ListOperators() fiber.Handler
 }
