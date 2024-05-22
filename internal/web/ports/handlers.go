@@ -12,4 +12,6 @@ type Handlers interface {
 	Me() fiber.Handler
 	// ListOperators ...
 	ListOperators() fiber.Handler
+	// NewOperator ...
+	NewOperator() fiber.Handler
 }

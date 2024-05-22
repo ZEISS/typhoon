@@ -1,11 +1,10 @@
 package operators
 
 import (
-	"fmt"
-
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/web/components"
+	"github.com/zeiss/typhoon/internal/web/components/operators"
 	"github.com/zeiss/typhoon/internal/web/ports"
 	"github.com/zeiss/typhoon/pkg/resolvers"
 )
@@ -24,9 +23,7 @@ func NewListOperatorsController(db ports.Operators) *ListOperatorsController {
 
 // Prepare ...
 func (l *ListOperatorsController) Get() error {
-	ops := htmx.Values[models.Pagination[models.Operator]](l.Ctx().UserContext(), resolvers.ValuesKeyOperators)
-
-	fmt.Println(ops)
+	ops := htmx.Values[models.Pagination[*models.Operator]](l.Ctx().UserContext(), resolvers.ValuesKeyOperators)
 
 	return htmx.RenderComp(
 		l.Ctx(),
@@ -34,7 +31,14 @@ func (l *ListOperatorsController) Get() error {
 			components.PageProps{},
 			components.Layout(
 				components.LayoutProps{},
-				htmx.Text("Operators"),
+				operators.OperatorsTable(
+					operators.OperatorsTableProps{
+						Operators: ops.Rows,
+						Offset:    ops.Offset,
+						Limit:     ops.Limit,
+						Total:     ops.TotalRows,
+					},
+				),
 			),
 		),
 	)

@@ -39,5 +39,10 @@ func (h *handlers) Me() fiber.Handler {
 
 // ListOperators ...
 func (h *handlers) ListOperators() fiber.Handler {
-	return htmx.NewHxControllerHandler(operators.NewListOperatorsController(h.db))
+	return htmx.NewHxControllerHandler(operators.NewListOperatorsController(h.db), htmx.Config{Resolvers: []htmx.ResolveFunc{resolvers.ListOperators(h.db)}})
+}
+
+// NewOperator ...
+func (h *handlers) NewOperator() fiber.Handler {
+	return htmx.NewHxControllerHandler(operators.NewOperatorController(h.db))
 }

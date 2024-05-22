@@ -40,6 +40,11 @@ type Operator struct {
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
 }
 
+// Compare ...
+func (o Operator) Compare() int {
+	return 0
+}
+
 // Claims returns the operator claims.
 func (o Operator) Claims() (*jwt.OperatorClaims, error) {
 	claims, err := jwt.DecodeOperatorClaims(o.Token.Token)

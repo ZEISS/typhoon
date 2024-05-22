@@ -115,6 +115,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 
 		// Operators handler
 		app.Get("/operators", handlers.ListOperators())
+		app.Get("/operators/new", handlers.NewOperator())
 
 		err = app.Listen(s.cfg.Flags.Addr)
 		if err != nil {
