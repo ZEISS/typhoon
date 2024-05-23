@@ -1,6 +1,8 @@
 package operators
 
 import (
+	"fmt"
+
 	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
@@ -100,9 +102,9 @@ func (l *ShowOperatorControllerImpl) Get() error {
 						),
 						cards.Actions(
 							cards.ActionsProps{},
-							buttons.OutlinePrimary(
+							buttons.Outline(
 								buttons.ButtonProps{},
-								htmx.HxDelete(""),
+								htmx.HxDelete(fmt.Sprintf("/operators/%s", op.ID)),
 								htmx.HxConfirm("Are you sure you want to delete this lens?"),
 								htmx.Text("Delete"),
 							),

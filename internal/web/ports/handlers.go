@@ -18,4 +18,6 @@ type Handlers interface {
 	CreateOperator() fiber.Handler
 	// ShowOperator ...
 	ShowOperator() fiber.Handler
+	// DeleteOperator ...
+	DeleteOperator() fiber.Handler
 }

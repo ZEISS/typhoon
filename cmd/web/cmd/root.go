@@ -118,6 +118,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Get("/operators/new", handlers.NewOperator())
 		app.Post("/operators/new", handlers.CreateOperator())
 		app.Get("/operators/:id", handlers.ShowOperator())
+		app.Delete("/operators/:id", handlers.DeleteOperator())
 
 		err = app.Listen(s.cfg.Flags.Addr)
 		if err != nil {
