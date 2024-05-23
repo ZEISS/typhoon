@@ -1,6 +1,8 @@
 package components
 
 import (
+	"strings"
+
 	authz "github.com/zeiss/fiber-authz"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/avatars"
@@ -218,7 +220,10 @@ func Layout(p LayoutProps, children ...htmx.Node) htmx.Node {
 								menus.MenuItem(
 									menus.MenuItemProps{},
 									menus.MenuLink(
-										menus.MenuLinkProps{},
+										menus.MenuLinkProps{
+											Href:   "/accounts",
+											Active: strings.HasPrefix(p.Path, "/accounts"),
+										},
 										htmx.Text("Accounts"),
 									),
 								),

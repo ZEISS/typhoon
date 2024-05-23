@@ -2,6 +2,7 @@ package ports
 
 // Repository ...
 type Repository interface {
-	Users
+	Accounts
 	Operators
+	Users
 }

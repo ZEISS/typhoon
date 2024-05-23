@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/gofiber/fiber/v2"
 	htmx "github.com/zeiss/fiber-htmx"
+	"github.com/zeiss/typhoon/internal/web/controllers/accounts"
 	"github.com/zeiss/typhoon/internal/web/controllers/dashboard"
 	"github.com/zeiss/typhoon/internal/web/controllers/login"
 	"github.com/zeiss/typhoon/internal/web/controllers/me"
@@ -60,4 +61,14 @@ func (h *handlers) ShowOperator() fiber.Handler {
 // DeleteOperator ...
 func (h *handlers) DeleteOperator() fiber.Handler {
 	return htmx.NewHxControllerHandler(operators.NewDeleteOperatorController(h.db))
+}
+
+// ListAccounts ...
+func (h *handlers) ListAccounts() fiber.Handler {
+	return htmx.NewHxControllerHandler(accounts.NewListAccountsController(h.db))
+}
+
+// NewAccount ...
+func (h *handlers) NewAccount() fiber.Handler {
+	return htmx.NewHxControllerHandler(accounts.NewAccountController(h.db))
 }
