@@ -50,7 +50,9 @@ func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node 
 						Cell: func(p tables.TableProps[*models.Operator], row *models.Operator) htmx.Node {
 							return htmx.Td(
 								links.Link(
-									links.LinkProps{},
+									links.LinkProps{
+										Href: "/operators/" + row.ID.String(),
+									},
 									htmx.Text(row.Name),
 								),
 							)

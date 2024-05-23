@@ -1,8 +1,6 @@
 package operators
 
 import (
-	"fmt"
-
 	"github.com/go-playground/validator/v10"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
@@ -61,13 +59,6 @@ func (l *NewOperatorControllerImpl) Post() error {
 	}
 
 	htmx.HxRedirect(l.Ctx(), "/operators")
-
-	return nil
-}
-
-// Error ...
-func (l *NewOperatorControllerImpl) Error(err error) error {
-	fmt.Println(err)
 
 	return nil
 }
