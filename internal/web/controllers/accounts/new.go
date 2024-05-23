@@ -5,22 +5,45 @@ import (
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/forms"
+	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
 // NewAccountControllerImpl ...
 type NewAccountControllerImpl struct {
-	ports.Accounts
+	Operators []*models.Operator
+
+	ports.Repository
 	htmx.DefaultController
 }
 
 // NewAccountController ...
-func NewAccountController(db ports.Accounts) *NewAccountControllerImpl {
+func NewAccountController(db ports.Repository) *NewAccountControllerImpl {
 	return &NewAccountControllerImpl{
-		Accounts:          db,
+		Repository:        db,
 		DefaultController: htmx.DefaultController{},
 	}
+}
+
+// Prepare ...
+func (l *NewAccountControllerImpl) Prepare() error {
+	pagination := models.Pagination[models.Operator]{}
+
+	err := l.BindQuery(&pagination)
+	if err != nil {
+		return err
+	}
+
+	err = l.ListOperators(l.Context(), &pagination)
+	if err != nil {
+		return err
+	}
+	for _, operator := range pagination.Rows {
+		l.Operators = append(l.Operators, &operator)
+	}
+
+	return nil
 }
 
 // Get ...
@@ -55,7 +78,7 @@ func (l *NewAccountControllerImpl) Get() error {
 												"-my-4": true,
 											},
 										},
-										htmx.Text("Name"),
+										htmx.Text("Operator	"),
 									),
 								),
 								forms.FormControlLabel(
@@ -66,7 +89,35 @@ func (l *NewAccountControllerImpl) Get() error {
 												"text-neutral-500": true,
 											},
 										},
-										htmx.Text("A unique identifier for operator."),
+										forms.SelectBordered(
+											forms.SelectProps{},
+											forms.Option(
+												forms.OptionProps{
+													Selected: true,
+													Disabled: true,
+												},
+												htmx.Text("Select an operator"),
+											),
+											htmx.ForEach(l.Operators, func(operator *models.Operator) htmx.Node {
+												return forms.Option(
+													forms.OptionProps{
+														Value: operator.ID.String(),
+													},
+													htmx.Text(operator.Name),
+												)
+											}),
+										),
+									),
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												"text-neutral-500": true,
+											},
+										},
+										htmx.Text("A unique identifier for the account."),
 									),
 								),
 								forms.TextInputBordered(
@@ -110,7 +161,7 @@ func (l *NewAccountControllerImpl) Get() error {
 													"text-neutral-500": true,
 												},
 											},
-											htmx.Text("A brief description of the operator to provide context."),
+											htmx.Text("A brief description of the acount to provide context."),
 										),
 									),
 									forms.TextareaBordered(

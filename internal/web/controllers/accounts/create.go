@@ -65,7 +65,7 @@ func (l *CreateControllerImpl) Post() error {
 	// 	return err
 	// }
 
-	htmx.HxRedirect(l.Ctx(), "/accounts")
+	htmx.Redirect(l.Ctx(), "/accounts")
 
 	return nil
 }

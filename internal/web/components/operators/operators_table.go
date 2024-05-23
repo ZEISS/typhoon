@@ -78,7 +78,7 @@ func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node 
 				Rows: tables.NewRows(props.Operators),
 				Toolbar: tables.TableToolbar(
 					tables.TableToolbarProps[*models.Operator]{
-						ClassName: htmx.ClassNames{
+						ClassNames: htmx.ClassNames{
 							"flex":            true,
 							"items-center":    true,
 							"justify-between": true,

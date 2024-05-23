@@ -29,7 +29,8 @@ func (m *MeController) Prepare() error {
 func (m *MeController) Get() error {
 	user := htmx.Values[adapters.GothUser](m.Ctx().UserContext(), resolvers.ValuesKeyUser)
 
-	return m.Hx().RenderComp(
+	return htmx.RenderComp(
+		m.Ctx(),
 		components.Page(
 			components.PageProps{},
 			components.Layout(

@@ -28,7 +28,8 @@ func (l *IndexLoginController) Prepare() error {
 
 // Get ...
 func (l *IndexLoginController) Get() error {
-	return l.Hx().RenderComp(
+	return htmx.RenderComp(
+		l.Ctx(),
 		components.Page(
 			components.PageProps{},
 			components.Wrap(

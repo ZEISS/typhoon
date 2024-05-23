@@ -58,7 +58,7 @@ func (l *NewOperatorControllerImpl) Post() error {
 		return err
 	}
 
-	htmx.HxRedirect(l.Ctx(), "/operators")
+	htmx.Redirect(l.Ctx(), "/operators")
 
 	return nil
 }

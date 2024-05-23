@@ -77,7 +77,7 @@ func AccountsTable(props AccountsTableProps, children ...htmx.Node) htmx.Node {
 				Rows: tables.NewRows(props.Accounts),
 				Toolbar: tables.TableToolbar(
 					tables.TableToolbarProps[*models.Account]{
-						ClassName: htmx.ClassNames{
+						ClassNames: htmx.ClassNames{
 							"flex":            true,
 							"items-center":    true,
 							"justify-between": true,
