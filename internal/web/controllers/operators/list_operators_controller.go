@@ -23,7 +23,12 @@ func NewListOperatorsController(db ports.Operators) *ListOperatorsController {
 
 // Prepare ...
 func (l *ListOperatorsController) Get() error {
-	ops := htmx.Values[models.Pagination[*models.Operator]](l.Ctx().UserContext(), resolvers.ValuesKeyOperators)
+	pagination := htmx.Values[models.Pagination[models.Operator]](l.Ctx().UserContext(), resolvers.ValuesKeyOperators)
+
+	ops := make([]*models.Operator, 0, len(pagination.Rows))
+	for _, row := range pagination.Rows {
+		ops = append(ops, &row)
+	}
 
 	return htmx.RenderComp(
 		l.Ctx(),
@@ -33,10 +38,10 @@ func (l *ListOperatorsController) Get() error {
 				components.LayoutProps{},
 				operators.OperatorsTable(
 					operators.OperatorsTableProps{
-						Operators: ops.Rows,
-						Offset:    ops.Offset,
-						Limit:     ops.Limit,
-						Total:     ops.TotalRows,
+						Operators: ops,
+						Offset:    pagination.Offset,
+						Limit:     pagination.Limit,
+						Total:     pagination.TotalRows,
 					},
 				),
 			),

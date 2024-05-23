@@ -4,6 +4,7 @@ import (
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/forms"
+	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tables"
 	"github.com/zeiss/typhoon/internal/api/models"
 )
@@ -48,12 +49,10 @@ func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node 
 						},
 						Cell: func(p tables.TableProps[*models.Operator], row *models.Operator) htmx.Node {
 							return htmx.Td(
-							// links.Link(
-							// 	links.LinkProps{
-							// 		Href: fmt.Sprintf("/%s/profiles/%s", props.Team.Slug, row.ID.String()),
-							// 	},
-							// 	htmx.Text(row.Name),
-							// ),
+								links.Link(
+									links.LinkProps{},
+									htmx.Text(row.Name),
+								),
 							)
 						},
 					},
@@ -69,13 +68,6 @@ func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node 
 											"btn-square": true,
 										},
 									},
-
-									// htmx.HxDelete(fmt.Sprintf("/%s/profiles/%s", props.Team.Slug, row.ID.String())),
-									// htmx.HxTarget("closest <tr />"),
-									// htmx.HxConfirm("Are you sure you want to delete this profile?"),
-									// icons.TrashOutline(
-									// 	icons.IconProps{},
-									// ),
 								),
 							)
 						},

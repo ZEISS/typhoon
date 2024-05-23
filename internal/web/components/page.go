@@ -27,11 +27,12 @@ func Page(props PageProps, children ...htmx.Node) htmx.Node {
 					htmx.Attribute("type", "text/css"),
 				),
 				htmx.Script(
-					htmx.Attribute("src", "https://cdn.jsdelivr.net/npm/daisyui/dist/full.js"),
-					htmx.Attribute("type", "application/javascript"),
+					htmx.Attribute("src", "https://cdn.tailwindcss.com"),
 				),
 				htmx.Script(
-					htmx.Attribute("src", "https://cdn.tailwindcss.com"),
+					htmx.Attribute("src", "https://unpkg.com/htmx.org@1.9.12"),
+					htmx.Integrity("sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2"),
+					htmx.CrossOrigin("anonymous"),
 				),
 			},
 		},

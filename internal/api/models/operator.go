@@ -5,8 +5,46 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/nats-io/jwt/v2"
+	"github.com/nats-io/nkeys"
 	"gorm.io/gorm"
 )
+
+// NewOperator is creating a new operator.
+func NewOperator(name, description string) (Operator, error) {
+	op := Operator{
+		Name:        name,
+		Description: description,
+	}
+
+	pk, err := nkeys.CreateOperator()
+	if err != nil {
+		return op, err
+	}
+
+	id, err := pk.PublicKey()
+	if err != nil {
+		return op, err
+	}
+
+	seed, err := pk.Seed()
+	if err != nil {
+		return op, err
+	}
+
+	// Create a token for the operator
+	oc := jwt.NewOperatorClaims(id)
+	oc.Name = name
+
+	token, err := oc.Encode(pk)
+	if err != nil {
+		return op, err
+	}
+
+	op.Key = NKey{ID: id, Seed: seed}
+	op.Token = Token{ID: id, Token: token}
+
+	return op, nil
+}
 
 // OperatorPagination is the pagination for operators.
 type OperatorPagination Pagination[Operator]
@@ -26,7 +64,7 @@ type Operator struct {
 	Token   Token  `json:"token" gorm:"foreignKey:TokenID"`
 	TokenID string `json:"token_id"`
 	// SystemAdminAccount is the account that is used to manage the systems.
-	SystemAdminAccount   *Account   `json:"system_admin_account" gorm:"many2many:operator_system_admin_accounts;foreignKey:ID;joinForeignKey:OperatorID;joinReferences:SystemAdminAccountID"`
+	SystemAdminAccount   *Account   `json:"system_admin_account"`
 	SystemAdminAccountID *uuid.UUID `json:"system_admin_account_id"`
 	// Systems is the systems that are associated with the operator.
 	Systems []System `json:"systems" gorm:"foreignKey:OperatorID"`

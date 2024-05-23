@@ -14,4 +14,6 @@ type Handlers interface {
 	ListOperators() fiber.Handler
 	// NewOperator ...
 	NewOperator() fiber.Handler
+	// CreateOperator ...
+	CreateOperator() fiber.Handler
 }

@@ -46,3 +46,8 @@ func (h *handlers) ListOperators() fiber.Handler {
 func (h *handlers) NewOperator() fiber.Handler {
 	return htmx.NewHxControllerHandler(operators.NewOperatorController(h.db))
 }
+
+// CreateOperator ...
+func (h *handlers) CreateOperator() fiber.Handler {
+	return htmx.NewHxControllerHandler(operators.NewOperatorController(h.db))
+}
