@@ -30,4 +30,6 @@ type Handlers interface {
 	// ShowAccount() fiber.Handler
 	// // DeleteAccount ...
 	// DeleteAccount() fiber.Handler
+	// ListUsers ...
+	ListUsers() fiber.Handler
 }

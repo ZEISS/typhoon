@@ -230,7 +230,10 @@ func Layout(p LayoutProps, children ...htmx.Node) htmx.Node {
 								menus.MenuItem(
 									menus.MenuItemProps{},
 									menus.MenuLink(
-										menus.MenuLinkProps{},
+										menus.MenuLinkProps{
+											Href:   "/users",
+											Active: strings.HasPrefix(p.Path, "/users"),
+										},
 										htmx.Text("Users"),
 									),
 								),

@@ -1,4 +1,4 @@
-package operators
+package users
 
 import (
 	htmx "github.com/zeiss/fiber-htmx"
@@ -9,33 +9,32 @@ import (
 	"github.com/zeiss/typhoon/internal/api/models"
 )
 
-// OperatorsTableProps ...
-type OperatorsTableProps struct {
-	Operators []*models.Operator
-	Offset    int
-	Limit     int
-	Total     int
+// UsersTableProps ...
+type UsersTableProps struct {
+	Users  []*models.User
+	Offset int
+	Limit  int
+	Total  int
 }
 
-// OperatorsTable ...
-func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node {
+// UsersTable ...
+func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 	return htmx.Div(
 		htmx.ClassNames{
 			"bg-base-100": true,
 			"m-4":         true,
 		},
-
 		tables.Table(
-			tables.TableProps[*models.Operator]{
-				ID: "operators-tables",
-				Columns: []tables.ColumnDef[*models.Operator]{
+			tables.TableProps[*models.User]{
+				ID: "accounts-tables",
+				Columns: []tables.ColumnDef[*models.User]{
 					{
 						ID:          "id",
 						AccessorKey: "id",
-						Header: func(p tables.TableProps[*models.Operator]) htmx.Node {
+						Header: func(p tables.TableProps[*models.User]) htmx.Node {
 							return htmx.Th(htmx.Text("ID"))
 						},
-						Cell: func(p tables.TableProps[*models.Operator], row *models.Operator) htmx.Node {
+						Cell: func(p tables.TableProps[*models.User], row *models.User) htmx.Node {
 							return htmx.Td(
 								htmx.Text(row.ID.String()),
 							)
@@ -44,14 +43,14 @@ func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node 
 					{
 						ID:          "name",
 						AccessorKey: "name",
-						Header: func(p tables.TableProps[*models.Operator]) htmx.Node {
+						Header: func(p tables.TableProps[*models.User]) htmx.Node {
 							return htmx.Th(htmx.Text("Name"))
 						},
-						Cell: func(p tables.TableProps[*models.Operator], row *models.Operator) htmx.Node {
+						Cell: func(p tables.TableProps[*models.User], row *models.User) htmx.Node {
 							return htmx.Td(
 								links.Link(
 									links.LinkProps{
-										Href: "/operators/" + row.ID.String(),
+										Href: "/users/" + row.ID.String(),
 									},
 									htmx.Text(row.Name),
 								),
@@ -59,10 +58,10 @@ func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node 
 						},
 					},
 					{
-						Header: func(p tables.TableProps[*models.Operator]) htmx.Node {
+						Header: func(p tables.TableProps[*models.User]) htmx.Node {
 							return nil
 						},
-						Cell: func(p tables.TableProps[*models.Operator], row *models.Operator) htmx.Node {
+						Cell: func(p tables.TableProps[*models.User], row *models.User) htmx.Node {
 							return htmx.Td(
 								buttons.Button(
 									buttons.ButtonProps{
@@ -75,9 +74,9 @@ func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node 
 						},
 					},
 				},
-				Rows: tables.NewRows(props.Operators),
+				Rows: tables.NewRows(props.Users),
 				Toolbar: tables.TableToolbar(
-					tables.TableToolbarProps[*models.Operator]{
+					tables.TableToolbarProps[*models.User]{
 						ClassNames: htmx.ClassNames{
 							"flex":            true,
 							"items-center":    true,
@@ -102,14 +101,14 @@ func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node 
 						),
 					),
 					htmx.A(
-						htmx.Href("/operators/new"),
+						htmx.Href("/users/new"),
 						buttons.Outline(
 							buttons.ButtonProps{
 								ClassNames: htmx.ClassNames{
 									"btn-sm": true,
 								},
 							},
-							htmx.Text("Create Operator"),
+							htmx.Text("Create User"),
 						),
 					),
 				),

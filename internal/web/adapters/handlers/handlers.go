@@ -8,6 +8,7 @@ import (
 	"github.com/zeiss/typhoon/internal/web/controllers/login"
 	"github.com/zeiss/typhoon/internal/web/controllers/me"
 	"github.com/zeiss/typhoon/internal/web/controllers/operators"
+	"github.com/zeiss/typhoon/internal/web/controllers/users"
 	"github.com/zeiss/typhoon/internal/web/ports"
 	"github.com/zeiss/typhoon/pkg/resolvers"
 )
@@ -71,4 +72,9 @@ func (h *handlers) ListAccounts() fiber.Handler {
 // NewAccount ...
 func (h *handlers) NewAccount() fiber.Handler {
 	return htmx.NewHxControllerHandler(accounts.NewAccountController(h.db))
+}
+
+// ListUsers ...
+func (h *handlers) ListUsers() fiber.Handler {
+	return htmx.NewHxControllerHandler(users.NewListUsersController(h.db))
 }
