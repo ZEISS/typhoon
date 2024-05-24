@@ -1,6 +1,9 @@
 package skgs
 
 import (
+	"fmt"
+
+	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
@@ -11,13 +14,27 @@ import (
 
 // NewSkgsControllerImpl ...
 type NewSkgsControllerImpl struct {
+	ID uuid.UUID `json:"id" params:"id" validate:"required:uuid"`
+
 	ports.Operators
 	htmx.DefaultController
 }
 
 // NewSkgsControllerImpl ...
 func NewSkgsController(db ports.Operators) *NewSkgsControllerImpl {
-	return &NewSkgsControllerImpl{db, htmx.DefaultController{}}
+	return &NewSkgsControllerImpl{
+		Operators:         db,
+		DefaultController: htmx.DefaultController{}}
+}
+
+// Prepare ...
+func (l *NewSkgsControllerImpl) Prepare() error {
+	err := l.BindParams(l)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Post ...
@@ -29,7 +46,7 @@ func (l *NewSkgsControllerImpl) Get() error {
 			components.Layout(
 				components.LayoutProps{},
 				htmx.FormElement(
-					htmx.HxPost("/operators/new"),
+					htmx.HxPost(fmt.Sprintf("/operators/%s/skgs/create", l.ID)),
 					cards.CardBordered(
 						cards.CardProps{},
 						cards.Body(
