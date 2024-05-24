@@ -25,58 +25,10 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 			"m-4":         true,
 		},
 		tables.Table(
-			tables.TableProps[*models.User]{
+			tables.TableProps{
 				ID: "accounts-tables",
-				Columns: []tables.ColumnDef[*models.User]{
-					{
-						ID:          "id",
-						AccessorKey: "id",
-						Header: func(p tables.TableProps[*models.User]) htmx.Node {
-							return htmx.Th(htmx.Text("ID"))
-						},
-						Cell: func(p tables.TableProps[*models.User], row *models.User) htmx.Node {
-							return htmx.Td(
-								htmx.Text(row.ID.String()),
-							)
-						},
-					},
-					{
-						ID:          "name",
-						AccessorKey: "name",
-						Header: func(p tables.TableProps[*models.User]) htmx.Node {
-							return htmx.Th(htmx.Text("Name"))
-						},
-						Cell: func(p tables.TableProps[*models.User], row *models.User) htmx.Node {
-							return htmx.Td(
-								links.Link(
-									links.LinkProps{
-										Href: "/users/" + row.ID.String(),
-									},
-									htmx.Text(row.Name),
-								),
-							)
-						},
-					},
-					{
-						Header: func(p tables.TableProps[*models.User]) htmx.Node {
-							return nil
-						},
-						Cell: func(p tables.TableProps[*models.User], row *models.User) htmx.Node {
-							return htmx.Td(
-								buttons.Button(
-									buttons.ButtonProps{
-										ClassNames: htmx.ClassNames{
-											"btn-square": true,
-										},
-									},
-								),
-							)
-						},
-					},
-				},
-				Rows: tables.NewRows(props.Users),
 				Toolbar: tables.TableToolbar(
-					tables.TableToolbarProps[*models.User]{
+					tables.TableToolbarProps{
 						ClassNames: htmx.ClassNames{
 							"flex":            true,
 							"items-center":    true,
@@ -122,6 +74,54 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 				// 	},
 				// ),
 			},
+			[]tables.ColumnDef[*models.User]{
+				{
+					ID:          "id",
+					AccessorKey: "id",
+					Header: func(p tables.TableProps) htmx.Node {
+						return htmx.Th(htmx.Text("ID"))
+					},
+					Cell: func(p tables.TableProps, row *models.User) htmx.Node {
+						return htmx.Td(
+							htmx.Text(row.ID.String()),
+						)
+					},
+				},
+				{
+					ID:          "name",
+					AccessorKey: "name",
+					Header: func(p tables.TableProps) htmx.Node {
+						return htmx.Th(htmx.Text("Name"))
+					},
+					Cell: func(p tables.TableProps, row *models.User) htmx.Node {
+						return htmx.Td(
+							links.Link(
+								links.LinkProps{
+									Href: "/users/" + row.ID.String(),
+								},
+								htmx.Text(row.Name),
+							),
+						)
+					},
+				},
+				{
+					Header: func(p tables.TableProps) htmx.Node {
+						return nil
+					},
+					Cell: func(p tables.TableProps, row *models.User) htmx.Node {
+						return htmx.Td(
+							buttons.Button(
+								buttons.ButtonProps{
+									ClassNames: htmx.ClassNames{
+										"btn-square": true,
+									},
+								},
+							),
+						)
+					},
+				},
+			},
+			props.Users,
 		),
 	)
 }
