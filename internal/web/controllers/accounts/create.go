@@ -1,8 +1,6 @@
 package accounts
 
 import (
-	"fmt"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/nats-io/jwt"
@@ -48,13 +46,6 @@ func (l *CreateControllerImpl) Prepare() error {
 	}
 
 	return nil
-}
-
-// Error ...
-func (l *CreateControllerImpl) Error(err error) error {
-	fmt.Println(err)
-
-	return err
 }
 
 // Post ...

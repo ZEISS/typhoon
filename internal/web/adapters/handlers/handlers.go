@@ -83,3 +83,8 @@ func (h *handlers) ListUsers() fiber.Handler {
 func (h *handlers) CreateAccount() fiber.Handler {
 	return htmx.NewHxControllerHandler(accounts.NewCreateController(h.db))
 }
+
+// ShowAccount ...
+func (h *handlers) ShowAccount() fiber.Handler {
+	return htmx.NewHxControllerHandler(accounts.NewShowAccountController(h.db))
+}

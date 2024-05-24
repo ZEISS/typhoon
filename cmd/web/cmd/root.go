@@ -124,6 +124,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Get("/accounts", handlers.ListAccounts())
 		app.Get("/accounts/new", handlers.NewAccount())
 		app.Post("/accounts/create", handlers.CreateAccount())
+		app.Get("/accounts/:id", handlers.ShowAccount())
 
 		// Users handler
 		app.Get("/users", handlers.ListUsers())
