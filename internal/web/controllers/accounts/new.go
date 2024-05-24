@@ -55,7 +55,7 @@ func (l *NewAccountControllerImpl) Get() error {
 			components.Layout(
 				components.LayoutProps{},
 				htmx.FormElement(
-					htmx.HxPost("/accounts/new"),
+					htmx.HxPost("/accounts/create"),
 					cards.CardBordered(
 						cards.CardProps{},
 						cards.Body(
@@ -98,6 +98,7 @@ func (l *NewAccountControllerImpl) Get() error {
 												},
 												htmx.Text("Select an operator"),
 											),
+											htmx.Name("operator_id"),
 											htmx.ForEach(l.Operators, func(operator *models.Operator) htmx.Node {
 												return forms.Option(
 													forms.OptionProps{

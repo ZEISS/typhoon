@@ -1,13 +1,15 @@
 package accounts
 
 import (
+	"fmt"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
+	"github.com/nats-io/jwt"
+	"github.com/nats-io/nkeys"
 	htmx "github.com/zeiss/fiber-htmx"
-	"github.com/zeiss/fiber-htmx/components/buttons"
-	"github.com/zeiss/fiber-htmx/components/cards"
-	"github.com/zeiss/fiber-htmx/components/forms"
-	"github.com/zeiss/typhoon/internal/web/components"
+	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/utils"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
@@ -15,18 +17,18 @@ var validate *validator.Validate
 
 // CreateControllerImpl ...
 type CreateControllerImpl struct {
-	OperatorID  uuid.UUID `json:"operator_id" form:"operator_id" validate:"required:uuid"`
+	OperatorID  uuid.UUID `json:"operator_id" form:"operator_id" validate:"required,uuid"`
 	Name        string    `json:"name" form:"name" validate:"required,min=3,max=100"`
 	Description string    `json:"description" form:"description" validate:"required,min=3,max=1024"`
 
-	ports.Accounts
+	ports.Repository
 	htmx.DefaultController
 }
 
 // NewCreateController ...
-func NewCreateController(db ports.Accounts) *CreateControllerImpl {
+func NewCreateController(db ports.Repository) *CreateControllerImpl {
 	return &CreateControllerImpl{
-		Accounts:          db,
+		Repository:        db,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -35,7 +37,7 @@ func NewCreateController(db ports.Accounts) *CreateControllerImpl {
 func (l *CreateControllerImpl) Prepare() error {
 	validate = validator.New()
 
-	err := l.Ctx().BodyParser(&l)
+	err := l.Ctx().BodyParser(l)
 	if err != nil {
 		return err
 	}
@@ -48,158 +50,87 @@ func (l *CreateControllerImpl) Prepare() error {
 	return nil
 }
 
+// Error ...
+func (l *CreateControllerImpl) Error(err error) error {
+	fmt.Println(err)
+
+	return err
+}
+
 // Post ...
 func (l *CreateControllerImpl) Post() error {
-	// op := models.Account{
-	// 	Name:        l.Name,
-	// 	Description: utils.StrPtr(l.Description),
-	// }
+	account := models.Account{
+		Name:        l.Name,
+		OperatorID:  l.OperatorID,
+		Description: utils.StrPtr(l.Description),
+	}
 
-	// op, err := models.NewOperator(query.Name, query.Description)
-	// if err != nil {
-	// 	return err
-	// }
+	operator := models.Operator{
+		ID: l.OperatorID,
+	}
+	err := l.GetOperator(l.Context(), &operator)
+	if err != nil {
+		return err
+	}
 
-	// err = l.CreateOperator(l.Context(), &op)
-	// if err != nil {
-	// 	return err
-	// }
+	pk, err := nkeys.CreateAccount()
+	if err != nil {
+		return err
+	}
+
+	id, err := pk.PublicKey()
+	if err != nil {
+		return err
+	}
+
+	seed, err := pk.Seed()
+	if err != nil {
+		return err
+	}
+	account.Key = models.NKey{ID: id, Seed: seed}
+
+	skg := models.SigningKeyGroup{Name: "Default", Description: "Default signing key group"}
+
+	skgpk, err := nkeys.CreateAccount()
+	if err != nil {
+		return err
+	}
+
+	skgid, err := skgpk.PublicKey()
+	if err != nil {
+		return err
+	}
+
+	skgseed, err := skgpk.Seed()
+	if err != nil {
+		return err
+	}
+	skg.Key = models.NKey{ID: skgid, Seed: skgseed}
+	account.SigningKeyGroups = append(account.SigningKeyGroups, skg)
+
+	// @katallaxie: this is a bit weird, but I think it's a good idea to have a default signing key group
+	osk, err := nkeys.FromSeed(operator.SigningKeyGroups[0].Key.Seed)
+	if err != nil {
+		return err
+	}
+
+	ac := jwt.NewAccountClaims(id)
+	ac.Name = l.Name
+	ac.Issuer = operator.KeyID
+	ac.SigningKeys.Add(skg.Key.ID)
+
+	token, err := ac.Encode(osk)
+	if err != nil {
+		return err
+	}
+	account.Token = models.Token{ID: id, Token: token}
+
+	err = l.CreateAccount(l.Context(), &account)
+	if err != nil {
+		return err
+	}
 
 	htmx.Redirect(l.Ctx(), "/accounts")
 
 	return nil
-}
-
-// Get ...
-func (l *CreateControllerImpl) Get() error {
-	return htmx.RenderComp(
-		l.Ctx(),
-		components.Page(
-			components.PageProps{},
-			components.Layout(
-				components.LayoutProps{},
-				htmx.FormElement(
-					htmx.HxPost("/accounts/new"),
-					cards.CardBordered(
-						cards.CardProps{},
-						cards.Body(
-							cards.BodyProps{},
-							cards.Title(
-								cards.TitleProps{},
-								htmx.Text("Properties"),
-							),
-							forms.FormControl(
-								forms.FormControlProps{
-									ClassNames: htmx.ClassNames{
-										"py-4": true,
-									},
-								},
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"-my-4": true,
-											},
-										},
-										htmx.Text("Name"),
-									),
-								),
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"text-neutral-500": true,
-											},
-										},
-										htmx.Text("A unique identifier for operator."),
-									),
-								),
-								forms.TextInputBordered(
-									forms.TextInputProps{
-										Name: "name",
-									},
-								),
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"text-neutral-500": true,
-											},
-										},
-										htmx.Text("The name must be from 3 to 100 characters. At least 3 characters must be non-whitespace."),
-									),
-								),
-								forms.FormControl(
-									forms.FormControlProps{
-										ClassNames: htmx.ClassNames{
-											"py-4": true,
-										},
-									},
-									forms.FormControlLabel(
-										forms.FormControlLabelProps{},
-										forms.FormControlLabelText(
-											forms.FormControlLabelTextProps{
-												ClassNames: htmx.ClassNames{
-													"-my-4": true,
-												},
-											},
-											htmx.Text("Description"),
-										),
-									),
-									forms.FormControlLabel(
-										forms.FormControlLabelProps{},
-										forms.FormControlLabelText(
-											forms.FormControlLabelTextProps{
-												ClassNames: htmx.ClassNames{
-													"text-neutral-500": true,
-												},
-											},
-											htmx.Text("A brief description of the operator to provide context."),
-										),
-									),
-									forms.TextareaBordered(
-										forms.TextareaProps{
-											Name: "description",
-										},
-									),
-									forms.FormControlLabel(
-										forms.FormControlLabelProps{},
-										forms.FormControlLabelText(
-											forms.FormControlLabelTextProps{
-												ClassNames: htmx.ClassNames{
-													"text-neutral-500": true,
-												},
-											},
-											htmx.Text("The description must be from 3 to 1024 characters."),
-										),
-									),
-								),
-							),
-						),
-					),
-					cards.CardBordered(
-						cards.CardProps{},
-						cards.Body(
-							cards.BodyProps{},
-							cards.Title(
-								cards.TitleProps{},
-								htmx.Text("Tags - Optional"),
-							),
-							cards.Actions(
-								cards.ActionsProps{},
-								buttons.Outline(
-									buttons.ButtonProps{},
-									htmx.Attribute("type", "submit"),
-									htmx.Text("Create Operator"),
-								),
-							),
-						),
-					),
-				),
-			),
-		),
-	)
 }
