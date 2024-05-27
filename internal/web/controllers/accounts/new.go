@@ -91,6 +91,9 @@ func (l *NewAccountControllerImpl) Get() error {
 										},
 										forms.SelectBordered(
 											forms.SelectProps{},
+											htmx.HxGet("/accounts/partials/operator-skgs"),
+											htmx.HxTarget("#operator-skgs"),
+											htmx.HxSwap("outerHTML"),
 											forms.Option(
 												forms.OptionProps{
 													Selected: true,
@@ -99,14 +102,56 @@ func (l *NewAccountControllerImpl) Get() error {
 												htmx.Text("Select an operator"),
 											),
 											htmx.Name("operator_id"),
-											htmx.ForEach(l.Operators, func(operator *models.Operator) htmx.Node {
-												return forms.Option(
+											htmx.Group(
+												htmx.ForEach(l.Operators, func(operator *models.Operator) htmx.Node {
+													return forms.Option(
+														forms.OptionProps{
+															Value: operator.ID.String(),
+														},
+														htmx.Text(operator.Name),
+													)
+												})...,
+											),
+										),
+									),
+								),
+								forms.FormControl(
+									forms.FormControlProps{
+										ClassNames: htmx.ClassNames{
+											"py-4": true,
+										},
+									},
+									forms.FormControlLabel(
+										forms.FormControlLabelProps{},
+										forms.FormControlLabelText(
+											forms.FormControlLabelTextProps{
+												ClassNames: htmx.ClassNames{
+													"-my-4": true,
+												},
+											},
+											htmx.Text("Signing Key Group"),
+										),
+									),
+									forms.FormControlLabel(
+										forms.FormControlLabelProps{},
+										forms.FormControlLabelText(
+											forms.FormControlLabelTextProps{
+												ClassNames: htmx.ClassNames{
+													"text-neutral-500": true,
+												},
+											},
+											forms.SelectBordered(
+												forms.SelectProps{},
+												forms.Option(
 													forms.OptionProps{
-														Value: operator.ID.String(),
+														Selected: true,
+														Disabled: true,
 													},
-													htmx.Text(operator.Name),
-												)
-											}),
+													htmx.Text("Select an signing key group"),
+												),
+												htmx.ID("operator-skgs"),
+												htmx.Name("operator_skgs_id"),
+											),
 										),
 									),
 								),

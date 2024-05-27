@@ -36,4 +36,6 @@ type Handlers interface {
 	NewOperatorSkg() fiber.Handler
 	// CreateOperatorSkg ...
 	CreateOperatorSkg() fiber.Handler
+	// OperatorSkgsOptions ...
+	OperatorSkgsOptions() fiber.Handler
 }

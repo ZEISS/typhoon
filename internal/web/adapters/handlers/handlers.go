@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/typhoon/internal/web/controllers/accounts"
+	pa "github.com/zeiss/typhoon/internal/web/controllers/accounts/partials"
 	"github.com/zeiss/typhoon/internal/web/controllers/dashboard"
 	"github.com/zeiss/typhoon/internal/web/controllers/login"
 	"github.com/zeiss/typhoon/internal/web/controllers/me"
@@ -11,7 +12,6 @@ import (
 	oskgs "github.com/zeiss/typhoon/internal/web/controllers/operators/skgs"
 	"github.com/zeiss/typhoon/internal/web/controllers/users"
 	"github.com/zeiss/typhoon/internal/web/ports"
-	"github.com/zeiss/typhoon/pkg/resolvers"
 )
 
 var _ ports.Handlers = (*handlers)(nil)
@@ -37,12 +37,12 @@ func (h *handlers) Dashboard() fiber.Handler {
 
 // Me ...
 func (h *handlers) Me() fiber.Handler {
-	return htmx.NewHxControllerHandler(me.NewMeController(), htmx.Config{Resolvers: []htmx.ResolveFunc{resolvers.UserByID(h.db)}})
+	return htmx.NewHxControllerHandler(me.NewMeController())
 }
 
 // ListOperators ...
 func (h *handlers) ListOperators() fiber.Handler {
-	return htmx.NewHxControllerHandler(operators.NewListOperatorsController(h.db), htmx.Config{Resolvers: []htmx.ResolveFunc{resolvers.ListOperators(h.db)}})
+	return htmx.NewHxControllerHandler(operators.NewListOperatorsController(h.db))
 }
 
 // NewOperator ...
@@ -98,4 +98,9 @@ func (h *handlers) NewOperatorSkg() fiber.Handler {
 // CreateOperatorSkg ...
 func (h *handlers) CreateOperatorSkg() fiber.Handler {
 	return htmx.NewHxControllerHandler(oskgs.NewCreateSkgsController(h.db))
+}
+
+// OperatorSkgsOptions ...
+func (h *handlers) OperatorSkgsOptions() fiber.Handler {
+	return htmx.NewHxControllerHandler(pa.NewOperatorSkgsOptions(h.db))
 }

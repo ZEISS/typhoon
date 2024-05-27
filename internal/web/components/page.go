@@ -8,6 +8,7 @@ import (
 type PageProps struct {
 	Title    string
 	Path     string
+	Boost    bool
 	Children []htmx.Node
 }
 
@@ -37,7 +38,7 @@ func Page(props PageProps, children ...htmx.Node) htmx.Node {
 			},
 		},
 		htmx.Body(
-			htmx.HxBoost(true),
+			htmx.HxBoost(props.Boost),
 			htmx.Group(children...),
 		),
 	)

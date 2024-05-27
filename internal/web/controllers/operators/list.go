@@ -6,24 +6,50 @@ import (
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/components/operators"
 	"github.com/zeiss/typhoon/internal/web/ports"
-	"github.com/zeiss/typhoon/pkg/resolvers"
 )
 
 var _ = htmx.Controller(&ListOperatorsController{})
 
 // ListOperatorsController ...
 type ListOperatorsController struct {
+	Limit  int    `json:"limit" xml:"limit" form:"limit"`
+	Offset int    `json:"offset" xml:"offset" form:"offset"`
+	Search string `json:"search" xml:"search" form:"search"`
+
+	ports.Operators
 	htmx.DefaultController
 }
 
 // NewListOperatorsController ...
 func NewListOperatorsController(db ports.Operators) *ListOperatorsController {
-	return &ListOperatorsController{}
+	return &ListOperatorsController{
+		Operators:         db,
+		DefaultController: htmx.DefaultController{},
+	}
+}
+
+// Prepare ...
+func (l *ListOperatorsController) Prepare() error {
+	err := l.Ctx().QueryParser(&l)
+	if err != nil {
+		return nil
+	}
+
+	return nil
 }
 
 // Prepare ...
 func (l *ListOperatorsController) Get() error {
-	pagination := htmx.Values[models.Pagination[models.Operator]](l.Ctx().UserContext(), resolvers.ValuesKeyOperators)
+	pagination := models.Pagination[models.Operator]{}
+
+	pagination.Limit = l.Limit
+	pagination.Offset = l.Offset
+	pagination.Search = l.Search
+
+	err := l.ListOperators(l.Context(), &pagination)
+	if err != nil {
+		return err
+	}
 
 	ops := make([]*models.Operator, 0, len(pagination.Rows))
 	for _, row := range pagination.Rows {
