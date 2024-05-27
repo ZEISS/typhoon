@@ -7,9 +7,11 @@ import (
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
+	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/utils"
 	"github.com/zeiss/typhoon/internal/web/components"
+	"github.com/zeiss/typhoon/internal/web/components/accounts"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
@@ -41,6 +43,11 @@ func (l *ShowAccountControllerImpl) Get() error {
 	err = l.GetAccount(l.Context(), &acc)
 	if err != nil {
 		return err
+	}
+
+	skgs := []*models.SigningKeyGroup{}
+	for _, skg := range acc.SigningKeyGroups {
+		skgs = append(skgs, &skg)
 	}
 
 	return htmx.RenderComp(
@@ -108,6 +115,36 @@ func (l *ShowAccountControllerImpl) Get() error {
 								htmx.HxDelete(fmt.Sprintf("/account/%s", acc.ID)),
 								htmx.HxConfirm("Are you sure you want to delete this lens?"),
 								htmx.Text("Delete"),
+							),
+						),
+					),
+				),
+				cards.CardBordered(
+					cards.CardProps{},
+					cards.Body(
+						cards.BodyProps{},
+						cards.Title(
+							cards.TitleProps{},
+							htmx.Text("Signing Key Groups"),
+						),
+
+						accounts.SigningKeyGroupsTable(
+							accounts.SigningKeyGroupsTableProps{
+								SigningKeyGroups: skgs,
+							},
+						),
+						cards.Actions(
+							cards.ActionsProps{},
+
+							htmx.A(
+								htmx.ClassNames{
+									"btn": true,
+								},
+								htmx.Href(fmt.Sprintf("/accounts/%s/skgs/new", acc.ID)),
+								icons.PlusOutline(
+									icons.IconProps{},
+								),
+								htmx.Text("Signing Key Group"),
 							),
 						),
 					),
