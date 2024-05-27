@@ -30,12 +30,19 @@ type Account struct {
 	OperatorID uuid.UUID `json:"operator_id" gorm:"foreignKey:ID"`
 	// SigningKeyGroups is the list of signing key groups the account has.
 	SigningKeyGroups []SigningKeyGroup `json:"signing_key_groups" gorm:"many2many:account_signing_key_groups;foreignKey:ID;joinForeignKey:AccountID;joinReferences:SigningKeyGroupID"`
+	// Users is the list of users the account has.
+	Users []User `json:"users" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	// CreatedAt is the time the account was created.
 	CreatedAt time.Time `json:"created_at"`
 	// UpdatedAt is the time the account was updated.
 	UpdatedAt time.Time `json:"updated_at"`
 	// DeletedAt is the time the account was deleted.
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
+}
+
+// AfterDelete ...
+func (a *Account) AfterDelete(tx *gorm.DB) error {
+	return tx.Where("account_id = ?", a.ID).Delete(&User{}).Error
 }
 
 // FindSigningKeyGroupByID ...

@@ -7,6 +7,7 @@ import (
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
+	"github.com/zeiss/fiber-htmx/components/dropdowns"
 	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/utils"
@@ -110,11 +111,34 @@ func (l *ShowAccountControllerImpl) Get() error {
 						),
 						cards.Actions(
 							cards.ActionsProps{},
-							buttons.Outline(
-								buttons.ButtonProps{},
-								htmx.HxDelete(fmt.Sprintf("/account/%s", acc.ID)),
-								htmx.HxConfirm("Are you sure you want to delete this lens?"),
-								htmx.Text("Delete"),
+							dropdowns.Dropdown(
+								dropdowns.DropdownProps{
+									ClassNames: htmx.ClassNames{
+										"dropdown-end": true,
+									},
+								},
+								dropdowns.DropdownButton(
+									dropdowns.DropdownButtonProps{},
+									icons.BoltOutline(
+										icons.IconProps{},
+									),
+									htmx.Text("Actions"),
+								),
+								dropdowns.DropdownMenuItems(
+									dropdowns.DropdownMenuItemsProps{},
+									dropdowns.DropdownMenuItem(
+										dropdowns.DropdownMenuItemProps{},
+										buttons.Error(
+											buttons.ButtonProps{
+												ClassNames: htmx.ClassNames{
+													"btn-sm": true,
+												},
+											},
+											htmx.HxDelete(fmt.Sprintf("/accounts/%s", acc.ID)),
+											htmx.Text("Delete Account"),
+										),
+									),
+								),
 							),
 						),
 					),
