@@ -131,3 +131,8 @@ func (h *handlers) ShowUser() fiber.Handler {
 func (h *handlers) UserCredentials() fiber.Handler {
 	return htmx.NewHxControllerHandler(credentials.NewIndexUserCredentialsController(h.db))
 }
+
+// DeleteUser ...
+func (h *handlers) DeleteUser() fiber.Handler {
+	return htmx.NewHxControllerHandler(users.NewDeleteUserController(h.db))
+}

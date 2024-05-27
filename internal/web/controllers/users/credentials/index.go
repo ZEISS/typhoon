@@ -55,5 +55,6 @@ func (l *IndexUserCredentialsControllerImpl) Get() error {
 	r := bytes.NewReader(bb)
 
 	l.Ctx().Set("Content-Disposition", `attachment; filename="credentials.creds"`)
+
 	return l.Ctx().SendStream(r)
 }

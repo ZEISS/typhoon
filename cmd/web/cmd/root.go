@@ -134,6 +134,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Get("/users/new", handlers.NewUser())
 		app.Post("/users/create", handlers.CreateUser())
 		app.Get("/users/:id", handlers.ShowUser())
+		app.Delete("/users/:id", handlers.DeleteUser())
 		app.Get("/users/partials/account-skgs", handlers.AccountSksOptions())
 		app.Get("/users/:id/credentials", handlers.UserCredentials())
 

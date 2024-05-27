@@ -46,4 +46,6 @@ type Handlers interface {
 	ShowUser() fiber.Handler
 	// UserCredentials ...
 	UserCredentials() fiber.Handler
+	// DeleteUser ...
+	DeleteUser() fiber.Handler
 }

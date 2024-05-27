@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
+	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/dropdowns"
 	"github.com/zeiss/fiber-htmx/components/icons"
@@ -136,6 +137,18 @@ func (l *ShowUserControllerImpl) Get() error {
 										htmx.A(
 											htmx.Href(fmt.Sprintf("/users/%s/credentials", user.ID)),
 											htmx.Text("Get Credentials"),
+										),
+									),
+									dropdowns.DropdownMenuItem(
+										dropdowns.DropdownMenuItemProps{},
+										buttons.Error(
+											buttons.ButtonProps{
+												ClassNames: htmx.ClassNames{
+													"btn-sm": true,
+												},
+											},
+											htmx.HxDelete(fmt.Sprintf("/users/%s", user.ID)),
+											htmx.Text("Delete User"),
 										),
 									),
 								),
