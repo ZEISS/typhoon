@@ -58,11 +58,9 @@ type Operator struct {
 	// Description is the description of the operator.
 	Description string `json:"description" validate:"max=1024"`
 	// Key is the issuer key identifier.
-	Key   NKey   `json:"key"`
-	KeyID string `json:"key_id" gorm:"foreignKey:ID"`
+	Key NKey `json:"key" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:operator"`
 	// Token is the JWT token used to authenticate the account.
-	Token   Token  `json:"token" gorm:"foreignKey:TokenID"`
-	TokenID string `json:"token_id"`
+	Token Token `json:"token" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:operator"`
 	// SystemAdminAccount is the account that is used to manage the systems.
 	SystemAdminAccount   *Account   `json:"system_admin_account"`
 	SystemAdminAccountID *uuid.UUID `json:"system_admin_account_id"`

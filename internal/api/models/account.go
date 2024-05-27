@@ -19,11 +19,9 @@ type Account struct {
 	// Description is the description of the account.
 	Description *string `json:"description"`
 	// Key is the issuer key identifier.
-	Key   NKey   `json:"key"`
-	KeyID string `json:"key_id" gorm:"foreignKey:ID"`
+	Key NKey `json:"key" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:account"`
 	// Token is the JWT token used to authenticate the account.
-	Token   Token  `json:"token" gorm:"foreignKey:TokenID"`
-	TokenID string `json:"token_id"`
+	Token Token `json:"token" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:account"`
 	// Operator is the operator this account is associated with.
 	Operator Operator `json:"operator" gorm:"foreignKey:OperatorID"`
 	// OperatorID is the operator ID.

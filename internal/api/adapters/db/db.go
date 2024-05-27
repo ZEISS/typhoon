@@ -33,6 +33,7 @@ func (db *DB) RunMigrations() error {
 		&models.System{},
 		&models.Tag{},
 		&models.Cluster{},
+		&models.Token{},
 		&models.SigningKeyGroup{},
 	)
 }

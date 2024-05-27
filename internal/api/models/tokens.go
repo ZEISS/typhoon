@@ -3,8 +3,21 @@ package models
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/nats-io/jwt"
 	"gorm.io/gorm"
+)
+
+// OwnerType is the struct that is used to define the owner of the token.
+type OwnerType string
+
+const (
+	// Operator is the owner of the token.
+	OperatorToken OwnerType = "operator"
+	// Account is the owner of the token.
+	AccountToken OwnerType = "account"
+	// User is the owner of the token.
+	UserToken OwnerType = "user"
 )
 
 // Token is a model for storing the the JWT token used to authenticate the user.
@@ -14,6 +27,10 @@ type Token struct {
 	ID string `json:"token_id" gorm:"primaryKey"`
 	// Token is the JWT token used to authenticate the account.
 	Token string `json:"token"`
+	// OwnerID is the owner of the token.
+	OwnerID uuid.UUID `json:"owner_id"`
+	// OwnerType is the type of the owner.
+	OwnerType OwnerType `json:"owner_type"`
 	// CreatedAt is the time the token was created.
 	CreatedAt time.Time `json:"created_at"`
 	// UpdatedAt is the time the token was updated.

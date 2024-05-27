@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/zeiss/typhoon/internal/api/models"
+	"gorm.io/gorm/clause"
 )
 
 // ListAccounts ...
@@ -28,5 +29,5 @@ func (db *database) UpdateAccount(ctx context.Context, account *models.Account) 
 
 // DeleteAccount ...
 func (db *database) DeleteAccount(ctx context.Context, account *models.Account) error {
-	return db.conn.WithContext(ctx).Delete(account).Error
+	return db.conn.Select(clause.Associations).WithContext(ctx).Delete(account).Error
 }

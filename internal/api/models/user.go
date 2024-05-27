@@ -17,13 +17,11 @@ type User struct {
 	// Description is the description of the user.
 	Description string `json:"description" validate:"max=1024"`
 	// Key is the issuer key identifier.
-	Key NKey `json:"key"`
+	Key NKey `json:"key" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:account"`
 	// KeyID is the foreign key for the key.
 	KeyID string `json:"key_id" gorm:"foreignKey:ID"`
 	// Token is the JWT token used to authenticate the account.
-	Token Token `json:"token" gorm:"foreignKey:TokenID"`
-	// TokenID is the foreign key for the token.
-	TokenID string `json:"token_id"`
+	Token Token `json:"token" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:user"`
 	// Account is the account that the user belongs to.
 	Account Account `json:"account" gorm:"foreignKey:AccountID"`
 	// AccountID is the foreign key for the account.

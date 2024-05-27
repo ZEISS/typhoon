@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/nats-io/nkeys"
 	"gorm.io/gorm"
 )
@@ -13,6 +14,10 @@ type NKey struct {
 	ID string `json:"id" gorm:"primaryKey"`
 	// Seed is the private key portion of the NKey.
 	Seed []byte `json:"seed"`
+	// OwnerID is the owner of the token.
+	OwnerID uuid.UUID `json:"owner_id"`
+	// OwnerType is the type of the owner.
+	OwnerType OwnerType `json:"owner_type"`
 	// CreatedAt is the timestamp the key was created
 	CreatedAt time.Time `json:"created_at"`
 	// UpdatedAt is the timestamp the key was last updated

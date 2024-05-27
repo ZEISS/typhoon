@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/zeiss/typhoon/internal/api/models"
+	"gorm.io/gorm/clause"
 )
 
 // GetUser ...
@@ -23,7 +24,7 @@ func (d *database) CreateUser(ctx context.Context, user *models.User) error {
 
 // DeleteUser ...
 func (d *database) DeleteUser(ctx context.Context, user *models.User) error {
-	return d.conn.WithContext(ctx).Delete(user).Error
+	return d.conn.Select(clause.Associations).WithContext(ctx).Delete(user).Error
 }
 
 // UpdateUser ...

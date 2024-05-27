@@ -177,7 +177,7 @@ func (l *ShowOperatorControllerImpl) Get() error {
 							),
 							htmx.H3(
 								htmx.Text(
-									op.KeyID,
+									op.Key.ID,
 								),
 							),
 						),

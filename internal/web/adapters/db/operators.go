@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/zeiss/typhoon/internal/api/models"
+	"gorm.io/gorm/clause"
 )
 
 // ListOperators ...
@@ -28,5 +29,5 @@ func (db *database) UpdateOperator(ctx context.Context, operator *models.Operato
 
 // DeleteOperator ...
 func (db *database) DeleteOperator(ctx context.Context, operator *models.Operator) error {
-	return db.conn.WithContext(ctx).Delete(operator).Error
+	return db.conn.Debug().WithContext(ctx).Select(clause.Associations).Delete(operator).Debug().Error
 }
