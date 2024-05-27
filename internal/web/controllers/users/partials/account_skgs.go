@@ -65,7 +65,7 @@ func (l *AccountSkgsOptionsImpl) Get() error {
 			htmx.Group(
 				htmx.ForEach(skgs, func(e *models.SigningKeyGroup) htmx.Node {
 					return htmx.Option(
-						htmx.Attribute("value", e.KeyID),
+						htmx.Attribute("value", e.ID.String()),
 						htmx.Text(e.Name),
 					)
 				})...,

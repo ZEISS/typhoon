@@ -243,7 +243,7 @@ func (l *NewUserControllerImpl) Get() error {
 								buttons.Outline(
 									buttons.ButtonProps{},
 									htmx.Attribute("type", "submit"),
-									htmx.Text("Create Account"),
+									htmx.Text("Create User"),
 								),
 							),
 						),

@@ -1,13 +1,11 @@
 package me
 
 import (
-	"github.com/zeiss/fiber-goth/adapters"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/forms"
 	"github.com/zeiss/typhoon/internal/web/components"
-	"github.com/zeiss/typhoon/pkg/resolvers"
 )
 
 // MeController ...
@@ -27,8 +25,6 @@ func (m *MeController) Prepare() error {
 
 // Get ...
 func (m *MeController) Get() error {
-	user := htmx.Values[adapters.GothUser](m.Ctx().UserContext(), resolvers.ValuesKeyUser)
-
 	return htmx.RenderComp(
 		m.Ctx(),
 		components.Page(
@@ -59,8 +55,8 @@ func (m *MeController) Get() error {
 
 									forms.TextInputBordered(
 										forms.TextInputProps{
-											Name:     "username",
-											Value:    user.Name,
+											Name: "username",
+											// Value:    user.Name,
 											Disabled: true,
 										},
 									),
@@ -87,8 +83,8 @@ func (m *MeController) Get() error {
 									),
 									forms.TextInputBordered(
 										forms.TextInputProps{
-											Name:     "email",
-											Value:    user.Email,
+											Name: "email",
+											// Value:    user.Email,
 											Disabled: true,
 										},
 									),

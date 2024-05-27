@@ -37,3 +37,14 @@ type Account struct {
 	// DeletedAt is the time the account was deleted.
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
 }
+
+// FindSigningKeyGroupByID ...
+func (a *Account) FindSigningKeyGroupByID(id uuid.UUID) *SigningKeyGroup {
+	for _, skg := range a.SigningKeyGroups {
+		if skg.ID == id {
+			return &skg
+		}
+	}
+
+	return nil
+}
