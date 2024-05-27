@@ -127,15 +127,20 @@ func (l *ShowOperatorControllerImpl) Get() error {
 									dropdowns.DropdownMenuItemsProps{},
 									dropdowns.DropdownMenuItem(
 										dropdowns.DropdownMenuItemProps{},
+										// htmx.A(
+										// 	htmx.Text("Get Token"),
+										// ),
 										htmx.A(
-											htmx.Text("Get Token"),
+											htmx.Href(fmt.Sprintf("/operators/%s/token", op.ID)),
+											htmx.Text("Download JWT Token"),
 										),
 									),
+
 									dropdowns.DropdownMenuItem(
 										dropdowns.DropdownMenuItemProps{},
 										htmx.A(
 											htmx.HxDelete(fmt.Sprintf("/operators/%s", op.ID)),
-											htmx.HxConfirm("Are you sure you want to delete this lens?"),
+											htmx.HxConfirm("Are you sure you want to delete this operator?"),
 											htmx.Text("Delete"),
 										),
 									),

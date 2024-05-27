@@ -10,6 +10,7 @@ import (
 	"github.com/zeiss/typhoon/internal/web/controllers/me"
 	"github.com/zeiss/typhoon/internal/web/controllers/operators"
 	oskgs "github.com/zeiss/typhoon/internal/web/controllers/operators/skgs"
+	ot "github.com/zeiss/typhoon/internal/web/controllers/operators/tokens"
 	"github.com/zeiss/typhoon/internal/web/controllers/users"
 	"github.com/zeiss/typhoon/internal/web/controllers/users/credentials"
 	pu "github.com/zeiss/typhoon/internal/web/controllers/users/partials"
@@ -73,6 +74,13 @@ func (h *handlers) CreateOperator() fiber.Handler {
 func (h *handlers) ShowOperator() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
 		return operators.NewShowOperatorController(h.db)
+	})
+}
+
+// TokenOperator ...
+func (h *handlers) TokenOperator() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return ot.NewIndexOperatorTokenController(h.db)
 	})
 }
 
