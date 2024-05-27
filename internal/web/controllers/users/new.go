@@ -55,7 +55,7 @@ func (l *NewUserControllerImpl) Get() error {
 			components.Layout(
 				components.LayoutProps{},
 				htmx.FormElement(
-					htmx.HxPost("/accounts/new"),
+					htmx.HxPost("/users/create"),
 					cards.CardBordered(
 						cards.CardProps{},
 						cards.Body(
@@ -78,7 +78,7 @@ func (l *NewUserControllerImpl) Get() error {
 												"-my-4": true,
 											},
 										},
-										htmx.Text("Operator	"),
+										htmx.Text("Account"),
 									),
 								),
 								forms.FormControlLabel(
@@ -91,21 +91,67 @@ func (l *NewUserControllerImpl) Get() error {
 										},
 										forms.SelectBordered(
 											forms.SelectProps{},
+											htmx.HxGet("/users/partials/account-skgs"),
+											htmx.HxTarget("#account-skgs"),
+											htmx.HxSwap("outerHTML"),
 											forms.Option(
 												forms.OptionProps{
 													Selected: true,
 													Disabled: true,
 												},
-												htmx.Text("Select an operator"),
+												htmx.Text("Select an account"),
 											),
-											// htmx.ForEach(l.Accounts, func(operator *models.Operator) htmx.Node {
-											// 	return forms.Option(
-											// 		forms.OptionProps{
-											// 			Value: operator.ID.String(),
-											// 		},
-											// 		htmx.Text(operator.Name),
-											// 	)
-											// }),
+											htmx.Name("account_id"),
+											htmx.Group(
+												htmx.ForEach(l.Accounts, func(operator *models.Account) htmx.Node {
+													return forms.Option(
+														forms.OptionProps{
+															Value: operator.ID.String(),
+														},
+														htmx.Text(operator.Name),
+													)
+												})...,
+											),
+										),
+									),
+								),
+								forms.FormControl(
+									forms.FormControlProps{
+										ClassNames: htmx.ClassNames{
+											"py-4": true,
+										},
+									},
+									forms.FormControlLabel(
+										forms.FormControlLabelProps{},
+										forms.FormControlLabelText(
+											forms.FormControlLabelTextProps{
+												ClassNames: htmx.ClassNames{
+													"-my-4": true,
+												},
+											},
+											htmx.Text("Signing Key Group"),
+										),
+									),
+									forms.FormControlLabel(
+										forms.FormControlLabelProps{},
+										forms.FormControlLabelText(
+											forms.FormControlLabelTextProps{
+												ClassNames: htmx.ClassNames{
+													"text-neutral-500": true,
+												},
+											},
+											forms.SelectBordered(
+												forms.SelectProps{},
+												forms.Option(
+													forms.OptionProps{
+														Selected: true,
+														Disabled: true,
+													},
+													htmx.Text("Select an signing key group"),
+												),
+												htmx.ID("account-skgs"),
+												htmx.Name("account_skgs_id"),
+											),
 										),
 									),
 								),

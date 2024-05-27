@@ -8,24 +8,24 @@ import (
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
-// OperatorSkgsOptionsImpl ...
-type OperatorSkgsOptionsImpl struct {
-	OperatorID uuid.UUID `json:"operator_id" form:"operator_id" query:"operator_id" validate:"required,uuid"`
+// AccountSkgsOptionsImpl ...
+type AccountSkgsOptionsImpl struct {
+	AccountID uuid.UUID `json:"account_id" form:"account_id" query:"account_id" validate:"required,uuid"`
 
-	ports.Operators
+	ports.Accounts
 	htmx.DefaultController
 }
 
-// NewOperatorSkgsOptions ...
-func NewOperatorSkgsOptions(db ports.Operators) *OperatorSkgsOptionsImpl {
-	return &OperatorSkgsOptionsImpl{
-		Operators:         db,
+// NewAccountSkgsOptions ...
+func NewAccountSkgsOptions(db ports.Accounts) *AccountSkgsOptionsImpl {
+	return &AccountSkgsOptionsImpl{
+		Accounts:          db,
 		DefaultController: htmx.DefaultController{},
 	}
 }
 
 // Prepare ...
-func (l *OperatorSkgsOptionsImpl) Prepare() error {
+func (l *AccountSkgsOptionsImpl) Prepare() error {
 	err := l.Ctx().QueryParser(l)
 	if err != nil {
 		return err
@@ -35,17 +35,17 @@ func (l *OperatorSkgsOptionsImpl) Prepare() error {
 }
 
 // Get ...
-func (l *OperatorSkgsOptionsImpl) Get() error {
-	operator := models.Operator{
-		ID: l.OperatorID,
+func (l *AccountSkgsOptionsImpl) Get() error {
+	account := models.Account{
+		ID: l.AccountID,
 	}
-	err := l.GetOperator(l.Context(), &operator)
+	err := l.GetAccount(l.Context(), &account)
 	if err != nil {
 		return err
 	}
 
 	skgs := make([]*models.SigningKeyGroup, 0)
-	for _, skg := range operator.SigningKeyGroups {
+	for _, skg := range account.SigningKeyGroups {
 		skgs = append(skgs, &skg)
 	}
 
@@ -60,8 +60,8 @@ func (l *OperatorSkgsOptionsImpl) Get() error {
 				},
 				htmx.Text("Select an signing key group"),
 			),
-			htmx.ID("operator-skgs"),
-			htmx.Name("operator_skgs_id"),
+			htmx.ID("account-skgs"),
+			htmx.Name("account_skgs_id"),
 			htmx.Group(
 				htmx.ForEach(skgs, func(e *models.SigningKeyGroup) htmx.Node {
 					return htmx.Option(

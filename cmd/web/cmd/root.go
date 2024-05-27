@@ -131,6 +131,9 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 
 		// Users handler
 		app.Get("/users", handlers.ListUsers())
+		app.Get("/users/new", handlers.NewUser())
+		app.Post("/users/create", handlers.CreateUser())
+		app.Get("/users/partials/account-skgs", handlers.AccountSksOptions())
 
 		err = app.Listen(s.cfg.Flags.Addr)
 		if err != nil {

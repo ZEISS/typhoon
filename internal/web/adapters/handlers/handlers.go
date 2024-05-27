@@ -11,6 +11,7 @@ import (
 	"github.com/zeiss/typhoon/internal/web/controllers/operators"
 	oskgs "github.com/zeiss/typhoon/internal/web/controllers/operators/skgs"
 	"github.com/zeiss/typhoon/internal/web/controllers/users"
+	pu "github.com/zeiss/typhoon/internal/web/controllers/users/partials"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
@@ -103,4 +104,19 @@ func (h *handlers) CreateOperatorSkg() fiber.Handler {
 // OperatorSkgsOptions ...
 func (h *handlers) OperatorSkgsOptions() fiber.Handler {
 	return htmx.NewHxControllerHandler(pa.NewOperatorSkgsOptions(h.db))
+}
+
+// AccountSksOptions ...
+func (h *handlers) AccountSksOptions() fiber.Handler {
+	return htmx.NewHxControllerHandler(pu.NewAccountSkgsOptions(h.db))
+}
+
+// NewUser ...
+func (h *handlers) NewUser() fiber.Handler {
+	return htmx.NewHxControllerHandler(users.NewUserController(h.db))
+}
+
+// CreateUser ...
+func (h *handlers) CreateUser() fiber.Handler {
+	return htmx.NewHxControllerHandler(users.NewUserController(h.db))
 }
