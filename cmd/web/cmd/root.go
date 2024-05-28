@@ -121,6 +121,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Delete("/operators/:id", handlers.DeleteOperator())
 		app.Get("/operators/:id/token", handlers.TokenOperator())
 		app.Get("/operators/:id/skgs/new", handlers.NewOperatorSkg())
+		app.Put("/operators/:id/system-account", handlers.UpdateSystemAccount())
 		app.Post("/operators/:id/skgs/create", handlers.CreateOperatorSkg())
 
 		// Accounts handler

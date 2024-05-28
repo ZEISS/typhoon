@@ -7,9 +7,11 @@ import (
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/dropdowns"
+	"github.com/zeiss/fiber-htmx/components/forms"
 	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/tooltips"
 	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/utils"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/components/operators"
 	"github.com/zeiss/typhoon/internal/web/ports"
@@ -48,6 +50,11 @@ func (l *ShowOperatorControllerImpl) Get() error {
 	skgs := []*models.SigningKeyGroup{}
 	for _, skg := range op.SigningKeyGroups {
 		skgs = append(skgs, &skg)
+	}
+
+	accs := []*models.Account{}
+	for _, acc := range op.Accounts {
+		accs = append(accs, &acc)
 	}
 
 	return htmx.RenderComp(
@@ -108,6 +115,7 @@ func (l *ShowOperatorControllerImpl) Get() error {
 								),
 							),
 						),
+
 						cards.Actions(
 							cards.ActionsProps{},
 							dropdowns.Dropdown(
@@ -127,9 +135,6 @@ func (l *ShowOperatorControllerImpl) Get() error {
 									dropdowns.DropdownMenuItemsProps{},
 									dropdowns.DropdownMenuItem(
 										dropdowns.DropdownMenuItemProps{},
-										// htmx.A(
-										// 	htmx.Text("Get Token"),
-										// ),
 										htmx.A(
 											htmx.Href(fmt.Sprintf("/operators/%s/token", op.ID)),
 											htmx.Text("Download JWT Token"),
@@ -149,6 +154,56 @@ func (l *ShowOperatorControllerImpl) Get() error {
 						),
 					),
 				),
+
+				cards.CardBordered(
+					cards.CardProps{},
+					cards.Body(
+						cards.BodyProps{},
+						cards.Title(
+							cards.TitleProps{},
+							htmx.Text("System Account"),
+						),
+						htmx.Form(
+
+							forms.FormControlLabel(
+								forms.FormControlLabelProps{},
+								forms.FormControlLabelText(
+									forms.FormControlLabelTextProps{
+										ClassNames: htmx.ClassNames{
+											"text-neutral-500": true,
+										},
+									},
+									forms.SelectBordered(
+										forms.SelectProps{},
+										htmx.HxPut(fmt.Sprintf("/operators/%s/system-account", op.ID)),
+										htmx.HxTarget("this"),
+										htmx.HxSwap("outerHTML"),
+										forms.Option(
+											forms.OptionProps{
+												Selected: true,
+												Disabled: true,
+											},
+											htmx.Text("Select account"),
+										),
+										htmx.Name("system_account_id"),
+										htmx.Group(
+											htmx.ForEach(accs, func(account *models.Account) htmx.Node {
+												return forms.Option(
+													forms.OptionProps{
+														Value:    account.ID.String(),
+														Selected: op.SystemAdminAccountID != nil && account.ID == utils.UUIDPtr(op.SystemAdminAccountID),
+													},
+													htmx.Text(account.Name),
+												)
+											})...,
+										),
+									),
+								),
+							),
+						),
+					),
+				),
+
 				cards.CardBordered(
 					cards.CardProps{},
 					cards.Body(

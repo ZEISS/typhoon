@@ -50,4 +50,6 @@ type Handlers interface {
 	UserCredentials() fiber.Handler
 	// DeleteUser ...
 	DeleteUser() fiber.Handler
+	// UpdateSystemAccount ...
+	UpdateSystemAccount() fiber.Handler
 }

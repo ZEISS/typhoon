@@ -68,6 +68,8 @@ type Operator struct {
 	Systems []System `json:"systems" gorm:"foreignKey:OperatorID"`
 	// SigningKeyGroups is the list of signing key groups the account has.
 	SigningKeyGroups []SigningKeyGroup `json:"signing_key_groups" gorm:"many2many:operator_signing_key_groups;foreignKey:ID;joinForeignKey:OperatorID;joinReferences:SigningKeyGroupID"`
+	// Accounts is the list of accounts the operator has.
+	Accounts []Account `json:"accounts"`
 	// CreatedAt is the time the operator was created.
 	CreatedAt time.Time `json:"created_at"`
 	// UpdatedAt is the time the operator was updated.

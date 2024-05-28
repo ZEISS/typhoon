@@ -196,3 +196,10 @@ func (h *handlers) DeleteUser() fiber.Handler {
 		return users.NewDeleteUserController(h.db)
 	})
 }
+
+// UpdateSystemAccount ...
+func (h *handlers) UpdateSystemAccount() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return operators.NewUpdateSystemAccountController(h.db)
+	})
+}
