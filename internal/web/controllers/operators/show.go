@@ -3,6 +3,12 @@ package operators
 import (
 	"fmt"
 
+	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/utils"
+	"github.com/zeiss/typhoon/internal/web/components"
+	"github.com/zeiss/typhoon/internal/web/components/operators"
+	"github.com/zeiss/typhoon/internal/web/ports"
+
 	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/cards"
@@ -10,11 +16,6 @@ import (
 	"github.com/zeiss/fiber-htmx/components/forms"
 	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/tooltips"
-	"github.com/zeiss/typhoon/internal/api/models"
-	"github.com/zeiss/typhoon/internal/utils"
-	"github.com/zeiss/typhoon/internal/web/components"
-	"github.com/zeiss/typhoon/internal/web/components/operators"
-	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
 // ShowOperatorControllerImpl ...
@@ -140,7 +141,6 @@ func (l *ShowOperatorControllerImpl) Get() error {
 											htmx.Text("Download JWT Token"),
 										),
 									),
-
 									dropdowns.DropdownMenuItem(
 										dropdowns.DropdownMenuItemProps{},
 										htmx.A(

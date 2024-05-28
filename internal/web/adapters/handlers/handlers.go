@@ -203,3 +203,10 @@ func (h *handlers) UpdateSystemAccount() fiber.Handler {
 		return operators.NewUpdateSystemAccountController(h.db)
 	})
 }
+
+// GetAccountToken ...
+func (h *handlers) GetAccountToken() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return accounts.NewGetAccountTokenController(h.db)
+	})
+}

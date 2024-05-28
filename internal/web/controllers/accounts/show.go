@@ -128,6 +128,13 @@ func (l *ShowAccountControllerImpl) Get() error {
 									dropdowns.DropdownMenuItemsProps{},
 									dropdowns.DropdownMenuItem(
 										dropdowns.DropdownMenuItemProps{},
+										htmx.A(
+											htmx.Href(fmt.Sprintf("/accounts/%s/token", acc.ID)),
+											htmx.Text("Download JWT Token"),
+										),
+									),
+									dropdowns.DropdownMenuItem(
+										dropdowns.DropdownMenuItemProps{},
 										buttons.Error(
 											buttons.ButtonProps{
 												ClassNames: htmx.ClassNames{

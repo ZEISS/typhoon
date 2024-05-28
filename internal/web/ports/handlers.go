@@ -52,4 +52,6 @@ type Handlers interface {
 	DeleteUser() fiber.Handler
 	// UpdateSystemAccount ...
 	UpdateSystemAccount() fiber.Handler
+	// GetAccountToken ...
+	GetAccountToken() fiber.Handler
 }

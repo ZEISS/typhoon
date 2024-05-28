@@ -130,6 +130,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Post("/accounts/create", handlers.CreateAccount())
 		app.Get("/accounts/:id", handlers.ShowAccount())
 		app.Delete("/accounts/:id", handlers.DeleteAccount())
+		app.Get("/accounts/:id/token", handlers.GetAccountToken())
 		app.Get("/accounts/partials/operator-skgs", handlers.OperatorSkgsOptions())
 
 		// Users handler
