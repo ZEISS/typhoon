@@ -3,18 +3,19 @@ package accounts
 import (
 	"fmt"
 
+	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/utils"
+	"github.com/zeiss/typhoon/internal/web/components"
+	"github.com/zeiss/typhoon/internal/web/components/accounts"
+	"github.com/zeiss/typhoon/internal/web/components/nkeys"
+	"github.com/zeiss/typhoon/internal/web/ports"
+
 	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/dropdowns"
 	"github.com/zeiss/fiber-htmx/components/icons"
-	"github.com/zeiss/fiber-htmx/components/tooltips"
-	"github.com/zeiss/typhoon/internal/api/models"
-	"github.com/zeiss/typhoon/internal/utils"
-	"github.com/zeiss/typhoon/internal/web/components"
-	"github.com/zeiss/typhoon/internal/web/components/accounts"
-	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
 // ShowAccountControllerImpl ...
@@ -159,34 +160,17 @@ func (l *ShowAccountControllerImpl) Get() error {
 							cards.TitleProps{},
 							htmx.Text("Details"),
 						),
-						htmx.Div(
-							htmx.ClassNames{
-								"flex":     true,
-								"flex-col": true,
-								"py-2":     true,
+						nkeys.NKey(
+							nkeys.NKeyProps{
+								Title:     "ID",
+								PublicKey: acc.Key.ID,
 							},
-							htmx.H4(
-								htmx.ClassNames{
-									"text-gray-500": true,
-								},
-								htmx.Text("Public NKey"),
-								tooltips.Tooltip(
-									tooltips.TooltipProps{
-										ClassNames: htmx.ClassNames{
-											"tooltip-right": true,
-										},
-										DataTip: "Public NKey is the public key of the account",
-									},
-									icons.InformationCircleOutline(
-										icons.IconProps{},
-									),
-								),
-							),
-							htmx.H3(
-								htmx.Text(
-									acc.Key.ID,
-								),
-							),
+						),
+						nkeys.NKey(
+							nkeys.NKeyProps{
+								Title:     "Issuer",
+								PublicKey: acc.Operator.Key.ID,
+							},
 						),
 					),
 				),

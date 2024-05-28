@@ -19,7 +19,14 @@ func (db *database) CreateAccount(ctx context.Context, account *models.Account) 
 
 // GetAccount ...
 func (db *database) GetAccount(ctx context.Context, account *models.Account) error {
-	return db.conn.WithContext(ctx).Preload("SigningKeyGroups").Preload("SigningKeyGroups.Key").Preload("Key").Preload("Token").First(account).Error
+	return db.conn.WithContext(ctx).
+		Preload("SigningKeyGroups").
+		Preload("SigningKeyGroups.Key").
+		Preload("Key").
+		Preload("Token").
+		Preload("Operator").
+		Preload("Operator.Key").
+		First(account).Error
 }
 
 // UpdateAccount ...
