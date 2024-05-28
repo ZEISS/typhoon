@@ -154,7 +154,6 @@ func (l *ShowOperatorControllerImpl) Get() error {
 						),
 					),
 				),
-
 				cards.CardBordered(
 					cards.CardProps{},
 					cards.Body(
@@ -203,7 +202,6 @@ func (l *ShowOperatorControllerImpl) Get() error {
 						),
 					),
 				),
-
 				cards.CardBordered(
 					cards.CardProps{},
 					cards.Body(

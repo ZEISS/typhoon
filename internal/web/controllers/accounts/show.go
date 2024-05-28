@@ -9,6 +9,7 @@ import (
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/dropdowns"
 	"github.com/zeiss/fiber-htmx/components/icons"
+	"github.com/zeiss/fiber-htmx/components/tooltips"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/utils"
 	"github.com/zeiss/typhoon/internal/web/components"
@@ -145,6 +146,45 @@ func (l *ShowAccountControllerImpl) Get() error {
 											htmx.Text("Delete Account"),
 										),
 									),
+								),
+							),
+						),
+					),
+				),
+				cards.CardBordered(
+					cards.CardProps{},
+					cards.Body(
+						cards.BodyProps{},
+						cards.Title(
+							cards.TitleProps{},
+							htmx.Text("Details"),
+						),
+						htmx.Div(
+							htmx.ClassNames{
+								"flex":     true,
+								"flex-col": true,
+								"py-2":     true,
+							},
+							htmx.H4(
+								htmx.ClassNames{
+									"text-gray-500": true,
+								},
+								htmx.Text("Public NKey"),
+								tooltips.Tooltip(
+									tooltips.TooltipProps{
+										ClassNames: htmx.ClassNames{
+											"tooltip-right": true,
+										},
+										DataTip: "Public NKey is the public key of the account",
+									},
+									icons.InformationCircleOutline(
+										icons.IconProps{},
+									),
+								),
+							),
+							htmx.H3(
+								htmx.Text(
+									acc.Key.ID,
 								),
 							),
 						),

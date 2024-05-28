@@ -19,7 +19,7 @@ func (db *database) CreateOperator(ctx context.Context, operator *models.Operato
 
 // GetOperator ...
 func (db *database) GetOperator(ctx context.Context, operator *models.Operator) error {
-	return db.conn.WithContext(ctx).Preload("Accounts").Preload("SigningKeyGroups").Preload("SigningKeyGroups.Key").Preload("Key").First(operator).Error
+	return db.conn.WithContext(ctx).Preload("Accounts").Preload("SigningKeyGroups").Preload("SigningKeyGroups.Key").Preload("Key").Preload("Token").First(operator).Error
 }
 
 // UpdateOperator ...
