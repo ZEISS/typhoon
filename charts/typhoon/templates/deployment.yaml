@@ -51,8 +51,6 @@ spec:
               value: "{{ .Values.global.image.repository }}/webhooksource-adapter:{{ .Values.global.image.tag | default .Chart.AppVersion }}"
             - name: SALESFORCESOURCE_IMAGE
               value: "{{ .Values.global.image.repository }}/salesforcesource-adapter:{{ .Values.global.image.tag | default .Chart.AppVersion }}"
-            - name: JIRASOURCE_IMAGE
-              value: "{{ .Values.global.image.repository }}/jirasource-adapter:{{ .Values.global.image.tag | default .Chart.AppVersion }}"
             # Target adapters
             - name: CLOUDEVENTSTARGET_IMAGE
               value: "{{ .Values.global.image.repository }}/cloudeventstarget-adapter:{{ .Values.global.image.tag | default .Chart.AppVersion }}"
@@ -64,6 +62,8 @@ spec:
               value: "{{ .Values.global.image.repository }}/splunktarget-adapter:{{ .Values.global.image.tag | default .Chart.AppVersion }}"
             - name: SERVICENOWTARGET_IMAGE
               value: "{{ .Values.global.image.repository }}/servicenowtarget-adapter:{{ .Values.global.image.tag | default .Chart.AppVersion }}"
+            - name: JIRATARGET_IMAGE
+              value: "{{ .Values.global.image.repository }}/jiratarget-adapter:{{ .Values.global.image.tag | default .Chart.AppVersion }}"
             # Flow adapters
             - name: JQTRANSFORMATION_IMAGE
               value: "{{ .Values.global.image.repository }}/jqtransformation-adapter:{{ .Values.global.image.tag | default .Chart.AppVersion }}"

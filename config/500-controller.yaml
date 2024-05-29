@@ -61,6 +61,10 @@ spec:
           value: ko://github.com/zeiss/typhoon/cmd/logztarget-adapter
         - name: NATSTARGET_IMAGE
           value: ko://github.com/zeiss/typhoon/cmd/natstarget-adapter
+        - name: JIRATARGET_IMAGE
+          value: ko://github.com/zeiss/typhoon/cmd/splunktarget-adapter
+        - name: SERVICENOWTARGET_IMAGE
+          value: ko://github.com/zeiss/typhoon/cmd/servicenowtarget-adapter
         # Flow adapters
         - name: JQTRANSFORMATION_IMAGE
           value: ko://github.com/zeiss/typhoon/cmd/jqtransformation-adapter
