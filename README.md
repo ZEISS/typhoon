@@ -7,7 +7,7 @@
 [![Volkswagen](https://auchenberg.github.io/volkswagen/volkswargen_ci.svg?v=1)](https://github.com/auchenberg/volkswagen)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-An event bridge for applications and services buil on an event mesh with a control plane.
+An event bridge for applications and services build on an event mesh with a team-oriented self-service control plane.
 
 ## Overview
 
