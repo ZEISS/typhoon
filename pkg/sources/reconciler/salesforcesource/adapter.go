@@ -16,10 +16,10 @@ import (
 )
 
 const (
-	envSalesforceAuthClientID = "SALESFORCE_AUTH_CLIENT_ID"
-	envSalesforceAuthServer   = "SALESFORCE_AUTH_SERVER"
-	envSalesforceAuthUser     = "SALESFORCE_AUTH_USER"
-	envSalesforceAuthCertKey  = "SALESFORCE_AUTH_CERT_KEY"
+	envSalesforceTokenURL     = "SALESFORCE_TOKEN_URL"
+	envSalesforceClientID     = "SALESFORCE_CLIENT_ID"
+	envSalesforceClientSecret = "SALESFORCE_CLIENT_SECRET"
+	envSalesforceInstanceURL  = "SALESFORCE_URL"
 	envSalesforceAPIVersion   = "SALESFORCE_API_VERSION"
 	envSalesforceChannel      = "SALESFORCE_SUBCRIPTION_CHANNEL"
 	envSalesforceReplayID     = "SALESFORCE_SUBCRIPTION_REPLAY_ID"
@@ -29,7 +29,7 @@ const (
 // These are automatically populated by envconfig.
 type adapterConfig struct {
 	// Container image
-	Image string `default:"gcr.io/triggermesh/salesforcesource-adapter"`
+	Image string `default:"ghcr.io/zeiss/typhoon/salesforcesource-adapter"`
 	// Configuration accessor for logging/metrics/tracing
 	configs source.ConfigAccessor
 }
@@ -54,26 +54,26 @@ func (r *Reconciler) BuildAdapter(src commonv1alpha1.Reconcilable, sinkURI *apis
 func MakeAppEnv(o *v1alpha1.SalesforceSource) []corev1.EnvVar {
 	appEnv := []corev1.EnvVar{
 		{
-			Name:  envSalesforceAuthClientID,
+			Name:  envSalesforceClientID,
 			Value: o.Spec.Auth.ClientID,
 		},
 		{
-			Name:  envSalesforceAuthServer,
-			Value: o.Spec.Auth.Server,
+			Name:  envSalesforceClientSecret,
+			Value: o.Spec.Auth.ClientSecret,
 		},
 		{
-			Name:  envSalesforceAuthUser,
-			Value: o.Spec.Auth.User,
+			Name:  envSalesforceTokenURL,
+			Value: o.Spec.Auth.TokenURL,
 		},
 		{
 			Name:  envSalesforceChannel,
 			Value: o.Spec.Subscription.Channel,
 		},
+		{
+			Name:  envSalesforceInstanceURL,
+			Value: o.Spec.InstanceURL,
+		},
 	}
-
-	appEnv = common.MaybeAppendValueFromEnvVar(appEnv,
-		envSalesforceAuthCertKey, o.Spec.Auth.CertKey,
-	)
 
 	if o.Spec.Subscription.ReplayID != nil {
 		appEnv = append(appEnv, corev1.EnvVar{

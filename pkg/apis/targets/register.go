@@ -46,4 +46,9 @@ var (
 		Group:    GroupName,
 		Resource: "salesforcetargets",
 	}
+	// JiraTargetResource respresents an event target for Jira.
+	JiraTargetResource = schema.GroupResource{
+		Group:    GroupName,
+		Resource: "jiratargets",
+	}
 )

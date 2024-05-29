@@ -8,6 +8,8 @@ type DatadogTargetExpansion interface{}
 
 type HTTPTargetExpansion interface{}
 
+type JiraTargetExpansion interface{}
+
 type KafkaTargetExpansion interface{}
 
 type LogzMetricsTargetExpansion interface{}
@@ -17,5 +19,7 @@ type LogzTargetExpansion interface{}
 type NatsTargetExpansion interface{}
 
 type SalesforceTargetExpansion interface{}
+
+type ServiceNowTargetExpansion interface{}
 
 type SplunkTargetExpansion interface{}

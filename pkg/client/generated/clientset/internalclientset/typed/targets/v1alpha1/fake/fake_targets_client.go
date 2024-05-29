@@ -24,6 +24,10 @@ func (c *FakeTargetsV1alpha1) HTTPTargets(namespace string) v1alpha1.HTTPTargetI
 	return &FakeHTTPTargets{c, namespace}
 }
 
+func (c *FakeTargetsV1alpha1) JiraTargets(namespace string) v1alpha1.JiraTargetInterface {
+	return &FakeJiraTargets{c, namespace}
+}
+
 func (c *FakeTargetsV1alpha1) KafkaTargets(namespace string) v1alpha1.KafkaTargetInterface {
 	return &FakeKafkaTargets{c, namespace}
 }
@@ -42,6 +46,10 @@ func (c *FakeTargetsV1alpha1) NatsTargets(namespace string) v1alpha1.NatsTargetI
 
 func (c *FakeTargetsV1alpha1) SalesforceTargets(namespace string) v1alpha1.SalesforceTargetInterface {
 	return &FakeSalesforceTargets{c, namespace}
+}
+
+func (c *FakeTargetsV1alpha1) ServiceNowTargets(namespace string) v1alpha1.ServiceNowTargetInterface {
+	return &FakeServiceNowTargets{c, namespace}
 }
 
 func (c *FakeTargetsV1alpha1) SplunkTargets(namespace string) v1alpha1.SplunkTargetInterface {

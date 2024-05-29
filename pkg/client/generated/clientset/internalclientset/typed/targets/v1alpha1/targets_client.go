@@ -15,11 +15,13 @@ type TargetsV1alpha1Interface interface {
 	CloudEventsTargetsGetter
 	DatadogTargetsGetter
 	HTTPTargetsGetter
+	JiraTargetsGetter
 	KafkaTargetsGetter
 	LogzMetricsTargetsGetter
 	LogzTargetsGetter
 	NatsTargetsGetter
 	SalesforceTargetsGetter
+	ServiceNowTargetsGetter
 	SplunkTargetsGetter
 }
 
@@ -40,6 +42,10 @@ func (c *TargetsV1alpha1Client) HTTPTargets(namespace string) HTTPTargetInterfac
 	return newHTTPTargets(c, namespace)
 }
 
+func (c *TargetsV1alpha1Client) JiraTargets(namespace string) JiraTargetInterface {
+	return newJiraTargets(c, namespace)
+}
+
 func (c *TargetsV1alpha1Client) KafkaTargets(namespace string) KafkaTargetInterface {
 	return newKafkaTargets(c, namespace)
 }
@@ -58,6 +64,10 @@ func (c *TargetsV1alpha1Client) NatsTargets(namespace string) NatsTargetInterfac
 
 func (c *TargetsV1alpha1Client) SalesforceTargets(namespace string) SalesforceTargetInterface {
 	return newSalesforceTargets(c, namespace)
+}
+
+func (c *TargetsV1alpha1Client) ServiceNowTargets(namespace string) ServiceNowTargetInterface {
+	return newServiceNowTargets(c, namespace)
 }
 
 func (c *TargetsV1alpha1Client) SplunkTargets(namespace string) SplunkTargetInterface {

@@ -1,7 +1,8 @@
-package snowtarget
+package servicenowtarget
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/zeiss/snow-go/push"
 	"github.com/zeiss/typhoon/pkg/apis/targets"
@@ -21,10 +22,10 @@ func EnvAccessorCtor() pkgadapter.EnvConfigAccessor {
 type envAccessor struct {
 	pkgadapter.EnvConfig
 
-	instance string `envconfig:"SNOW_INSTANCE"`
-	user     string `envconfig:"SNOW_BASICAUTH_USER"`
-	password string `envconfig:"SNOW_BASICAUTH_PASSWORD"`
-	source   string `envconfig:"SNOW_SOURCE"`
+	instance string `envconfig:"SERVICENOW_INSTANCE"`
+	user     string `envconfig:"SERVICENOW_BASICAUTH_USER"`
+	password string `envconfig:"SERVICENOW_BASICAUTH_PASSWORD"`
+	source   string `envconfig:"SERVICENOW_SOURCE"`
 }
 
 var _ pkgadapter.Adapter = (*snowAdapter)(nil)
@@ -65,7 +66,7 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, client 
 
 // Start is the main entrypoint for the adapter
 func (a *snowAdapter) Start(ctx context.Context) error {
-	a.logger.Info("starting SNOW adapter")
+	a.logger.Info("starting ServiceNow adapter")
 
 	return a.client.StartReceiver(ctx, a.dispatch)
 }
@@ -78,7 +79,7 @@ func (a *snowAdapter) dispatch(event cloudevents.Event) cloudevents.Result {
 
 	err := a.sc.Do(context.Background(), req, res)
 	if err != nil {
-		return err
+		return a.errorHTTPResult(http.StatusBadRequest, "failed to push event to ServiceNow: %v", err)
 	}
 
 	return cloudevents.ResultACK

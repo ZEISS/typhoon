@@ -5,6 +5,7 @@ go 1.22.1
 require (
 	github.com/Shopify/sarama v1.30.0
 	github.com/ZachtimusPrime/Go-Splunk-HTTP/splunk/v2 v2.0.2
+	github.com/andygrunwald/go-jira v1.16.0
 	github.com/basgys/goxml2json v1.1.0
 	github.com/cloudevents/sdk-go/v2 v2.15.2
 	github.com/fsnotify/fsnotify v1.7.0
@@ -61,7 +62,6 @@ require (
 require (
 	4d63.com/gocheckcompilerdirectives v1.2.1 // indirect
 	4d63.com/gochecknoglobals v0.2.1 // indirect
-	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	contrib.go.opencensus.io/exporter/ocagent v0.7.1-0.20200907061046-05415f1de66d // indirect
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2 // indirect
 	contrib.go.opencensus.io/exporter/zipkin v0.1.2 // indirect
@@ -120,6 +120,7 @@ require (
 	github.com/evanphx/json-patch v4.12.0+incompatible // indirect
 	github.com/evanphx/json-patch/v5 v5.9.0 // indirect
 	github.com/fatih/color v1.17.0 // indirect
+	github.com/fatih/structs v1.1.0 // indirect
 	github.com/fatih/structtag v1.2.0 // indirect
 	github.com/firefart/nonamedreturns v1.0.5 // indirect
 	github.com/fzipp/gocyclo v0.6.0 // indirect
@@ -163,6 +164,7 @@ require (
 	github.com/google/gnostic-models v0.6.8 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/go-containerregistry v0.13.0 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/gordonklaus/ineffassign v0.1.0 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
@@ -301,6 +303,7 @@ require (
 	github.com/timonwong/loggercheck v0.9.4 // indirect
 	github.com/tomarrell/wrapcheck/v2 v2.8.3 // indirect
 	github.com/tommy-muehle/go-mnd/v2 v2.5.1 // indirect
+	github.com/trivago/tgo v1.0.7 // indirect
 	github.com/ultraware/funlen v0.1.0 // indirect
 	github.com/ultraware/whitespace v0.1.1 // indirect
 	github.com/uudashr/gocognit v1.1.2 // indirect

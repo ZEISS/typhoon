@@ -14,6 +14,8 @@ type Interface interface {
 	DatadogTargets() DatadogTargetInformer
 	// HTTPTargets returns a HTTPTargetInformer.
 	HTTPTargets() HTTPTargetInformer
+	// JiraTargets returns a JiraTargetInformer.
+	JiraTargets() JiraTargetInformer
 	// KafkaTargets returns a KafkaTargetInformer.
 	KafkaTargets() KafkaTargetInformer
 	// LogzMetricsTargets returns a LogzMetricsTargetInformer.
@@ -24,6 +26,8 @@ type Interface interface {
 	NatsTargets() NatsTargetInformer
 	// SalesforceTargets returns a SalesforceTargetInformer.
 	SalesforceTargets() SalesforceTargetInformer
+	// ServiceNowTargets returns a ServiceNowTargetInformer.
+	ServiceNowTargets() ServiceNowTargetInformer
 	// SplunkTargets returns a SplunkTargetInformer.
 	SplunkTargets() SplunkTargetInformer
 }
@@ -54,6 +58,11 @@ func (v *version) HTTPTargets() HTTPTargetInformer {
 	return &hTTPTargetInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
 
+// JiraTargets returns a JiraTargetInformer.
+func (v *version) JiraTargets() JiraTargetInformer {
+	return &jiraTargetInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+}
+
 // KafkaTargets returns a KafkaTargetInformer.
 func (v *version) KafkaTargets() KafkaTargetInformer {
 	return &kafkaTargetInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
@@ -77,6 +86,11 @@ func (v *version) NatsTargets() NatsTargetInformer {
 // SalesforceTargets returns a SalesforceTargetInformer.
 func (v *version) SalesforceTargets() SalesforceTargetInformer {
 	return &salesforceTargetInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+}
+
+// ServiceNowTargets returns a ServiceNowTargetInformer.
+func (v *version) ServiceNowTargets() ServiceNowTargetInformer {
+	return &serviceNowTargetInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
 
 // SplunkTargets returns a SplunkTargetInformer.

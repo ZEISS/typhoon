@@ -85,6 +85,8 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Targets().V1alpha1().DatadogTargets().Informer()}, nil
 	case targetsv1alpha1.SchemeGroupVersion.WithResource("httptargets"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Targets().V1alpha1().HTTPTargets().Informer()}, nil
+	case targetsv1alpha1.SchemeGroupVersion.WithResource("jiratargets"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Targets().V1alpha1().JiraTargets().Informer()}, nil
 	case targetsv1alpha1.SchemeGroupVersion.WithResource("kafkatargets"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Targets().V1alpha1().KafkaTargets().Informer()}, nil
 	case targetsv1alpha1.SchemeGroupVersion.WithResource("logzmetricstargets"):
@@ -95,6 +97,8 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Targets().V1alpha1().NatsTargets().Informer()}, nil
 	case targetsv1alpha1.SchemeGroupVersion.WithResource("salesforcetargets"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Targets().V1alpha1().SalesforceTargets().Informer()}, nil
+	case targetsv1alpha1.SchemeGroupVersion.WithResource("servicenowtargets"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Targets().V1alpha1().ServiceNowTargets().Informer()}, nil
 	case targetsv1alpha1.SchemeGroupVersion.WithResource("splunktargets"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Targets().V1alpha1().SplunkTargets().Informer()}, nil
 

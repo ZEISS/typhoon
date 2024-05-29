@@ -35,6 +35,9 @@ type SalesforceSourceSpec struct {
 	// Authentication method to interact with the Salesforce API.
 	Auth SalesforceAuth `json:"auth"`
 
+	// InstanceURL of the Salesforce instance.
+	InstanceURL string `json:"instanceURL"`
+
 	// APIVersion at Salesforce.
 	// +optional
 	APIVersion *string `json:"apiVersion"`
@@ -55,10 +58,9 @@ type SalesforceSubscription struct {
 
 // SalesforceAuth contains Salesforce credentials.
 type SalesforceAuth struct {
-	ClientID string                  `json:"clientID"`
-	Server   string                  `json:"server"`
-	User     string                  `json:"user"`
-	CertKey  v1alpha1.ValueFromField `json:"certKey"`
+	ClientID     string `json:"clientID"`
+	ClientSecret string `json:"clientSecret"`
+	TokenURL     string `json:"tokenURL"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

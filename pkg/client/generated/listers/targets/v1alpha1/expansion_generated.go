@@ -26,6 +26,14 @@ type HTTPTargetListerExpansion interface{}
 // HTTPTargetNamespaceLister.
 type HTTPTargetNamespaceListerExpansion interface{}
 
+// JiraTargetListerExpansion allows custom methods to be added to
+// JiraTargetLister.
+type JiraTargetListerExpansion interface{}
+
+// JiraTargetNamespaceListerExpansion allows custom methods to be added to
+// JiraTargetNamespaceLister.
+type JiraTargetNamespaceListerExpansion interface{}
+
 // KafkaTargetListerExpansion allows custom methods to be added to
 // KafkaTargetLister.
 type KafkaTargetListerExpansion interface{}
@@ -65,6 +73,14 @@ type SalesforceTargetListerExpansion interface{}
 // SalesforceTargetNamespaceListerExpansion allows custom methods to be added to
 // SalesforceTargetNamespaceLister.
 type SalesforceTargetNamespaceListerExpansion interface{}
+
+// ServiceNowTargetListerExpansion allows custom methods to be added to
+// ServiceNowTargetLister.
+type ServiceNowTargetListerExpansion interface{}
+
+// ServiceNowTargetNamespaceListerExpansion allows custom methods to be added to
+// ServiceNowTargetNamespaceLister.
+type ServiceNowTargetNamespaceListerExpansion interface{}
 
 // SplunkTargetListerExpansion allows custom methods to be added to
 // SplunkTargetLister.
