@@ -1,0 +1,17 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Start Web Server",
+        "type": "shell",
+        "command": "air",
+        "args": ["-c", "${workspaceFolder}/cmd/web/.air.toml"]
+      },
+      {
+        "label": "Start API Server",
+        "type": "shell",
+        "command": "air",
+        "args": ["-c", "${workspaceFolder}/cmd/api/.air.toml"]
+      }
+    ]
+  }
