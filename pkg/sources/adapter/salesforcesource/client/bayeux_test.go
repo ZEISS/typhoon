@@ -10,8 +10,6 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/require"
-	"github.com/zeiss/typhoon/pkg/sources/adapter/salesforcesource/auth"
-	"github.com/zeiss/typhoon/pkg/sources/adapter/salesforcesource/auth/fake"
 	zapt "go.uber.org/zap/zaptest"
 )
 
@@ -145,11 +143,8 @@ func TestBayeux(t *testing.T) {
 			dispatcher := &eventDispatcher{
 				eof: make(chan struct{}),
 			}
-			authenticator := fake.NewFakeAuthenticator(auth.Credentials{
-				InstanceURL: sf.URL,
-			})
 
-			b := NewBayeux(tAPIVersion, tSubscription, authenticator, dispatcher, sf.Client(), logger)
+			b := NewBayeux(tAPIVersion, sf.URL, tSubscription, dispatcher, sf.Client(), logger)
 			ctx, cancel := context.WithCancel(context.Background())
 			defer cancel()
 

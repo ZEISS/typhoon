@@ -13,35 +13,24 @@ type UserMenuProps struct {
 
 // UserMenu ...
 func UserMenu(p UserMenuProps, children ...htmx.Node) htmx.Node {
-	return htmx.Div(
+	return htmx.Nav(
 		htmx.Merge(
 			htmx.ClassNames{},
-			p.ClassNames,
 		),
 		menus.Menu(
 			menus.MenuProps{
 				ClassNames: htmx.ClassNames{
-					"w-full": true,
+					"w-full":      true,
+					"bg-base-200": false,
 				},
 			},
 			menus.MenuItem(
 				menus.MenuItemProps{},
 				menus.MenuLink(
 					menus.MenuLinkProps{
-						Href:   "/me",
-						Active: p.Path == "/me",
+						Href: "/me",
 					},
 					htmx.Text("Profile"),
-				),
-			),
-			menus.MenuItem(
-				menus.MenuItemProps{},
-				menus.MenuLink(
-					menus.MenuLinkProps{
-						Href:   "/settings",
-						Active: p.Path == "/settings",
-					},
-					htmx.Text("Settings"),
 				),
 			),
 			menus.MenuItem(

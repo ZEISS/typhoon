@@ -20,8 +20,6 @@ import (
 
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/utils/clock"
-
-	"github.com/zeiss/typhoon/pkg/sources/adapter/salesforcesource/auth"
 )
 
 const (
@@ -43,9 +41,7 @@ type Bayeux interface {
 // and the subset needed for Salesforce Streaming API.
 // See: https://docs.cometd.org/current3/reference/
 type bayeux struct {
-	auth           auth.Authenticator
 	needsHandshake bool
-	creds          *auth.Credentials
 
 	client     *http.Client
 	clientID   string
@@ -67,7 +63,7 @@ type bayeux struct {
 }
 
 // NewBayeux creates a Bayeux client for Salesforce Streaming API consumption.
-func NewBayeux(apiVersion string, subscriptions []Subscription, authenticator auth.Authenticator, dispatcher EventDispatcher, client *http.Client, logger *zap.SugaredLogger) Bayeux {
+func NewBayeux(apiVersion string, url string, subscriptions []Subscription, dispatcher EventDispatcher, client *http.Client, logger *zap.SugaredLogger) Bayeux {
 	// replayID is stored in a map and will keep track of the latest event received,
 	// we copy the configured value for initialization.
 	sr := make(map[string]*int64, len(subscriptions))
@@ -76,12 +72,15 @@ func NewBayeux(apiVersion string, subscriptions []Subscription, authenticator au
 		sr[s.Channel] = &r
 	}
 
+	url = strings.TrimRight(url, "/")
+	url = fmt.Sprintf("%s/cometd/%s", url, apiVersion)
+
 	return &bayeux{
-		auth:           authenticator,
 		needsHandshake: true,
 
 		client:     client,
 		apiVersion: apiVersion,
+		url:        url,
 
 		msgCh:  make(chan *ConnectResponse),
 		errCh:  make(chan error),
@@ -96,10 +95,6 @@ func NewBayeux(apiVersion string, subscriptions []Subscription, authenticator au
 
 // init does handshake and subscriptions.
 func (b *bayeux) init() error {
-	if err := b.authenticate(); err != nil {
-		return err
-	}
-
 	if err := b.handshake(); err != nil {
 		return err
 	}
@@ -116,26 +111,6 @@ func (b *bayeux) init() error {
 			}
 		}
 	}
-
-	return nil
-}
-
-// uses the authenticator to retrieve credentials
-func (b *bayeux) authenticate() error {
-	creds, err := b.auth.CreateOrRenewCredentials()
-
-	b.mutex.Lock()
-	defer b.mutex.Unlock()
-
-	if err != nil {
-		// if there was an error with refresh, let's try to
-		// use a new access token next time
-		b.creds = nil
-		return err
-	}
-
-	b.creds = creds
-	b.url = b.creds.InstanceURL + "/cometd/" + b.apiVersion
 
 	return nil
 }
@@ -363,7 +338,6 @@ func (b *bayeux) doPost(payload string) (*http.Response, error) {
 	}
 
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", "Bearer "+b.creds.Token)
 
 	req = req.WithContext(b.ctx)
 	res, err := b.client.Do(req)

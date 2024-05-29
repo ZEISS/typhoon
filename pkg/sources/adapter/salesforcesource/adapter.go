@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"go.uber.org/zap"
+	"golang.org/x/oauth2/clientcredentials"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/google/uuid"
@@ -14,7 +15,6 @@ import (
 	"knative.dev/pkg/logging"
 
 	"github.com/zeiss/typhoon/pkg/apis/sources"
-	"github.com/zeiss/typhoon/pkg/sources/adapter/salesforcesource/auth"
 	sfclient "github.com/zeiss/typhoon/pkg/sources/adapter/salesforcesource/client"
 )
 
@@ -23,9 +23,10 @@ const eventType = "com.salesforce.stream.message"
 type salesforceAdapter struct {
 	sfVersion         string
 	sfChannel         string
+	sfInstanceURL     string
 	sfInitialReplayID int
 
-	sfAuth auth.Authenticator
+	client *http.Client
 
 	dispatcher *eventDispatcher
 	logger     *zap.SugaredLogger
@@ -68,16 +69,23 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 		logger:      logger.Named("dispatcher"),
 	}
 
-	jwtAuth, err := auth.NewJWTAuthenticator(env.CertKey, env.ClientID, env.User, env.AuthServer, http.DefaultClient, logger.Named("authenticator"))
-	if err != nil {
-		logger.Panic(err)
+	cfg := clientcredentials.Config{
+		TokenURL:     env.TokenURL,
+		ClientID:     env.ClientID,
+		ClientSecret: env.ClientSecret,
+		// TODO(@katallaxie) we need to figure out how to get the full scope
+		// Scopes:       []string{"full"},
 	}
+
+	client := cfg.Client(ctx)
 
 	adapter := &salesforceAdapter{
 		sfVersion:         env.Version,
 		sfChannel:         env.SubscriptionChannel,
 		sfInitialReplayID: env.SubscriptionReplayID,
-		sfAuth:            jwtAuth,
+		sfInstanceURL:     env.InstanceURL,
+
+		client: client,
 
 		dispatcher: dispatcher,
 		logger:     logger,
@@ -98,7 +106,7 @@ func (a *salesforceAdapter) Start(ctx context.Context) (err error) {
 		},
 	}
 
-	client := sfclient.NewBayeux(a.sfVersion, subs, a.sfAuth, a.dispatcher, http.DefaultClient, a.logger.Named("bayeux"))
+	client := sfclient.NewBayeux(a.sfVersion, a.sfInstanceURL, subs, a.dispatcher, a.client, a.logger.Named("bayeux"))
 
 	ctx = pkgadapter.ContextWithMetricTag(ctx, a.mt)
 

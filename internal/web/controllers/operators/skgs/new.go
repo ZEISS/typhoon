@@ -24,7 +24,8 @@ type NewSkgsControllerImpl struct {
 func NewSkgsController(db ports.Operators) *NewSkgsControllerImpl {
 	return &NewSkgsControllerImpl{
 		Operators:         db,
-		DefaultController: htmx.DefaultController{}}
+		DefaultController: htmx.DefaultController{},
+	}
 }
 
 // Prepare ...

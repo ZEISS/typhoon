@@ -1,8 +1,6 @@
 package components
 
 import (
-	"strings"
-
 	authz "github.com/zeiss/fiber-authz"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/avatars"
@@ -11,7 +9,6 @@ import (
 	"github.com/zeiss/fiber-htmx/components/drawers"
 	"github.com/zeiss/fiber-htmx/components/dropdowns"
 	"github.com/zeiss/fiber-htmx/components/icons"
-	"github.com/zeiss/fiber-htmx/components/menus"
 	"github.com/zeiss/fiber-htmx/components/navbars"
 	"github.com/zeiss/fiber-htmx/components/swap"
 )
@@ -184,128 +181,14 @@ func Layout(p LayoutProps, children ...htmx.Node) htmx.Node {
 								"bg-base-200": false,
 							},
 						},
-						htmx.Nav(
-							htmx.Merge(
-								htmx.ClassNames{},
-							),
-							menus.Menu(
-								menus.MenuProps{
-									ClassNames: htmx.ClassNames{
-										"w-full":      true,
-										"bg-base-200": false,
-									},
-								},
-								menus.MenuItem(
-									menus.MenuItemProps{},
-									menus.MenuLink(
-										menus.MenuLinkProps{
-											Href: "/",
-										},
-										htmx.Text("Dashboard"),
-									),
-								),
-								menus.MenuTitle(
-									menus.MenuTitleProps{},
-									htmx.Text("Identity & Access"),
-								),
-								menus.MenuItem(
-									menus.MenuItemProps{},
-									menus.MenuLink(
-										menus.MenuLinkProps{
-											Href: "/operators",
-										},
-										htmx.Text("Operators"),
-									),
-								),
-								menus.MenuItem(
-									menus.MenuItemProps{},
-									menus.MenuLink(
-										menus.MenuLinkProps{
-											Href:   "/accounts",
-											Active: strings.HasPrefix(p.Path, "/accounts"),
-										},
-										htmx.Text("Accounts"),
-									),
-								),
-								menus.MenuItem(
-									menus.MenuItemProps{},
-									menus.MenuLink(
-										menus.MenuLinkProps{
-											Href:   "/users",
-											Active: strings.HasPrefix(p.Path, "/users"),
-										},
-										htmx.Text("Users"),
-									),
-								),
-								dividers.Divider(
-									dividers.DividerProps{},
-								),
-								menus.MenuItem(
-									menus.MenuItemProps{},
-									menus.MenuLink(
-										menus.MenuLinkProps{
-											Href: "/me",
-										},
-										htmx.Text("Profile"),
-									),
-								),
-								menus.MenuItem(
-									menus.MenuItemProps{},
-									menus.MenuLink(
-										menus.MenuLinkProps{
-											Href: "/logout",
-										},
-										htmx.Text("Logout"),
-									),
-								),
-								// menus.MenuItem(
-								// 	menus.MenuItemProps{},
-								// 	menus.MenuCollapsible(
-								// 		menus.MenuCollapsibleProps{},
-								// 		menus.MenuCollapsibleSummary(
-								// 			menus.MenuCollapsibleSummaryProps{},
-								// 			htmx.Text("Operators"),
-								// 		),
-								// 		menus.MenuItem(
-								// 			menus.MenuItemProps{},
-								// 			htmx.A(
-								// 				htmx.Attribute("href", "#"),
-								// 				htmx.Text("Item 1"),
-								// 			),
-								// 			htmx.A(
-								// 				htmx.Attribute("href", "#"),
-								// 				htmx.Text("Item 2"),
-								// 			),
-								// 			htmx.A(
-								// 				htmx.Attribute("href", "#"),
-								// 				htmx.Text("Item 3"),
-								// 			),
-								// 		),
-								// 	),
-								// 	menus.MenuCollapsible(
-								// 		menus.MenuCollapsibleProps{},
-								// 		menus.MenuCollapsibleSummary(
-								// 			menus.MenuCollapsibleSummaryProps{},
-								// 			htmx.Text("Forms"),
-								// 		),
-								// 		menus.MenuItem(
-								// 			menus.MenuItemProps{},
-								// 			htmx.A(
-								// 				htmx.Attribute("href", "#"),
-								// 				htmx.Text("Item 1"),
-								// 			),
-								// 			htmx.A(
-								// 				htmx.Attribute("href", "#"),
-								// 				htmx.Text("Item 2"),
-								// 			),
-								// 			htmx.A(
-								// 				htmx.Attribute("href", "#"),
-								// 				htmx.Text("Item 3"),
-								// 			),
-								// 		),
-								// 	),
-								// ),
-							),
+						MainMenu(
+							MainMenuProps{},
+						),
+						dividers.Divider(
+							dividers.DividerProps{},
+						),
+						UserMenu(
+							UserMenuProps{},
 						),
 					),
 				),

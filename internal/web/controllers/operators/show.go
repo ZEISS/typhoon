@@ -251,5 +251,4 @@ func (l *ShowOperatorControllerImpl) Get() error {
 			),
 		),
 	)
-
 }

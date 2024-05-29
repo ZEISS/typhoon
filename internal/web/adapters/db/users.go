@@ -9,7 +9,12 @@ import (
 
 // GetUser ...
 func (d *database) GetUser(ctx context.Context, user *models.User) error {
-	return d.conn.WithContext(ctx).Preload("Key").Preload("Token").Preload("Account").Preload("Account.SigningKeyGroups").First(user).Error
+	return d.conn.WithContext(ctx).
+		Preload("Key").
+		Preload("Token").
+		Preload("Account").
+		Preload("Account.SigningKeyGroups").
+		First(user).Error
 }
 
 // ListUsers ...
