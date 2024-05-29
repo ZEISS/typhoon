@@ -39,7 +39,7 @@ func NewController(
 	}
 	impl := reconcilerv1alpha1.NewImpl(ctx, r)
 
-	r.base = common.NewGenericServiceReconciler[*v1alpha1.JiraTarget](
+	r.base = common.NewGenericServiceReconciler(
 		ctx,
 		typ.GetGroupVersionKind(),
 		impl.Tracker,
