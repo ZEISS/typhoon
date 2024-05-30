@@ -43,7 +43,8 @@ func MainMenu(p MainMenuProps, children ...htmx.Node) htmx.Node {
 				menus.MenuItemProps{},
 				menus.MenuLink(
 					menus.MenuLinkProps{
-						Href: "/operators",
+						Href:   "/operators",
+						Active: strings.HasPrefix(p.Path, "/operators"),
 					},
 					htmx.Text("Operators"),
 				),

@@ -197,7 +197,9 @@ func Layout(p LayoutProps, children ...htmx.Node) htmx.Node {
 							},
 						},
 						MainMenu(
-							MainMenuProps{},
+							MainMenuProps{
+								Path: p.Path,
+							},
 						),
 						dividers.Divider(
 							dividers.DividerProps{},

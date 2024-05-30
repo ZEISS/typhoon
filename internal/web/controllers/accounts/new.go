@@ -55,7 +55,9 @@ func (l *NewAccountControllerImpl) Get() error {
 	return htmx.RenderComp(
 		l.Ctx(),
 		components.Page(
-			components.PageProps{},
+			components.PageProps{
+				Path: l.Ctx().Path(),
+			},
 			components.Layout(
 				components.LayoutProps{},
 				htmx.FormElement(

@@ -11,6 +11,7 @@ import (
 	"github.com/zeiss/typhoon/internal/web/controllers/operators"
 	oskgs "github.com/zeiss/typhoon/internal/web/controllers/operators/skgs"
 	ot "github.com/zeiss/typhoon/internal/web/controllers/operators/tokens"
+	"github.com/zeiss/typhoon/internal/web/controllers/systems"
 	"github.com/zeiss/typhoon/internal/web/controllers/users"
 	"github.com/zeiss/typhoon/internal/web/controllers/users/credentials"
 	pu "github.com/zeiss/typhoon/internal/web/controllers/users/partials"
@@ -45,7 +46,7 @@ func (h *handlers) Dashboard() fiber.Handler {
 // Me ...
 func (h *handlers) Me() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return me.NewMeController()
+		return me.NewMeController(h.db)
 	})
 }
 
@@ -208,5 +209,12 @@ func (h *handlers) UpdateSystemAccount() fiber.Handler {
 func (h *handlers) GetAccountToken() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
 		return accounts.NewGetAccountTokenController(h.db)
+	})
+}
+
+// ListSystems ...
+func (h *handlers) ListSystems() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return systems.NewListSystemsController(h.db)
 	})
 }

@@ -65,7 +65,9 @@ func (l *ShowOperatorControllerImpl) Get() error {
 				Boost: true,
 			},
 			components.Layout(
-				components.LayoutProps{},
+				components.LayoutProps{
+					Path: l.Ctx().Path(),
+				},
 				cards.CardBordered(
 					cards.CardProps{},
 					cards.Body(

@@ -2,6 +2,7 @@ package operators
 
 import (
 	htmx "github.com/zeiss/fiber-htmx"
+	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/components/operators"
@@ -59,16 +60,26 @@ func (l *ListOperatorsController) Get() error {
 	return htmx.RenderComp(
 		l.Ctx(),
 		components.Page(
-			components.PageProps{},
+			components.PageProps{
+				Title: "Operators",
+			},
 			components.Layout(
-				components.LayoutProps{},
-				operators.OperatorsTable(
-					operators.OperatorsTableProps{
-						Operators: ops,
-						Offset:    pagination.Offset,
-						Limit:     pagination.Limit,
-						Total:     pagination.TotalRows,
-					},
+				components.LayoutProps{
+					Path: l.Ctx().Path(),
+				},
+				cards.CardBordered(
+					cards.CardProps{},
+					cards.Body(
+						cards.BodyProps{},
+						operators.OperatorsTable(
+							operators.OperatorsTableProps{
+								Operators: ops,
+								Offset:    pagination.Offset,
+								Limit:     pagination.Limit,
+								Total:     pagination.TotalRows,
+							},
+						),
+					),
 				),
 			),
 		),

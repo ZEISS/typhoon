@@ -22,9 +22,7 @@ func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node 
 	return htmx.Div(
 		htmx.ClassNames{
 			"bg-base-100": true,
-			"m-4":         true,
 		},
-
 		tables.Table(
 			tables.TableProps{
 				ID: "operators-tables",

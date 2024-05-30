@@ -53,7 +53,9 @@ func (l *NewUserControllerImpl) Get() error {
 		components.Page(
 			components.PageProps{},
 			components.Layout(
-				components.LayoutProps{},
+				components.LayoutProps{
+					Path: l.Ctx().Path(),
+				},
 				htmx.FormElement(
 					htmx.HxPost("/users/create"),
 					cards.CardBordered(

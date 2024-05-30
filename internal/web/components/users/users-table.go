@@ -20,10 +20,7 @@ type UsersTableProps struct {
 // UsersTable ...
 func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 	return htmx.Div(
-		htmx.ClassNames{
-			"bg-base-100": true,
-			"m-4":         true,
-		},
+		htmx.ClassNames{},
 		tables.Table(
 			tables.TableProps{
 				ID: "accounts-tables",

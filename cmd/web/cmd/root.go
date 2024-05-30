@@ -142,6 +142,9 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Get("/users/partials/account-skgs", handlers.AccountSksOptions())
 		app.Get("/users/:id/credentials", handlers.UserCredentials())
 
+		// Systems handler
+		app.Get("/systems", handlers.ListSystems())
+
 		err = app.Listen(s.cfg.Flags.Addr)
 		if err != nil {
 			return err

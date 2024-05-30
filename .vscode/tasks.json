@@ -14,7 +14,8 @@
       "args": [
         "-c",
         "${workspaceFolder}/cmd/web/.air.toml"
-      ]
+      ],
+      "problemMatcher": []
     },
     {
       "label": "Start API Server",

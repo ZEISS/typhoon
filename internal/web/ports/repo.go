@@ -5,4 +5,5 @@ type Repository interface {
 	Accounts
 	Operators
 	Users
+	Me
 }

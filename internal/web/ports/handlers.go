@@ -54,4 +54,6 @@ type Handlers interface {
 	UpdateSystemAccount() fiber.Handler
 	// GetAccountToken ...
 	GetAccountToken() fiber.Handler
+	// ListSystems ...
+	ListSystems() fiber.Handler
 }

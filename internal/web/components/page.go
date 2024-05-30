@@ -16,7 +16,7 @@ type PageProps struct {
 func Page(props PageProps, children ...htmx.Node) htmx.Node {
 	return htmx.HTML5(
 		htmx.HTML5Props{
-			Title:    "index",
+			Title:    props.Title,
 			Language: "en",
 			Attributes: []htmx.Node{
 				htmx.DataAttribute("theme", "light"),
