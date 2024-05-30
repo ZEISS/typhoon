@@ -61,7 +61,9 @@ func (l *ShowOperatorControllerImpl) Get() error {
 	return htmx.RenderComp(
 		l.Ctx(),
 		components.Page(
-			components.PageProps{},
+			components.PageProps{
+				Boost: true,
+			},
 			components.Layout(
 				components.LayoutProps{},
 				cards.CardBordered(
@@ -163,7 +165,6 @@ func (l *ShowOperatorControllerImpl) Get() error {
 							htmx.Text("System Account"),
 						),
 						htmx.Form(
-
 							forms.FormControlLabel(
 								forms.FormControlLabelProps{},
 								forms.FormControlLabelText(

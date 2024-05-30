@@ -8,6 +8,8 @@ import (
 	"github.com/nats-io/nkeys"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/forms"
+	"github.com/zeiss/fiber-htmx/components/icons"
+	"github.com/zeiss/fiber-htmx/components/toasts"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/utils"
 	"github.com/zeiss/typhoon/internal/web/ports"
@@ -113,28 +115,49 @@ func (l *UpdateSystemAccountControllerImpl) Put() error {
 
 	return htmx.RenderComp(
 		l.Ctx(),
-		forms.SelectBordered(
-			forms.SelectProps{},
-			htmx.HxPut(fmt.Sprintf("/operators/%s/system-account", op.ID)),
-			htmx.HxTarget("this"),
-			forms.Option(
-				forms.OptionProps{
-					Selected: true,
-					Disabled: true,
-				},
-				htmx.Text("Select account"),
+		htmx.Fragment(
+			htmx.Div(
+				htmx.ID("alerts"),
+				htmx.HxSwapOob("true"),
+				toasts.ToastEnd(
+					toasts.ToastProps{},
+					// toasts.ToastAlertInfo(
+					// 	htmx.Text("Info"),
+					// ),
+					// toasts.ToastAlertError(
+					// 	htmx.Text("Error"),
+					// ),
+					toasts.ToastAlertSuccess(
+						icons.CheckCircleOutline(
+							icons.IconProps{},
+						),
+						htmx.Span(htmx.Text("Success")),
+					),
+				),
 			),
-			htmx.Name("system_account_id"),
-			htmx.Group(
-				htmx.ForEach(accs, func(account *models.Account) htmx.Node {
-					return forms.Option(
-						forms.OptionProps{
-							Value:    account.ID.String(),
-							Selected: op.SystemAdminAccountID != nil && account.ID == utils.UUIDPtr(op.SystemAdminAccountID),
-						},
-						htmx.Text(account.Name),
-					)
-				})...,
+			forms.SelectBordered(
+				forms.SelectProps{},
+				htmx.HxPut(fmt.Sprintf("/operators/%s/system-account", op.ID)),
+				htmx.HxTarget("this"),
+				forms.Option(
+					forms.OptionProps{
+						Selected: true,
+						Disabled: true,
+					},
+					htmx.Text("Select account"),
+				),
+				htmx.Name("system_account_id"),
+				htmx.Group(
+					htmx.ForEach(accs, func(account *models.Account) htmx.Node {
+						return forms.Option(
+							forms.OptionProps{
+								Value:    account.ID.String(),
+								Selected: op.SystemAdminAccountID != nil && account.ID == utils.UUIDPtr(op.SystemAdminAccountID),
+							},
+							htmx.Text(account.Name),
+						)
+					})...,
+				),
 			),
 		),
 	)

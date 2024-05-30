@@ -55,6 +55,21 @@ func Layout(p LayoutProps, children ...htmx.Node) htmx.Node {
 						ID: "drawer",
 					},
 					htmx.Div(
+						htmx.ID("alerts"),
+						// toasts.ToastEnd(
+						// 	toasts.ToastProps{},
+						// 	toasts.ToastAlertInfo(
+						// 		htmx.Text("Info"),
+						// 	),
+						// 	toasts.ToastAlertError(
+						// 		htmx.Text("Error"),
+						// 	),
+						// 	toasts.ToastAlertSuccess(
+						// 		htmx.Text("Success"),
+						// 	),
+						// ),
+					),
+					htmx.Div(
 						htmx.ClassNames{
 							"overflow-auto": true,
 							"w-full":        true,
