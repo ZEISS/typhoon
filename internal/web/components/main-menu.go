@@ -30,7 +30,8 @@ func MainMenu(p MainMenuProps, children ...htmx.Node) htmx.Node {
 				menus.MenuItemProps{},
 				menus.MenuLink(
 					menus.MenuLinkProps{
-						Href: "/",
+						Href:   "/",
+						Active: p.Path == "/",
 					},
 					htmx.Text("Dashboard"),
 				),

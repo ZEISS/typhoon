@@ -1,6 +1,8 @@
 package components
 
 import (
+	"strings"
+
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/menus"
 )
@@ -28,7 +30,8 @@ func UserMenu(p UserMenuProps, children ...htmx.Node) htmx.Node {
 				menus.MenuItemProps{},
 				menus.MenuLink(
 					menus.MenuLinkProps{
-						Href: "/me",
+						Href:   "/me",
+						Active: strings.HasPrefix(p.Path, "/me"),
 					},
 					htmx.Text("Profile"),
 				),

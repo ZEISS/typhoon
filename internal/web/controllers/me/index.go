@@ -40,7 +40,9 @@ func (m *MeController) Get() error {
 				Title: "Profile",
 			},
 			components.Layout(
-				components.LayoutProps{},
+				components.LayoutProps{
+					Path: m.Ctx().Path(),
+				},
 				components.Wrap(
 					components.WrapProps{},
 					cards.CardBordered(

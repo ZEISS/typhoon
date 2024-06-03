@@ -2,6 +2,7 @@ package systems
 
 import (
 	"github.com/zeiss/typhoon/internal/web/components"
+	"github.com/zeiss/typhoon/internal/web/components/systems"
 	"github.com/zeiss/typhoon/internal/web/ports"
 
 	htmx "github.com/zeiss/fiber-htmx"
@@ -61,6 +62,9 @@ func (l *ListSystemsController) Get() error {
 					cards.CardProps{},
 					cards.Body(
 						cards.BodyProps{},
+						systems.SystemsTable(
+							systems.SystemsTableProps{},
+						),
 					),
 				),
 			),
