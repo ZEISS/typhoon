@@ -1,0 +1,3 @@
+accounting:
+  image: "zeiss/typhoon/typhoon-accounting:latest"
+  pullPolicy: IfNotPresent
