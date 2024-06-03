@@ -66,9 +66,8 @@ jobs:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
           charts_dir: charts
-          config: ${{ github.workspace }}/.cr.yml
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+          config: ${{ github.workspace }}/helm/cr.yaml
+      - uses: actions/upload-artifact@v4
         with:
           name: manifests
           path: /tmp/dist

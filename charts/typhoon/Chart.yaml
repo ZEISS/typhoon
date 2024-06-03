@@ -7,4 +7,3 @@ version: 0.0.0
 sources:
   - https://github.com/zeiss/typhoon/tree/main/charts/typhoon
   - https://github.com/zeiss/typhoon
-dependencies:
