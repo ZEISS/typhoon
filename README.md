@@ -1,6 +1,6 @@
 # typhoon
 
-![Github Action](https://github.com/zeiss/typhoon/workflows/main/badge.svg)
+[![Release](https://github.com/ZEISS/typhoon/actions/workflows/release.yml/badge.svg)](https://github.com/ZEISS/typhoon/actions/workflows/release.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/zeiss/typhoon.svg)](https://pkg.go.dev/github.com/zeiss/typhoon)
 [![Go Report Card](https://goreportcard.com/badge/github.com/zeiss/typhoon)](https://goreportcard.com/report/github.com/zeiss/typhoon)
 [![Taylor Swift](https://img.shields.io/badge/secured%20by-taylor%20swift-brightgreen.svg)](https://twitter.com/SwiftOnSecurity)
