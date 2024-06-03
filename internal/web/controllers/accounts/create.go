@@ -3,7 +3,7 @@ package accounts
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
-	"github.com/nats-io/jwt"
+	"github.com/nats-io/jwt/v2"
 	"github.com/nats-io/nkeys"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/typhoon/internal/api/models"
