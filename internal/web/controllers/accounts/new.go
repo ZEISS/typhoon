@@ -1,8 +1,6 @@
 package accounts
 
 import (
-	"fmt"
-
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
@@ -44,8 +42,6 @@ func (l *NewAccountControllerImpl) Prepare() error {
 	for _, operator := range pagination.Rows {
 		l.Operators = append(l.Operators, &operator)
 	}
-
-	fmt.Println((len(l.Operators)))
 
 	return nil
 }

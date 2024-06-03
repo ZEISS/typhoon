@@ -109,7 +109,6 @@ func (a *jiraAdapter) Start(ctx context.Context) error {
 }
 
 func (a *jiraAdapter) dispatch(ctx context.Context, event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
-
 	switch event.Type() {
 	case v1alpha1.EventTypeJiraIssueCreate:
 		return a.jiraIssueCreate(ctx, event)

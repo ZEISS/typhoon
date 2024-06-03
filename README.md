@@ -9,6 +9,19 @@
 
 An event bridge for applications and services build on an event mesh with a team-oriented self-service control plane.
 
+## Design
+
+Every software system has design goals. Properties that it should provide io its users to create value. Typhoon has the following design goals:
+
+* **Team-based self-service control plane**. Teams control their own event sources, triggers, and targets. They also control their users their permissions.
+* **Event mesh**. The system is capable to route events from producers to consumers in hybrid cloud environemts.
+* **Streaming**. The system is capable to stream events from producers to consumers. That means it is capable of replaying events not only queueing them.
+* **Event bridging**. The system is capable to bridge events from different sources to different targets, also transforming them. Furthermore, this should use a declarative approach.
+* **Scalability**. The system is capable to scale horizontally and vertically.
+* **Resilience**. The system is capable to recover from failures.
+* **Security**. The system is capable to secure the communication between producers and consumers.
+* **Open standards**. The system is based on open standards like [NATS.io](https://nats.io/) and [Knative Eventing](https://knative.dev/docs/eventing/).
+
 ## Overview
 
 Typhoon is built on top of [NATS.io](https://nats.io/) and [Knative Eventing](https://knative.dev/docs/eventing/). It provides a control plane for managing event sources, triggers, and targets. It also provides an API for managing the control plane.

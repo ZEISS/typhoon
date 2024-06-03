@@ -1,6 +1,8 @@
 package accounts
 
 import (
+	"fmt"
+
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/forms"
@@ -86,7 +88,7 @@ func SigningKeyGroupsTable(props SigningKeyGroupsTableProps, children ...htmx.No
 						return htmx.Td(
 							links.Link(
 								links.LinkProps{
-									Href: "/operators/" + row.ID.String(),
+									Href: fmt.Sprintf("/accounts/%s", row.ID),
 								},
 								htmx.Text(row.Name),
 							),

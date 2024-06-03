@@ -250,7 +250,6 @@ func TestJiraEvents(t *testing.T) {
 
 	for name, tc := range testCases {
 		t.Run(name, func(t *testing.T) {
-
 			// jira client configured to use test server
 			jiraClient, err := jira.NewClient(nil, server.URL)
 			if err != nil {
@@ -293,7 +292,6 @@ func TestJiraEvents(t *testing.T) {
 			case <-time.After(13 * time.Second):
 				assert.Fail(t, "expected cloud event response was not received")
 			}
-
 		})
 	}
 }
@@ -341,7 +339,6 @@ func newJiraMockedServer() *httptest.Server {
 		default:
 			w.WriteHeader(http.StatusBadRequest)
 		}
-
 	})
 
 	testMux.HandleFunc("/rest/api/2/issue/"+tIssueID, func(w http.ResponseWriter, r *http.Request) {
