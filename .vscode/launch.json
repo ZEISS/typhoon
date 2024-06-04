@@ -7,6 +7,8 @@
         "mode": "remote",
         "request": "attach",
         "host": "127.0.0.1",
+        "apiVersion": 2,
+        "trace": "verbose",
         "port": 2345
       }
     ]
