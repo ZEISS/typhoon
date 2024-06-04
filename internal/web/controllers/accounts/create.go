@@ -8,16 +8,30 @@ import (
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/utils"
+	"github.com/zeiss/typhoon/internal/web/components/alerts"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
 var validate *validator.Validate
 
+// CreateControllerBody ...
+type CreateControllerBody struct {
+	OperatorID                  uuid.UUID `json:"operator_id" form:"operator_id" validate:"required,uuid"`
+	Name                        string    `json:"name" form:"name" validate:"required,min=3,max=100"`
+	Description                 string    `json:"description" form:"description" validate:"required,min=3,max=1024"`
+	JetStreamEnable             bool      `json:"jetstream_enable" form:"jetstream_enable"`
+	JetStreamMaxDiskStorage     float64   `json:"jetstream_max_disk_storage" form:"jetstream_max_disk_storage"`
+	JetStreamMaxDiskStorageUnit string    `json:"jetstream_max_disk_storage_unit" form:"jetstream_max_disk_storage_unit"`
+	JetStreamMaxStreams         int64     `json:"jetstream_max_streams" form:"jetstream_max_streams"`
+	JetStreamMaxConsumers       int64     `json:"jetstream_max_consumers" form:"jetstream_max_consumers"`
+	JetStreamMaxStreamSize      float64   `json:"jetstream_max_stream_size" form:"jetstream_max_stream_size"`
+	JetStreamMaxStreamSizeUnit  string    `json:"jetstream_max_stream_size_unit" form:"jetstream_max_stream_size_unit"`
+	JetStreamMaxBytesRequired   bool      `json:"jetstream_max_bytes_required" form:"jetstream_max_bytes_required"`
+}
+
 // CreateControllerImpl ...
 type CreateControllerImpl struct {
-	OperatorID  uuid.UUID `json:"operator_id" form:"operator_id" validate:"required,uuid"`
-	Name        string    `json:"name" form:"name" validate:"required,min=3,max=100"`
-	Description string    `json:"description" form:"description" validate:"required,min=3,max=1024"`
+	Form CreateControllerBody
 
 	ports.Repository
 	htmx.DefaultController
@@ -35,7 +49,7 @@ func NewCreateController(db ports.Repository) *CreateControllerImpl {
 func (l *CreateControllerImpl) Prepare() error {
 	validate = validator.New()
 
-	err := l.Ctx().BodyParser(l)
+	err := l.Ctx().BodyParser(&l.Form)
 	if err != nil {
 		return err
 	}
@@ -48,16 +62,30 @@ func (l *CreateControllerImpl) Prepare() error {
 	return nil
 }
 
+// Error ...
+func (l *CreateControllerImpl) Error(err error) error {
+	return htmx.RenderComp(
+		l.Ctx(),
+		alerts.Error(
+			alerts.ErrorProps{
+				Error: err,
+				ID:    "alerts",
+			},
+		),
+		htmx.RenderStatusCode(err),
+	)
+}
+
 // Post ...
 func (l *CreateControllerImpl) Post() error {
 	account := models.Account{
-		Name:        l.Name,
-		OperatorID:  l.OperatorID,
-		Description: utils.StrPtr(l.Description),
+		Name:        l.Form.Name,
+		OperatorID:  l.Form.OperatorID,
+		Description: utils.StrPtr(l.Form.Description),
 	}
 
 	operator := models.Operator{
-		ID: l.OperatorID,
+		ID: l.Form.OperatorID,
 	}
 	err := l.GetOperator(l.Context(), &operator)
 	if err != nil {
@@ -106,7 +134,7 @@ func (l *CreateControllerImpl) Post() error {
 	}
 
 	ac := jwt.NewAccountClaims(id)
-	ac.Name = l.Name
+	ac.Name = l.Form.Name
 	ac.Issuer = operator.Key.ID
 	ac.SigningKeys.Add(skg.Key.ID)
 

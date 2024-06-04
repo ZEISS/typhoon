@@ -30,6 +30,18 @@ type Account struct {
 	SigningKeyGroups []SigningKeyGroup `json:"signing_key_groups" gorm:"many2many:account_signing_key_groups;foreignKey:ID;joinForeignKey:AccountID;joinReferences:SigningKeyGroupID"`
 	// Users is the list of users the account has.
 	Users []User `json:"users" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	// LimitJetStreamMaxDiskStorage is the limit for JetStream maximum disk storage.
+	LimitJetStreamMaxDiskStorage int64 `json:"limit_jetstream_max_disk_storage"`
+	// LimitJetStreamMaxStreams is the limit for JetStream maximum streams.
+	LimitJetStreamMaxStreams int64 `json:"limit_jetstream_max_streams"`
+	// LimitJetStreamMaxAckPending is the limit for JetStream maximum ack pending.
+	LimitJetStreamMaxAckPending int64 `json:"limit_jetstream_max_ack_pending"`
+	/// LimitJetStreamMaxStreamBytes is the limit for JetStream maximum stream bytes.
+	LimitJetStreamMaxStreamBytes int64 `json:"limit_jetstream_max_stream_bytes"`
+	// LimitJetStreamMaxBytesRequired indicates if JetStream maximum bytes required is limited.
+	LimitJetStreamMaxBytesRequired bool `json:"limit_jetstream_max_bytes_required"`
+	// LimitJetStreamMaxConsumers indicates if JetStream maximum consumer is limited.
+	LimitJetStreamMaxConsumers int64 `json:"limit_jetstream_max_consumers"`
 	// CreatedAt is the time the account was created.
 	CreatedAt time.Time `json:"created_at"`
 	// UpdatedAt is the time the account was updated.

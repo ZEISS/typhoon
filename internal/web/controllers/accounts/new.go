@@ -57,7 +57,9 @@ func (l *NewAccountControllerImpl) Get() error {
 			components.Layout(
 				components.LayoutProps{},
 				htmx.FormElement(
+					htmx.Action("."),
 					htmx.HxPost("/accounts/create"),
+					htmx.HxTargetError("#alerts"),
 					cards.CardBordered(
 						cards.CardProps{},
 						cards.Body(
@@ -227,6 +229,196 @@ func (l *NewAccountControllerImpl) Get() error {
 											},
 											htmx.Text("The description must be from 3 to 1024 characters."),
 										),
+									),
+								),
+							),
+						),
+					),
+					cards.CardBordered(
+						cards.CardProps{},
+						cards.Body(
+							cards.BodyProps{},
+							cards.Title(
+								cards.TitleProps{},
+								htmx.Text("Limits"),
+							),
+							forms.FormControl(
+								forms.FormControlProps{
+									ClassNames: htmx.ClassNames{
+										"py-4": true,
+									},
+								},
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{},
+										htmx.Text("Enable JetStream"),
+									),
+									forms.Toggle(
+										forms.ToggleProps{
+											Checked: true,
+										},
+										htmx.ID("jetstream_enable"),
+										htmx.Name("jetstream_enable"),
+									),
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												"w-full": true,
+											},
+										},
+										htmx.Text("Max Disk Storage"),
+									),
+									forms.TextInputBordered(
+										forms.TextInputProps{
+											Name:  "jetstream_max_disk_storage",
+											Value: "2.5",
+										},
+									),
+									forms.SelectBordered(
+										forms.SelectProps{
+											ClassNames: htmx.ClassNames{
+												"w-full": false,
+											},
+										},
+										htmx.Name("jetstream_max_disk_storage_unit"),
+										forms.Option(
+											forms.OptionProps{
+												Value: "bytes",
+											},
+											htmx.Text("Bytes"),
+										),
+										forms.Option(
+											forms.OptionProps{
+												Value: "kilobit",
+											},
+											htmx.Text("KiB"),
+										),
+										forms.Option(
+											forms.OptionProps{
+												Value: "megabit",
+											},
+											htmx.Text("MiB"),
+										),
+										forms.Option(
+											forms.OptionProps{
+												Value:    "gigabit",
+												Selected: true,
+											},
+											htmx.Text("GiB"),
+										),
+										forms.Option(
+											forms.OptionProps{
+												Value: "terabit",
+											},
+											htmx.Text("TiB"),
+										),
+									),
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												"w-full": true,
+											},
+										},
+										htmx.Text("Streams"),
+									),
+									forms.TextInputBordered(
+										forms.TextInputProps{
+											Name:  "jetstream_max_streams",
+											Value: "10",
+										},
+									),
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												"w-full": true,
+											},
+										},
+										htmx.Text("Consumers"),
+									),
+									forms.TextInputBordered(
+										forms.TextInputProps{
+											Name:  "jetstream_max_consumers",
+											Value: "10",
+										},
+									),
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												"w-full": true,
+											},
+										},
+										htmx.Text("Max Stream Size"),
+									),
+									forms.TextInputBordered(
+										forms.TextInputProps{
+											Name:  "jetstream_max_stream_size",
+											Value: "2.6",
+										},
+									),
+									forms.SelectBordered(
+										forms.SelectProps{
+											ClassNames: htmx.ClassNames{
+												"w-full": false,
+											},
+										},
+										htmx.Name("jetstream_max_stream_size_unit"),
+										forms.Option(
+											forms.OptionProps{
+												Value: "bytes",
+											},
+											htmx.Text("Bytes"),
+										),
+										forms.Option(
+											forms.OptionProps{
+												Value: "kilobit",
+											},
+											htmx.Text("KiB"),
+										),
+										forms.Option(
+											forms.OptionProps{
+												Value: "megabit",
+											},
+											htmx.Text("MiB"),
+										),
+										forms.Option(
+											forms.OptionProps{
+												Value:    "gigabit",
+												Selected: true,
+											},
+											htmx.Text("GiB"),
+										),
+										forms.Option(
+											forms.OptionProps{
+												Value: "terabit",
+											},
+											htmx.Text("TiB"),
+										),
+									),
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{},
+										htmx.Text("Require Max Bytes"),
+									),
+									forms.Toggle(
+										forms.ToggleProps{
+											Checked: true,
+										},
+										htmx.Name("jetstream_max_bytes_required"),
 									),
 								),
 							),

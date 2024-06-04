@@ -389,8 +389,8 @@ github.com/go-playground/locales v0.14.1 h1:EWaQ/wswjilfKLTECiXz7Rh+3BjFhfDFKv/o
 github.com/go-playground/locales v0.14.1/go.mod h1:hxrqLVvrK65+Rwrd5Fc6F2O76J/NuW9t0sjnWqG1slY=
 github.com/go-playground/universal-translator v0.18.1 h1:Bcnm0ZwsGyWbCzImXv+pAJnYK9S473LQFuzCbDbfSFY=
 github.com/go-playground/universal-translator v0.18.1/go.mod h1:xekY+UJKNuX9WP91TpwSH2VMlDf28Uj24BCp08ZFTUY=
-github.com/go-playground/validator/v10 v10.20.0 h1:K9ISHbSaI0lyB2eWMPJo+kOS/FBExVwjEviJTixqxL8=
-github.com/go-playground/validator/v10 v10.20.0/go.mod h1:dbuPbCMFw/DrkbEynArYaCwl3amGuJotoKCe95atGMM=
+github.com/go-playground/validator/v10 v10.21.0 h1:4fZA11ovvtkdgaeev9RGWPgc1uj3H8W+rNYyH/ySBb0=
+github.com/go-playground/validator/v10 v10.21.0/go.mod h1:dbuPbCMFw/DrkbEynArYaCwl3amGuJotoKCe95atGMM=
 github.com/go-stack/stack v1.8.0/go.mod h1:v0f6uXyyMGvRgIKkXu+yp6POWl0qKG85gN/melR3HDY=
 github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0/go.mod h1:fyg7847qk6SyHyPtNmDHnmrv/HOrqktSC+C9fM+CJOE=
 github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 h1:tfuBGBXKqDEevZMzYi5KSi8KkcZtzBcTgAUUtapy0OI=
@@ -1231,8 +1231,8 @@ github.com/zeiss/fiber-authz v1.0.24 h1:rNaBl56GGsn5CJmcsCCTEvC+tqRD57utGvl7tagO
 github.com/zeiss/fiber-authz v1.0.24/go.mod h1:q3yxf4CcCkIrXPaBc+n+TW7XsZLpNi7YhF28r55pYCY=
 github.com/zeiss/fiber-goth v1.2.1 h1:mXjQx5ekV6jfe3Gi0apyTGh2IoQ8zRw2oY1o8iy+CmQ=
 github.com/zeiss/fiber-goth v1.2.1/go.mod h1:AVhqrCUdrqRdtu+N0mkq/JI2rZd01Ss46LKbdXZ3bsA=
-github.com/zeiss/fiber-htmx v1.3.4 h1:INGXQe11YI0gbhQACsyTvYcsxOy3cdKb8WaWpstoZB4=
-github.com/zeiss/fiber-htmx v1.3.4/go.mod h1:HM23oBjoxuJmMh8KnPMzFfPO8GWNbefBNpgXKxXxXdw=
+github.com/zeiss/fiber-htmx v1.3.7 h1:+mQApFsZ0rrmQDPB5NfpMZcfkTxsCGZDCkq0/O4zDbE=
+github.com/zeiss/fiber-htmx v1.3.7/go.mod h1:Gr1tnnkT3HMNXRepSArjOrbIfKLyHqKfHsRwjZ/GnEY=
 github.com/zeiss/snow-go v0.0.0-20240312201415-88f059622cff h1:IguG+jnCnFyAzZ8Fp+6v2lJNvUFPfu8Q2UUgSFw4doU=
 github.com/zeiss/snow-go v0.0.0-20240312201415-88f059622cff/go.mod h1:HvitS/QkqgqhV/bNWxPKn0NjByjTaEACZnNgHKZEuio=
 gitlab.com/bosi/decorder v0.4.2 h1:qbQaV3zgwnBZ4zPMhGLW4KZe7A7NwxEhJx39R3shffo=

@@ -10,7 +10,7 @@ require (
 	github.com/cloudevents/sdk-go/v2 v2.15.2
 	github.com/fsnotify/fsnotify v1.7.0
 	github.com/getkin/kin-openapi v0.124.0
-	github.com/go-playground/validator/v10 v10.20.0
+	github.com/go-playground/validator/v10 v10.21.0
 	github.com/gofiber/fiber/v2 v2.52.4
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/golang/mock v1.7.0-rc.1
@@ -36,7 +36,7 @@ require (
 	github.com/xdg-go/scram v1.0.2
 	github.com/zeiss/fiber-authz v1.0.24
 	github.com/zeiss/fiber-goth v1.2.1
-	github.com/zeiss/fiber-htmx v1.3.4
+	github.com/zeiss/fiber-htmx v1.3.7
 	github.com/zeiss/snow-go v0.0.0-20240312201415-88f059622cff
 	go.opencensus.io v0.24.0
 	go.uber.org/zap v1.27.0
