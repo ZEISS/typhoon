@@ -1,6 +1,8 @@
 package accounts
 
 import (
+	"context"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/nats-io/jwt/v2"
@@ -31,17 +33,19 @@ type CreateControllerBody struct {
 
 // CreateControllerImpl ...
 type CreateControllerImpl struct {
-	Form CreateControllerBody
+	Form  CreateControllerBody
+	Store ports.Datastore
 
 	ports.Repository
+	htmx.TransactionController
 	htmx.DefaultController
 }
 
 // NewCreateController ...
-func NewCreateController(db ports.Repository) *CreateControllerImpl {
+func NewCreateController(store ports.Datastore) *CreateControllerImpl {
 	return &CreateControllerImpl{
-		Repository:        db,
-		DefaultController: htmx.DefaultController{},
+		Store:                 store,
+		TransactionController: htmx.NewTransactionController(),
 	}
 }
 
@@ -92,7 +96,10 @@ func (l *CreateControllerImpl) Post() error {
 	operator := models.Operator{
 		ID: l.Form.OperatorID,
 	}
-	err := l.GetOperator(l.Context(), &operator)
+
+	err := l.Store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.GetOperator(ctx, &operator)
+	})
 	if err != nil {
 		return err
 	}
@@ -142,26 +149,29 @@ func (l *CreateControllerImpl) Post() error {
 	ac.Name = l.Form.Name
 	ac.Issuer = operator.Key.ID
 	ac.SigningKeys.Add(skg.Key.ID)
-	ac.Exports = jwt.Exports{&jwt.Export{
-		Name:                 "account-monitoring-services",
-		Subject:              "$SYS.REQ.ACCOUNT.*.*",
-		Type:                 jwt.Service,
-		ResponseType:         jwt.ResponseTypeStream,
-		AccountTokenPosition: 4,
-		Info: jwt.Info{
-			Description: `Request account specific monitoring services for: SUBSZ, CONNZ, LEAFZ, JSZ and INFO`,
-			InfoURL:     "https://docs.nats.io/nats-server/configuration/sys_accounts",
-		},
-	}, &jwt.Export{
-		Name:                 "account-monitoring-streams",
-		Subject:              "$SYS.ACCOUNT.*.>",
-		Type:                 jwt.Stream,
-		AccountTokenPosition: 3,
-		Info: jwt.Info{
-			Description: `Account specific monitoring stream`,
-			InfoURL:     "https://docs.nats.io/nats-server/configuration/sys_accounts",
-		},
-	}}
+	ac.Limits.JetStreamLimits.DiskStorage = -1
+	ac.Limits.JetStreamLimits.Streams = -1
+
+	// ac.Exports = jwt.Exports{&jwt.Export{
+	// 	Name:                 "account-monitoring-services",
+	// 	Subject:              "$SYS.REQ.ACCOUNT.*.*",
+	// 	Type:                 jwt.Service,
+	// 	ResponseType:         jwt.ResponseTypeStream,
+	// 	AccountTokenPosition: 4,
+	// 	Info: jwt.Info{
+	// 		Description: `Request account specific monitoring services for: SUBSZ, CONNZ, LEAFZ, JSZ and INFO`,
+	// 		InfoURL:     "https://docs.nats.io/nats-server/configuration/sys_accounts",
+	// 	},
+	// }, &jwt.Export{
+	// 	Name:                 "account-monitoring-streams",
+	// 	Subject:              "$SYS.ACCOUNT.*.>",
+	// 	Type:                 jwt.Stream,
+	// 	AccountTokenPosition: 3,
+	// 	Info: jwt.Info{
+	// 		Description: `Account specific monitoring stream`,
+	// 		InfoURL:     "https://docs.nats.io/nats-server/configuration/sys_accounts",
+	// 	},
+	// }}
 
 	token, err := ac.Encode(osk)
 	if err != nil {
@@ -169,7 +179,9 @@ func (l *CreateControllerImpl) Post() error {
 	}
 	account.Token = models.Token{ID: id, Token: token}
 
-	err = l.CreateAccount(l.Context(), &account)
+	err = l.Store.ReadWriteTx(l.Context(), func(ctx context.Context, tx ports.ReadWriteTx) error {
+		return tx.CreateAccount(ctx, &account)
+	})
 	if err != nil {
 		return err
 	}

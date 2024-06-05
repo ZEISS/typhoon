@@ -21,12 +21,13 @@ import (
 var _ ports.Handlers = (*handlers)(nil)
 
 type handlers struct {
-	db ports.Repository
+	db    ports.Repository
+	store ports.Datastore
 }
 
 // NewHandlers ...
-func NewHandlers(db ports.Repository) *handlers {
-	return &handlers{db}
+func NewHandlers(db ports.Repository, store ports.Datastore) *handlers {
+	return &handlers{db, store}
 }
 
 // Login ...
@@ -116,7 +117,7 @@ func (h *handlers) ListUsers() fiber.Handler {
 // CreateAccount ...
 func (h *handlers) CreateAccount() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return accounts.NewCreateController(h.db)
+		return accounts.NewCreateController(h.store)
 	})
 }
 

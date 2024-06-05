@@ -1,8 +1,6 @@
 package operators
 
 import (
-	"fmt"
-
 	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/typhoon/internal/api/models"
@@ -28,8 +26,6 @@ func NewDeleteOperatorController(db ports.Operators) *DeleteOperatorController {
 
 // Error ...
 func (l *DeleteOperatorController) Error(err error) error {
-	fmt.Println(err)
-
 	return nil
 }
 

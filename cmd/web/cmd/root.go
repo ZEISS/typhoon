@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/kelseyhightower/envconfig"
+	"github.com/nats-io/nats.go"
 	"github.com/zeiss/fiber-goth/providers"
 	"github.com/zeiss/fiber-goth/providers/github"
 	"github.com/zeiss/typhoon/internal/web/adapters/db"
@@ -31,11 +33,21 @@ func init() {
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Password, "db-password", cfg.Flags.DB.Password, "Database password")
 	Root.PersistentFlags().IntVar(&cfg.Flags.DB.Port, "db-port", cfg.Flags.DB.Port, "Database port")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Addr, "db-host", cfg.Flags.DB.Addr, "Database host")
+	Root.PersistentFlags().StringVar(&cfg.Flags.Nats.Credentials, "nats-credentials", cfg.Flags.Nats.Credentials, "NATS credentials")
+	Root.PersistentFlags().StringVar(&cfg.Flags.Nats.URL, "nats-url", cfg.Flags.Nats.URL, "NATS URL")
 
 	Root.SilenceUsage = true
 }
 
 var Root = &cobra.Command{
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		err := envconfig.Process("", cfg.Flags)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		srv := NewWebSrv(cfg)
 
@@ -72,6 +84,17 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 			return err
 		}
 
+		nc, err := nats.Connect(cfg.Flags.Nats.URL, nats.UserCredentials(cfg.Flags.Nats.Credentials))
+		if err != nil {
+			return err
+		}
+		defer nc.Close()
+
+		store, err := db.NewDatastore(conn, nc)
+		if err != nil {
+			return err
+		}
+
 		db := db.NewDB(conn)
 		err = db.RunMigrations()
 		if err != nil {
@@ -89,7 +112,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 			},
 		}
 
-		handlers := handlers.NewHandlers(db)
+		handlers := handlers.NewHandlers(db, store)
 
 		app := fiber.New()
 		app.Use(requestid.New())

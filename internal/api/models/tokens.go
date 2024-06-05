@@ -39,6 +39,11 @@ type Token struct {
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
 }
 
+// Bytes returns the token as a byte slice.
+func (t *Token) Bytes() []byte {
+	return []byte(t.Token)
+}
+
 // DeepCopy returns a deep copy of the token.
 func (t *Token) DeepCopy() Token {
 	return Token{

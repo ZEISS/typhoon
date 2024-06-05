@@ -2,7 +2,6 @@ package credentials
 
 import (
 	"bytes"
-	"fmt"
 
 	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
@@ -28,8 +27,6 @@ func NewIndexUserCredentialsController(db ports.Users) *IndexUserCredentialsCont
 
 // Error ...
 func (l *IndexUserCredentialsControllerImpl) Error(err error) error {
-	fmt.Println(err)
-
 	return nil
 }
 

@@ -1231,8 +1231,8 @@ github.com/zeiss/fiber-authz v1.0.24 h1:rNaBl56GGsn5CJmcsCCTEvC+tqRD57utGvl7tagO
 github.com/zeiss/fiber-authz v1.0.24/go.mod h1:q3yxf4CcCkIrXPaBc+n+TW7XsZLpNi7YhF28r55pYCY=
 github.com/zeiss/fiber-goth v1.2.1 h1:mXjQx5ekV6jfe3Gi0apyTGh2IoQ8zRw2oY1o8iy+CmQ=
 github.com/zeiss/fiber-goth v1.2.1/go.mod h1:AVhqrCUdrqRdtu+N0mkq/JI2rZd01Ss46LKbdXZ3bsA=
-github.com/zeiss/fiber-htmx v1.3.7 h1:+mQApFsZ0rrmQDPB5NfpMZcfkTxsCGZDCkq0/O4zDbE=
-github.com/zeiss/fiber-htmx v1.3.7/go.mod h1:Gr1tnnkT3HMNXRepSArjOrbIfKLyHqKfHsRwjZ/GnEY=
+github.com/zeiss/fiber-htmx v1.3.9 h1:kzitX50ZTmngg35pEJs/ylU78oBEu7fZevv379V6fdY=
+github.com/zeiss/fiber-htmx v1.3.9/go.mod h1:59XexHy0MOd8rurD1uKBkokMz5vLg5nWq3jNkE5glG4=
 github.com/zeiss/snow-go v0.0.0-20240312201415-88f059622cff h1:IguG+jnCnFyAzZ8Fp+6v2lJNvUFPfu8Q2UUgSFw4doU=
 github.com/zeiss/snow-go v0.0.0-20240312201415-88f059622cff/go.mod h1:HvitS/QkqgqhV/bNWxPKn0NjByjTaEACZnNgHKZEuio=
 gitlab.com/bosi/decorder v0.4.2 h1:qbQaV3zgwnBZ4zPMhGLW4KZe7A7NwxEhJx39R3shffo=
