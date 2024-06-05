@@ -79,9 +79,14 @@ func (l *CreateControllerImpl) Error(err error) error {
 // Post ...
 func (l *CreateControllerImpl) Post() error {
 	account := models.Account{
-		Name:        l.Form.Name,
-		OperatorID:  l.Form.OperatorID,
-		Description: utils.StrPtr(l.Form.Description),
+		Name:                           l.Form.Name,
+		OperatorID:                     l.Form.OperatorID,
+		Description:                    utils.StrPtr(l.Form.Description),
+		LimitJetStreamMaxDiskStorage:   utils.PrettyByteSize(l.Form.JetStreamMaxDiskStorage, l.Form.JetStreamMaxDiskStorageUnit),
+		LimitJetStreamMaxStreams:       l.Form.JetStreamMaxStreams,
+		LimitJetStreamMaxConsumers:     l.Form.JetStreamMaxConsumers,
+		LimitJetStreamMaxStreamBytes:   utils.PrettyByteSize(l.Form.JetStreamMaxStreamSize, l.Form.JetStreamMaxStreamSizeUnit),
+		LimitJetStreamMaxBytesRequired: l.Form.JetStreamMaxBytesRequired,
 	}
 
 	operator := models.Operator{
@@ -137,6 +142,26 @@ func (l *CreateControllerImpl) Post() error {
 	ac.Name = l.Form.Name
 	ac.Issuer = operator.Key.ID
 	ac.SigningKeys.Add(skg.Key.ID)
+	ac.Exports = jwt.Exports{&jwt.Export{
+		Name:                 "account-monitoring-services",
+		Subject:              "$SYS.REQ.ACCOUNT.*.*",
+		Type:                 jwt.Service,
+		ResponseType:         jwt.ResponseTypeStream,
+		AccountTokenPosition: 4,
+		Info: jwt.Info{
+			Description: `Request account specific monitoring services for: SUBSZ, CONNZ, LEAFZ, JSZ and INFO`,
+			InfoURL:     "https://docs.nats.io/nats-server/configuration/sys_accounts",
+		},
+	}, &jwt.Export{
+		Name:                 "account-monitoring-streams",
+		Subject:              "$SYS.ACCOUNT.*.>",
+		Type:                 jwt.Stream,
+		AccountTokenPosition: 3,
+		Info: jwt.Info{
+			Description: `Account specific monitoring stream`,
+			InfoURL:     "https://docs.nats.io/nats-server/configuration/sys_accounts",
+		},
+	}}
 
 	token, err := ac.Encode(osk)
 	if err != nil {

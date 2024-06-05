@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/deepmap/oapi-codegen/HEAD/configuration-schema.json
+package: accounts
+generate:
+  fiber-server: true
+  strict-server: true
+output: ../../pkg/apis/accounts/server.gen.go
+output-options:
+  skip-prune: true

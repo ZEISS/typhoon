@@ -1,10 +1,10 @@
-package adapters
+package database
 
 import (
 	"context"
 
 	"github.com/zeiss/typhoon/internal/accounts/ports"
-	api "github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/api/models"
 
 	"gorm.io/gorm"
 )
@@ -22,6 +22,6 @@ func NewDB(conn *gorm.DB) *DB {
 }
 
 // GetToken ...
-func (db *DB) GetToken(ctx context.Context, token *api.Token) error {
-	return db.conn.WithContext(ctx).First(token).Error
+func (db *DB) GetToken(ctx context.Context, account *models.Token) error {
+	return db.conn.WithContext(ctx).First(account).Error
 }

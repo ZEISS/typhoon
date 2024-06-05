@@ -1,0 +1,86 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.1/schema.json
+openapi: 3.1.0
+
+info:
+  version: 1.0.0
+  title: Thyphoon Account Server API
+  summary: |-
+    The account server provides the JWT tokens for the accounts in NATS 2.0.
+  contact:
+    name: Sebastian Doell
+    email: sebastian@katallaxie.dev
+  description: |
+    # Introduction
+
+    The account server provides the JWT tokens for the accounts in NATS 2.0.
+  license:
+    name: Apache 2.0
+    identifier: Apache-2.0
+
+servers:
+  - url: http://localhost:8080/jwt/v1
+    description: Development server
+  - url: /jwt/v1
+    description: Production server
+
+tags:
+  - name: Help
+    description: |-
+      These are the help endpoints.
+  - name: Account
+    description: |-
+      These are the account endpoints.
+
+paths:
+  /accounts/{pubKey}:
+    get:
+      tags:
+        - Account
+      operationId: getAccountToken
+      summary: Get account information
+      description: |-
+        Get the account information for the given public key.
+      parameters:
+        - $ref: '#/components/parameters/pubKey'
+      responses:
+        '200':
+          description: Account information
+          content:
+            application/jwt:
+              schema:
+                $ref: "#/components/schemas/JWT"
+        '404':
+          description: Account token was not found
+        '304':
+          description: Account token was not modified
+        default:
+          description: Unexpected error
+
+components:
+  schemas:
+    JWT:
+      type: string
+      format: jwt
+      description: The JWT token.
+
+  parameters:
+    pubKey:
+      name: pubKey
+      in: path
+      required: true
+      description: The public key of the account.
+      schema:
+        type: string
+        
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+security:
+  - bearerAuth: []
+  - apiKey: []

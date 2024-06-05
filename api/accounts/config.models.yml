@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/deepmap/oapi-codegen/HEAD/configuration-schema.json
+package: accounts
+generate:
+  models: true
+  embedded-spec: true
+output: ../../pkg/apis/accounts/models.gen.go
+output-options:
+  skip-prune: true

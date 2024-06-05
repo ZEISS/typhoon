@@ -287,32 +287,32 @@ func (l *NewAccountControllerImpl) Get() error {
 										htmx.Name("jetstream_max_disk_storage_unit"),
 										forms.Option(
 											forms.OptionProps{
-												Value: "bytes",
+												Value: "B",
 											},
 											htmx.Text("Bytes"),
 										),
 										forms.Option(
 											forms.OptionProps{
-												Value: "kilobit",
+												Value: "KB",
 											},
 											htmx.Text("KiB"),
 										),
 										forms.Option(
 											forms.OptionProps{
-												Value: "megabit",
+												Value: "MB",
 											},
 											htmx.Text("MiB"),
 										),
 										forms.Option(
 											forms.OptionProps{
-												Value:    "gigabit",
+												Value:    "GB",
 												Selected: true,
 											},
-											htmx.Text("GiB"),
+											htmx.Text("GB"),
 										),
 										forms.Option(
 											forms.OptionProps{
-												Value: "terabit",
+												Value: "TB",
 											},
 											htmx.Text("TiB"),
 										),

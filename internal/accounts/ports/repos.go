@@ -1,4 +1,11 @@
 package ports
 
 // Repositories ...
-type Repositories interface{}
+type Repositories interface {
+	AccountsRepository
+}
+
+// Controllers ...
+type Controllers interface {
+	AccountsController
+}

@@ -2,44 +2,40 @@ package cmd
 
 import (
 	"context"
-	"strings"
 
-	"github.com/zeiss/typhoon/internal/accounts/adapters"
+	"github.com/zeiss/typhoon/internal/accounts/adapters/database"
 	"github.com/zeiss/typhoon/internal/accounts/adapters/handlers"
+	"github.com/zeiss/typhoon/internal/accounts/config"
 	"github.com/zeiss/typhoon/internal/accounts/controllers"
+	"github.com/zeiss/typhoon/internal/utils"
+	openapi "github.com/zeiss/typhoon/pkg/apis/accounts"
+
+	"github.com/gofiber/fiber/v2"
+	logger "github.com/gofiber/fiber/v2/middleware/logger"
+	requestid "github.com/gofiber/fiber/v2/middleware/requestid"
+	"github.com/katallaxie/pkg/server"
+	middleware "github.com/oapi-codegen/fiber-middleware"
+	"github.com/spf13/cobra"
+	authz "github.com/zeiss/fiber-authz"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-
-	"github.com/katallaxie/pkg/server"
-	"github.com/kelseyhightower/envconfig"
-	"github.com/nats-io/nats.go"
-	"github.com/spf13/cobra"
+	"gorm.io/gorm/schema"
 )
 
-var cfg = New()
-
 func init() {
-	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Database, "db-database", cfg.Flags.DB.Database, "Database name")
-	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Username, "db-username", cfg.Flags.DB.Username, "Database user")
-	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Password, "db-password", cfg.Flags.DB.Password, "Database password")
-	Root.PersistentFlags().IntVar(&cfg.Flags.DB.Port, "db-port", cfg.Flags.DB.Port, "Database port")
-	Root.PersistentFlags().StringVar(&cfg.Flags.Nats.Credentials, "nats-credentials", cfg.Flags.Nats.Credentials, "credentials file")
-	Root.PersistentFlags().StringVar(&cfg.Flags.Nats.Url, "nats-url", cfg.Flags.Nats.Url, "url")
+	Root.PersistentFlags().StringVar(&config.Cfg.Flags.Addr, "addr", ":8080", "addr")
+	Root.PersistentFlags().StringVar(&config.Cfg.Flags.DB.Addr, "db-addr", config.Cfg.Flags.DB.Addr, "Database address")
+	Root.PersistentFlags().StringVar(&config.Cfg.Flags.DB.Database, "db-database", config.Cfg.Flags.DB.Database, "Database name")
+	Root.PersistentFlags().StringVar(&config.Cfg.Flags.DB.Username, "db-username", config.Cfg.Flags.DB.Username, "Database user")
+	Root.PersistentFlags().StringVar(&config.Cfg.Flags.DB.Password, "db-password", config.Cfg.Flags.DB.Password, "Database password")
+	Root.PersistentFlags().IntVar(&config.Cfg.Flags.DB.Port, "db-port", config.Cfg.Flags.DB.Port, "Database port")
 
 	Root.SilenceUsage = true
 }
 
 var Root = &cobra.Command{
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		err := envconfig.Process("", cfg.Flags)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		srv := NewAccountSrv(cfg)
+		srv := NewAccountsSrv(config.Cfg)
 
 		s, _ := server.WithContext(cmd.Context())
 		s.Listen(srv, false)
@@ -48,57 +44,64 @@ var Root = &cobra.Command{
 	},
 }
 
-var _ server.Listener = (*AccountSrv)(nil)
+var _ server.Listener = (*AccountsSrv)(nil)
 
-// AccountSrv is the server that implements the Noop interface.
-type AccountSrv struct {
-	cfg *Config
+// AccountsSrv is the server that implements the Noop interface.
+type AccountsSrv struct {
+	cfg *config.Config
 }
 
-// NewAccountSrv returns a new instance of AccountServ.
-func NewAccountSrv(cfg *Config) *AccountSrv {
-	return &AccountSrv{cfg}
+// NewAccountsSrv returns a new instance of NoopSrv.
+func NewAccountsSrv(cfg *config.Config) *AccountsSrv {
+	return &AccountsSrv{cfg}
 }
 
 // Start starts the server.
-func (s *AccountSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.RunFunc) func() error {
+func (s *AccountsSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.RunFunc) func() error {
 	return func() error {
-		dsn := "host=localhost user=example password=example dbname=example port=5432 sslmode=disable"
-		conn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		conn, err := gorm.Open(postgres.Open(s.cfg.DSN()), &gorm.Config{
+			NamingStrategy: schema.NamingStrategy{
+				TablePrefix: "typhoon_",
+			},
+		})
 		if err != nil {
 			return err
 		}
 
-		db := adapters.NewDB(conn)
+		db := database.NewDB(conn)
+
+		swagger, err := openapi.GetSwagger()
+		if err != nil {
+			return err
+		}
+		swagger.Servers = nil
+
+		c := fiber.Config{
+			ErrorHandler: utils.DefaultErrorHandler,
+		}
+
+		app := fiber.New(c)
+		app.Use(requestid.New())
+		app.Use(logger.New())
+
+		validatorOptions := &middleware.Options{}
+		validatorOptions.Options.AuthenticationFunc = authz.NewOpenAPIAuthenticator(authz.WithAuthzChecker(authz.NewFake(true)))
+		validatorOptions.ErrorHandler = authz.NewOpenAPIErrorHandler()
+
+		app.Use(middleware.OapiRequestValidatorWithOptions(swagger, validatorOptions))
+
 		ac := controllers.NewAccountsController(db)
-		lh := handlers.NewAccountLookupRequestHandler(ac)
 
-		nc, err := nats.Connect(cfg.Flags.Nats.Url, nats.UserCredentials(cfg.Flags.Nats.Credentials))
+		handlers := handlers.NewAccountsHandler(ac)
+
+		handler := openapi.NewStrictHandler(handlers, nil)
+		openapi.RegisterHandlers(app, handler)
+
+		err = app.Listen(s.cfg.Flags.Addr)
 		if err != nil {
 			return err
 		}
 
-		sub, err := nc.SubscribeSync("$SYS.REQ.ACCOUNT.*.CLAIMS.LOOKUP")
-		if err != nil {
-			return err
-		}
-
-		for {
-			msg, err := sub.NextMsgWithContext(ctx)
-			if err != nil {
-				return err
-			}
-
-			apk := strings.TrimSuffix(strings.TrimPrefix(msg.Subject, "$SYS.REQ.ACCOUNT."), ".CLAIMS.LOOKUP")
-			jwt, err := lh.HandleLookupRequest(ctx, apk)
-			if err != nil {
-				return err
-			}
-
-			err = msg.Respond([]byte(jwt))
-			if err != nil {
-				return err
-			}
-		}
+		return nil
 	}
 }
