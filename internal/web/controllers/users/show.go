@@ -1,6 +1,7 @@
 package users
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -19,14 +20,14 @@ import (
 type ShowUserControllerImpl struct {
 	ID uuid.UUID `json:"name" form:"name" validate:"required:uuid"`
 
-	ports.Users
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewShowUserController ...
-func NewShowUserController(db ports.Users) *ShowUserControllerImpl {
+func NewShowUserController(store ports.Datastore) *ShowUserControllerImpl {
 	return &ShowUserControllerImpl{
-		Users:             db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -39,8 +40,9 @@ func (l *ShowUserControllerImpl) Get() error {
 	}
 
 	user := models.User{ID: l.ID}
-
-	err = l.GetUser(l.Context(), &user)
+	err = l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.GetUser(ctx, &user)
+	})
 	if err != nil {
 		return err
 	}

@@ -1,6 +1,7 @@
 package tokens
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -18,15 +19,16 @@ type GetAccountTokenControllerParams struct {
 // GetAccountTokenControllerImpl ...
 type GetAccountTokenControllerImpl struct {
 	Params GetAccountTokenControllerParams
-	ports.Accounts
+
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewGetAccountTokenController ...
-func NewGetAccountTokenController(db ports.Accounts) *GetAccountTokenControllerImpl {
+func NewGetAccountTokenController(store ports.Datastore) *GetAccountTokenControllerImpl {
 	return &GetAccountTokenControllerImpl{
 		Params:            GetAccountTokenControllerParams{},
-		Accounts:          db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -40,7 +42,9 @@ func (l *GetAccountTokenControllerImpl) Get() error {
 
 	account := models.Account{ID: l.Params.ID}
 
-	err = l.GetAccount(l.Context(), &account)
+	err = l.store.ReadTx(l.Context(), func(ctx context.Context, rt ports.ReadTx) error {
+		return rt.GetAccount(ctx, &account)
+	})
 	if err != nil {
 		return err
 	}

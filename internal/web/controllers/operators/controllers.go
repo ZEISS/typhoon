@@ -6,6 +6,6 @@ import (
 )
 
 // NewUpdateSystemAccountController ...
-func NewUpdateSystemAccountController(db ports.Repository) *sysaccount.UpdateSystemAccountControllerImpl {
-	return sysaccount.NewCreateSkgsController(db)
+func NewUpdateSystemAccountController(store ports.Datastore) *sysaccount.UpdateSystemAccountControllerImpl {
+	return sysaccount.NewCreateSkgsController(store)
 }

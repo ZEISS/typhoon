@@ -1,6 +1,8 @@
 package operators
 
 import (
+	"context"
+
 	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/typhoon/internal/api/models"
@@ -12,14 +14,15 @@ var _ = htmx.Controller(&DeleteOperatorController{})
 // DeleteOperatorsController ...
 type DeleteOperatorController struct {
 	ID uuid.UUID `json:"name" form:"name" validate:"required:uuid"`
-	ports.Operators
+
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewDeleteOperatorController ...
-func NewDeleteOperatorController(db ports.Operators) *DeleteOperatorController {
+func NewDeleteOperatorController(store ports.Datastore) *DeleteOperatorController {
 	return &DeleteOperatorController{
-		Operators:         db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -37,10 +40,9 @@ func (l *DeleteOperatorController) Delete() error {
 	}
 
 	op := models.Operator{ID: l.ID}
-	err = l.DeleteOperator(l.Context(), &op)
-	if err != nil {
-		return err
-	}
+	err = l.store.ReadWriteTx(l.Context(), func(ctx context.Context, tx ports.ReadWriteTx) error {
+		return tx.DeleteOperator(l.Context(), &op)
+	})
 
 	htmx.Redirect(l.Ctx(), "/operators")
 

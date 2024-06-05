@@ -1,6 +1,8 @@
 package users
 
 import (
+	"context"
+
 	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/typhoon/internal/api/models"
@@ -13,14 +15,14 @@ var _ = htmx.Controller(&DeleteUserControllerImpl{})
 type DeleteUserControllerImpl struct {
 	ID uuid.UUID `json:"name" form:"name" param:"id" validate:"required,uuid"`
 
-	ports.Users
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewDeleteUserController ...
-func NewDeleteUserController(db ports.Users) *DeleteUserControllerImpl {
+func NewDeleteUserController(store ports.Datastore) *DeleteUserControllerImpl {
 	return &DeleteUserControllerImpl{
-		Users:             db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -33,7 +35,9 @@ func (l *DeleteUserControllerImpl) Delete() error {
 	}
 
 	user := models.User{ID: l.ID}
-	err = l.DeleteUser(l.Context(), &user)
+	err = l.store.ReadWriteTx(l.Context(), func(ctx context.Context, tx ports.ReadWriteTx) error {
+		return tx.DeleteUser(l.Context(), &user)
+	})
 	if err != nil {
 		return err
 	}

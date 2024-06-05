@@ -1,6 +1,8 @@
 package users
 
 import (
+	"context"
+
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
@@ -14,14 +16,14 @@ import (
 type NewUserControllerImpl struct {
 	Accounts []*models.Account
 
-	ports.Repository
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewUserController ...
-func NewUserController(db ports.Repository) *NewUserControllerImpl {
+func NewUserController(store ports.Datastore) *NewUserControllerImpl {
 	return &NewUserControllerImpl{
-		Repository:        db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -35,10 +37,13 @@ func (l *NewUserControllerImpl) Prepare() error {
 		return err
 	}
 
-	err = l.ListAccounts(l.Context(), &pagination)
+	err = l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.ListAccounts(ctx, &pagination)
+	})
 	if err != nil {
 		return err
 	}
+
 	for _, account := range pagination.Rows {
 		l.Accounts = append(l.Accounts, &account)
 	}

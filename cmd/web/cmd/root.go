@@ -90,13 +90,12 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		}
 		defer nc.Close()
 
-		store, err := db.NewDatastore(conn, nc)
+		store, err := db.NewDB(conn, nc)
 		if err != nil {
 			return err
 		}
 
-		db := db.NewDB(conn)
-		err = db.RunMigrations()
+		err = store.Migrate(ctx)
 		if err != nil {
 			return err
 		}
@@ -112,7 +111,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 			},
 		}
 
-		handlers := handlers.NewHandlers(db, store)
+		handlers := handlers.NewHandlers(store)
 
 		app := fiber.New()
 		app.Use(requestid.New())

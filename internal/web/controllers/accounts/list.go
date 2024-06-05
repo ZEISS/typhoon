@@ -1,6 +1,8 @@
 package accounts
 
 import (
+	"context"
+
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/typhoon/internal/api/models"
@@ -18,14 +20,14 @@ type ListAccountsController struct {
 	Search string `json:"search" form:"search"`
 	Sort   string `json:"sort" form:"sort"`
 
-	ports.Accounts
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewListAccountsController ...
-func NewListAccountsController(db ports.Accounts) *ListAccountsController {
+func NewListAccountsController(store ports.Datastore) *ListAccountsController {
 	return &ListAccountsController{
-		Accounts:          db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -49,7 +51,9 @@ func (l *ListAccountsController) Get() error {
 		Search: l.Search,
 	}
 
-	err := l.ListAccounts(l.Context(), &pagination)
+	err := l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.ListAccounts(ctx, &pagination)
+	})
 	if err != nil {
 		return err
 	}

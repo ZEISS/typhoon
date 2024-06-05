@@ -12,28 +12,20 @@ import (
 
 	"github.com/zeiss/fiber-goth/adapters"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 const (
 	accountUpdateFormat = "$SYS.ACCOUNT.%s.CLAIMS.UPDATE"
 )
 
-var _ ports.Repository = (*database)(nil)
-
 type database struct {
 	conn *gorm.DB
 	nc   *nats.Conn
 }
 
-// NewDB returns a new instance of db.
-func NewDB(conn *gorm.DB) *database {
-	return &database{
-		conn: conn,
-	}
-}
-
 // NewDatastore returns a new instance of db.
-func NewDatastore(conn *gorm.DB, nc *nats.Conn) (ports.Datastore, error) {
+func NewDB(conn *gorm.DB, nc *nats.Conn) (ports.Datastore, error) {
 	return &database{
 		conn: conn,
 		nc:   nc,
@@ -116,14 +108,89 @@ func (t *datastoreTx) CreateAccount(ctx context.Context, account *models.Account
 	return t.nc.Publish(fmt.Sprintf(accountUpdateFormat, account.Token.ID), account.Token.Bytes())
 }
 
-// Conn returns the database connection.
-func (d *database) Conn() *gorm.DB {
-	return d.conn
+// ListAccounts ...
+func (t *datastoreTx) ListAccounts(ctx context.Context, pagination *models.Pagination[models.Account]) error {
+	return t.tx.Scopes(models.Paginate(&pagination.Rows, pagination, t.tx)).Preload("SigningKeyGroups").Preload("SigningKeyGroups.Key").Preload("Key").Find(&pagination.Rows).Error
+}
+
+// GetAccount ...
+func (t *datastoreTx) GetAccount(ctx context.Context, account *models.Account) error {
+	return t.tx.Preload("SigningKeyGroups").
+		Preload("SigningKeyGroups.Key").
+		Preload("Key").
+		Preload("Token").
+		Preload("Operator").
+		Preload("Operator.Key").
+		First(account).Error
+}
+
+// UpdateAccount ...
+func (t *datastoreTx) UpdateAccount(ctx context.Context, account *models.Account) error {
+	return t.tx.Save(account).Error
+}
+
+// DeleteAccount ...
+func (t *datastoreTx) DeleteAccount(ctx context.Context, account *models.Account) error {
+	return t.tx.Select(clause.Associations).Delete(account).Error
+}
+
+// ListOperators ...
+func (t *datastoreTx) ListOperators(ctx context.Context, pagination *models.Pagination[models.Operator]) error {
+	return t.tx.Scopes(models.Paginate(&pagination.Rows, pagination, t.tx)).Preload("SigningKeyGroups").Preload("SigningKeyGroups.Key").Preload("Key").Find(&pagination.Rows).Error
+}
+
+// CreateOperator ...
+func (t *datastoreTx) CreateOperator(ctx context.Context, operator *models.Operator) error {
+	return t.tx.Create(operator).Error
+}
+
+// UpdateOperator ...
+func (t *datastoreTx) UpdateOperator(ctx context.Context, operator *models.Operator) error {
+	return t.tx.Session(&gorm.Session{FullSaveAssociations: true}).Updates(operator).Error
+}
+
+// DeleteOperator ...
+func (t *datastoreTx) DeleteOperator(ctx context.Context, operator *models.Operator) error {
+	return t.tx.Debug().Select(clause.Associations).Delete(operator).Debug().Error
+}
+
+// GetUser ...
+func (t *datastoreTx) GetUser(ctx context.Context, user *models.User) error {
+	return t.tx.Preload("Key").
+		Preload("Token").
+		Preload("Account").
+		Preload("Account.SigningKeyGroups").
+		First(user).Error
+}
+
+// ListUsers ...
+func (t *datastoreTx) ListUsers(ctx context.Context, pagination *models.Pagination[models.User]) error {
+	return t.tx.Scopes(models.Paginate(&pagination.Rows, pagination, t.tx)).Find(&pagination.Rows).Error
+}
+
+// CreateUser ...
+func (t *datastoreTx) CreateUser(ctx context.Context, user *models.User) error {
+	return t.tx.Create(user).Error
+}
+
+// DeleteUser ...
+func (t *datastoreTx) DeleteUser(ctx context.Context, user *models.User) error {
+	return t.tx.Select(clause.Associations).Delete(user).Error
+}
+
+// UpdateUser ...
+func (t *datastoreTx) UpdateUser(ctx context.Context, user *models.User) error {
+	return t.tx.Updates(user).Error
+}
+
+// GetProfile is a method that returns the profile of the current user
+func (t *datastoreTx) GetProfile(ctx context.Context, user *adapters.GothUser) error {
+	return t.tx.First(user).Error
 }
 
 // RunMigrations runs the database migrations.
-func (d *database) RunMigrations() error {
-	return d.conn.AutoMigrate(
+func (d *database) Migrate(ctx context.Context) error {
+	return d.conn.WithContext(ctx).AutoMigrate(
 		&adapters.GothUser{},
 		&adapters.GothAccount{},
 		&adapters.GothSession{},

@@ -1,6 +1,7 @@
 package skgs
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -17,14 +18,14 @@ type CreateSkgsControllerImpl struct {
 	Name        string    `json:"name" form:"name" validate:"required"`
 	Description string    `json:"description" form:"description" validate:"required"`
 
-	ports.Operators
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewCreateSkgsController ...
-func NewCreateSkgsController(db ports.Operators) *CreateSkgsControllerImpl {
+func NewCreateSkgsController(store ports.Datastore) *CreateSkgsControllerImpl {
 	return &CreateSkgsControllerImpl{
-		Operators:         db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -49,7 +50,9 @@ func (l *CreateSkgsControllerImpl) Post() error {
 	op := models.Operator{ID: l.ID}
 	skg := models.SigningKeyGroup{Name: l.Name, Description: l.Description}
 
-	err := l.GetOperator(l.Context(), &op)
+	err := l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.GetOperator(ctx, &op)
+	})
 	if err != nil {
 		return err
 	}
@@ -88,7 +91,9 @@ func (l *CreateSkgsControllerImpl) Post() error {
 		Token: token,
 	}
 
-	err = l.UpdateOperator(l.Context(), &op)
+	err = l.store.ReadWriteTx(l.Context(), func(ctx context.Context, tx ports.ReadWriteTx) error {
+		return tx.UpdateOperator(l.Context(), &op)
+	})
 	if err != nil {
 		return err
 	}

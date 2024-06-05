@@ -1,6 +1,8 @@
 package partials
 
 import (
+	"context"
+
 	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/forms"
@@ -12,14 +14,14 @@ import (
 type AccountSkgsOptionsImpl struct {
 	AccountID uuid.UUID `json:"account_id" form:"account_id" query:"account_id" validate:"required,uuid"`
 
-	ports.Accounts
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewAccountSkgsOptions ...
-func NewAccountSkgsOptions(db ports.Accounts) *AccountSkgsOptionsImpl {
+func NewAccountSkgsOptions(store ports.Datastore) *AccountSkgsOptionsImpl {
 	return &AccountSkgsOptionsImpl{
-		Accounts:          db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -36,10 +38,10 @@ func (l *AccountSkgsOptionsImpl) Prepare() error {
 
 // Get ...
 func (l *AccountSkgsOptionsImpl) Get() error {
-	account := models.Account{
-		ID: l.AccountID,
-	}
-	err := l.GetAccount(l.Context(), &account)
+	account := models.Account{ID: l.AccountID}
+	err := l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.GetAccount(ctx, &account)
+	})
 	if err != nil {
 		return err
 	}

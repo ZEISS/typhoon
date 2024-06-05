@@ -1,6 +1,8 @@
 package me
 
 import (
+	"context"
+
 	"github.com/zeiss/fiber-goth/adapters"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
@@ -13,22 +15,25 @@ import (
 // MeController ...
 type MeController struct {
 	User adapters.GothUser
-	ports.Me
+
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewMeIndexController ...
-func NewMeController(db ports.Me) *MeController {
+func NewMeController(store ports.Datastore) *MeController {
 	return &MeController{
 		User:              adapters.GothUser{},
-		Me:                db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
 
 // Prepare ...
 func (m *MeController) Prepare() error {
-	return m.GetProfile(m.Context(), &m.User)
+	return m.store.ReadTx(m.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.GetProfile(m.Context(), &m.User)
+	})
 }
 
 // Get ...

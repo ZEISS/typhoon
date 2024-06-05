@@ -21,13 +21,12 @@ import (
 var _ ports.Handlers = (*handlers)(nil)
 
 type handlers struct {
-	db    ports.Repository
 	store ports.Datastore
 }
 
 // NewHandlers ...
-func NewHandlers(db ports.Repository, store ports.Datastore) *handlers {
-	return &handlers{db, store}
+func NewHandlers(store ports.Datastore) *handlers {
+	return &handlers{store}
 }
 
 // Login ...
@@ -47,70 +46,70 @@ func (h *handlers) Dashboard() fiber.Handler {
 // Me ...
 func (h *handlers) Me() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return me.NewMeController(h.db)
+		return me.NewMeController(h.store)
 	})
 }
 
 // ListOperators ...
 func (h *handlers) ListOperators() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return operators.NewListOperatorsController(h.db)
+		return operators.NewListOperatorsController(h.store)
 	})
 }
 
 // NewOperator ...
 func (h *handlers) NewOperator() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return operators.NewOperatorController(h.db)
+		return operators.NewOperatorController(h.store)
 	})
 }
 
 // CreateOperator ...
 func (h *handlers) CreateOperator() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return operators.NewOperatorController(h.db)
+		return operators.NewOperatorController(h.store)
 	})
 }
 
 // ShowOperator ...
 func (h *handlers) ShowOperator() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return operators.NewShowOperatorController(h.db)
+		return operators.NewShowOperatorController(h.store)
 	})
 }
 
 // TokenOperator ...
 func (h *handlers) TokenOperator() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return ot.NewIndexOperatorTokenController(h.db)
+		return ot.NewIndexOperatorTokenController(h.store)
 	})
 }
 
 // DeleteOperator ...
 func (h *handlers) DeleteOperator() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return operators.NewDeleteOperatorController(h.db)
+		return operators.NewDeleteOperatorController(h.store)
 	})
 }
 
 // ListAccounts ...
 func (h *handlers) ListAccounts() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return accounts.NewListAccountsController(h.db)
+		return accounts.NewListAccountsController(h.store)
 	})
 }
 
 // NewAccount ...
 func (h *handlers) NewAccount() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return accounts.NewAccountController(h.db)
+		return accounts.NewAccountController(h.store)
 	})
 }
 
 // ListUsers ...
 func (h *handlers) ListUsers() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return users.NewListUsersController(h.db)
+		return users.NewListUsersController(h.store)
 	})
 }
 
@@ -124,21 +123,21 @@ func (h *handlers) CreateAccount() fiber.Handler {
 // ShowAccount ...
 func (h *handlers) ShowAccount() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return accounts.NewShowAccountController(h.db)
+		return accounts.NewShowAccountController(h.store)
 	})
 }
 
 // DeleteAccount ...
 func (h *handlers) DeleteAccount() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return accounts.NewDeleteAccountController(h.db)
+		return accounts.NewDeleteAccountController(h.store)
 	})
 }
 
 // NewOperatorSkg ...
 func (h *handlers) NewOperatorSkg() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return oskgs.NewSkgsController(h.db)
+		return oskgs.NewSkgsController(h.store)
 	})
 }
 
@@ -146,76 +145,76 @@ func (h *handlers) NewOperatorSkg() fiber.Handler {
 func (h *handlers) CreateOperatorSkg() fiber.Handler {
 	return htmx.NewHxControllerHandler(
 		func() htmx.Controller {
-			return oskgs.NewCreateSkgsController(h.db)
+			return oskgs.NewCreateSkgsController(h.store)
 		})
 }
 
 // OperatorSkgsOptions ...
 func (h *handlers) OperatorSkgsOptions() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return pa.NewOperatorSkgsOptions(h.db)
+		return pa.NewOperatorSkgsOptions(h.store)
 	})
 }
 
 // AccountSksOptions ...
 func (h *handlers) AccountSksOptions() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return pu.NewAccountSkgsOptions(h.db)
+		return pu.NewAccountSkgsOptions(h.store)
 	})
 }
 
 // NewUser ...
 func (h *handlers) NewUser() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return users.NewUserController(h.db)
+		return users.NewUserController(h.store)
 	})
 }
 
 // CreateUser ...
 func (h *handlers) CreateUser() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return users.NewCreateUserController(h.db)
+		return users.NewCreateUserController(h.store)
 	})
 }
 
 // ShowUser ...
 func (h *handlers) ShowUser() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return users.NewShowUserController(h.db)
+		return users.NewShowUserController(h.store)
 	})
 }
 
 // UserCredentials ...
 func (h *handlers) UserCredentials() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return credentials.NewIndexUserCredentialsController(h.db)
+		return credentials.NewIndexUserCredentialsController(h.store)
 	})
 }
 
 // DeleteUser ...
 func (h *handlers) DeleteUser() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return users.NewDeleteUserController(h.db)
+		return users.NewDeleteUserController(h.store)
 	})
 }
 
 // UpdateSystemAccount ...
 func (h *handlers) UpdateSystemAccount() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return operators.NewUpdateSystemAccountController(h.db)
+		return operators.NewUpdateSystemAccountController(h.store)
 	})
 }
 
 // GetAccountToken ...
 func (h *handlers) GetAccountToken() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return accounts.NewGetAccountTokenController(h.db)
+		return accounts.NewGetAccountTokenController(h.store)
 	})
 }
 
 // ListSystems ...
 func (h *handlers) ListSystems() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return systems.NewListSystemsController(h.db)
+		return systems.NewListSystemsController(h.store)
 	})
 }

@@ -1,6 +1,8 @@
 package partials
 
 import (
+	"context"
+
 	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/forms"
@@ -12,14 +14,14 @@ import (
 type OperatorSkgsOptionsImpl struct {
 	OperatorID uuid.UUID `json:"operator_id" form:"operator_id" query:"operator_id" validate:"required,uuid"`
 
-	ports.Operators
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewOperatorSkgsOptions ...
-func NewOperatorSkgsOptions(db ports.Operators) *OperatorSkgsOptionsImpl {
+func NewOperatorSkgsOptions(store ports.Datastore) *OperatorSkgsOptionsImpl {
 	return &OperatorSkgsOptionsImpl{
-		Operators:         db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -39,7 +41,10 @@ func (l *OperatorSkgsOptionsImpl) Get() error {
 	operator := models.Operator{
 		ID: l.OperatorID,
 	}
-	err := l.GetOperator(l.Context(), &operator)
+
+	err := l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.GetOperator(ctx, &operator)
+	})
 	if err != nil {
 		return err
 	}

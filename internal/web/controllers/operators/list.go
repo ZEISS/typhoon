@@ -1,6 +1,8 @@
 package operators
 
 import (
+	"context"
+
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/typhoon/internal/api/models"
@@ -17,14 +19,14 @@ type ListOperatorsController struct {
 	Offset int    `json:"offset" xml:"offset" form:"offset"`
 	Search string `json:"search" xml:"search" form:"search"`
 
-	ports.Operators
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewListOperatorsController ...
-func NewListOperatorsController(db ports.Operators) *ListOperatorsController {
+func NewListOperatorsController(store ports.Datastore) *ListOperatorsController {
 	return &ListOperatorsController{
-		Operators:         db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -47,7 +49,9 @@ func (l *ListOperatorsController) Get() error {
 	pagination.Offset = l.Offset
 	pagination.Search = l.Search
 
-	err := l.ListOperators(l.Context(), &pagination)
+	err := l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.ListOperators(ctx, &pagination)
+	})
 	if err != nil {
 		return err
 	}

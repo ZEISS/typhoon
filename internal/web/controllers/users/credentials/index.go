@@ -2,6 +2,7 @@ package credentials
 
 import (
 	"bytes"
+	"context"
 
 	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
@@ -13,14 +14,14 @@ import (
 type IndexUserCredentialsControllerImpl struct {
 	ID uuid.UUID `json:"id" form:"id" param:"id" validate:"required:uuid"`
 
-	ports.Users
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewIndexUserCredentialsController ...
-func NewIndexUserCredentialsController(db ports.Users) *IndexUserCredentialsControllerImpl {
+func NewIndexUserCredentialsController(store ports.Datastore) *IndexUserCredentialsControllerImpl {
 	return &IndexUserCredentialsControllerImpl{
-		Users:             db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -38,8 +39,9 @@ func (l *IndexUserCredentialsControllerImpl) Get() error {
 	}
 
 	user := models.User{ID: l.ID}
-
-	err = l.GetUser(l.Context(), &user)
+	err = l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.GetUser(ctx, &user)
+	})
 	if err != nil {
 		return err
 	}

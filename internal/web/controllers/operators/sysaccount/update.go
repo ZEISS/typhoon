@@ -1,6 +1,7 @@
 package sysaccount
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -30,16 +31,16 @@ type UpdateSystemAccountControllerImpl struct {
 	Params UpdateSystemAccountControllerParams
 	Body   UpdateSystemAccountControllerBody
 
-	ports.Repository
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewCreateSkgsController ...
-func NewCreateSkgsController(db ports.Repository) *UpdateSystemAccountControllerImpl {
+func NewCreateSkgsController(store ports.Datastore) *UpdateSystemAccountControllerImpl {
 	return &UpdateSystemAccountControllerImpl{
 		Params:            UpdateSystemAccountControllerParams{},
 		Body:              UpdateSystemAccountControllerBody{},
-		Repository:        db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -64,17 +65,21 @@ func (l *UpdateSystemAccountControllerImpl) Put() error {
 	op := models.Operator{ID: l.Params.ID}
 	acc := models.Account{ID: l.Body.SystemAccountID}
 
-	// TODO: implement a parallel resolution
-	err := l.GetOperator(l.Context(), &op)
-	if err != nil {
-		return err
-	}
+	err := l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		// TODO: implement a parallel resolution
+		err := tx.GetOperator(l.Context(), &op)
+		if err != nil {
+			return err
+		}
 
-	err = l.GetAccount(l.Context(), &acc)
-	if err != nil {
-		return err
-	}
-	op.SystemAdminAccountID = utils.PtrUUID(acc.ID)
+		err = tx.GetAccount(l.Context(), &acc)
+		if err != nil {
+			return err
+		}
+		op.SystemAdminAccountID = utils.PtrUUID(acc.ID)
+
+		return nil
+	})
 
 	pk, err := nkeys.FromSeed(op.Key.Seed)
 	if err != nil {
@@ -103,7 +108,9 @@ func (l *UpdateSystemAccountControllerImpl) Put() error {
 		Token: token,
 	}
 
-	err = l.UpdateOperator(l.Context(), &op)
+	err = l.store.ReadWriteTx(l.Context(), func(ctx context.Context, tx ports.ReadWriteTx) error {
+		return tx.UpdateOperator(l.Context(), &op)
+	})
 	if err != nil {
 		return err
 	}

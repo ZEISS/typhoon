@@ -1,6 +1,7 @@
 package operators
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/zeiss/typhoon/internal/api/models"
@@ -22,14 +23,14 @@ import (
 type ShowOperatorControllerImpl struct {
 	ID uuid.UUID `json:"name" form:"name" validate:"required:uuid"`
 
-	ports.Operators
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewShowOperatorController ...
-func NewShowOperatorController(db ports.Operators) *ShowOperatorControllerImpl {
+func NewShowOperatorController(store ports.Datastore) *ShowOperatorControllerImpl {
 	return &ShowOperatorControllerImpl{
-		Operators:         db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -43,7 +44,9 @@ func (l *ShowOperatorControllerImpl) Get() error {
 
 	op := models.Operator{ID: l.ID}
 
-	err = l.GetOperator(l.Context(), &op)
+	err = l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.GetOperator(ctx, &op)
+	})
 	if err != nil {
 		return err
 	}

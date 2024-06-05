@@ -1,6 +1,8 @@
 package accounts
 
 import (
+	"context"
+
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
@@ -14,14 +16,14 @@ import (
 type NewAccountControllerImpl struct {
 	Operators []*models.Operator
 
-	ports.Repository
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewAccountController ...
-func NewAccountController(db ports.Repository) *NewAccountControllerImpl {
+func NewAccountController(store ports.Datastore) *NewAccountControllerImpl {
 	return &NewAccountControllerImpl{
-		Repository:        db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -35,10 +37,13 @@ func (l *NewAccountControllerImpl) Prepare() error {
 		return err
 	}
 
-	err = l.ListOperators(l.Context(), &pagination)
+	err = l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.ListOperators(ctx, &pagination)
+	})
 	if err != nil {
 		return err
 	}
+
 	for _, operator := range pagination.Rows {
 		l.Operators = append(l.Operators, &operator)
 	}

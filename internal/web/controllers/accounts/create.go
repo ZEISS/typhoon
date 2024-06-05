@@ -33,10 +33,9 @@ type CreateControllerBody struct {
 
 // CreateControllerImpl ...
 type CreateControllerImpl struct {
-	Form  CreateControllerBody
-	Store ports.Datastore
+	Form CreateControllerBody
 
-	ports.Repository
+	store ports.Datastore
 	htmx.TransactionController
 	htmx.DefaultController
 }
@@ -44,7 +43,7 @@ type CreateControllerImpl struct {
 // NewCreateController ...
 func NewCreateController(store ports.Datastore) *CreateControllerImpl {
 	return &CreateControllerImpl{
-		Store:                 store,
+		store:                 store,
 		TransactionController: htmx.NewTransactionController(),
 	}
 }
@@ -97,7 +96,7 @@ func (l *CreateControllerImpl) Post() error {
 		ID: l.Form.OperatorID,
 	}
 
-	err := l.Store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+	err := l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
 		return tx.GetOperator(ctx, &operator)
 	})
 	if err != nil {
@@ -179,7 +178,7 @@ func (l *CreateControllerImpl) Post() error {
 	}
 	account.Token = models.Token{ID: id, Token: token}
 
-	err = l.Store.ReadWriteTx(l.Context(), func(ctx context.Context, tx ports.ReadWriteTx) error {
+	err = l.store.ReadWriteTx(l.Context(), func(ctx context.Context, tx ports.ReadWriteTx) error {
 		return tx.CreateAccount(ctx, &account)
 	})
 	if err != nil {

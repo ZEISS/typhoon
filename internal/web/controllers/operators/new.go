@@ -1,6 +1,8 @@
 package operators
 
 import (
+	"context"
+
 	"github.com/go-playground/validator/v10"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
@@ -15,13 +17,13 @@ var validate *validator.Validate
 
 // NewOperatorControllerImpl ...
 type NewOperatorControllerImpl struct {
-	ports.Operators
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewOperatorsController ...
-func NewOperatorController(db ports.Operators) *NewOperatorControllerImpl {
-	return &NewOperatorControllerImpl{db, htmx.DefaultController{}}
+func NewOperatorController(store ports.Datastore) *NewOperatorControllerImpl {
+	return &NewOperatorControllerImpl{store, htmx.DefaultController{}}
 }
 
 // Prepare ...
@@ -53,7 +55,9 @@ func (l *NewOperatorControllerImpl) Post() error {
 		return err
 	}
 
-	err = l.CreateOperator(l.Context(), &op)
+	err = l.store.ReadWriteTx(l.Context(), func(ctx context.Context, tx ports.ReadWriteTx) error {
+		return tx.CreateOperator(ctx, &op)
+	})
 	if err != nil {
 		return err
 	}

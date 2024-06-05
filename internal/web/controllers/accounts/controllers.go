@@ -6,6 +6,6 @@ import (
 )
 
 // NewGetAccountTokenController ...
-func NewGetAccountTokenController(db ports.Accounts) *tokens.GetAccountTokenControllerImpl {
-	return tokens.NewGetAccountTokenController(db)
+func NewGetAccountTokenController(store ports.Datastore) *tokens.GetAccountTokenControllerImpl {
+	return tokens.NewGetAccountTokenController(store)
 }

@@ -1,6 +1,8 @@
 package users
 
 import (
+	"context"
+
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/typhoon/internal/api/models"
@@ -18,14 +20,14 @@ type ListUsersController struct {
 	Search string `json:"search" form:"search"`
 	Sort   string `json:"sort" form:"sort"`
 
-	ports.Users
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewListUsersController ...
-func NewListUsersController(db ports.Users) *ListUsersController {
+func NewListUsersController(store ports.Datastore) *ListUsersController {
 	return &ListUsersController{
-		Users:             db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -49,7 +51,9 @@ func (l *ListUsersController) Get() error {
 		Search: l.Search,
 	}
 
-	err := l.ListUsers(l.Context(), &pagination)
+	err := l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.ListUsers(ctx, &pagination)
+	})
 	if err != nil {
 		return err
 	}

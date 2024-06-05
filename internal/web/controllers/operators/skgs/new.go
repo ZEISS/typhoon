@@ -16,14 +16,14 @@ import (
 type NewSkgsControllerImpl struct {
 	ID uuid.UUID `json:"id" params:"id" validate:"required:uuid"`
 
-	ports.Operators
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewSkgsControllerImpl ...
-func NewSkgsController(db ports.Operators) *NewSkgsControllerImpl {
+func NewSkgsController(store ports.Datastore) *NewSkgsControllerImpl {
 	return &NewSkgsControllerImpl{
-		Operators:         db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }

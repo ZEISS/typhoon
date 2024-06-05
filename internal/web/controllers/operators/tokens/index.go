@@ -1,6 +1,7 @@
 package tokens
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -14,14 +15,14 @@ import (
 type IndexOperatorTokenControllerImpl struct {
 	ID uuid.UUID `json:"id" form:"id" param:"id" validate:"required:uuid"`
 
-	ports.Operators
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewIndexOperatorTokenController ...
-func NewIndexOperatorTokenController(db ports.Operators) *IndexOperatorTokenControllerImpl {
+func NewIndexOperatorTokenController(store ports.Datastore) *IndexOperatorTokenControllerImpl {
 	return &IndexOperatorTokenControllerImpl{
-		Operators:         db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -35,10 +36,9 @@ func (l *IndexOperatorTokenControllerImpl) Get() error {
 
 	operator := models.Operator{ID: l.ID}
 
-	err = l.GetOperator(l.Context(), &operator)
-	if err != nil {
-		return err
-	}
+	err = l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.GetOperator(ctx, &operator)
+	})
 
 	r := strings.NewReader(operator.Token.Token)
 

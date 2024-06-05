@@ -1,6 +1,7 @@
 package users
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
@@ -25,14 +26,14 @@ type CreateUserControllerImpl struct {
 	Name                     string    `json:"name" form:"name" validate:"required,min=3,max=100"`
 	Description              string    `json:"description" form:"description" validate:"required,min=3,max=1024"`
 
-	ports.Repository
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewCreateUserController ...
-func NewCreateUserController(db ports.Repository) *CreateUserControllerImpl {
+func NewCreateUserController(store ports.Datastore) *CreateUserControllerImpl {
 	return &CreateUserControllerImpl{
-		Repository:        db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -59,7 +60,9 @@ func (l *CreateUserControllerImpl) Post() error {
 	user := models.User{Name: l.Name, Description: l.Description}
 	account := models.Account{ID: l.AccountID, SigningKeyGroups: []models.SigningKeyGroup{{ID: l.AccountSigningKeyGroupID}}}
 
-	err := l.GetAccount(l.Context(), &account)
+	err := l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.GetAccount(ctx, &account)
+	})
 	if err != nil {
 		return err
 	}
@@ -112,7 +115,9 @@ func (l *CreateUserControllerImpl) Post() error {
 	}
 	user.Token = models.Token{ID: id, Token: token}
 
-	err = l.CreateUser(l.Context(), &user)
+	err = l.store.ReadWriteTx(l.Context(), func(ctx context.Context, tx ports.ReadWriteTx) error {
+		return tx.CreateUser(ctx, &user)
+	})
 	if err != nil {
 		return err
 	}

@@ -23,15 +23,15 @@ type ListSystemsControllerParams struct {
 type ListSystemsController struct {
 	Params ListSystemsControllerParams
 
-	ports.Users
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewListSystemsController ...
-func NewListSystemsController(db ports.Users) *ListSystemsController {
+func NewListSystemsController(store ports.Datastore) *ListSystemsController {
 	return &ListSystemsController{
 		Params:            ListSystemsControllerParams{},
-		Users:             db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }

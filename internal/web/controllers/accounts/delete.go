@@ -1,6 +1,8 @@
 package accounts
 
 import (
+	"context"
+
 	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/typhoon/internal/api/models"
@@ -13,14 +15,14 @@ var _ = htmx.Controller(&DeleteAccountControllerImpl{})
 type DeleteAccountControllerImpl struct {
 	ID uuid.UUID `json:"name" form:"name" param:"id" validate:"required,uuid"`
 
-	ports.Accounts
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewDeleteAccountController ...
-func NewDeleteAccountController(db ports.Accounts) *DeleteAccountControllerImpl {
+func NewDeleteAccountController(store ports.Datastore) *DeleteAccountControllerImpl {
 	return &DeleteAccountControllerImpl{
-		Accounts:          db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -33,7 +35,9 @@ func (l *DeleteAccountControllerImpl) Delete() error {
 	}
 
 	account := models.Account{ID: l.ID}
-	err = l.DeleteAccount(l.Context(), &account)
+	err = l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.GetAccount(ctx, &account)
+	})
 	if err != nil {
 		return err
 	}

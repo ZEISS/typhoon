@@ -1,6 +1,7 @@
 package accounts
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/zeiss/typhoon/internal/api/models"
@@ -22,14 +23,14 @@ import (
 type ShowAccountControllerImpl struct {
 	ID uuid.UUID `json:"name" form:"name" validate:"required:uuid"`
 
-	ports.Accounts
+	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewShowAccountController ...
-func NewShowAccountController(db ports.Accounts) *ShowAccountControllerImpl {
+func NewShowAccountController(store ports.Datastore) *ShowAccountControllerImpl {
 	return &ShowAccountControllerImpl{
-		Accounts:          db,
+		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
 }
@@ -43,7 +44,9 @@ func (l *ShowAccountControllerImpl) Get() error {
 
 	acc := models.Account{ID: l.ID}
 
-	err = l.GetAccount(l.Context(), &acc)
+	err = l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.GetAccount(ctx, &acc)
+	})
 	if err != nil {
 		return err
 	}
