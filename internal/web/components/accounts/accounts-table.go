@@ -24,6 +24,43 @@ func AccountsTable(props AccountsTableProps, children ...htmx.Node) htmx.Node {
 		tables.Table(
 			tables.TableProps{
 				ID: "accounts-tables",
+				Pagination: tables.TablePagination(
+					tables.TablePaginationProps{
+						Pagination: tables.Pagination(
+							tables.PaginationProps{
+								Offset: props.Offset,
+								Limit:  props.Limit,
+								Total:  props.Total,
+							},
+							tables.Prev(
+								tables.PaginationProps{
+									Total:  props.Total,
+									Offset: props.Offset,
+									Limit:  props.Limit,
+									URL:    "/accounts",
+								},
+							),
+
+							tables.Select(
+								tables.SelectProps{
+									Total:  props.Total,
+									Offset: props.Offset,
+									Limit:  props.Limit,
+									Limits: tables.DefaultLimits,
+									URL:    "/accounts",
+								},
+							),
+							tables.Next(
+								tables.PaginationProps{
+									Total:  props.Total,
+									Offset: props.Offset,
+									Limit:  props.Limit,
+									URL:    "/accounts",
+								},
+							),
+						),
+					},
+				),
 				Toolbar: tables.TableToolbar(
 					tables.TableToolbarProps{
 						ClassNames: htmx.ClassNames{

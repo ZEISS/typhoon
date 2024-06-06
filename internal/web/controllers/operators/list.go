@@ -15,9 +15,7 @@ var _ = htmx.Controller(&ListOperatorsController{})
 
 // ListOperatorsController ...
 type ListOperatorsController struct {
-	Limit  int    `json:"limit" xml:"limit" form:"limit"`
-	Offset int    `json:"offset" xml:"offset" form:"offset"`
-	Search string `json:"search" xml:"search" form:"search"`
+	Pagination models.Pagination[models.Operator]
 
 	store ports.Datastore
 	htmx.DefaultController
@@ -26,6 +24,7 @@ type ListOperatorsController struct {
 // NewListOperatorsController ...
 func NewListOperatorsController(store ports.Datastore) *ListOperatorsController {
 	return &ListOperatorsController{
+		Pagination:        models.Pagination[models.Operator]{Limit: 10},
 		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
@@ -33,36 +32,19 @@ func NewListOperatorsController(store ports.Datastore) *ListOperatorsController 
 
 // Prepare ...
 func (l *ListOperatorsController) Prepare() error {
-	err := l.Ctx().QueryParser(&l)
+	err := l.Ctx().QueryParser(&l.Pagination)
 	if err != nil {
 		return nil
 	}
 
-	return nil
+	return l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.ListOperators(ctx, &l.Pagination)
+	})
 }
 
 // Prepare ...
 func (l *ListOperatorsController) Get() error {
-	pagination := models.Pagination[models.Operator]{}
-
-	pagination.Limit = l.Limit
-	pagination.Offset = l.Offset
-	pagination.Search = l.Search
-
-	err := l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
-		return tx.ListOperators(ctx, &pagination)
-	})
-	if err != nil {
-		return err
-	}
-
-	ops := make([]*models.Operator, 0, len(pagination.Rows))
-	for _, row := range pagination.Rows {
-		ops = append(ops, &row)
-	}
-
-	return htmx.RenderComp(
-		l.Ctx(),
+	return l.Render(
 		components.Page(
 			components.PageProps{
 				Title: "Operators",
@@ -77,10 +59,10 @@ func (l *ListOperatorsController) Get() error {
 						cards.BodyProps{},
 						operators.OperatorsTable(
 							operators.OperatorsTableProps{
-								Operators: ops,
-								Offset:    pagination.Offset,
-								Limit:     pagination.Limit,
-								Total:     pagination.TotalRows,
+								Operators: l.Pagination.GetRows(),
+								Offset:    l.Pagination.GetOffset(),
+								Limit:     l.Pagination.GetLimit(),
+								Total:     l.Pagination.GetTotalRows(),
 							},
 						),
 					),

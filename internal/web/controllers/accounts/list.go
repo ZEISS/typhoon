@@ -15,10 +15,7 @@ var _ = htmx.Controller(&ListAccountsController{})
 
 // ListAccountsController ...
 type ListAccountsController struct {
-	Offset int    `json:"offset" form:"offset"`
-	Limit  int    `json:"limit" form:"limit"`
-	Search string `json:"search" form:"search"`
-	Sort   string `json:"sort" form:"sort"`
+	Pagination models.Pagination[models.Account]
 
 	store ports.Datastore
 	htmx.DefaultController
@@ -27,51 +24,34 @@ type ListAccountsController struct {
 // NewListAccountsController ...
 func NewListAccountsController(store ports.Datastore) *ListAccountsController {
 	return &ListAccountsController{
-		store:             store,
+		Pagination:        models.Pagination[models.Account]{Limit: 10},
 		DefaultController: htmx.DefaultController{},
+		store:             store,
 	}
 }
 
 // Prepare ...
 func (l *ListAccountsController) Prepare() error {
-	err := l.BindParams(l)
+	err := l.BindQuery(&l.Pagination)
 	if err != nil {
 		return err
 	}
 
-	return nil
+	return l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.ListAccounts(ctx, &l.Pagination)
+	})
 }
 
 // Prepare ...
 func (l *ListAccountsController) Get() error {
-	pagination := models.Pagination[models.Account]{
-		Offset: l.Offset,
-		Limit:  l.Limit,
-		Sort:   l.Sort,
-		Search: l.Search,
-	}
-
-	err := l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
-		return tx.ListAccounts(ctx, &pagination)
-	})
-	if err != nil {
-		return err
-	}
-
-	accs := make([]*models.Account, 0, len(pagination.Rows))
-	for _, row := range pagination.Rows {
-		accs = append(accs, &row)
-	}
-
-	return htmx.RenderComp(
-		l.Ctx(),
+	return l.Render(
 		components.Page(
 			components.PageProps{
 				Title: "Accounts",
 			},
 			components.Layout(
 				components.LayoutProps{
-					Path: l.Ctx().Path(),
+					Path: l.Path(),
 				},
 				cards.CardBordered(
 					cards.CardProps{},
@@ -79,10 +59,10 @@ func (l *ListAccountsController) Get() error {
 						cards.BodyProps{},
 						accounts.AccountsTable(
 							accounts.AccountsTableProps{
-								Accounts: accs,
-								Offset:   pagination.Offset,
-								Limit:    pagination.Limit,
-								Total:    pagination.TotalRows,
+								Accounts: l.Pagination.GetRows(),
+								Offset:   l.Pagination.GetOffset(),
+								Limit:    l.Pagination.GetLimit(),
+								Total:    l.Pagination.GetTotalRows(),
 							},
 						),
 					),

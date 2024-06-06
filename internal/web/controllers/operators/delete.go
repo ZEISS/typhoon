@@ -43,8 +43,9 @@ func (l *DeleteOperatorController) Delete() error {
 	err = l.store.ReadWriteTx(l.Context(), func(ctx context.Context, tx ports.ReadWriteTx) error {
 		return tx.DeleteOperator(l.Context(), &op)
 	})
+	if err != nil {
+		return err
+	}
 
-	htmx.Redirect(l.Ctx(), "/operators")
-
-	return nil
+	return l.Redirect("/operators")
 }
