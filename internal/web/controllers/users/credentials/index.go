@@ -12,7 +12,7 @@ import (
 
 // IndexUserCredentialsControllerImpl ...
 type IndexUserCredentialsControllerImpl struct {
-	ID uuid.UUID `json:"id" form:"id" param:"id" validate:"required:uuid"`
+	ID uuid.UUID `json:"id" form:"id" params:"id" validate:"required:uuid"`
 
 	store ports.Datastore
 	htmx.DefaultController

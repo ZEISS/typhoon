@@ -13,7 +13,7 @@ var _ = htmx.Controller(&DeleteAccountControllerImpl{})
 
 // DeleteAccountControllerImpl ...
 type DeleteAccountControllerImpl struct {
-	ID uuid.UUID `json:"name" form:"name" param:"id" validate:"required,uuid"`
+	ID uuid.UUID `json:"name" form:"name" params:"id" validate:"required,uuid"`
 
 	store ports.Datastore
 	htmx.DefaultController

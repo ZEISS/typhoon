@@ -42,6 +42,24 @@ func (d *database) Close() error {
 	return sqlDB.Close()
 }
 
+// RunMigrations runs the database migrations.
+func (d *database) Migrate(ctx context.Context) error {
+	return d.conn.WithContext(ctx).AutoMigrate(
+		&adapters.GothUser{},
+		&adapters.GothAccount{},
+		&adapters.GothSession{},
+		&adapters.GothVerificationToken{},
+		&models.User{},
+		&models.Account{},
+		&models.Operator{},
+		&models.System{},
+		&models.Tag{},
+		&models.Cluster{},
+		&models.Token{},
+		&models.SigningKeyGroup{},
+	)
+}
+
 // ReadWriteTx starts a read only transaction.
 func (d *database) ReadWriteTx(ctx context.Context, fn func(context.Context, ports.ReadWriteTx) error) error {
 	tx := d.conn.WithContext(ctx).Begin()
@@ -96,12 +114,22 @@ type datastoreTx struct {
 
 // GetOperator is a method that returns an operator by ID.
 func (t *datastoreTx) GetOperator(ctx context.Context, operator *models.Operator) error {
-	return t.tx.Preload("Accounts").Preload("SigningKeyGroups").Preload("SigningKeyGroups.Key").Preload("Key").Preload("Token").First(operator).Error
+	return t.tx.Preload("Accounts").
+		Preload("SigningKeyGroups").
+		Preload("SigningKeyGroups.Key").
+		Preload("Key").
+		Preload("Token").
+		First(operator).Error
 }
 
 // CreateAccount is creating a new account.
 func (t *datastoreTx) CreateAccount(ctx context.Context, account *models.Account) error {
-	if err := t.tx.Preload("Accounts").Preload("SigningKeyGroups").Preload("SigningKeyGroups.Key").Preload("Key").Preload("Token").Create(account).Error; err != nil {
+	if err := t.tx.Preload("Accounts").
+		Preload("SigningKeyGroups").
+		Preload("SigningKeyGroups.Key").
+		Preload("Key").
+		Preload("Token").
+		Create(account).Error; err != nil {
 		return err
 	}
 
@@ -110,7 +138,11 @@ func (t *datastoreTx) CreateAccount(ctx context.Context, account *models.Account
 
 // ListAccounts ...
 func (t *datastoreTx) ListAccounts(ctx context.Context, pagination *models.Pagination[models.Account]) error {
-	return t.tx.Scopes(models.Paginate(&pagination.Rows, pagination, t.tx)).Preload("SigningKeyGroups").Preload("SigningKeyGroups.Key").Preload("Key").Find(&pagination.Rows).Error
+	return t.tx.Scopes(models.Paginate(&pagination.Rows, pagination, t.tx)).
+		Preload("SigningKeyGroups").
+		Preload("SigningKeyGroups.Key").
+		Preload("Key").
+		Find(&pagination.Rows).Error
 }
 
 // GetAccount ...
@@ -136,7 +168,11 @@ func (t *datastoreTx) DeleteAccount(ctx context.Context, account *models.Account
 
 // ListOperators ...
 func (t *datastoreTx) ListOperators(ctx context.Context, pagination *models.Pagination[models.Operator]) error {
-	return t.tx.Scopes(models.Paginate(&pagination.Rows, pagination, t.tx)).Preload("SigningKeyGroups").Preload("SigningKeyGroups.Key").Preload("Key").Find(&pagination.Rows).Error
+	return t.tx.Scopes(models.Paginate(&pagination.Rows, pagination, t.tx)).
+		Preload("SigningKeyGroups").
+		Preload("SigningKeyGroups.Key").
+		Preload("Key").
+		Find(&pagination.Rows).Error
 }
 
 // CreateOperator ...
@@ -188,20 +224,27 @@ func (t *datastoreTx) GetProfile(ctx context.Context, user *adapters.GothUser) e
 	return t.tx.First(user).Error
 }
 
-// RunMigrations runs the database migrations.
-func (d *database) Migrate(ctx context.Context) error {
-	return d.conn.WithContext(ctx).AutoMigrate(
-		&adapters.GothUser{},
-		&adapters.GothAccount{},
-		&adapters.GothSession{},
-		&adapters.GothVerificationToken{},
-		&models.User{},
-		&models.Account{},
-		&models.Operator{},
-		&models.System{},
-		&models.Tag{},
-		&models.Cluster{},
-		&models.Token{},
-		&models.SigningKeyGroup{},
-	)
+// CreateSystem is a method that creates a new system
+func (t *datastoreTx) CreateSystem(ctx context.Context, system *models.System) error {
+	return t.tx.Create(system).Error
+}
+
+// GetSystem is a method that returns a system by ID
+func (t *datastoreTx) GetSystem(ctx context.Context, system *models.System) error {
+	return t.tx.Preload("Tags").First(system).Error
+}
+
+// ListSystems is a method that returns a list of systems
+func (t *datastoreTx) ListSystems(ctx context.Context, pagination *models.Pagination[models.System]) error {
+	return t.tx.Scopes(models.Paginate(&pagination.Rows, pagination, t.tx)).Preload("Tags").Find(&pagination.Rows).Error
+}
+
+// DeleteSystem is a method that deletes a system
+func (t *datastoreTx) DeleteSystem(ctx context.Context, system *models.System) error {
+	return t.tx.Select(clause.Associations).Delete(system).Error
+}
+
+// UpdateSystem is a method that updates a system
+func (t *datastoreTx) UpdateSystem(ctx context.Context, system *models.System) error {
+	return t.tx.Session(&gorm.Session{FullSaveAssociations: true}).Updates(system).Error
 }

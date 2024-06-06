@@ -41,6 +41,10 @@ type ReadTx interface {
 	ListUsers(ctx context.Context, pagination *models.Pagination[models.User]) error
 	// GetProfile is a method that returns the profile of the current user
 	GetProfile(ctx context.Context, user *adapters.GothUser) error
+	// GetSystem is a method that returns a system by ID
+	GetSystem(ctx context.Context, system *models.System) error
+	// ListSystems is a method that returns a list of systems
+	ListSystems(ctx context.Context, pagination *models.Pagination[models.System]) error
 }
 
 // ReadWriteTx provides methods for transactional read and write operations.
@@ -65,4 +69,10 @@ type ReadWriteTx interface {
 	UpdateUser(ctx context.Context, user *models.User) error
 	// DeleteUser is a method that deletes a user
 	DeleteUser(ctx context.Context, user *models.User) error
+	// CreateSystem is a method that creates a new system
+	CreateSystem(ctx context.Context, system *models.System) error
+	// UpdateSystem is a method that updates a system
+	UpdateSystem(ctx context.Context, system *models.System) error
+	// DeleteSystem is a method that deletes a system
+	DeleteSystem(ctx context.Context, system *models.System) error
 }

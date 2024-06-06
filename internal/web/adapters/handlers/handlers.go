@@ -218,3 +218,24 @@ func (h *handlers) ListSystems() fiber.Handler {
 		return systems.NewListSystemsController(h.store)
 	})
 }
+
+// NewSystem ...
+func (h *handlers) NewSystem() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return systems.NewSystemController(h.store)
+	})
+}
+
+// CreateSystem ...
+func (h *handlers) CreateSystem() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return systems.NewCreateSystemController(h.store)
+	})
+}
+
+// DeleteSystem ...
+func (h *handlers) DeleteSystem() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return systems.NewDeleteSystemController(h.store)
+	})
+}

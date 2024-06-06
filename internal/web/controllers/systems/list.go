@@ -31,32 +31,27 @@ type ListSystemsController struct {
 func NewListSystemsController(store ports.Datastore) *ListSystemsController {
 	return &ListSystemsController{
 		Params:            ListSystemsControllerParams{},
-		store:             store,
 		DefaultController: htmx.DefaultController{},
+		store:             store,
 	}
 }
 
 // Prepare ...
 func (l *ListSystemsController) Prepare() error {
-	err := l.BindParams(&l.Params)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return l.BindParams(&l.Params)
 }
 
-// Prepare ...
+// Get ...
 func (l *ListSystemsController) Get() error {
-	return htmx.RenderComp(
-		l.Ctx(),
+	return l.Render( // render the html using htmx
 		components.Page(
 			components.PageProps{
 				Title: "Systems",
+				Boost: true,
 			},
 			components.Layout(
 				components.LayoutProps{
-					Path: l.Ctx().Path(),
+					Path: l.Path(), // get the current path
 				},
 				cards.CardBordered(
 					cards.CardProps{},
