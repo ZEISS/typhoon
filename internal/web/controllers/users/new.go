@@ -6,6 +6,7 @@ import (
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/forms"
+	"github.com/zeiss/fiber-htmx/components/tables"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/ports"
@@ -15,7 +16,7 @@ import (
 
 // NewUserControllerImpl ...
 type NewUserControllerImpl struct {
-	Accounts []*models.Account
+	Results tables.Results[models.Account]
 
 	store ports.Datastore
 	htmx.DefaultController
@@ -24,32 +25,22 @@ type NewUserControllerImpl struct {
 // NewUserController ...
 func NewUserController(store ports.Datastore) *NewUserControllerImpl {
 	return &NewUserControllerImpl{
-		store:             store,
+		Results:           tables.Results[models.Account]{Limit: 10},
 		DefaultController: htmx.DefaultController{},
+		store:             store,
 	}
 }
 
 // Prepare ...
 func (l *NewUserControllerImpl) Prepare() error {
-	pagination := models.Pagination[models.Account]{}
-
-	err := l.BindQuery(&pagination)
+	err := l.BindQuery(&l.Results)
 	if err != nil {
 		return err
 	}
 
-	err = l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
-		return tx.ListAccounts(ctx, &pagination)
+	return l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.ListAccounts(ctx, &l.Results)
 	})
-	if err != nil {
-		return err
-	}
-
-	for _, account := range pagination.Rows {
-		l.Accounts = append(l.Accounts, &account)
-	}
-
-	return nil
 }
 
 // Get ...
@@ -110,7 +101,7 @@ func (l *NewUserControllerImpl) Get() error {
 											),
 											htmx.Name("account_id"),
 											htmx.Group(
-												htmx.ForEach(l.Accounts, func(operator *models.Account) htmx.Node {
+												htmx.ForEach(l.Results.GetRows(), func(operator *models.Account) htmx.Node {
 													return forms.Option(
 														forms.OptionProps{
 															Value: operator.ID.String(),

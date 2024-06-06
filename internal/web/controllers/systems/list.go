@@ -10,21 +10,14 @@ import (
 
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/cards"
+	"github.com/zeiss/fiber-htmx/components/tables"
 )
 
 var _ = htmx.Controller(&ListSystemsController{})
 
-// ListSystemsControllerParams ...
-type ListSystemsControllerParams struct {
-	Offset int    `json:"offset" form:"offset" params:"offset"`
-	Limit  int    `json:"limit" form:"limit" params:"limit"`
-	Search string `json:"search" form:"search" params:"search"`
-	Sort   string `json:"sort" form:"sort" params:"sort"`
-}
-
 // ListSystemsController ...
 type ListSystemsController struct {
-	Pagination models.Pagination[models.System]
+	Results tables.Results[models.System]
 
 	store ports.Datastore
 	htmx.DefaultController
@@ -33,7 +26,7 @@ type ListSystemsController struct {
 // NewListSystemsController ...
 func NewListSystemsController(store ports.Datastore) *ListSystemsController {
 	return &ListSystemsController{
-		Pagination:        models.Pagination[models.System]{Limit: 10},
+		Results:           tables.Results[models.System]{Limit: 10},
 		DefaultController: htmx.DefaultController{},
 		store:             store,
 	}
@@ -41,19 +34,14 @@ func NewListSystemsController(store ports.Datastore) *ListSystemsController {
 
 // Prepare ...
 func (l *ListSystemsController) Prepare() error {
-	err := l.BindQuery(&l.Pagination)
+	err := l.BindQuery(&l.Results)
 	if err != nil {
 		return err
 	}
 
-	err = l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
-		return tx.ListSystems(ctx, &l.Pagination)
+	return l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.ListSystems(ctx, &l.Results)
 	})
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 // Get ...
@@ -74,10 +62,10 @@ func (l *ListSystemsController) Get() error {
 						cards.BodyProps{},
 						systems.SystemsTable(
 							systems.SystemsTableProps{
-								Limit:   l.Pagination.GetLimit(),
-								Offset:  l.Pagination.GetOffset(),
-								Total:   l.Pagination.GetTotalRows(),
-								Systems: l.Pagination.GetRows(),
+								Limit:   l.Results.GetLimit(),
+								Offset:  l.Results.GetOffset(),
+								Total:   l.Results.GetLen(),
+								Systems: l.Results.GetRows(),
 							},
 						),
 					),

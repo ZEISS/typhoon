@@ -64,7 +64,7 @@ func (l *ListOperatorsController) Get() error {
 								Operators: l.Results.GetRows(),
 								Offset:    l.Results.GetOffset(),
 								Limit:     l.Results.GetLimit(),
-								Total:     l.Results.GetTotalRows(),
+								Total:     l.Results.GetLen(),
 							},
 						),
 					),

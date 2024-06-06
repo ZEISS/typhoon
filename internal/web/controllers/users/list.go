@@ -5,6 +5,7 @@ import (
 
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/cards"
+	"github.com/zeiss/fiber-htmx/components/tables"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/components/users"
@@ -15,10 +16,7 @@ var _ = htmx.Controller(&ListUsersController{})
 
 // ListUsersController ...
 type ListUsersController struct {
-	Offset int    `json:"offset" form:"offset"`
-	Limit  int    `json:"limit" form:"limit"`
-	Search string `json:"search" form:"search"`
-	Sort   string `json:"sort" form:"sort"`
+	Results tables.Results[models.User]
 
 	store ports.Datastore
 	htmx.DefaultController
@@ -27,44 +25,27 @@ type ListUsersController struct {
 // NewListUsersController ...
 func NewListUsersController(store ports.Datastore) *ListUsersController {
 	return &ListUsersController{
-		store:             store,
+		Results:           tables.Results[models.User]{Limit: 10},
 		DefaultController: htmx.DefaultController{},
+		store:             store,
 	}
 }
 
 // Prepare ...
 func (l *ListUsersController) Prepare() error {
-	err := l.BindParams(l)
+	err := l.BindQuery(&l.Results)
 	if err != nil {
 		return err
 	}
 
-	return nil
+	return l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.ListUsers(ctx, &l.Results)
+	})
 }
 
 // Prepare ...
 func (l *ListUsersController) Get() error {
-	pagination := models.Pagination[models.User]{
-		Offset: l.Offset,
-		Limit:  l.Limit,
-		Sort:   l.Sort,
-		Search: l.Search,
-	}
-
-	err := l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
-		return tx.ListUsers(ctx, &pagination)
-	})
-	if err != nil {
-		return err
-	}
-
-	accs := make([]*models.User, 0, len(pagination.Rows))
-	for _, row := range pagination.Rows {
-		accs = append(accs, &row)
-	}
-
-	return htmx.RenderComp(
-		l.Ctx(),
+	return l.Render(
 		components.Page(
 			components.PageProps{
 				Title: "Users",
@@ -79,10 +60,10 @@ func (l *ListUsersController) Get() error {
 						cards.BodyProps{},
 						users.UsersTable(
 							users.UsersTableProps{
-								Users:  accs,
-								Offset: pagination.Offset,
-								Limit:  pagination.Limit,
-								Total:  pagination.TotalRows,
+								Users:  l.Results.GetRows(),
+								Offset: l.Results.GetOffset(),
+								Limit:  l.Results.GetLimit(),
+								Total:  l.Results.GetLen(),
 							},
 						),
 					),

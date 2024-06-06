@@ -139,8 +139,8 @@ func (t *datastoreTx) CreateAccount(ctx context.Context, account *models.Account
 }
 
 // ListAccounts ...
-func (t *datastoreTx) ListAccounts(ctx context.Context, pagination *models.Pagination[models.Account]) error {
-	return t.tx.Scopes(models.Paginate(&pagination.Rows, pagination, t.tx)).
+func (t *datastoreTx) ListAccounts(ctx context.Context, pagination *tables.Results[models.Account]) error {
+	return t.tx.Scopes(tables.PaginatedResults(&pagination.Rows, pagination, t.tx)).
 		Preload("SigningKeyGroups").
 		Preload("SigningKeyGroups.Key").
 		Preload("Key").
@@ -202,8 +202,8 @@ func (t *datastoreTx) GetUser(ctx context.Context, user *models.User) error {
 }
 
 // ListUsers ...
-func (t *datastoreTx) ListUsers(ctx context.Context, pagination *models.Pagination[models.User]) error {
-	return t.tx.Scopes(models.Paginate(&pagination.Rows, pagination, t.tx)).Find(&pagination.Rows).Error
+func (t *datastoreTx) ListUsers(ctx context.Context, pagination *tables.Results[models.User]) error {
+	return t.tx.Scopes(tables.PaginatedResults(&pagination.Rows, pagination, t.tx)).Find(&pagination.Rows).Error
 }
 
 // CreateUser ...
@@ -237,8 +237,8 @@ func (t *datastoreTx) GetSystem(ctx context.Context, system *models.System) erro
 }
 
 // ListSystems is a method that returns a list of systems
-func (t *datastoreTx) ListSystems(ctx context.Context, pagination *models.Pagination[models.System]) error {
-	return t.tx.Scopes(models.Paginate(&pagination.Rows, pagination, t.tx)).Preload("Tags").Find(&pagination.Rows).Error
+func (t *datastoreTx) ListSystems(ctx context.Context, pagination *tables.Results[models.System]) error {
+	return t.tx.Scopes(tables.PaginatedResults(&pagination.Rows, pagination, t.tx)).Preload("Tags").Find(&pagination.Rows).Error
 }
 
 // DeleteSystem is a method that deletes a system

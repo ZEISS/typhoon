@@ -32,27 +32,25 @@ type ReadTx interface {
 	// GetOperator is a method that returns an operator by ID
 	GetOperator(ctx context.Context, operator *models.Operator) error
 	// ListOperators is a method that returns a list of operators
-	ListOperators(ctx context.Context, pagination *tables.Results[models.Operator]) error
+	ListOperators(ctx context.Context, results *tables.Results[models.Operator]) error
 	// GetAccount ...
 	GetAccount(ctx context.Context, account *models.Account) error
 	// ListAccounts ...
-	ListAccounts(ctx context.Context, pagination *models.Pagination[models.Account]) error
+	ListAccounts(ctx context.Context, results *tables.Results[models.Account]) error
 	// GetUser is a method that returns a user by ID
 	GetUser(ctx context.Context, user *models.User) error
 	// ListUsers is a method that returns a list of users
-	ListUsers(ctx context.Context, pagination *models.Pagination[models.User]) error
+	ListUsers(ctx context.Context, results *tables.Results[models.User]) error
 	// GetProfile is a method that returns the profile of the current user
 	GetProfile(ctx context.Context, user *adapters.GothUser) error
 	// GetSystem is a method that returns a system by ID
 	GetSystem(ctx context.Context, system *models.System) error
 	// ListSystems is a method that returns a list of systems
-	ListSystems(ctx context.Context, pagination *models.Pagination[models.System]) error
+	ListSystems(ctx context.Context, results *tables.Results[models.System]) error
 }
 
 // ReadWriteTx provides methods for transactional read and write operations.
 type ReadWriteTx interface {
-	ReadTx
-
 	// CreateOperator is a method that creates a new operator
 	CreateOperator(ctx context.Context, operator *models.Operator) error
 	// UpdateOperator is a method that updates an operator
@@ -77,4 +75,6 @@ type ReadWriteTx interface {
 	UpdateSystem(ctx context.Context, system *models.System) error
 	// DeleteSystem is a method that deletes a system
 	DeleteSystem(ctx context.Context, system *models.System) error
+
+	ReadTx
 }
