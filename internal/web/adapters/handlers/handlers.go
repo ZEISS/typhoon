@@ -239,3 +239,10 @@ func (h *handlers) DeleteSystem() fiber.Handler {
 		return systems.NewDeleteSystemController(h.store)
 	})
 }
+
+// ShowSystem ...
+func (h *handlers) ShowSystem() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return systems.NewShowSystemController(h.store)
+	})
+}

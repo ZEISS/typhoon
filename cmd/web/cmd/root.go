@@ -168,6 +168,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Get("/systems", handlers.ListSystems())
 		app.Post("/systems", handlers.CreateSystem())
 		app.Get("/systems/new", handlers.NewSystem())
+		app.Get("/systems/:id", handlers.ShowSystem())
 		app.Delete("/systems/:id", handlers.DeleteSystem())
 
 		err = app.Listen(s.cfg.Flags.Addr)

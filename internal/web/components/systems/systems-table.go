@@ -1,12 +1,18 @@
 package systems
 
 import (
+	"fmt"
+
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/forms"
 	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tables"
 	"github.com/zeiss/typhoon/internal/api/models"
+)
+
+const (
+	showSystemURLFormat = "/systems/%s"
 )
 
 // SystemsTableProps ...
@@ -84,9 +90,7 @@ func SystemsTable(props SystemsTableProps, children ...htmx.Node) htmx.Node {
 					Cell: func(p tables.TableProps, row *models.System) htmx.Node {
 						return htmx.Td(
 							links.Link(
-								links.LinkProps{
-									Href: "/accounts/" + row.ID.String(),
-								},
+								links.LinkProps{Href: fmt.Sprintf(showSystemURLFormat, row.ID)},
 								htmx.Text(row.Name),
 							),
 						)

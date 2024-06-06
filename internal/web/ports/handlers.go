@@ -62,4 +62,6 @@ type Handlers interface {
 	CreateSystem() fiber.Handler
 	// DeleteSystem ...
 	DeleteSystem() fiber.Handler
+	// ShowSystem ...
+	ShowSystem() fiber.Handler
 }
