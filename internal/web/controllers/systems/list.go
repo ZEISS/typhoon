@@ -1,6 +1,9 @@
 package systems
 
 import (
+	"context"
+
+	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/components/systems"
 	"github.com/zeiss/typhoon/internal/web/ports"
@@ -21,7 +24,7 @@ type ListSystemsControllerParams struct {
 
 // ListSystemsController ...
 type ListSystemsController struct {
-	Params ListSystemsControllerParams
+	Pagination models.Pagination[models.System]
 
 	store ports.Datastore
 	htmx.DefaultController
@@ -30,7 +33,7 @@ type ListSystemsController struct {
 // NewListSystemsController ...
 func NewListSystemsController(store ports.Datastore) *ListSystemsController {
 	return &ListSystemsController{
-		Params:            ListSystemsControllerParams{},
+		Pagination:        models.Pagination[models.System]{Limit: 10},
 		DefaultController: htmx.DefaultController{},
 		store:             store,
 	}
@@ -38,7 +41,19 @@ func NewListSystemsController(store ports.Datastore) *ListSystemsController {
 
 // Prepare ...
 func (l *ListSystemsController) Prepare() error {
-	return l.BindParams(&l.Params)
+	err := l.BindQuery(&l.Pagination)
+	if err != nil {
+		return err
+	}
+
+	err = l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.ListSystems(ctx, &l.Pagination)
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Get ...
@@ -58,7 +73,12 @@ func (l *ListSystemsController) Get() error {
 					cards.Body(
 						cards.BodyProps{},
 						systems.SystemsTable(
-							systems.SystemsTableProps{},
+							systems.SystemsTableProps{
+								Limit:   l.Pagination.GetLimit(),
+								Offset:  l.Pagination.GetOffset(),
+								Total:   l.Pagination.GetTotalRows(),
+								Systems: l.Pagination.GetRows(),
+							},
 						),
 					),
 				),

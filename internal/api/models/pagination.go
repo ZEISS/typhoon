@@ -9,13 +9,13 @@ import (
 // Pagination is a struct that contains the pagination information.
 type Pagination[R any] struct {
 	// Limit is the number of items to return.
-	Limit int `json:"limit" xml:"limit" form:"limit"`
+	Limit int `json:"limit" xml:"limit" form:"limit" query:"limit"`
 	// Offset is the number of items to skip.
-	Offset int `json:"offset" xml:"offset" form:"offset"`
+	Offset int `json:"offset" xml:"offset" form:"offset" query:"limit"`
 	// Search is the search term to filter the results.
-	Search string `json:"search" xml:"search" form:"search"`
+	Search string `json:"search" xml:"search" form:"search" query:"limit"`
 	// Sort is the sorting order.
-	Sort string `json:"sort,omitempty" xml:"sort" form:"sort"`
+	Sort string `json:"sort,omitempty" xml:"sort" form:"sort" query:"limit"`
 	// TotalRows is the total number of rows.
 	TotalRows int `json:"total_rows"`
 	// TotalPages is the total number of pages.
@@ -54,6 +54,21 @@ func (p *Pagination[R]) GetSort() string {
 	}
 
 	return p.Sort
+}
+
+// GetRows returns the rows as pointers.
+func (p *Pagination[R]) GetRows() []*R {
+	rows := make([]*R, 0, len(p.Rows))
+	for _, row := range p.Rows {
+		rows = append(rows, &row)
+	}
+
+	return rows
+}
+
+// GetTotalRows returns the total rows.
+func (p *Pagination[R]) GetTotalRows() int {
+	return p.TotalRows
 }
 
 // Paginate returns a function that paginates the results.

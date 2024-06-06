@@ -3,13 +3,14 @@ package users
 import (
 	"context"
 
-	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/forms"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/ports"
+
+	htmx "github.com/zeiss/fiber-htmx"
 )
 
 // NewUserControllerImpl ...
@@ -53,8 +54,7 @@ func (l *NewUserControllerImpl) Prepare() error {
 
 // Get ...
 func (l *NewUserControllerImpl) Get() error {
-	return htmx.RenderComp(
-		l.Ctx(),
+	return l.Render(
 		components.Page(
 			components.PageProps{},
 			components.Layout(

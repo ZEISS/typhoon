@@ -1,16 +1,21 @@
 package systems
 
 import (
+	"context"
+
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/forms"
+	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
 // NewSystemControllerImpl ...
 type NewSystemControllerImpl struct {
+	Operators []*models.Operator
+
 	store ports.Datastore
 	htmx.DefaultController
 }
@@ -21,6 +26,29 @@ func NewSystemController(store ports.Datastore) *NewSystemControllerImpl {
 		store:             store,
 		DefaultController: htmx.DefaultController{},
 	}
+}
+
+// Prepare ...
+func (l *NewSystemControllerImpl) Prepare() error {
+	pagination := models.Pagination[models.Operator]{}
+
+	err := l.BindQuery(&pagination)
+	if err != nil {
+		return err
+	}
+
+	err = l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.ListOperators(ctx, &pagination)
+	})
+	if err != nil {
+		return err
+	}
+
+	for _, op := range pagination.Rows {
+		l.Operators = append(l.Operators, &op)
+	}
+
+	return nil
 }
 
 // Get ...
@@ -41,6 +69,45 @@ func (l *NewSystemControllerImpl) Get() error {
 							cards.Title(
 								cards.TitleProps{},
 								htmx.Text("Properties"),
+							),
+							forms.FormControl(
+								forms.FormControlProps{
+									ClassNames: htmx.ClassNames{
+										"py-4": true,
+									},
+								},
+								forms.SelectBordered(
+									forms.SelectProps{},
+									forms.Option(
+										forms.OptionProps{
+											Selected: true,
+											Disabled: true,
+										},
+										htmx.Text("Select operator"),
+									),
+									htmx.Name("operator_id"),
+									htmx.Group(
+										htmx.ForEach(l.Operators, func(operator *models.Operator) htmx.Node {
+											return forms.Option(
+												forms.OptionProps{
+													Value: operator.ID.String(),
+												},
+												htmx.Text(operator.Name),
+											)
+										})...,
+									),
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelAltText(
+										forms.FormControlLabelAltTextProps{
+											ClassNames: htmx.ClassNames{
+												"text-neutral-500": true,
+											},
+										},
+										htmx.Text("An operator needs to be created before adding a system."),
+									),
+								),
 							),
 							forms.FormControl(
 								forms.FormControlProps{

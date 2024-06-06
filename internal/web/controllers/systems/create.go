@@ -2,6 +2,7 @@ package systems
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/go-playground/validator/v10"
 	htmx "github.com/zeiss/fiber-htmx"
@@ -9,6 +10,7 @@ import (
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
+// validat
 var validate *validator.Validate
 
 // CreateSystemControllerImpl ...
@@ -29,6 +31,7 @@ func NewCreateSystemController(store ports.Datastore) *CreateSystemControllerImp
 
 // Error ...
 func (l *CreateSystemControllerImpl) Error(err error) error {
+	fmt.Println(err)
 	return err
 }
 
