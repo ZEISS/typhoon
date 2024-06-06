@@ -7,6 +7,7 @@ import (
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/forms"
+	"github.com/zeiss/fiber-htmx/components/tables"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/ports"
@@ -14,7 +15,7 @@ import (
 
 // NewSystemControllerImpl ...
 type NewSystemControllerImpl struct {
-	Operators []*models.Operator
+	Results tables.Results[models.Operator]
 
 	store ports.Datastore
 	htmx.DefaultController
@@ -23,32 +24,22 @@ type NewSystemControllerImpl struct {
 // NewSystemController ...
 func NewSystemController(store ports.Datastore) *NewSystemControllerImpl {
 	return &NewSystemControllerImpl{
-		store:             store,
+		Results:           tables.Results[models.Operator]{},
 		DefaultController: htmx.DefaultController{},
+		store:             store,
 	}
 }
 
 // Prepare ...
 func (l *NewSystemControllerImpl) Prepare() error {
-	pagination := models.Pagination[models.Operator]{}
-
-	err := l.BindQuery(&pagination)
+	err := l.BindQuery(&l.Results)
 	if err != nil {
 		return err
 	}
 
-	err = l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
-		return tx.ListOperators(ctx, &pagination)
+	return l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.ListOperators(ctx, &l.Results)
 	})
-	if err != nil {
-		return err
-	}
-
-	for _, op := range pagination.Rows {
-		l.Operators = append(l.Operators, &op)
-	}
-
-	return nil
 }
 
 // Get ...
@@ -87,7 +78,7 @@ func (l *NewSystemControllerImpl) Get() error {
 									),
 									htmx.Name("operator_id"),
 									htmx.Group(
-										htmx.ForEach(l.Operators, func(operator *models.Operator) htmx.Node {
+										htmx.ForEach(l.Results.GetRows(), func(operator *models.Operator) htmx.Node {
 											return forms.Option(
 												forms.OptionProps{
 													Value: operator.ID.String(),

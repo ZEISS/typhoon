@@ -22,6 +22,8 @@ type User struct {
 	KeyID string `json:"key_id" gorm:"foreignKey:ID"`
 	// Token is the JWT token used to authenticate the account.
 	Token Token `json:"token" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:user"`
+	// UserLimits is the user limits.
+	UserLimits UserLimits `json:"limits"`
 	// Account is the account that the user belongs to.
 	Account Account `json:"account" gorm:"foreignKey:AccountID"`
 	// AccountID is the foreign key for the account.
@@ -32,6 +34,20 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	// DeletedAt is the time the user was deleted.
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
+}
+
+// UserLimits ...
+type UserLimits struct {
+	// UserID is the user identifier.
+	UserID uuid.UUID `json:"user_id"`
+	// MaxSubscriptions is the maximum number of subscriptions the user can have.
+	MaxSubscriptions int `json:"max_subscriptions"`
+	// MaxJWTLiftime is the maximum payload size the user can have.
+	MaxJWTLiftime time.Duration `json:"jwt_lifetime"`
+	// MaxPayloadSize is the maximum payload size the user can have.
+	MaxPayloadSize int `json:"max_payload_size"`
+	// MaxDataRate is the maximum data rate the user can have.
+	MaxDataRate int `json:"max_data_rate"`
 }
 
 // Credentials returns the user's credentials.

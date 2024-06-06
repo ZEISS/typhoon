@@ -57,7 +57,10 @@ func (l *CreateUserControllerImpl) Prepare() error {
 
 // Post ...
 func (l *CreateUserControllerImpl) Post() error {
-	user := models.User{Name: l.Name, Description: l.Description}
+	user := models.User{
+		Name:        l.Name,
+		Description: l.Description,
+	}
 	account := models.Account{ID: l.AccountID, SigningKeyGroups: []models.SigningKeyGroup{{ID: l.AccountSigningKeyGroupID}}}
 
 	err := l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {

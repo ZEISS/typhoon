@@ -4,8 +4,10 @@ import (
 	"context"
 	"io"
 
-	"github.com/zeiss/fiber-goth/adapters"
 	"github.com/zeiss/typhoon/internal/api/models"
+
+	"github.com/zeiss/fiber-goth/adapters"
+	"github.com/zeiss/fiber-htmx/components/tables"
 )
 
 // Migration is a method that runs the migration.
@@ -30,7 +32,7 @@ type ReadTx interface {
 	// GetOperator is a method that returns an operator by ID
 	GetOperator(ctx context.Context, operator *models.Operator) error
 	// ListOperators is a method that returns a list of operators
-	ListOperators(ctx context.Context, pagination *models.Pagination[models.Operator]) error
+	ListOperators(ctx context.Context, pagination *tables.Results[models.Operator]) error
 	// GetAccount ...
 	GetAccount(ctx context.Context, account *models.Account) error
 	// ListAccounts ...

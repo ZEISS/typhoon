@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"github.com/nats-io/nats.go"
+	"github.com/zeiss/fiber-htmx/components/tables"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/web/ports"
 
@@ -57,6 +58,7 @@ func (d *database) Migrate(ctx context.Context) error {
 		&models.Cluster{},
 		&models.Token{},
 		&models.SigningKeyGroup{},
+		&models.UserLimits{},
 	)
 }
 
@@ -167,8 +169,8 @@ func (t *datastoreTx) DeleteAccount(ctx context.Context, account *models.Account
 }
 
 // ListOperators ...
-func (t *datastoreTx) ListOperators(ctx context.Context, pagination *models.Pagination[models.Operator]) error {
-	return t.tx.Scopes(models.Paginate(&pagination.Rows, pagination, t.tx)).
+func (t *datastoreTx) ListOperators(ctx context.Context, pagination *tables.Results[models.Operator]) error {
+	return t.tx.Scopes(tables.PaginatedResults(&pagination.Rows, pagination, t.tx)).
 		Preload("SigningKeyGroups").
 		Preload("SigningKeyGroups.Key").
 		Preload("Key").
