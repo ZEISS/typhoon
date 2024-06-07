@@ -16,6 +16,7 @@ import (
 
 const (
 	userShowURLFormat = "/users/%s"
+	accountShowURL    = "/accounts/%s"
 )
 
 // UsersTableProps ...
@@ -140,8 +141,15 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 					},
 					Cell: func(p tables.TableProps, row *models.User) htmx.Node {
 						return htmx.Td(
-							htmx.Class("truncate"),
-							htmx.Text(row.Account.Name),
+							links.Link(
+								links.LinkProps{
+									ClassNames: htmx.ClassNames{
+										"truncate": true,
+									},
+									Href: fmt.Sprintf(accountShowURL, row.Account.ID),
+								},
+								htmx.Text(row.Account.Name),
+							),
 						)
 					},
 				},
