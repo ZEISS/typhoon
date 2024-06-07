@@ -238,7 +238,7 @@ func (t *datastoreTx) GetSystem(ctx context.Context, system *models.System) erro
 
 // ListSystems is a method that returns a list of systems
 func (t *datastoreTx) ListSystems(ctx context.Context, pagination *tables.Results[models.System]) error {
-	return t.tx.Scopes(tables.PaginatedResults(&pagination.Rows, pagination, t.tx)).Preload("Tags").Find(&pagination.Rows).Error
+	return t.tx.Scopes(tables.PaginatedResults(&pagination.Rows, pagination, t.tx)).Preload("Operator").Preload("Tags").Find(&pagination.Rows).Error
 }
 
 // DeleteSystem is a method that deletes a system

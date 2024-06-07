@@ -5,14 +5,17 @@ import (
 
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
+	"github.com/zeiss/fiber-htmx/components/dropdowns"
 	"github.com/zeiss/fiber-htmx/components/forms"
+	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tables"
 	"github.com/zeiss/typhoon/internal/api/models"
 )
 
 const (
-	showSystemURLFormat = "/systems/%s"
+	showSystemURLFormat   = "/systems/%s"
+	showOperatorURLFormat = "/operators/%s"
 )
 
 // SystemsTableProps ...
@@ -30,6 +33,43 @@ func SystemsTable(props SystemsTableProps, children ...htmx.Node) htmx.Node {
 		tables.Table(
 			tables.TableProps{
 				ID: "systems-tables",
+				Pagination: tables.TablePagination(
+					tables.TablePaginationProps{
+						Pagination: tables.Pagination(
+							tables.PaginationProps{
+								Offset: props.Offset,
+								Limit:  props.Limit,
+								Total:  props.Total,
+							},
+							tables.Prev(
+								tables.PaginationProps{
+									Total:  props.Total,
+									Offset: props.Offset,
+									Limit:  props.Limit,
+									URL:    "/systems",
+								},
+							),
+
+							tables.Select(
+								tables.SelectProps{
+									Total:  props.Total,
+									Offset: props.Offset,
+									Limit:  props.Limit,
+									Limits: tables.DefaultLimits,
+									URL:    "/systems",
+								},
+							),
+							tables.Next(
+								tables.PaginationProps{
+									Total:  props.Total,
+									Offset: props.Offset,
+									Limit:  props.Limit,
+									URL:    "/systems",
+								},
+							),
+						),
+					},
+				),
 				Toolbar: tables.TableToolbar(
 					tables.TableToolbarProps{
 						ClassNames: htmx.ClassNames{
@@ -97,32 +137,56 @@ func SystemsTable(props SystemsTableProps, children ...htmx.Node) htmx.Node {
 					},
 				},
 				{
+					ID:          "operator",
+					AccessorKey: "operator",
+					Header: func(p tables.TableProps) htmx.Node {
+						return htmx.Th(htmx.Text("Operator"))
+					},
+					Cell: func(p tables.TableProps, row *models.System) htmx.Node {
+						return htmx.Td(
+							links.Link(
+								links.LinkProps{Href: fmt.Sprintf(showOperatorURLFormat, row.Operator.ID)},
+								htmx.Text(row.Operator.Name),
+							),
+						)
+					},
+				},
+				{
 					Header: func(p tables.TableProps) htmx.Node {
 						return nil
 					},
 					Cell: func(p tables.TableProps, row *models.System) htmx.Node {
 						return htmx.Td(
-							buttons.Button(
-								buttons.ButtonProps{
-									ClassNames: htmx.ClassNames{
-										"btn-square": true,
-									},
-								},
+							dropdowns.Dropdown(
+								dropdowns.DropdownProps{},
+								dropdowns.DropdownButton(
+									dropdowns.DropdownButtonProps{},
+									icons.BoltOutline(
+										icons.IconProps{},
+									),
+								),
+								dropdowns.DropdownMenuItems(
+									dropdowns.DropdownMenuItemsProps{},
+									dropdowns.DropdownMenuItem(
+										dropdowns.DropdownMenuItemProps{},
+										buttons.Error(
+											buttons.ButtonProps{
+												ClassNames: htmx.ClassNames{
+													"btn-sm": true,
+												},
+											},
+											htmx.HxDelete(fmt.Sprintf("/systems/%s", row.ID)),
+											htmx.HxConfirm("Are you sure you want to delete this system?"),
+											htmx.Text("Delete"),
+										),
+									),
+								),
 							),
 						)
 					},
 				},
 			},
 			props.Systems,
-			// Pagination: ProfileListTablePaginationComponent(
-			// 	ProfileListTablePaginationProps{
-			// 		Limit:  props.Limit,
-			// 		Offset: props.Offset,
-			// 		Total:  props.Total,
-			// 		Target: "profiles-tables",
-			// 		Team:   props.Team,
-			// 	},
-			// ),
 		),
 	)
 }
