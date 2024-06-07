@@ -234,6 +234,76 @@ func (l *NewUserControllerImpl) Get() error {
 							cards.BodyProps{},
 							cards.Title(
 								cards.TitleProps{},
+								htmx.Text("Limits"),
+							),
+							forms.FormControl(
+								forms.FormControlProps{
+									ClassNames: htmx.ClassNames{
+										"py-4": true,
+									},
+								},
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{},
+										htmx.Text("Max Subscriptions"),
+									),
+								),
+								forms.TextInputBordered(
+									forms.TextInputProps{
+										Name:  "max_subscriptions",
+										Value: "-1",
+									},
+								),
+							),
+							forms.FormControl(
+								forms.FormControlProps{
+									ClassNames: htmx.ClassNames{
+										"py-4": true,
+									},
+								},
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{},
+										htmx.Text("Max Payload Size (bytes)"),
+									),
+								),
+								forms.TextInputBordered(
+									forms.TextInputProps{
+										Name:  "max_payload",
+										Value: "-1",
+									},
+								),
+							),
+							forms.FormControl(
+								forms.FormControlProps{
+									ClassNames: htmx.ClassNames{
+										"py-4": true,
+									},
+								},
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{},
+										htmx.Text("Max JWT Lifetime (seconds)"),
+									),
+								),
+								forms.TextInputBordered(
+									forms.TextInputProps{
+										Name:  "max_subscriptions",
+										Value: "0",
+									},
+								),
+							),
+						),
+					),
+					cards.CardBordered(
+						cards.CardProps{},
+						cards.Body(
+							cards.BodyProps{},
+							cards.Title(
+								cards.TitleProps{},
 								htmx.Text("Tags - Optional"),
 							),
 							cards.Actions(

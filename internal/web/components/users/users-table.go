@@ -1,12 +1,21 @@
 package users
 
 import (
+	"fmt"
+
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
+	"github.com/zeiss/fiber-htmx/components/dropdowns"
 	"github.com/zeiss/fiber-htmx/components/forms"
+	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tables"
 	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/utils"
+)
+
+const (
+	userShowURLFormat = "/users/%s"
 )
 
 // UsersTableProps ...
@@ -24,6 +33,43 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 		tables.Table(
 			tables.TableProps{
 				ID: "accounts-tables",
+				Pagination: tables.TablePagination(
+					tables.TablePaginationProps{
+						Pagination: tables.Pagination(
+							tables.PaginationProps{
+								Offset: props.Offset,
+								Limit:  props.Limit,
+								Total:  props.Total,
+							},
+							tables.Prev(
+								tables.PaginationProps{
+									Total:  props.Total,
+									Offset: props.Offset,
+									Limit:  props.Limit,
+									URL:    "/users",
+								},
+							),
+
+							tables.Select(
+								tables.SelectProps{
+									Total:  props.Total,
+									Offset: props.Offset,
+									Limit:  props.Limit,
+									Limits: tables.DefaultLimits,
+									URL:    "/users",
+								},
+							),
+							tables.Next(
+								tables.PaginationProps{
+									Total:  props.Total,
+									Offset: props.Offset,
+									Limit:  props.Limit,
+									URL:    "/users",
+								},
+							),
+						),
+					},
+				),
 				Toolbar: tables.TableToolbar(
 					tables.TableToolbarProps{
 						ClassNames: htmx.ClassNames{
@@ -61,15 +107,6 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 						),
 					),
 				),
-				// Pagination: ProfileListTablePaginationComponent(
-				// 	ProfileListTablePaginationProps{
-				// 		Limit:  props.Limit,
-				// 		Offset: props.Offset,
-				// 		Total:  props.Total,
-				// 		Target: "profiles-tables",
-				// 		Team:   props.Team,
-				// 	},
-				// ),
 			},
 			[]tables.ColumnDef[*models.User]{
 				{
@@ -80,7 +117,31 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 					},
 					Cell: func(p tables.TableProps, row *models.User) htmx.Node {
 						return htmx.Td(
+							htmx.Class("truncate"),
 							htmx.Text(row.ID.String()),
+						)
+					},
+				},
+				{
+					ID:          "pubKey",
+					AccessorKey: "pubKey",
+					Header: func(p tables.TableProps) htmx.Node {
+						return htmx.Th(htmx.Text("Public Key"))
+					},
+					Cell: func(p tables.TableProps, row *models.User) htmx.Node {
+						return htmx.Td(htmx.Text(utils.ShortPubKey(row.Key.ID)))
+					},
+				},
+				{
+					ID:          "accountName",
+					AccessorKey: "accountName",
+					Header: func(p tables.TableProps) htmx.Node {
+						return htmx.Th(htmx.Text("Account"))
+					},
+					Cell: func(p tables.TableProps, row *models.User) htmx.Node {
+						return htmx.Td(
+							htmx.Class("truncate"),
+							htmx.Text(row.Account.Name),
 						)
 					},
 				},
@@ -94,7 +155,7 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 						return htmx.Td(
 							links.Link(
 								links.LinkProps{
-									Href: "/users/" + row.ID.String(),
+									Href: fmt.Sprintf(userShowURLFormat, row.ID),
 								},
 								htmx.Text(row.Name),
 							),
@@ -107,12 +168,36 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 					},
 					Cell: func(p tables.TableProps, row *models.User) htmx.Node {
 						return htmx.Td(
-							buttons.Button(
-								buttons.ButtonProps{
-									ClassNames: htmx.ClassNames{
-										"btn-square": true,
-									},
-								},
+							dropdowns.Dropdown(
+								dropdowns.DropdownProps{},
+								dropdowns.DropdownButton(
+									dropdowns.DropdownButtonProps{},
+									icons.BoltOutline(
+										icons.IconProps{},
+									),
+								),
+								dropdowns.DropdownMenuItems(
+									dropdowns.DropdownMenuItemsProps{},
+									dropdowns.DropdownMenuItem(
+										dropdowns.DropdownMenuItemProps{},
+										htmx.A(
+											htmx.Href(fmt.Sprintf("/users/%s/credentials", row.ID)),
+											htmx.Text("Get Credentials"),
+										),
+									),
+									dropdowns.DropdownMenuItem(
+										dropdowns.DropdownMenuItemProps{},
+										buttons.Error(
+											buttons.ButtonProps{
+												ClassNames: htmx.ClassNames{
+													"btn-sm": true,
+												},
+											},
+											htmx.HxDelete(fmt.Sprintf("/users/%s", row.ID)),
+											htmx.Text("Delete User"),
+										),
+									),
+								),
 							),
 						)
 					},

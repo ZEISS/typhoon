@@ -203,7 +203,7 @@ func (t *datastoreTx) GetUser(ctx context.Context, user *models.User) error {
 
 // ListUsers ...
 func (t *datastoreTx) ListUsers(ctx context.Context, pagination *tables.Results[models.User]) error {
-	return t.tx.Scopes(tables.PaginatedResults(&pagination.Rows, pagination, t.tx)).Find(&pagination.Rows).Error
+	return t.tx.Scopes(tables.PaginatedResults(&pagination.Rows, pagination, t.tx)).Preload("Account").Preload("Key").Find(&pagination.Rows).Error
 }
 
 // CreateUser ...

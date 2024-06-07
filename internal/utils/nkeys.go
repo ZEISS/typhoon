@@ -11,3 +11,8 @@ func CreateNKeyPair(p nkeys.PrefixByte) (nkeys.KeyPair, error) {
 
 	return kp, nil
 }
+
+// ShortPubKey returns the first 8 characters of the public key.
+func ShortPubKey(pubKey string) string {
+	return FirstN(pubKey, 8)
+}

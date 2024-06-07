@@ -52,7 +52,7 @@ func (l *ListUsersController) Get() error {
 			},
 			components.Layout(
 				components.LayoutProps{
-					Path: l.Ctx().Path(),
+					Path: l.Path(),
 				},
 				cards.CardBordered(
 					cards.CardProps{},
