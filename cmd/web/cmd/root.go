@@ -20,6 +20,7 @@ import (
 	"github.com/katallaxie/pkg/server"
 	"github.com/spf13/cobra"
 	goth "github.com/zeiss/fiber-goth"
+	adapter "github.com/zeiss/fiber-goth/adapters/gorm"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -99,7 +100,13 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 			return err
 		}
 
+		gorm, err := adapter.New(conn)
+		if err != nil {
+			return err
+		}
+
 		gothConfig := goth.Config{
+			Adapter:        gorm,
 			Secret:         goth.GenerateKey(),
 			CookieHTTPOnly: true,
 		}
