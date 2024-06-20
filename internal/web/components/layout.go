@@ -1,7 +1,7 @@
 package components
 
 import (
-	authz "github.com/zeiss/fiber-authz"
+	"github.com/zeiss/fiber-goth/adapters"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/avatars"
 	"github.com/zeiss/fiber-htmx/components/buttons"
@@ -16,8 +16,8 @@ import (
 // LayoutProps is the properties for the Layout component.
 type LayoutProps struct {
 	Children []htmx.Node
-	Team     *authz.Team
-	User     *authz.User
+	Team     adapters.GothTeam
+	User     adapters.GothUser
 	Path     string
 }
 

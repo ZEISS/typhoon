@@ -3,13 +3,11 @@ package cmd
 import (
 	"context"
 
-	authz "github.com/zeiss/fiber-authz"
 	"github.com/zeiss/typhoon/internal/api/adapters"
 	"github.com/zeiss/typhoon/internal/api/adapters/db"
 	"github.com/zeiss/typhoon/internal/api/adapters/handlers"
 	"github.com/zeiss/typhoon/internal/api/controllers"
 	"github.com/zeiss/typhoon/internal/utils"
-	openapi "github.com/zeiss/typhoon/pkg/apis"
 
 	"github.com/gofiber/fiber/v2"
 	logger "github.com/gofiber/fiber/v2/middleware/logger"
@@ -17,6 +15,8 @@ import (
 	"github.com/katallaxie/pkg/server"
 	middleware "github.com/oapi-codegen/fiber-middleware"
 	"github.com/spf13/cobra"
+	authz "github.com/zeiss/fiber-authz"
+	openapi "github.com/zeiss/typhoon/pkg/apis"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -64,11 +64,6 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 				TablePrefix: "typhoon_",
 			},
 		})
-		if err != nil {
-			return err
-		}
-
-		err = authz.RunMigrations(conn)
 		if err != nil {
 			return err
 		}

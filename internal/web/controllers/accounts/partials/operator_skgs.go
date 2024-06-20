@@ -68,7 +68,7 @@ func (l *OperatorSkgsOptionsImpl) Get() error {
 			htmx.ID("operator-skgs"),
 			htmx.Name("operator_skgs_id"),
 			htmx.Group(
-				htmx.ForEach(skgs, func(e *models.SigningKeyGroup) htmx.Node {
+				htmx.ForEach(skgs, func(e *models.SigningKeyGroup, idx int) htmx.Node {
 					return htmx.Option(
 						htmx.Attribute("value", e.KeyID),
 						htmx.Text(e.Name),

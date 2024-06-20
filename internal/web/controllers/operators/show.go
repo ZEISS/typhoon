@@ -192,7 +192,7 @@ func (l *ShowOperatorControllerImpl) Get() error {
 										),
 										htmx.Name("system_account_id"),
 										htmx.Group(
-											htmx.ForEach(accs, func(account *models.Account) htmx.Node {
+											htmx.ForEach(accs, func(account *models.Account, idx int) htmx.Node {
 												return forms.Option(
 													forms.OptionProps{
 														Value:    account.ID.String(),

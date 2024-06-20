@@ -19,7 +19,6 @@ import (
 	requestid "github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/katallaxie/pkg/server"
 	"github.com/spf13/cobra"
-	authz "github.com/zeiss/fiber-authz"
 	goth "github.com/zeiss/fiber-goth"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -100,15 +99,9 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 			return err
 		}
 
-		tbac := authz.NewTBAC(conn)
-
 		gothConfig := goth.Config{
-			Adapter:        tbac,
 			Secret:         goth.GenerateKey(),
 			CookieHTTPOnly: true,
-			ResponseFilter: func(c *fiber.Ctx) error {
-				return c.Redirect("/")
-			},
 		}
 
 		handlers := handlers.NewHandlers(store)
@@ -122,7 +115,6 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		}))
 
 		app.Use(goth.NewProtectMiddleware(gothConfig))
-		app.Use(authz.SetAuthzHandler(authz.NewNoopObjectResolver(), authz.NewNoopActionResolver(), authz.NewGothAuthzPrincipalResolver()))
 
 		app.Get("/login", handlers.Login())
 		app.Get("/login/:provider", goth.NewBeginAuthHandler(gothConfig))

@@ -103,7 +103,7 @@ func (l *NewAccountControllerImpl) Get() error {
 											),
 											htmx.Name("operator_id"),
 											htmx.Group(
-												htmx.ForEach(l.Results.GetRows(), func(operator *models.Operator) htmx.Node {
+												htmx.ForEach(l.Results.GetRows(), func(operator *models.Operator, idx int) htmx.Node {
 													return forms.Option(
 														forms.OptionProps{
 															Value: operator.ID.String(),
@@ -239,6 +239,23 @@ func (l *NewAccountControllerImpl) Get() error {
 								htmx.Text("Limits"),
 							),
 							forms.FormControl(
+								forms.FormControlProps{},
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{},
+										htmx.Text("Enable JetStream"),
+									),
+								),
+								forms.Toggle(
+									forms.ToggleProps{
+										Checked: true,
+									},
+									htmx.ID("jetstream_enable"),
+									htmx.Name("jetstream_enable"),
+								),
+							),
+							forms.FormControl(
 								forms.FormControlProps{
 									ClassNames: htmx.ClassNames{
 										"py-4": true,
@@ -247,27 +264,16 @@ func (l *NewAccountControllerImpl) Get() error {
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
 									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{},
-										htmx.Text("Enable JetStream"),
-									),
-									forms.Toggle(
-										forms.ToggleProps{
-											Checked: true,
-										},
-										htmx.ID("jetstream_enable"),
-										htmx.Name("jetstream_enable"),
-									),
-								),
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
 										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"w-full": true,
-											},
+											ClassNames: htmx.ClassNames{},
 										},
 										htmx.Text("Max Disk Storage"),
 									),
+								),
+								htmx.Div(
+									htmx.ClassNames{
+										"flex": true,
+									},
 									forms.TextInputBordered(
 										forms.TextInputProps{
 											Name:  "jetstream_max_disk_storage",
@@ -314,6 +320,9 @@ func (l *NewAccountControllerImpl) Get() error {
 										),
 									),
 								),
+							),
+							forms.FormControl(
+								forms.FormControlProps{},
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
 									forms.FormControlLabelText(
@@ -324,13 +333,16 @@ func (l *NewAccountControllerImpl) Get() error {
 										},
 										htmx.Text("Streams"),
 									),
-									forms.TextInputBordered(
-										forms.TextInputProps{
-											Name:  "jetstream_max_streams",
-											Value: "10",
-										},
-									),
 								),
+								forms.TextInputBordered(
+									forms.TextInputProps{
+										Name:  "jetstream_max_streams",
+										Value: "10",
+									},
+								),
+							),
+							forms.FormControl(
+								forms.FormControlProps{},
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
 									forms.FormControlLabelText(
@@ -341,13 +353,16 @@ func (l *NewAccountControllerImpl) Get() error {
 										},
 										htmx.Text("Consumers"),
 									),
-									forms.TextInputBordered(
-										forms.TextInputProps{
-											Name:  "jetstream_max_consumers",
-											Value: "10",
-										},
-									),
 								),
+								forms.TextInputBordered(
+									forms.TextInputProps{
+										Name:  "jetstream_max_consumers",
+										Value: "10",
+									},
+								),
+							),
+							forms.FormControl(
+								forms.FormControlProps{},
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
 									forms.FormControlLabelText(
@@ -358,6 +373,11 @@ func (l *NewAccountControllerImpl) Get() error {
 										},
 										htmx.Text("Max Stream Size"),
 									),
+								),
+								htmx.Div(
+									htmx.ClassNames{
+										"flex": true,
+									},
 									forms.TextInputBordered(
 										forms.TextInputProps{
 											Name:  "jetstream_max_stream_size",
@@ -404,18 +424,21 @@ func (l *NewAccountControllerImpl) Get() error {
 										),
 									),
 								),
+							),
+							forms.FormControl(
+								forms.FormControlProps{},
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
 									forms.FormControlLabelText(
 										forms.FormControlLabelTextProps{},
 										htmx.Text("Require Max Bytes"),
 									),
-									forms.Toggle(
-										forms.ToggleProps{
-											Checked: true,
-										},
-										htmx.Name("jetstream_max_bytes_required"),
-									),
+								),
+								forms.Toggle(
+									forms.ToggleProps{
+										Checked: true,
+									},
+									htmx.Name("jetstream_max_bytes_required"),
 								),
 							),
 						),

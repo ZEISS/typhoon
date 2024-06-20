@@ -78,7 +78,7 @@ func (l *NewSystemControllerImpl) Get() error {
 									),
 									htmx.Name("operator_id"),
 									htmx.Group(
-										htmx.ForEach(l.Results.GetRows(), func(operator *models.Operator) htmx.Node {
+										htmx.ForEach(l.Results.GetRows(), func(operator *models.Operator, idx int) htmx.Node {
 											return forms.Option(
 												forms.OptionProps{
 													Value: operator.ID.String(),

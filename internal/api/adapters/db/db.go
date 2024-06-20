@@ -26,6 +26,7 @@ func (db *DB) RunMigrations() error {
 		&adapters.GothUser{},
 		&adapters.GothAccount{},
 		&adapters.GothSession{},
+		&adapters.GothTeam{},
 		&adapters.GothVerificationToken{},
 		&models.User{},
 		&models.Account{},

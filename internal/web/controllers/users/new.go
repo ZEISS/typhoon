@@ -101,7 +101,7 @@ func (l *NewUserControllerImpl) Get() error {
 											),
 											htmx.Name("account_id"),
 											htmx.Group(
-												htmx.ForEach(l.Results.GetRows(), func(operator *models.Account) htmx.Node {
+												htmx.ForEach(l.Results.GetRows(), func(operator *models.Account, idx int) htmx.Node {
 													return forms.Option(
 														forms.OptionProps{
 															Value: operator.ID.String(),
