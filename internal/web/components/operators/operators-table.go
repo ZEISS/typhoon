@@ -31,41 +31,40 @@ func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node 
 			tables.TableProps{
 				ID: "operators-tables",
 				Pagination: tables.TablePagination(
-					tables.TablePaginationProps{
-						Pagination: tables.Pagination(
+					tables.TablePaginationProps{},
+					tables.Pagination(
+						tables.PaginationProps{
+							Offset: props.Offset,
+							Limit:  props.Limit,
+							Total:  props.Total,
+						},
+						tables.Prev(
 							tables.PaginationProps{
+								Total:  props.Total,
 								Offset: props.Offset,
 								Limit:  props.Limit,
-								Total:  props.Total,
+								URL:    "/operators",
 							},
-							tables.Prev(
-								tables.PaginationProps{
-									Total:  props.Total,
-									Offset: props.Offset,
-									Limit:  props.Limit,
-									URL:    "/operators",
-								},
-							),
-
-							tables.Select(
-								tables.SelectProps{
-									Total:  props.Total,
-									Offset: props.Offset,
-									Limit:  props.Limit,
-									Limits: tables.DefaultLimits,
-									URL:    "/operators",
-								},
-							),
-							tables.Next(
-								tables.PaginationProps{
-									Total:  props.Total,
-									Offset: props.Offset,
-									Limit:  props.Limit,
-									URL:    "/operators",
-								},
-							),
 						),
-					},
+
+						tables.Select(
+							tables.SelectProps{
+								Total:  props.Total,
+								Offset: props.Offset,
+								Limit:  props.Limit,
+								Limits: tables.DefaultLimits,
+								URL:    "/operators",
+							},
+						),
+						tables.Next(
+							tables.PaginationProps{
+								Total:  props.Total,
+								Offset: props.Offset,
+								Limit:  props.Limit,
+								URL:    "/operators",
+							},
+						),
+					),
 				),
 				Toolbar: tables.TableToolbar(
 					tables.TableToolbarProps{

@@ -34,41 +34,40 @@ func SystemsTable(props SystemsTableProps, children ...htmx.Node) htmx.Node {
 			tables.TableProps{
 				ID: "systems-tables",
 				Pagination: tables.TablePagination(
-					tables.TablePaginationProps{
-						Pagination: tables.Pagination(
+					tables.TablePaginationProps{},
+					tables.Pagination(
+						tables.PaginationProps{
+							Offset: props.Offset,
+							Limit:  props.Limit,
+							Total:  props.Total,
+						},
+						tables.Prev(
 							tables.PaginationProps{
+								Total:  props.Total,
 								Offset: props.Offset,
 								Limit:  props.Limit,
-								Total:  props.Total,
+								URL:    "/systems",
 							},
-							tables.Prev(
-								tables.PaginationProps{
-									Total:  props.Total,
-									Offset: props.Offset,
-									Limit:  props.Limit,
-									URL:    "/systems",
-								},
-							),
-
-							tables.Select(
-								tables.SelectProps{
-									Total:  props.Total,
-									Offset: props.Offset,
-									Limit:  props.Limit,
-									Limits: tables.DefaultLimits,
-									URL:    "/systems",
-								},
-							),
-							tables.Next(
-								tables.PaginationProps{
-									Total:  props.Total,
-									Offset: props.Offset,
-									Limit:  props.Limit,
-									URL:    "/systems",
-								},
-							),
 						),
-					},
+
+						tables.Select(
+							tables.SelectProps{
+								Total:  props.Total,
+								Offset: props.Offset,
+								Limit:  props.Limit,
+								Limits: tables.DefaultLimits,
+								URL:    "/systems",
+							},
+						),
+						tables.Next(
+							tables.PaginationProps{
+								Total:  props.Total,
+								Offset: props.Offset,
+								Limit:  props.Limit,
+								URL:    "/systems",
+							},
+						),
+					),
 				),
 				Toolbar: tables.TableToolbar(
 					tables.TableToolbarProps{
