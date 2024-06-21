@@ -131,6 +131,16 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		// Root handler
 		app.Get("/", handlers.Dashboard())
 
+		// Site handler
+		site := app.Group("/site")
+
+		// Teams handler
+		site.Get("/teams", handlers.ListTeams())
+		site.Get("/teams/new", handlers.NewTeam())
+		site.Post("/teams/new", handlers.CreateTeam())
+		site.Get("/teams/:id", handlers.ShowTeam())
+		site.Delete("/teams/:id", handlers.DeleteTeam())
+
 		// Me handler
 		app.Get("/me", handlers.Me())
 

@@ -1,60 +1,44 @@
-package systems
+package teams
 
 import (
-	"context"
+	"github.com/zeiss/typhoon/internal/web/components"
+	"github.com/zeiss/typhoon/internal/web/ports"
 
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/forms"
-	"github.com/zeiss/fiber-htmx/components/tables"
-	"github.com/zeiss/typhoon/internal/api/models"
-	"github.com/zeiss/typhoon/internal/web/components"
-	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
-// NewSystemControllerImpl ...
-type NewSystemControllerImpl struct {
-	Results tables.Results[models.Operator]
-
+// NewTeamControllerImpl ...
+type NewTeamControllerImpl struct {
 	store ports.Datastore
 	htmx.DefaultController
 }
 
-// NewSystemController ...
-func NewSystemController(store ports.Datastore) *NewSystemControllerImpl {
-	return &NewSystemControllerImpl{
-		Results:           tables.Results[models.Operator]{},
-		DefaultController: htmx.DefaultController{},
-		store:             store,
-	}
+// NewTeamController ...
+func NewTeamController(store ports.Datastore) *NewTeamControllerImpl {
+	return &NewTeamControllerImpl{store: store}
 }
 
-// Prepare ...
-func (l *NewSystemControllerImpl) Prepare() error {
-	err := l.BindQuery(&l.Results)
-	if err != nil {
-		return err
-	}
-
-	return l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
-		return tx.ListOperators(ctx, &l.Results)
-	})
-}
-
-// Get ...
-func (l *NewSystemControllerImpl) Get() error {
-	return l.Render(
+// New ...
+func (p *NewTeamControllerImpl) Get() error {
+	return p.Render(
 		components.Page(
 			components.PageProps{},
 			components.Layout(
 				components.LayoutProps{
-					Path: l.Path(),
+					Path: p.Path(),
 				},
 				htmx.FormElement(
-					htmx.HxPost("/systems"),
+					htmx.HxPost(""),
 					cards.CardBordered(
-						cards.CardProps{},
+						cards.CardProps{
+							ClassNames: htmx.ClassNames{
+								"w-full": true,
+								"my-4":   true,
+							},
+						},
 						cards.Body(
 							cards.BodyProps{},
 							cards.Title(
@@ -63,57 +47,22 @@ func (l *NewSystemControllerImpl) Get() error {
 							),
 							forms.FormControl(
 								forms.FormControlProps{},
-								forms.SelectBordered(
-									forms.SelectProps{},
-									forms.Option(
-										forms.OptionProps{
-											Selected: true,
-											Disabled: true,
-										},
-										htmx.Text("Select operator"),
-									),
-									htmx.Name("operator_id"),
-									htmx.Group(
-										htmx.ForEach(l.Results.GetRows(), func(operator *models.Operator, idx int) htmx.Node {
-											return forms.Option(
-												forms.OptionProps{
-													Value: operator.ID.String(),
-												},
-												htmx.Text(operator.Name),
-											)
-										})...,
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{},
+										htmx.Text("Name"),
 									),
 								),
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
-									forms.FormControlLabelAltText(
-										forms.FormControlLabelAltTextProps{
-											ClassNames: htmx.ClassNames{
-												"text-neutral-500": true,
-											},
-										},
-										htmx.Text("An operator needs to be created before adding a system."),
-									),
-								),
-							),
-							forms.FormControl(
-								forms.FormControlProps{},
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{
-										ClassNames: htmx.ClassNames{
-											"flex":        true,
-											"flex-col":    true,
-											"items-start": true,
-										},
-									},
 									forms.FormControlLabelText(
 										forms.FormControlLabelTextProps{
 											ClassNames: htmx.ClassNames{
-												"w-full":           true,
 												"text-neutral-500": true,
 											},
 										},
-										htmx.Text("A unique identifier for the system."),
+										htmx.Text("Give the team a great name."),
 									),
 								),
 								forms.TextInputBordered(
@@ -123,8 +72,8 @@ func (l *NewSystemControllerImpl) Get() error {
 								),
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
-									forms.FormControlLabelAltText(
-										forms.FormControlLabelAltTextProps{
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
 											ClassNames: htmx.ClassNames{
 												"text-neutral-500": true,
 											},
@@ -138,12 +87,64 @@ func (l *NewSystemControllerImpl) Get() error {
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
 									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{},
+										htmx.Text("Slug"),
+									),
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
 										forms.FormControlLabelTextProps{
 											ClassNames: htmx.ClassNames{
 												"text-neutral-500": true,
 											},
 										},
-										htmx.Text("A brief description of the system to provide context."),
+										htmx.Text("A unique identifier of the team"),
+									),
+								),
+								forms.TextInputBordered(
+									forms.TextInputProps{
+										Name: "slug",
+									},
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												"text-neutral-500": true,
+											},
+										},
+										htmx.Text("The slug must be from 3 to 100 characters. At least 3 characters must be non-whitespace."),
+									),
+								),
+							),
+							forms.FormControl(
+								forms.FormControlProps{
+									ClassNames: htmx.ClassNames{
+										"py-4": true,
+									},
+								},
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												"-my-4": true,
+											},
+										},
+										htmx.Text("Description"),
+									),
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												"text-neutral-500": true,
+											},
+										},
+										htmx.Text("A brief description of the team."),
 									),
 								),
 								forms.TextareaBordered(
@@ -166,7 +167,12 @@ func (l *NewSystemControllerImpl) Get() error {
 						),
 					),
 					cards.CardBordered(
-						cards.CardProps{},
+						cards.CardProps{
+							ClassNames: htmx.ClassNames{
+								"w-full": true,
+								"my-4":   true,
+							},
+						},
 						cards.Body(
 							cards.BodyProps{},
 							cards.Title(
@@ -175,10 +181,10 @@ func (l *NewSystemControllerImpl) Get() error {
 							),
 							cards.Actions(
 								cards.ActionsProps{},
-								buttons.Outline(
+								buttons.OutlinePrimary(
 									buttons.ButtonProps{},
 									htmx.Attribute("type", "submit"),
-									htmx.Text("Create System"),
+									htmx.Text("Create Team"),
 								),
 							),
 						),
