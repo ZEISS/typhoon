@@ -66,93 +66,109 @@ func (l *NewAccountControllerImpl) Get() error {
 							),
 							forms.FormControl(
 								forms.FormControlProps{
-									ClassNames: htmx.ClassNames{
-										"py-4": true,
-									},
+									ClassNames: htmx.ClassNames{},
 								},
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
 									forms.FormControlLabelText(
 										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"-my-4": true,
-											},
+											ClassNames: htmx.ClassNames{},
 										},
-										htmx.Text("Operator	"),
+										htmx.Text("Team"),
 									),
 								),
+								forms.SelectBordered(
+									forms.SelectProps{},
+									htmx.HxGet("/accounts/partials/teams"),
+									htmx.HxTarget("#teams"),
+									htmx.HxSwap("outerHTML"),
+									forms.Option(
+										forms.OptionProps{
+											Selected: true,
+											Disabled: true,
+										},
+										htmx.Text("Select a team"),
+									),
+									htmx.Name("team_id"),
+									htmx.Group(
+										htmx.ForEach(l.Results.GetRows(), func(operator *models.Operator, idx int) htmx.Node {
+											return forms.Option(
+												forms.OptionProps{
+													Value: operator.ID.String(),
+												},
+												htmx.Text(operator.Name),
+											)
+										})...,
+									),
+								),
+							),
+							forms.FormControl(
+								forms.FormControlProps{
+									ClassNames: htmx.ClassNames{},
+								},
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
 									forms.FormControlLabelText(
 										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"text-neutral-500": true,
-											},
+											ClassNames: htmx.ClassNames{},
 										},
-										forms.SelectBordered(
-											forms.SelectProps{},
-											htmx.HxGet("/accounts/partials/operator-skgs"),
-											htmx.HxTarget("#operator-skgs"),
-											htmx.HxSwap("outerHTML"),
-											forms.Option(
-												forms.OptionProps{
-													Selected: true,
-													Disabled: true,
-												},
-												htmx.Text("Select an operator"),
-											),
-											htmx.Name("operator_id"),
-											htmx.Group(
-												htmx.ForEach(l.Results.GetRows(), func(operator *models.Operator, idx int) htmx.Node {
-													return forms.Option(
-														forms.OptionProps{
-															Value: operator.ID.String(),
-														},
-														htmx.Text(operator.Name),
-													)
-												})...,
-											),
-										),
+										htmx.Text("Operator"),
 									),
 								),
-								forms.FormControl(
-									forms.FormControlProps{
-										ClassNames: htmx.ClassNames{
-											"py-4": true,
+								forms.SelectBordered(
+									forms.SelectProps{},
+									htmx.HxGet("/accounts/partials/operator-skgs"),
+									htmx.HxTarget("#operator-skgs"),
+									htmx.HxSwap("outerHTML"),
+									forms.Option(
+										forms.OptionProps{
+											Selected: true,
+											Disabled: true,
 										},
-									},
-									forms.FormControlLabel(
-										forms.FormControlLabelProps{},
-										forms.FormControlLabelText(
-											forms.FormControlLabelTextProps{
-												ClassNames: htmx.ClassNames{
-													"-my-4": true,
-												},
-											},
-											htmx.Text("Signing Key Group"),
-										),
+										htmx.Text("Select an operator"),
 									),
-									forms.FormControlLabel(
-										forms.FormControlLabelProps{},
-										forms.FormControlLabelText(
-											forms.FormControlLabelTextProps{
-												ClassNames: htmx.ClassNames{
-													"text-neutral-500": true,
+									htmx.Name("operator_id"),
+									htmx.Group(
+										htmx.ForEach(l.Results.GetRows(), func(operator *models.Operator, idx int) htmx.Node {
+											return forms.Option(
+												forms.OptionProps{
+													Value: operator.ID.String(),
 												},
-											},
-											forms.SelectBordered(
-												forms.SelectProps{},
-												forms.Option(
-													forms.OptionProps{
-														Selected: true,
-														Disabled: true,
-													},
-													htmx.Text("Select an signing key group"),
-												),
-												htmx.ID("operator-skgs"),
-												htmx.Name("operator_skgs_id"),
-											),
-										),
+												htmx.Text(operator.Name),
+											)
+										})...,
+									),
+								),
+							),
+							forms.FormControl(
+								forms.FormControlProps{},
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{},
+										htmx.Text("Signing Key Group"),
+									),
+								),
+								forms.SelectBordered(
+									forms.SelectProps{},
+									forms.Option(
+										forms.OptionProps{
+											Selected: true,
+											Disabled: true,
+										},
+										htmx.Text("Select an signing key group"),
+									),
+									htmx.ID("operator-skgs"),
+									htmx.Name("operator_skgs_id"),
+								),
+							),
+							forms.FormControl(
+								forms.FormControlProps{},
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{},
+										htmx.Text("Name"),
 									),
 								),
 								forms.FormControlLabel(
@@ -182,49 +198,41 @@ func (l *NewAccountControllerImpl) Get() error {
 										htmx.Text("The name must be from 3 to 100 characters. At least 3 characters must be non-whitespace."),
 									),
 								),
-								forms.FormControl(
-									forms.FormControlProps{
-										ClassNames: htmx.ClassNames{
-											"py-4": true,
+							),
+							forms.FormControl(
+								forms.FormControlProps{},
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{},
+										htmx.Text("Description"),
+									),
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												"text-neutral-500": true,
+											},
 										},
+										htmx.Text("A brief description of the acount to provide context."),
+									),
+								),
+								forms.TextareaBordered(
+									forms.TextareaProps{
+										Name: "description",
 									},
-									forms.FormControlLabel(
-										forms.FormControlLabelProps{},
-										forms.FormControlLabelText(
-											forms.FormControlLabelTextProps{
-												ClassNames: htmx.ClassNames{
-													"-my-4": true,
-												},
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												"text-neutral-500": true,
 											},
-											htmx.Text("Description"),
-										),
-									),
-									forms.FormControlLabel(
-										forms.FormControlLabelProps{},
-										forms.FormControlLabelText(
-											forms.FormControlLabelTextProps{
-												ClassNames: htmx.ClassNames{
-													"text-neutral-500": true,
-												},
-											},
-											htmx.Text("A brief description of the acount to provide context."),
-										),
-									),
-									forms.TextareaBordered(
-										forms.TextareaProps{
-											Name: "description",
 										},
-									),
-									forms.FormControlLabel(
-										forms.FormControlLabelProps{},
-										forms.FormControlLabelText(
-											forms.FormControlLabelTextProps{
-												ClassNames: htmx.ClassNames{
-													"text-neutral-500": true,
-												},
-											},
-											htmx.Text("The description must be from 3 to 1024 characters."),
-										),
+										htmx.Text("The description must be from 3 to 1024 characters."),
 									),
 								),
 							),

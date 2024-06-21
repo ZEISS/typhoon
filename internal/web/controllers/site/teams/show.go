@@ -151,13 +151,12 @@ func (p *TeamShowControllerImpl) Get() error {
 									links.LinkProps{
 										ClassNames: htmx.ClassNames{
 											"btn-outline": true,
-											"btn-primary": true,
 										},
 										Href: fmt.Sprintf("%s/edit", p.team.ID),
 									},
 									htmx.Text("Edit"),
 								),
-								buttons.OutlinePrimary(
+								buttons.Outline(
 									buttons.ButtonProps{},
 									htmx.HxDelete(""),
 									htmx.HxConfirm("Are you sure you want to delete this team?"),

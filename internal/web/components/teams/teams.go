@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	showTeamsURLFormat = "/teams/%s"
+	showTeamsURLFormat = "/site/teams/%s"
 )
 
 // TeamsTableProps ...
@@ -135,16 +135,16 @@ func TeamsTable(props TeamsTableProps, children ...htmx.Node) htmx.Node {
 					},
 				},
 				{
-					ID:          "operator",
-					AccessorKey: "operator",
+					ID:          "slug",
+					AccessorKey: "slug",
 					Header: func(p tables.TableProps) htmx.Node {
-						return htmx.Th(htmx.Text("Operator"))
+						return htmx.Th(htmx.Text("Slug"))
 					},
 					Cell: func(p tables.TableProps, row *adapters.GothTeam) htmx.Node {
 						return htmx.Td(
 							links.Link(
 								links.LinkProps{Href: fmt.Sprintf(showTeamsURLFormat, row.ID)},
-								htmx.Text(row.Name),
+								htmx.Text(row.Slug),
 							),
 						)
 					},
