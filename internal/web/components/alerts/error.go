@@ -25,6 +25,7 @@ func Error(props ErrorProps, children ...htmx.Node) htmx.Node {
 		toasts.ToastEnd(
 			toasts.ToastProps{},
 			toasts.ToastAlertError(
+				toasts.ToastProps{},
 				icons.ExclamationCircleOutline(
 					icons.IconProps{},
 				),

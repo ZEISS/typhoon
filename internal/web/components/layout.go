@@ -15,10 +15,10 @@ import (
 
 // LayoutProps is the properties for the Layout component.
 type LayoutProps struct {
-	Children []htmx.Node
-	Team     adapters.GothTeam
-	User     adapters.GothUser
-	Path     string
+	// Team is the teams to user adapters.
+	Team adapters.GothTeam
+	User adapters.GothUser
+	Path string
 }
 
 // WrapProps ...
@@ -196,6 +196,14 @@ func Layout(p LayoutProps, children ...htmx.Node) htmx.Node {
 								"bg-base-200": false,
 							},
 						},
+						AccountSwitch(
+							AccountSwitchProps{
+								User: p.User,
+							},
+						),
+						dividers.Divider(
+							dividers.DividerProps{},
+						),
 						MainMenu(
 							MainMenuProps{
 								Path: p.Path,

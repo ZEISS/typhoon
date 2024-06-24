@@ -1,9 +1,13 @@
 package accounts
 
 import (
+	"fmt"
+
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
+	"github.com/zeiss/fiber-htmx/components/dropdowns"
 	"github.com/zeiss/fiber-htmx/components/forms"
+	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tables"
 	"github.com/zeiss/typhoon/internal/api/models"
@@ -134,27 +138,36 @@ func AccountsTable(props AccountsTableProps, children ...htmx.Node) htmx.Node {
 					},
 					Cell: func(p tables.TableProps, row *models.Account) htmx.Node {
 						return htmx.Td(
-							buttons.Button(
-								buttons.ButtonProps{
-									ClassNames: htmx.ClassNames{
-										"btn-square": true,
-									},
-								},
+							dropdowns.Dropdown(
+								dropdowns.DropdownProps{},
+								dropdowns.DropdownButton(
+									dropdowns.DropdownButtonProps{},
+									icons.BoltOutline(
+										icons.IconProps{},
+									),
+								),
+								dropdowns.DropdownMenuItems(
+									dropdowns.DropdownMenuItemsProps{},
+									dropdowns.DropdownMenuItem(
+										dropdowns.DropdownMenuItemProps{},
+										buttons.Error(
+											buttons.ButtonProps{
+												ClassNames: htmx.ClassNames{
+													"btn-sm": true,
+												},
+											},
+											htmx.HxDelete(fmt.Sprintf("//%s", row.ID)),
+											htmx.HxConfirm("Are you sure you want to delete this operator?"),
+											htmx.Text("Delete"),
+										),
+									),
+								),
 							),
 						)
 					},
 				},
 			},
 			props.Accounts,
-			// Pagination: ProfileListTablePaginationComponent(
-			// 	ProfileListTablePaginationProps{
-			// 		Limit:  props.Limit,
-			// 		Offset: props.Offset,
-			// 		Total:  props.Total,
-			// 		Target: "profiles-tables",
-			// 		Team:   props.Team,
-			// 	},
-			// ),
 		),
 	)
 }

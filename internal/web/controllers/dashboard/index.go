@@ -4,6 +4,7 @@ import (
 	"github.com/zeiss/typhoon/internal/web/components"
 
 	htmx "github.com/zeiss/fiber-htmx"
+	"github.com/zeiss/fiber-htmx/components/stats"
 )
 
 // IndexDashboardController ...
@@ -16,15 +17,9 @@ func NewIndexDashboardController() *IndexDashboardController {
 	return &IndexDashboardController{}
 }
 
-// Prepare ...
-func (d *IndexDashboardController) Prepare() error {
-	return nil
-}
-
 // Get ...
 func (l *IndexDashboardController) Get() error {
-	return htmx.RenderComp(
-		l.Ctx(),
+	return l.Render(
 		components.Page(
 			components.PageProps{
 				Title: "Dashboard",
@@ -35,9 +30,13 @@ func (l *IndexDashboardController) Get() error {
 				},
 				components.Wrap(
 					components.WrapProps{},
-				),
-				htmx.Div(
-					htmx.ID("messages"),
+					stats.Stats(
+						stats.StatsProps{},
+						stats.Title(
+							stats.TitleProps{},
+							htmx.Text("Dashboard"),
+						),
+					),
 				),
 			),
 		),

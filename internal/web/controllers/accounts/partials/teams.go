@@ -33,9 +33,7 @@ func (l *TeamsOptionsImpl) Prepare() error {
 
 // Get ...
 func (l *TeamsOptionsImpl) Get() error {
-
-	return htmx.RenderComp(
-		l.Ctx(),
+	return l.Render(
 		forms.SelectBordered(
 			forms.SelectProps{},
 			forms.Option(

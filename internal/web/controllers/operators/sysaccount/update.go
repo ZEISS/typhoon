@@ -135,6 +135,7 @@ func (l *UpdateSystemAccountControllerImpl) Put() error {
 					// 	htmx.Text("Error"),
 					// ),
 					toasts.ToastAlertSuccess(
+						toasts.ToastProps{},
 						icons.CheckCircleOutline(
 							icons.IconProps{},
 						),
