@@ -2,6 +2,7 @@ package accounts
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
@@ -19,6 +20,7 @@ var validate *validator.Validate
 // CreateControllerBody ...
 type CreateControllerBody struct {
 	OperatorID                  uuid.UUID `json:"operator_id" form:"operator_id" validate:"required,uuid"`
+	TeamID                      uuid.UUID `json:"team_id" form:"team_id" validate:"required,uuid"`
 	Name                        string    `json:"name" form:"name" validate:"required,min=3,max=100"`
 	Description                 string    `json:"description" form:"description" validate:"required,min=3,max=1024"`
 	JetStreamEnable             bool      `json:"jetstream_enable" form:"jetstream_enable"`
@@ -81,9 +83,12 @@ func (l *CreateControllerImpl) Error(err error) error {
 
 // Post ...
 func (l *CreateControllerImpl) Post() error {
+	fmt.Println(l.Form)
+
 	account := models.Account{
 		Name:                           l.Form.Name,
 		OperatorID:                     l.Form.OperatorID,
+		TeamID:                         l.Form.TeamID,
 		Description:                    utils.StrPtr(l.Form.Description),
 		LimitJetStreamMaxDiskStorage:   utils.PrettyByteSize(l.Form.JetStreamMaxDiskStorage, l.Form.JetStreamMaxDiskStorageUnit),
 		LimitJetStreamMaxStreams:       l.Form.JetStreamMaxStreams,

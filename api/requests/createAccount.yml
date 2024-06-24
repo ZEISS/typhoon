@@ -12,6 +12,9 @@ components:
               operatorId:
                 type: string
                 format: uuid
+              teamId:
+                type: string
+                format: uuid
               name:
                 type: string
               description:

@@ -1175,6 +1175,9 @@ components:
               operatorId:
                 type: string
                 format: uuid
+              teamId:
+                type: string
+                format: uuid
               name:
                 type: string
               description:
@@ -1345,6 +1348,8 @@ components:
           type: string
         contactEmail:
           type: string
+        team:
+          $ref: '#/components/schemas/Team'
         key:
           $ref: '#/components/schemas/KeyPair'
         signingKeys:

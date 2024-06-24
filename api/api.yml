@@ -1348,6 +1348,8 @@ components:
           type: string
         contactEmail:
           type: string
+        team:
+          $ref: "#/components/schemas/Team"
         key:
           $ref: "./schemas/keypair.yml#/components/schemas/KeyPair"
         signingKeys:

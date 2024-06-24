@@ -26,7 +26,9 @@ func (l *IndexDashboardController) Get() error {
 	return htmx.RenderComp(
 		l.Ctx(),
 		components.Page(
-			components.PageProps{},
+			components.PageProps{
+				Title: "Dashboard",
+			},
 			components.Layout(
 				components.LayoutProps{
 					Path: l.Ctx().Path(),

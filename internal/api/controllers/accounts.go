@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/nats-io/jwt"
@@ -16,6 +17,7 @@ type CreateAccountCommand struct {
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	OperatorID  uuid.UUID `json:"operator_id"`
+	TeamID      uuid.UUID `json:"team_id"`
 }
 
 // ListAccountsQuery ...
@@ -70,7 +72,10 @@ func (c *accountsController) CreateAccount(ctx context.Context, cmd CreateAccoun
 		Name:        cmd.Name,
 		OperatorID:  cmd.OperatorID,
 		Description: utils.StrPtr(cmd.Description),
+		TeamID:      cmd.TeamID,
 	}
+
+	fmt.Println(account)
 
 	operator := models.Operator{
 		ID: cmd.OperatorID,

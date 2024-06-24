@@ -3,6 +3,7 @@ package accounts
 import (
 	"context"
 
+	"github.com/zeiss/fiber-goth/adapters"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
@@ -16,29 +17,25 @@ import (
 // NewAccountControllerImpl ...
 type NewAccountControllerImpl struct {
 	Results tables.Results[models.Operator]
-
-	store ports.Datastore
+	Teams   tables.Results[adapters.GothTeam]
+	store   ports.Datastore
 	htmx.DefaultController
 }
 
 // NewAccountController ...
 func NewAccountController(store ports.Datastore) *NewAccountControllerImpl {
-	return &NewAccountControllerImpl{
-		Results:           tables.Results[models.Operator]{},
-		DefaultController: htmx.DefaultController{},
-		store:             store,
-	}
+	return &NewAccountControllerImpl{store: store}
 }
 
 // Prepare ...
 func (l *NewAccountControllerImpl) Prepare() error {
-	err := l.BindQuery(&l.Results)
-	if err != nil {
-		return err
-	}
-
 	return l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
-		return tx.ListOperators(ctx, &l.Results)
+		err := tx.ListOperators(ctx, &l.Results)
+		if err != nil {
+			return err
+		}
+
+		return tx.ListTeams(ctx, &l.Teams)
 	})
 }
 
@@ -48,14 +45,12 @@ func (l *NewAccountControllerImpl) Get() error {
 		l.Ctx(),
 		components.Page(
 			components.PageProps{
-				Path: l.Ctx().Path(),
+				Title: "New Account",
+				Path:  l.Path(),
 			},
 			components.Layout(
 				components.LayoutProps{},
 				htmx.FormElement(
-					htmx.Action("."),
-					htmx.HxPost("/accounts/create"),
-					htmx.HxTargetError("#alerts"),
 					cards.CardBordered(
 						cards.CardProps{},
 						cards.Body(
@@ -79,9 +74,8 @@ func (l *NewAccountControllerImpl) Get() error {
 								),
 								forms.SelectBordered(
 									forms.SelectProps{},
-									htmx.HxGet("/accounts/partials/teams"),
-									htmx.HxTarget("#teams"),
-									htmx.HxSwap("outerHTML"),
+									htmx.Required(),
+									htmx.HxValidate(true),
 									forms.Option(
 										forms.OptionProps{
 											Selected: true,
@@ -91,7 +85,7 @@ func (l *NewAccountControllerImpl) Get() error {
 									),
 									htmx.Name("team_id"),
 									htmx.Group(
-										htmx.ForEach(l.Results.GetRows(), func(operator *models.Operator, idx int) htmx.Node {
+										htmx.ForEach(l.Teams.GetRows(), func(operator *adapters.GothTeam, idx int) htmx.Node {
 											return forms.Option(
 												forms.OptionProps{
 													Value: operator.ID.String(),
@@ -120,6 +114,7 @@ func (l *NewAccountControllerImpl) Get() error {
 									htmx.HxGet("/accounts/partials/operator-skgs"),
 									htmx.HxTarget("#operator-skgs"),
 									htmx.HxSwap("outerHTML"),
+									htmx.HxValidate(true),
 									forms.Option(
 										forms.OptionProps{
 											Selected: true,
@@ -158,6 +153,7 @@ func (l *NewAccountControllerImpl) Get() error {
 										},
 										htmx.Text("Select an signing key group"),
 									),
+									htmx.HxValidate(true),
 									htmx.ID("operator-skgs"),
 									htmx.Name("operator_skgs_id"),
 								),
@@ -463,6 +459,9 @@ func (l *NewAccountControllerImpl) Get() error {
 								cards.ActionsProps{},
 								buttons.Outline(
 									buttons.ButtonProps{},
+									htmx.Action("."),
+									htmx.HxPost("/accounts/create"),
+									htmx.HxTargetError("#alerts"),
 									htmx.Attribute("type", "submit"),
 									htmx.Text("Create Account"),
 								),

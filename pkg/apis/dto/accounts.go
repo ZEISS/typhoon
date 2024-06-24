@@ -13,6 +13,7 @@ func FromCreateAccountRequest(req openapi.CreateAccountRequestObject) controller
 		OperatorID:  req.Body.OperatorId,
 		Name:        req.Body.Name,
 		Description: utils.PtrStr(req.Body.Description),
+		TeamID:      utils.UUIDPtr(req.Body.TeamId),
 	}
 }
 
