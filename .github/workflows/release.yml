@@ -62,11 +62,11 @@ jobs:
       - run: |
           go run internal/tools/updater/main.go --file charts/typhoon/Chart.yaml --version ${{ env.RELEASE_VERSION }}
       - uses: helm/chart-releaser-action@v1.6.0
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
           charts_dir: helm/charts
           config: ${{ github.workspace }}/.cr.yaml
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       - uses: actions/upload-artifact@v4
         with:
           name: manifests

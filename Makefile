@@ -58,7 +58,7 @@ release: ## Release the application.
 	@mkdir -p $(OUTPUT_DIR)
 	$(GO_KO) resolve -f $(BASE_DIR)/config/ -l 'typhoon.zeiss.com/crd-install' > $(OUTPUT_DIR)/typhoon-crds.yaml
 	@cp config/namespace/100-namespace.yaml $(OUTPUT_DIR)/typhoon.yaml
-	@cp $(OUTPUT_DIR)/*.yaml $(BASE_DIR)/charts/typhoon/crds
+	@cp $(OUTPUT_DIR)/*.yaml $(BASE_DIR)/helm/charts/typhoon/crds
 
 ifeq ($(shell echo ${IMAGE_TAG} | egrep "${TAG_REGEX}"),${IMAGE_TAG})
 	$(GO_KO) resolve $(KOFLAGS) -B -t latest -f config/ -l '!typhoon.zeiss.com/crd-install' > /dev/null
