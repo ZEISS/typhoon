@@ -37,4 +37,21 @@ entries:
     urls:
     - https://github.com/ZEISS/typhoon/releases/download/typhoon-chart-0.1.23/typhoon-0.1.23.tgz
     version: 0.1.23
-generated: "2024-06-26T14:09:54.941723685Z"
+  typhoon-accounting:
+  - apiVersion: v2
+    appVersion: v0.1.25
+    created: "2024-06-26T14:29:50.271306883Z"
+    description: A Helm chart for the Typhoon accounting
+    digest: 0713421c9cf59096968b67a563c12d529f141d82ead76487d59bf92c4983c12c
+    home: http://github.com/zeiss/typhoon
+    keywords:
+    - messaging
+    - jwt
+    - auth
+    name: typhoon-accounting
+    sources:
+    - https://github.com/zeiss/typhoon
+    urls:
+    - https://github.com/ZEISS/typhoon/releases/download/typhoon-accounting-0.1.25/typhoon-accounting-0.1.25.tgz
+    version: 0.1.25
+generated: "2024-06-26T14:29:50.27132655Z"
