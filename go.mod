@@ -48,9 +48,9 @@ require (
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.10
 	helm.sh/helm v2.17.0+incompatible
-	k8s.io/api v0.29.0
-	k8s.io/apimachinery v0.29.0
-	k8s.io/client-go v0.29.0
+	k8s.io/api v0.30.2
+	k8s.io/apimachinery v0.30.2
+	k8s.io/client-go v0.30.2
 	k8s.io/utils v0.0.0-20230726121419-3b25d923346b
 	knative.dev/eventing v0.31.1-0.20220523181303-c3e13967001f
 	knative.dev/networking v0.0.0-20240220074405-630e71a2dbc7
@@ -344,8 +344,8 @@ require (
 	honnef.co/go/tools v0.4.7 // indirect
 	k8s.io/apiextensions-apiserver v0.28.5 // indirect
 	k8s.io/helm v2.17.0+incompatible // indirect
-	k8s.io/klog/v2 v2.110.1 // indirect
-	k8s.io/kube-openapi v0.0.0-20231010175941-2dd684a91f00 // indirect
+	k8s.io/klog/v2 v2.120.1 // indirect
+	k8s.io/kube-openapi v0.0.0-20240228011516-70dd3763d340 // indirect
 	mvdan.cc/unparam v0.0.0-20240528143540-8a5130ca722f // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
