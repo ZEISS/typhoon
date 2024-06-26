@@ -60,7 +60,8 @@ jobs:
           DIST_DIR: /tmp/dist
         if: success()
       - run: |
-          go run internal/tools/updater/main.go --file charts/typhoon/Chart.yaml --version ${{ env.RELEASE_VERSION }}
+          go run internal/tools/updater/main.go --file helm/charts/typhoon/Chart.yaml --version ${{ env.RELEASE_VERSION }}
+          go run internal/tools/updater/main.go --file helm/charts/typhoon/Chart.yaml --version ${{ env.RELEASE_VERSION }}
       - uses: helm/chart-releaser-action@v1.6.0
         with:
           charts_dir: helm/charts
