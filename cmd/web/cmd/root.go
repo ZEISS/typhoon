@@ -180,6 +180,12 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Get("/systems/:id", handlers.ShowSystem())
 		app.Delete("/systems/:id", handlers.DeleteSystem())
 
+		// Teams
+		teams := app.Group("/teams/:team_id")
+
+		// Accounts ...
+		teams.Get("/", handlers.ShowTeam())
+
 		err = app.Listen(s.cfg.Flags.Addr)
 		if err != nil {
 			return err

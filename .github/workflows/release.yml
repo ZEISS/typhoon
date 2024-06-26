@@ -65,7 +65,7 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
-          charts_dir: charts
+          charts_dir: helm/charts
           config: ${{ github.workspace }}/.cr.yaml
       - uses: actions/upload-artifact@v4
         with:
