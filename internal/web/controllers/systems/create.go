@@ -31,9 +31,8 @@ func NewCreateSystemController(store ports.Datastore) *CreateSystemControllerImp
 
 // Error ...
 func (l *CreateSystemControllerImpl) Error(err error) error {
-	htmx.ReSwap(l.Ctx(), "none")
-
-	return l.Render(
+	return toasts.RenderToasts(
+		l.Ctx(),
 		toasts.Toasts(
 			toasts.ToastsProps{},
 			toasts.ToastAlertError(

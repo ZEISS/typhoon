@@ -9,27 +9,29 @@ var Cfg = New()
 
 // DB ...
 type DB struct {
-	Addr     string
-	Database string
-	Password string
-	Port     int
-	Username string
+	Addr     string `envconfig:"TYPHOON_DB_ADDR" default:"host.docker.internal"`
+	Username string `envconfig:"TYPHOON_DB_USERNAME" default:"root"`
+	Password string `envconfig:"TYPHOON_DB_PASSWORD" default:""`
+	Database string `envconfig:"TYPHOON_DB_DATABASE" default:"defaultdb"`
+	Port     int    `envconfig:"TYPHOON_DB_PORT" default:"26257"`
+	SslMode  string `envconfig:"TYPHOON_DB_SSL_MODE" default:"disable"`
 }
 
 // Flags contains the command line flags.
 type Flags struct {
-	Addr string
+	Addr string `envconfig:"TYPHOON_ADDR" default:":8080"`
 	DB   *DB
 }
 
 // DSN for PostgreSQL.
 func (c *Config) DSN() string {
-	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable", c.Flags.DB.Addr, c.Flags.DB.Username, c.Flags.DB.Password, c.Flags.DB.Database, c.Flags.DB.Port)
+	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s", c.Flags.DB.Addr, c.Flags.DB.Username, c.Flags.DB.Password, c.Flags.DB.Database, c.Flags.DB.Port, c.Flags.DB.SslMode)
 }
 
 // NewFlags ...
 func NewFlags() *Flags {
 	return &Flags{
+		Addr: ":8080",
 		DB: &DB{
 			Addr:     "host.docker.internal",
 			Database: "example",

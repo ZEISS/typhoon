@@ -3,8 +3,9 @@ package handlers
 import (
 	"context"
 
+	"github.com/zeiss/typhoon/internal/accounts/controllers"
 	"github.com/zeiss/typhoon/internal/accounts/dto"
-	"github.com/zeiss/typhoon/internal/accounts/ports"
+
 	openapi "github.com/zeiss/typhoon/pkg/apis/accounts"
 )
 
@@ -12,12 +13,12 @@ var _ openapi.StrictServerInterface = (*AccountsHandler)(nil)
 
 // AccountsHandler ...
 type AccountsHandler struct {
-	ac ports.AccountsController
+	ac controllers.AccountsController
 }
 
 // NewAccountsHandler ...
-func NewAccountsHandler(ac ports.AccountsController) *AccountsHandler {
-	return &AccountsHandler{ac: ac}
+func NewAccountsHandler(ac controllers.AccountsController) *AccountsHandler {
+	return &AccountsHandler{ac}
 }
 
 // GetToken ...

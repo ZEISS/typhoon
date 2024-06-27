@@ -9,19 +9,18 @@ import (
 	"gorm.io/gorm"
 )
 
-var _ ports.Repositories = (*DB)(nil)
+var _ ports.ReadWriteTx = (*datastoreImpl)(nil)
 
-// DB ...
-type DB struct {
+type datastoreImpl struct {
 	conn *gorm.DB
 }
 
-// NewDB ...
-func NewDB(conn *gorm.DB) *DB {
-	return &DB{conn}
+// NewDatastore ...
+func NewDatastore(conn *gorm.DB) *datastoreImpl {
+	return &datastoreImpl{conn}
 }
 
-// GetToken ...
-func (db *DB) GetToken(ctx context.Context, account *models.Token) error {
-	return db.conn.WithContext(ctx).First(account).Error
+// GetToken us
+func (d *datastoreImpl) GetToken(ctx context.Context, account *models.Token) error {
+	return d.conn.WithContext(ctx).Find(account).Error
 }
