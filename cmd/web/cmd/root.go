@@ -12,7 +12,6 @@ import (
 	"github.com/zeiss/fiber-goth/providers/github"
 	"github.com/zeiss/typhoon/internal/web/adapters/db"
 	"github.com/zeiss/typhoon/internal/web/adapters/handlers"
-	authzz "github.com/zeiss/typhoon/pkg/authz"
 	"github.com/zeiss/typhoon/static"
 
 	"github.com/gofiber/fiber/v2"
@@ -99,12 +98,6 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		}
 
 		auth := authz.NewFGA(fga)
-		authConfig := authz.Config{
-			Checker:           auth,
-			ObjectResolver:    &authzz.AuthzObjectResolver{},
-			PrincipalResolver: &authzz.AuthzPrincipalResolver{},
-			ActionResolver:    &authzz.AuthzActionResolver{},
-		}
 
 		nc, err := nats.Connect(cfg.Flags.Nats.URL, nats.UserCredentials(cfg.Flags.Nats.Credentials))
 		if err != nil {
@@ -133,7 +126,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 			CookieHTTPOnly: true,
 		}
 
-		handlers := handlers.NewHandlers(store)
+		handlers := handlers.NewHandlers(store, auth)
 
 		app := fiber.New()
 		app.Use(requestid.New())
@@ -157,7 +150,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		site := app.Group("/site")
 
 		// Teams handler
-		site.Get("/teams", authz.Authenticate(handlers.ListTeams(), authConfig))
+		site.Get("/teams", handlers.ListTeams())
 		site.Get("/teams/new", handlers.NewTeam())
 		site.Post("/teams/new", handlers.CreateTeam())
 		site.Get("/teams/:id", handlers.ShowTeam())
