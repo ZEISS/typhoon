@@ -1,90 +1,137 @@
 services:
-  east1:
-    image: docker.io/nats:2.10.9
-    ports:
-      - "4222:4222"
-      - "8222:8222"
-    volumes:
-      - east1:/data
-    configs:
-      - source: east.conf
-        target: /config/east.conf
-      - source: west.conf
-        target: /config/west.conf
-      - source: central.conf
-        target: /config/central.conf
-      - source: sys.conf
-        target: /config/sys.conf
-    command:
-      - '-c'
-      - '/config/east.conf'
 
-  west1:
-    image: docker.io/nats:2.10.9
+  crdb:
+    image: cockroachdb/cockroach:latest-v24.1
     ports:
-      - "4224:4222"
-      - "8224:8222"
+      - "26257:26257"
+      - "8082:8080"
+    networks:
+      - typhoon
+    command: start-single-node --insecure
     volumes:
-      - west1:/data
-    configs:
-      - source: east.conf
-        target: /config/east.conf
-      - source: west.conf
-        target: /config/west.conf
-      - source: central.conf
-        target: /config/central.conf
-      - source: sys.conf
-        target: /config/sys.conf
-    command:
-      - '-c'
-      - '/config/west.conf'
-
-  central1:
-    image: docker.io/nats:2.10.9
-    ports:
-      - "4223:4222"
-      - "8223:8222"
-    volumes:
-      - central1:/data
-    configs:
-      - source: east.conf
-        target: /config/east.conf
-      - source: west.conf
-        target: /config/west.conf
-      - source: central.conf
-        target: /config/central.conf
-      - source: sys.conf
-        target: /config/sys.conf
-    command:
-      - '-c'
-      - '/config/central.conf'
-
-  db:
-    image: postgres
-    restart: always
+      - crdb:/cockroach/cockroach-data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health?ready=1"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+  
+  migrate:
+    depends_on:
+      crdb:
+        condition: service_healthy
+    image: openfga/openfga:latest
+    container_name: migrate
+    command: migrate
     environment:
-      POSTGRES_USER: example
-      POSTGRES_PASSWORD: example
-      POSTGRES_DB: example
+      - OPENFGA_DATASTORE_ENGINE=postgres
+      - OPENFGA_DATASTORE_URI=postgres://root@crdb:26257/defaultdb?sslmode=disable
+    networks:
+      - typhoon
+  
+  openfga:
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    image: openfga/openfga:latest
+    container_name: openfga
+    environment:
+      - OPENFGA_DATASTORE_ENGINE=postgres
+      - OPENFGA_DATASTORE_URI=postgres://root@crdb:26257/defaultdb?sslmode=disable
+      - OPENFGA_LOG_FORMAT=json
+    command: run
+    networks:
+      - typhoon
     ports:
-      - "5432:5432"
+      # Needed for the http server
+      - "8080:8080"
+      # Needed for the grpc server (if used)
+      - "8081:8081"
+      # Needed for the playground (Do not enable in prod!)
+      - "3001:3000"
 
-configs:
-  east.conf:
-    file: './example/east.conf'
-  west.conf:
-    file: './example/west.conf'
-  central.conf:
-    file: './example/central.conf'
-  sys.conf:
-    file: './example/sys.conf'
+  # east1:
+  #   image: docker.io/nats:2.10.9
+  #   ports:
+  #     - "4222:4222"
+  #     - "8222:8222"
+  #   volumes:
+  #     - east1:/data
+  #   configs:
+  #     - source: east.conf
+  #       target: /config/east.conf
+  #     - source: west.conf
+  #       target: /config/west.conf
+  #     - source: central.conf
+  #       target: /config/central.conf
+  #     - source: sys.conf
+  #       target: /config/sys.conf
+  #   command:
+  #     - '-c'
+  #     - '/config/east.conf'
+
+  # west1:
+  #   image: docker.io/nats:2.10.9
+  #   ports:
+  #     - "4224:4222"
+  #     - "8224:8222"
+  #   volumes:
+  #     - west1:/data
+  #   configs:
+  #     - source: east.conf
+  #       target: /config/east.conf
+  #     - source: west.conf
+  #       target: /config/west.conf
+  #     - source: central.conf
+  #       target: /config/central.conf
+  #     - source: sys.conf
+  #       target: /config/sys.conf
+  #   command:
+  #     - '-c'
+  #     - '/config/west.conf'
+
+  # central1:
+  #   image: docker.io/nats:2.10.9
+  #   ports:
+  #     - "4223:4222"
+  #     - "8223:8222"
+  #   volumes:
+  #     - central1:/data
+  #   configs:
+  #     - source: east.conf
+  #       target: /config/east.conf
+  #     - source: west.conf
+  #       target: /config/west.conf
+  #     - source: central.conf
+  #       target: /config/central.conf
+  #     - source: sys.conf
+  #       target: /config/sys.conf
+  #   command:
+  #     - '-c'
+  #     - '/config/central.conf'
+
+  # db:
+  #   image: postgres
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: example
+  #     POSTGRES_PASSWORD: example
+  #     POSTGRES_DB: example
+  #   ports:
+  #     - "5432:5432"
+
+# configs:
+#   east.conf:
+#     file: './example/east.conf'
+#   west.conf:
+#     file: './example/west.conf'
+#   central.conf:
+#     file: './example/central.conf'
+#   sys.conf:
+#     file: './example/sys.conf'
 
 volumes:
-  east1:
-  west1:
-  central1:
-  db:
-
+  crdb:
 
 networks:
-  nats: {}
+  typhoon:

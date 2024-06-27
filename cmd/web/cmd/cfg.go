@@ -10,17 +10,28 @@ var cfg = New()
 // DB ...
 type DB struct {
 	Addr     string `envconfig:"TYPHOON_DB_ADDR" default:"host.docker.internal"`
-	Database string `envconfig:"TYPHOON_DB_DATABASE" default:"example"`
-	Password string `envconfig:"TYPHOON_DB_PASSWORD" default:"example"`
-	Port     int    `envconfig:"TYPHOON_DB_PORT" default:"5432"`
-	Username string `envconfig:"TYPHOON_DB_USERNAME" default:"example"`
+	Username string `envconfig:"TYPHOON_DB_USERNAME" default:"root"`
+	Password string `envconfig:"TYPHOON_DB_PASSWORD" default:""`
+	Database string `envconfig:"TYPHOON_DB_DATABASE" default:"defaultdb"`
+	Port     int    `envconfig:"TYPHOON_DB_PORT" default:"26257"`
 }
 
 // Flags contains the command line flags.
 type Flags struct {
-	Addr string
+	Addr string `envconfig:"TYPHOON_ADDR" default:":3000"`
 	Nats *Nats
+	FGA  *FGA
 	DB   *DB
+}
+
+// FGA contains the OpenFGA configuration.
+type FGA struct {
+	// ApiUrl ...
+	ApiUrl string `envconfig:"TYPHOON_FGA_API_URL" default:"http://host.docker.internal:8080"`
+	// StoreId ...
+	StoreID string `envconfig:"TYPHOON_FGA_STORE_ID" default:""`
+	// AuthorizationModelId ...
+	AuthorizationModelID string `envconfig:"TYPHOON_FGA_AUTHORIZATION_MODEL_ID" default:""`
 }
 
 // Nats contains the NATS configuration.
@@ -37,13 +48,14 @@ func (c *Config) DSN() string {
 // NewFlags ...
 func NewFlags() *Flags {
 	return &Flags{
+		FGA:  &FGA{},
 		Nats: &Nats{},
 		DB: &DB{
 			Addr:     "host.docker.internal",
-			Database: "example",
-			Password: "example",
-			Port:     5432,
-			Username: "example",
+			Database: "defaultdb",
+			Password: "",
+			Port:     26257,
+			Username: "root",
 		},
 	}
 }

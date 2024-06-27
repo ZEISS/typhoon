@@ -745,6 +745,8 @@ github.com/kkHAIKE/contextcheck v1.1.5/go.mod h1:O930cpht4xb1YQpK+1+AgoM3mFsvxr7
 github.com/klauspost/compress v1.13.6/go.mod h1:/3/Vjq9QcHkK5uEr5lBEmyoZ1iFhe47etQ6QUkpK6sk=
 github.com/klauspost/compress v1.17.8 h1:YcnTYrq7MikUT7k0Yb5eceMmALQPYBW/Xltxn0NAMnU=
 github.com/klauspost/compress v1.17.8/go.mod h1:Di0epgTjJY877eYKx5yC51cX2A2Vl2ibi7bDH9ttBbw=
+github.com/klauspost/compress v1.17.9 h1:6KIumPrER1LHsvBVuDa0r5xaG0Es51mhhB9BQB2qeMA=
+github.com/klauspost/compress v1.17.9/go.mod h1:Di0epgTjJY877eYKx5yC51cX2A2Vl2ibi7bDH9ttBbw=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/konsorten/go-windows-terminal-sequences v1.0.3/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/kr/fs v0.1.0/go.mod h1:FFnZGqtBN9Gxj7eW1uZ42v5BccTP0vu6NEaFoC2HwRg=
@@ -1191,6 +1193,8 @@ github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6Kllzaw
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/valyala/fasthttp v1.54.0 h1:cCL+ZZR3z3HPLMVfEYVUMtJqVaui0+gu7Lx63unHwS0=
 github.com/valyala/fasthttp v1.54.0/go.mod h1:6dt4/8olwq9QARP/TDuPmWyWcl4byhpvTJ4AAtcz+QM=
+github.com/valyala/fasthttp v1.55.0 h1:Zkefzgt6a7+bVKHnu/YaYSOPfNYNisSVBo/unVCf8k8=
+github.com/valyala/fasthttp v1.55.0/go.mod h1:NkY9JtkrpPKmgwV3HTaS2HWaJss9RSIsRVfcxxoHiOM=
 github.com/valyala/tcplisten v1.0.0 h1:rBHj/Xf+E1tRGZyWIWwJDiRY0zc1Js+CV5DqwacVSA8=
 github.com/valyala/tcplisten v1.0.0/go.mod h1:T0xQ8SeCZGxckz9qRXTfG43PvQ/mcWh7FwZEA7Ioqkc=
 github.com/wamuir/go-xslt v0.1.5 h1:FmO1SD7PpoJtHOfnXcb6R/+NANYHX8+mz0UogNJuPnk=
@@ -1227,6 +1231,10 @@ github.com/zeiss/fiber-authz v1.0.27 h1:vm8oorWm2Kj8LG34mI68I1tFL5DB/Qk4vNRmP1ly
 github.com/zeiss/fiber-authz v1.0.27/go.mod h1:wC7CT4M+oLTQMhwZLbKZDAqSYBcla967jpOC+fwMf2c=
 github.com/zeiss/fiber-goth v1.2.4 h1:tzuS4iXhCC9elEzVNVKILB4fBMa+wkaSqe8kr6jLA4c=
 github.com/zeiss/fiber-goth v1.2.4/go.mod h1:TkapFI+7LOvbb093zF8cP/CH2PcQJSBQWQZDzgGoygE=
+github.com/zeiss/fiber-goth v1.2.5-0.20240627072712-d5346f0c4342 h1:T3sVpEgDmwQfzGEGY/AhnGNdEWcR0i/XomOwgd1lab4=
+github.com/zeiss/fiber-goth v1.2.5-0.20240627072712-d5346f0c4342/go.mod h1:Bhg8jyZ97NmIlcwJBlVrGNA4/F4HFIZIZGBD3xD9fTY=
+github.com/zeiss/fiber-goth v1.2.5-0.20240627074038-6bbb515b112f h1:zDy9k1MhhSv36eAoo4aG5cISb9sJHrnKcFcoCdiY1Yk=
+github.com/zeiss/fiber-goth v1.2.5-0.20240627074038-6bbb515b112f/go.mod h1:Bhg8jyZ97NmIlcwJBlVrGNA4/F4HFIZIZGBD3xD9fTY=
 github.com/zeiss/fiber-htmx v1.3.15 h1:7LQHXaa+ne/X86zjMA4Uas1jbARewJEzjU8OWQ8ECsM=
 github.com/zeiss/fiber-htmx v1.3.15/go.mod h1:SvNPGf7l72gG1rAW++gan7QNkJc/8tKWqyMStUqUpgM=
 github.com/zeiss/snow-go v0.0.0-20240312201415-88f059622cff h1:IguG+jnCnFyAzZ8Fp+6v2lJNvUFPfu8Q2UUgSFw4doU=

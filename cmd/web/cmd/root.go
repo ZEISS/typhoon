@@ -7,10 +7,12 @@ import (
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/nats-io/nats.go"
+	authz "github.com/zeiss/fiber-authz"
 	"github.com/zeiss/fiber-goth/providers"
 	"github.com/zeiss/fiber-goth/providers/github"
 	"github.com/zeiss/typhoon/internal/web/adapters/db"
 	"github.com/zeiss/typhoon/internal/web/adapters/handlers"
+	authzz "github.com/zeiss/typhoon/pkg/authz"
 	"github.com/zeiss/typhoon/static"
 
 	"github.com/gofiber/fiber/v2"
@@ -18,6 +20,7 @@ import (
 	logger "github.com/gofiber/fiber/v2/middleware/logger"
 	requestid "github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/katallaxie/pkg/server"
+	openfga "github.com/openfga/go-sdk/client"
 	"github.com/spf13/cobra"
 	goth "github.com/zeiss/fiber-goth"
 	adapter "github.com/zeiss/fiber-goth/adapters/gorm"
@@ -84,6 +87,25 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 			return err
 		}
 
+		fga, err := openfga.NewSdkClient(
+			&openfga.ClientConfiguration{
+				ApiUrl:               cfg.Flags.FGA.ApiUrl,
+				StoreId:              cfg.Flags.FGA.StoreID,
+				AuthorizationModelId: cfg.Flags.FGA.AuthorizationModelID,
+			},
+		)
+		if err != nil {
+			return err
+		}
+
+		auth := authz.NewFGA(fga)
+		authConfig := authz.Config{
+			Checker:           auth,
+			ObjectResolver:    &authzz.AuthzObjectResolver{},
+			PrincipalResolver: &authzz.AuthzPrincipalResolver{},
+			ActionResolver:    &authzz.AuthzActionResolver{},
+		}
+
 		nc, err := nats.Connect(cfg.Flags.Nats.URL, nats.UserCredentials(cfg.Flags.Nats.Credentials))
 		if err != nil {
 			return err
@@ -135,7 +157,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		site := app.Group("/site")
 
 		// Teams handler
-		site.Get("/teams", handlers.ListTeams())
+		site.Get("/teams", authz.Authenticate(handlers.ListTeams(), authConfig))
 		site.Get("/teams/new", handlers.NewTeam())
 		site.Post("/teams/new", handlers.CreateTeam())
 		site.Get("/teams/:id", handlers.ShowTeam())
