@@ -50,25 +50,25 @@ services:
       # Needed for the playground (Do not enable in prod!)
       - "3001:3000"
 
-  # east1:
-  #   image: docker.io/nats:2.10.9
-  #   ports:
-  #     - "4222:4222"
-  #     - "8222:8222"
-  #   volumes:
-  #     - east1:/data
-  #   configs:
-  #     - source: east.conf
-  #       target: /config/east.conf
-  #     - source: west.conf
-  #       target: /config/west.conf
-  #     - source: central.conf
-  #       target: /config/central.conf
-  #     - source: sys.conf
-  #       target: /config/sys.conf
-  #   command:
-  #     - '-c'
-  #     - '/config/east.conf'
+  east1:
+    image: docker.io/nats:2.10.9
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    volumes:
+      - east1:/data
+    configs:
+      - source: east.conf
+        target: /example/east.conf
+      - source: sys.conf
+        target: /example/sys.conf
+      # - source: west.conf
+      #   target: /config/west.conf
+      # - source: central.conf
+      #   target: /config/central.conf
+    command:
+      - '-c'
+      - '/example/east.conf'
 
   # west1:
   #   image: docker.io/nats:2.10.9
@@ -120,18 +120,20 @@ services:
   #   ports:
   #     - "5432:5432"
 
-# configs:
-#   east.conf:
-#     file: './example/east.conf'
+configs:
+  sys.conf:
+    file: './example/sys.conf'
+  east.conf:
+    file: './example/east.conf'
 #   west.conf:
 #     file: './example/west.conf'
 #   central.conf:
 #     file: './example/central.conf'
-#   sys.conf:
-#     file: './example/sys.conf'
+  
 
 volumes:
   crdb:
+  east1:
 
 networks:
   typhoon:

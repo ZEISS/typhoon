@@ -253,8 +253,8 @@ func (t *datastoreTx) UpdateSystem(ctx context.Context, system *models.System) e
 }
 
 // GetTeam is a method to get a team.
-func (t *datastoreTx) GetTeam(ctx context.Context, team *adapters.GothTeam) error {
-	return t.tx.First(team).Error
+func (t *datastoreTx) GetTeam(ctx context.Context, team *tables.Paginated[adapters.GothTeam]) error {
+	return t.tx.Preload("Users", tables.Paginate(&team.Value, team, t.tx)).Where(team.Value).First(&team.Value).Error
 }
 
 // ListTeams is a method that returns a list of teams
