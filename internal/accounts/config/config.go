@@ -19,7 +19,7 @@ type DB struct {
 
 // Flags contains the command line flags.
 type Flags struct {
-	Addr string `envconfig:"TYPHOON_ADDR" default:":8080"`
+	Addr string `envconfig:"TYPHOON_ADDR" default:":8084"`
 	DB   *DB
 }
 
@@ -31,13 +31,14 @@ func (c *Config) DSN() string {
 // NewFlags ...
 func NewFlags() *Flags {
 	return &Flags{
-		Addr: ":8080",
+		Addr: ":8084",
 		DB: &DB{
 			Addr:     "host.docker.internal",
-			Database: "example",
-			Password: "example",
-			Port:     5432,
-			Username: "example",
+			Database: "defaultdb",
+			Password: "",
+			Port:     26257,
+			Username: "root",
+			SslMode:  "disable",
 		},
 	}
 }

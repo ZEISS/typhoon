@@ -50,9 +50,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/JWT"
         '404':
-          description: Account token was not found
+          description: The token was not found.
         '304':
-          description: Account token was not modified
+          description: The token was not modified.
         default:
           description: Unexpected error
 

@@ -17,13 +17,14 @@ import (
 	middleware "github.com/oapi-codegen/fiber-middleware"
 	"github.com/spf13/cobra"
 	authz "github.com/zeiss/fiber-authz"
+	seed "github.com/zeiss/gorm-seed"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 )
 
 func init() {
-	Root.PersistentFlags().StringVar(&config.Cfg.Flags.Addr, "addr", ":8080", "addr")
+	Root.PersistentFlags().StringVar(&config.Cfg.Flags.Addr, "addr", config.Cfg.Flags.Addr, "addr")
 	Root.PersistentFlags().StringVar(&config.Cfg.Flags.DB.Addr, "db-addr", config.Cfg.Flags.DB.Addr, "Database address")
 	Root.PersistentFlags().StringVar(&config.Cfg.Flags.DB.Database, "db-database", config.Cfg.Flags.DB.Database, "Database name")
 	Root.PersistentFlags().StringVar(&config.Cfg.Flags.DB.Username, "db-username", config.Cfg.Flags.DB.Username, "Database user")
@@ -68,7 +69,10 @@ func (s *AccountsSrv) Start(ctx context.Context, ready server.ReadyFunc, run ser
 			return err
 		}
 
-		db := database.NewDB(conn)
+		store, err := seed.NewDatabase(conn, database.NewReadTx(), database.NewWriteTx())
+		if err != nil {
+			return err
+		}
 
 		swagger, err := openapi.GetSwagger()
 		if err != nil {
@@ -90,8 +94,7 @@ func (s *AccountsSrv) Start(ctx context.Context, ready server.ReadyFunc, run ser
 
 		app.Use(middleware.OapiRequestValidatorWithOptions(swagger, validatorOptions))
 
-		ac := controllers.NewAccountsController(db)
-
+		ac := controllers.NewAccountsController(store)
 		handlers := handlers.NewAccountsHandler(ac)
 
 		handler := openapi.NewStrictHandler(handlers, nil)

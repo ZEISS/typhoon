@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 
+	seed "github.com/zeiss/gorm-seed"
 	"github.com/zeiss/typhoon/internal/accounts/dto"
 	"github.com/zeiss/typhoon/internal/accounts/ports"
 	"github.com/zeiss/typhoon/internal/api/models"
@@ -18,11 +19,11 @@ type AccountsController interface {
 
 // AccountsControllerImpl ...
 type AccountsControllerImpl struct {
-	store ports.Datastore
+	store seed.Database[ports.ReadTx, ports.ReadWriteTx]
 }
 
 // NewAccountsController ...
-func NewAccountsController(store ports.Datastore) *AccountsControllerImpl {
+func NewAccountsController(store seed.Database[ports.ReadTx, ports.ReadWriteTx]) *AccountsControllerImpl {
 	return &AccountsControllerImpl{store}
 }
 
@@ -33,6 +34,9 @@ func (c *AccountsControllerImpl) GetToken(ctx context.Context, query dto.GetAcco
 	err := c.store.ReadTx(ctx, func(ctx context.Context, tx ports.ReadTx) error {
 		return tx.GetToken(ctx, &token)
 	})
+	if err != nil {
+		return token, err
+	}
 
-	return token, err
+	return token, nil
 }
