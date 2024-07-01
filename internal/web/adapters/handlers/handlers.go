@@ -71,7 +71,7 @@ func (h *handlers) NewOperator() fiber.Handler {
 // CreateOperator ...
 func (h *handlers) CreateOperator() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return operators.NewOperatorController(h.store)
+		return operators.NewCreateController(h.store)
 	})
 }
 
@@ -199,13 +199,6 @@ func (h *handlers) UserCredentials() fiber.Handler {
 func (h *handlers) DeleteUser() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
 		return users.NewDeleteUserController(h.store)
-	})
-}
-
-// UpdateSystemAccount ...
-func (h *handlers) UpdateSystemAccount() fiber.Handler {
-	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return operators.NewUpdateSystemAccountController(h.store)
 	})
 }
 

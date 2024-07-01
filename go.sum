@@ -1233,6 +1233,8 @@ github.com/zeiss/fiber-htmx v1.3.17 h1:IF4+nDmHp7WPYg5K19U+9Ho09AZL7hl4t1Wjl1/ws
 github.com/zeiss/fiber-htmx v1.3.17/go.mod h1:+dp/Ct0DMxPuPX5xqTn72K0+ndpVxLjrAn6GeW+OXVg=
 github.com/zeiss/fiber-htmx v1.3.18-0.20240628114428-8064f1af4ae3 h1:YAGNcSbI6w3vTITrJqrC2MFrsXdScJcAuhgJwyJcJXE=
 github.com/zeiss/fiber-htmx v1.3.18-0.20240628114428-8064f1af4ae3/go.mod h1:CvbT2DdAGkfOF9m24mHREMFcnrHctEDrqttncEdGScU=
+github.com/zeiss/fiber-htmx v1.3.18-0.20240628131553-334787f154e5 h1:hIbpyz6aRg6QtXnmhsmlkEYVlX1b8UJ29Jc3g25LXIw=
+github.com/zeiss/fiber-htmx v1.3.18-0.20240628131553-334787f154e5/go.mod h1:CvbT2DdAGkfOF9m24mHREMFcnrHctEDrqttncEdGScU=
 github.com/zeiss/gorm-seed v0.1.2 h1:XksLz/IXC1ejUgbl5dHC2/vQAqD2LNZMhZMz2w+E7fY=
 github.com/zeiss/gorm-seed v0.1.2/go.mod h1:Tli6ekFpRjtQY8S6VoNiLgRnX1DVEvHJkf+UI85kV+E=
 github.com/zeiss/snow-go v0.0.0-20240312201415-88f059622cff h1:IguG+jnCnFyAzZ8Fp+6v2lJNvUFPfu8Q2UUgSFw4doU=

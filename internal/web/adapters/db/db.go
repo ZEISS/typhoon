@@ -117,11 +117,10 @@ type datastoreTx struct {
 
 // GetOperator is a method that returns an operator by ID.
 func (t *datastoreTx) GetOperator(ctx context.Context, operator *models.Operator) error {
-	return t.tx.Preload("Accounts").
-		Preload("SigningKeyGroups").
-		Preload("SigningKeyGroups.Key").
-		Preload("Key").
-		Preload("Token").
+	return t.tx.
+		Preload(clause.Associations).
+		Preload("SystemAccount.Key").
+		Where(operator).
 		First(operator).Error
 }
 
@@ -180,7 +179,7 @@ func (t *datastoreTx) ListOperators(ctx context.Context, pagination *tables.Resu
 
 // CreateOperator ...
 func (t *datastoreTx) CreateOperator(ctx context.Context, operator *models.Operator) error {
-	return t.tx.Create(operator).Error
+	return t.tx.Session(&gorm.Session{FullSaveAssociations: true}).Create(operator).Error
 }
 
 // UpdateOperator ...

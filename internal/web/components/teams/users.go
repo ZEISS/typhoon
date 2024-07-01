@@ -1,14 +1,11 @@
 package teams
 
 import (
-	"fmt"
-
 	"github.com/zeiss/fiber-goth/adapters"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
-	"github.com/zeiss/fiber-htmx/components/dropdowns"
 	"github.com/zeiss/fiber-htmx/components/forms"
-	"github.com/zeiss/fiber-htmx/components/icons"
+	"github.com/zeiss/fiber-htmx/components/joins"
 	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tables"
 )
@@ -134,41 +131,24 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 					},
 				},
 				{
+					ID:          "actions",
+					AccessorKey: "actions",
 					Header: func(p tables.TableProps) htmx.Node {
 						return nil
 					},
 					Cell: func(p tables.TableProps, row *adapters.GothUser) htmx.Node {
 						return htmx.Td(
-							dropdowns.Dropdown(
-								dropdowns.DropdownProps{},
-								dropdowns.DropdownButton(
-									dropdowns.DropdownButtonProps{},
-									icons.BoltOutline(
-										icons.IconProps{},
-									),
-								),
-								dropdowns.DropdownMenuItems(
-									dropdowns.DropdownMenuItemsProps{},
-									dropdowns.DropdownMenuItem(
-										dropdowns.DropdownMenuItemProps{},
-										htmx.A(
-											htmx.Href(fmt.Sprintf("/users/%s/credentials", row.ID)),
-											htmx.Text("Get Credentials"),
-										),
-									),
-									dropdowns.DropdownMenuItem(
-										dropdowns.DropdownMenuItemProps{},
-										buttons.Error(
-											buttons.ButtonProps{
-												ClassNames: htmx.ClassNames{
-													"btn-sm": true,
-												},
-											},
-											htmx.HxDelete(fmt.Sprintf("/users/%s", row.ID)),
-											htmx.HxConfirm("Are you sure you want to delete this user?"),
-											htmx.Text("Delete"),
-										),
-									),
+							joins.Join(
+								joins.JoinProps{},
+								buttons.Button(
+									buttons.ButtonProps{
+										ClassNames: htmx.ClassNames{
+											"btn-sm": true,
+										},
+									},
+									htmx.HxDelete(""),
+									htmx.HxConfirm("Are you sure you want to remove this user?"),
+									htmx.Text("Remove"),
 								),
 							),
 						)

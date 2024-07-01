@@ -8,7 +8,6 @@ import (
 	"github.com/nats-io/nkeys"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/api/ports"
-	"github.com/zeiss/typhoon/internal/utils"
 )
 
 var _ OperatorsController = (*OperatorsControllerImpl)(nil)
@@ -259,7 +258,7 @@ func (c *OperatorsControllerImpl) UpdateOperatorSystemAccount(ctx context.Contex
 		return ac, err
 	}
 
-	op.SystemAdminAccountID = utils.PtrUUID(cmd.AccountID)
+	// op.SystemAdminAccountID = utils.PtrUUID(cmd.AccountID)
 
 	pk, err := nkeys.FromSeed(op.Key.Seed)
 	if err != nil {

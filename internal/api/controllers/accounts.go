@@ -70,9 +70,7 @@ func NewAccountsController(db ports.Repositories) *accountsController {
 func (c *accountsController) CreateAccount(ctx context.Context, cmd CreateAccountCommand) (models.Account, error) {
 	account := models.Account{
 		Name:        cmd.Name,
-		OperatorID:  cmd.OperatorID,
 		Description: utils.StrPtr(cmd.Description),
-		TeamID:      cmd.TeamID,
 	}
 
 	fmt.Println(account)

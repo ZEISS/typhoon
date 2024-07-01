@@ -4,12 +4,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/zeiss/fiber-goth/adapters"
 	"gorm.io/gorm"
 )
 
-// AccountPagination is the pagination for operators.
-type AccountPagination Pagination[Operator]
+// AccountType
 
 // Account ...
 type Account struct {
@@ -23,18 +21,12 @@ type Account struct {
 	Key NKey `json:"key" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:account"`
 	// Token is the JWT token used to authenticate the account.
 	Token Token `json:"token" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:account"`
-	// Operator is the operator this account is associated with.
-	Operator Operator `json:"operator" gorm:"foreignKey:OperatorID"`
-	// OperatorID is the operator ID.
-	OperatorID uuid.UUID `json:"operator_id" gorm:"foreignKey:ID"`
 	// SigningKeyGroups is the list of signing key groups the account has.
 	SigningKeyGroups []SigningKeyGroup `json:"signing_key_groups" gorm:"many2many:account_signing_key_groups;foreignKey:ID;joinForeignKey:AccountID;joinReferences:SigningKeyGroupID"`
 	// Users is the list of users the account has.
 	Users []User `json:"users" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	// Team is the team the account is associated with.
-	Team adapters.GothTeam `json:"team" gorm:"foreignKey:TeamID"`
-	// TeamID is the team ID.
-	TeamID uuid.UUID `json:"team_id" gorm:"foreignKey:ID"`
+	// AccountType is the type of the account.
+	AccountType string `json:"account_type"`
 	// LimitJetStreamMaxDiskStorage is the limit for JetStream maximum disk storage.
 	LimitJetStreamMaxDiskStorage int64 `json:"limit_jetstream_max_disk_storage"`
 	// LimitJetStreamMaxStreams is the limit for JetStream maximum streams.
