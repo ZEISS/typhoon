@@ -14,12 +14,12 @@ type DB struct {
 	Password string `envconfig:"TYPHOON_DB_PASSWORD" default:""`
 	Database string `envconfig:"TYPHOON_DB_DATABASE" default:"defaultdb"`
 	Port     int    `envconfig:"TYPHOON_DB_PORT" default:"26257"`
+	Prefix   string `envconfig:"TYPHOON_DB_PREFIX" default:"typhoon_"`
 }
 
 // Flags contains the command line flags.
 type Flags struct {
 	Addr string `envconfig:"TYPHOON_ADDR" default:":3000"`
-	Nats *Nats
 	FGA  *FGA
 	DB   *DB
 }
@@ -34,12 +34,6 @@ type FGA struct {
 	AuthorizationModelID string `envconfig:"TYPHOON_FGA_AUTHORIZATION_MODEL_ID" default:""`
 }
 
-// Nats contains the NATS configuration.
-type Nats struct {
-	Credentials string `envconfig:"TYPHOON_NATS_CREDENTIALS" default:"sys.creds"`
-	URL         string `envconfig:"TYPHOON_NATS_URL" default:"nats://localhost:4222"`
-}
-
 // DSN for PostgreSQL.
 func (c *Config) DSN() string {
 	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable", c.Flags.DB.Addr, c.Flags.DB.Username, c.Flags.DB.Password, c.Flags.DB.Database, c.Flags.DB.Port)
@@ -48,14 +42,14 @@ func (c *Config) DSN() string {
 // NewFlags ...
 func NewFlags() *Flags {
 	return &Flags{
-		FGA:  &FGA{},
-		Nats: &Nats{},
+		FGA: &FGA{},
 		DB: &DB{
 			Addr:     "host.docker.internal",
 			Database: "defaultdb",
 			Password: "",
 			Port:     26257,
 			Username: "root",
+			Prefix:   "typhoon_",
 		},
 	}
 }
@@ -70,6 +64,11 @@ func New() *Config {
 // Config ...
 type Config struct {
 	Flags *Flags
+}
+
+// Prefix ...
+func (c *Config) Prefix() string {
+	return c.Flags.DB.Prefix
 }
 
 // Cwd returns the current working directory.

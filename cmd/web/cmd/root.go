@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/kelseyhightower/envconfig"
-	"github.com/nats-io/nats.go"
 	authz "github.com/zeiss/fiber-authz"
 	"github.com/zeiss/fiber-goth/providers"
 	"github.com/zeiss/fiber-goth/providers/github"
@@ -29,14 +28,15 @@ import (
 )
 
 func init() {
+	Root.AddCommand(Migrate)
+
 	Root.PersistentFlags().StringVar(&cfg.Flags.Addr, "addr", ":3000", "addr")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Database, "db-database", cfg.Flags.DB.Database, "Database name")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Username, "db-username", cfg.Flags.DB.Username, "Database user")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Password, "db-password", cfg.Flags.DB.Password, "Database password")
 	Root.PersistentFlags().IntVar(&cfg.Flags.DB.Port, "db-port", cfg.Flags.DB.Port, "Database port")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Addr, "db-host", cfg.Flags.DB.Addr, "Database host")
-	Root.PersistentFlags().StringVar(&cfg.Flags.Nats.Credentials, "nats-credentials", cfg.Flags.Nats.Credentials, "NATS credentials")
-	Root.PersistentFlags().StringVar(&cfg.Flags.Nats.URL, "nats-url", cfg.Flags.Nats.URL, "NATS URL")
+	Root.PersistentFlags().StringVar(&cfg.Flags.FGA.ApiUrl, "fga-api-url", cfg.Flags.FGA.ApiUrl, "FGA API URL")
 
 	Root.SilenceUsage = true
 }
@@ -99,18 +99,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 
 		auth := authz.NewFGA(fga)
 
-		nc, err := nats.Connect(cfg.Flags.Nats.URL, nats.UserCredentials(cfg.Flags.Nats.Credentials))
-		if err != nil {
-			return err
-		}
-		defer nc.Close()
-
-		store, err := db.NewDB(conn, nc)
-		if err != nil {
-			return err
-		}
-
-		err = store.Migrate(ctx)
+		store, err := db.NewDB(conn)
 		if err != nil {
 			return err
 		}
