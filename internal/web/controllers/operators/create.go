@@ -8,8 +8,8 @@ import (
 	"github.com/nats-io/jwt/v2"
 	"github.com/nats-io/nkeys"
 	htmx "github.com/zeiss/fiber-htmx"
+	"github.com/zeiss/fiber-htmx/components/toasts"
 	"github.com/zeiss/typhoon/internal/api/models"
-	"github.com/zeiss/typhoon/internal/web/components/alerts"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
@@ -55,14 +55,15 @@ func (l *CreateControllerImpl) Prepare() error {
 
 // Error ...
 func (l *CreateControllerImpl) Error(err error) error {
-	return l.Render(
-		alerts.Error(
-			alerts.ErrorProps{
-				Error: err,
-				ID:    "alerts",
-			},
+	return toasts.RenderToasts(
+		l.Ctx(),
+		toasts.Toasts(
+			toasts.ToastsProps{},
+			toasts.ToastAlertError(
+				toasts.ToastProps{},
+				htmx.Text(err.Error()),
+			),
 		),
-		htmx.RenderStatusCode(err),
 	)
 }
 
@@ -178,6 +179,51 @@ func (l *CreateControllerImpl) Post() error {
 		return err
 	}
 	operator.Token = models.Token{ID: id, Token: token}
+
+	// Create user ...
+	user := models.User{
+		Name: "System User",
+	}
+
+	upk, err := nkeys.CreateUser()
+	if err != nil {
+		return err
+	}
+
+	uid, err := upk.PublicKey()
+	if err != nil {
+		return err
+	}
+
+	useed, err := upk.Seed()
+	if err != nil {
+		return err
+	}
+	user.Key = models.NKey{ID: uid, Seed: useed}
+
+	ask, err := nkeys.FromSeed(askg.Key.Seed)
+	if err != nil {
+		return err
+	}
+
+	askpk, err := ask.PublicKey()
+	if err != nil {
+		return err
+	}
+
+	u := jwt.NewUserClaims(uid)
+	u.Name = "System User"
+	u.IssuerAccount = account.Key.ID
+	u.Issuer = askpk
+
+	token, err = u.Encode(ask)
+	if err != nil {
+		return err
+	}
+	user.Token = models.Token{ID: uid, Token: token}
+
+	// Associate user with account
+	account.Users = append(account.Users, user)
 
 	// Associate account with operator
 	operator.SystemAccount = account

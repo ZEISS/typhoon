@@ -154,6 +154,22 @@ func (l *ShowOperatorControllerImpl) Get() error {
 						cards.BodyProps{},
 						cards.Title(
 							cards.TitleProps{},
+							htmx.Text("Details"),
+						),
+						nkeys.NKey(
+							nkeys.NKeyProps{
+								Title:     "ID",
+								PublicKey: op.Key.ID,
+							},
+						),
+					),
+				),
+				cards.CardBordered(
+					cards.CardProps{},
+					cards.Body(
+						cards.BodyProps{},
+						cards.Title(
+							cards.TitleProps{},
 							htmx.Text("System Account"),
 						),
 						nkeys.NKey(
@@ -170,12 +186,11 @@ func (l *ShowOperatorControllerImpl) Get() error {
 						cards.BodyProps{},
 						cards.Title(
 							cards.TitleProps{},
-							htmx.Text("Details"),
+							htmx.Text("System Users"),
 						),
-						nkeys.NKey(
-							nkeys.NKeyProps{
-								Title:     "ID",
-								PublicKey: op.Key.ID,
+						operators.UsersTable(
+							operators.UsersTableProps{
+								Users: tables.RowsPtr(op.SystemAccount.Users),
 							},
 						),
 					),

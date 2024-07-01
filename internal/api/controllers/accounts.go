@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/nats-io/jwt"
@@ -72,8 +71,6 @@ func (c *accountsController) CreateAccount(ctx context.Context, cmd CreateAccoun
 		Name:        cmd.Name,
 		Description: utils.StrPtr(cmd.Description),
 	}
-
-	fmt.Println(account)
 
 	operator := models.Operator{
 		ID: cmd.OperatorID,

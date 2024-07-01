@@ -120,6 +120,7 @@ func (t *datastoreTx) GetOperator(ctx context.Context, operator *models.Operator
 	return t.tx.
 		Preload(clause.Associations).
 		Preload("SystemAccount.Key").
+		Preload("SystemAccount.Users").
 		Where(operator).
 		First(operator).Error
 }
