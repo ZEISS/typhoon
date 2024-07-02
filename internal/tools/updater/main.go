@@ -31,13 +31,15 @@ func main() {
 		log.Fatal(errors.New("updater: no valid version"))
 	}
 
+	f.Version = strings.TrimPrefix(f.Version, "v")
+
 	meta, err := chartutil.LoadChartfile(f.File)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	meta.AppVersion = f.Version
-	meta.Version = strings.TrimPrefix(f.Version, "v")
+	meta.Version = f.Version
 
 	err = chartutil.SaveChartfile(f.File, meta)
 	if err != nil {
