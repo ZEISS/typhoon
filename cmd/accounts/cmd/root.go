@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"context"
+	"log"
 
+	"github.com/kelseyhightower/envconfig"
 	"github.com/zeiss/typhoon/internal/accounts/adapters/database"
 	"github.com/zeiss/typhoon/internal/accounts/adapters/handlers"
 	"github.com/zeiss/typhoon/internal/accounts/controllers"
@@ -23,6 +25,11 @@ import (
 )
 
 func init() {
+	err := envconfig.Process("", cfg.Flags)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	Root.PersistentFlags().StringVar(&cfg.Flags.Addr, "addr", cfg.Flags.Addr, "addr")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DatabaseURI, "db-uri", cfg.Flags.DatabaseURI, "Database URI")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DatabaseTablePrefix, "db-table-prefix", cfg.Flags.DatabaseTablePrefix, "Database table prefix")
