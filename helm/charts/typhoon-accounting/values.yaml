@@ -32,13 +32,12 @@ podSecurityContext:
   # fsGroup: 2000
 
 securityContext:
-  {}
+  runAsNonRoot: true
+  runAsUser: 1000
   # capabilities:
   #   drop:
   #   - ALL
   # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
 
 initContainer:
   repository: groundnuty/k8s-wait-for

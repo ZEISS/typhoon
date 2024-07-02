@@ -37,10 +37,10 @@ spec:
           args: ["migrate"]
           env:
             {{- if .Values.database.uri }}
-            - name: TYHOON_ACCOUNTS_DATABASE_URI
+            - name: TYPHOON_ACCOUNTS_DATABASE_URI
               value: "{{ .Values.database.uri }}"
             {{- else if .Values.database.uriSecret }}
-            - name: TYHOON_ACCOUNTS_DATABASE_URI
+            - name: TYPHOON_ACCOUNTS_DATABASE_URI
               valueFrom:
                 secretKeyRef:
                   name: "{{ .Values.database.uriSecret }}"
