@@ -55,7 +55,7 @@ service:
 
 database:
   prefix: typhoon_
-  uri: postgres://craig:Q7gc8rEdS@zanzibar-cockroachdb-public:26257/defaultdb?sslmode=allow
+  uri:
   uriSecret:
   maxCacheSize:
   maxOpenConns:
