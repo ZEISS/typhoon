@@ -2,6 +2,18 @@ apiVersion: v1
 entries:
   typhoon:
   - apiVersion: v2
+    appVersion: v0.1.26
+    created: "2024-07-02T09:59:39.030208711Z"
+    description: A Helm chart deploying Typhoon on Kubernetes
+    digest: 615a5b5c765bd02e9c5026c974b15095312dc57b722117236c8621c5ae6d4916
+    name: typhoon
+    sources:
+    - https://github.com/zeiss/typhoon/tree/main/charts/typhoon
+    - https://github.com/zeiss/typhoon
+    urls:
+    - https://github.com/ZEISS/typhoon/releases/download/typhoon-0.1.26/typhoon-0.1.26.tgz
+    version: 0.1.26
+  - apiVersion: v2
     appVersion: v0.1.25
     created: "2024-06-26T14:09:54.941707696Z"
     description: A Helm chart deploying Typhoon on Kubernetes
@@ -39,6 +51,22 @@ entries:
     version: 0.1.23
   typhoon-accounting:
   - apiVersion: v2
+    appVersion: v0.1.26
+    created: "2024-07-02T09:59:39.134281478Z"
+    description: A Helm chart for the Typhoon accounting
+    digest: be7cc8b1e8897a0e87f2ae200ab8c481844e9d804f3eff4c979d37e842eea755
+    home: http://github.com/zeiss/typhoon
+    keywords:
+    - messaging
+    - jwt
+    - auth
+    name: typhoon-accounting
+    sources:
+    - https://github.com/zeiss/typhoon
+    urls:
+    - https://github.com/ZEISS/typhoon/releases/download/typhoon-accounting-0.1.26/typhoon-accounting-0.1.26.tgz
+    version: 0.1.26
+  - apiVersion: v2
     appVersion: v0.1.25
     created: "2024-06-26T14:29:50.271306883Z"
     description: A Helm chart for the Typhoon accounting
@@ -54,4 +82,4 @@ entries:
     urls:
     - https://github.com/ZEISS/typhoon/releases/download/typhoon-accounting-0.1.25/typhoon-accounting-0.1.25.tgz
     version: 0.1.25
-generated: "2024-06-26T14:29:50.27132655Z"
+generated: "2024-07-02T09:59:39.134340869Z"
