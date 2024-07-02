@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"github.com/zeiss/fiber-goth/adapters"
 	seed "github.com/zeiss/gorm-seed"
 	"github.com/zeiss/typhoon/internal/accounts/adapters/database"
+	"github.com/zeiss/typhoon/internal/api/models"
 
 	"github.com/spf13/cobra"
 	"gorm.io/driver/postgres"
@@ -28,6 +30,22 @@ var Migrate = &cobra.Command{
 			return err
 		}
 
-		return store.Migrate(cmd.Context())
+		return store.Migrate(
+			cmd.Context(),
+			&adapters.GothAccount{},
+			&adapters.GothUser{},
+			&adapters.GothSession{},
+			&adapters.GothVerificationToken{},
+			&adapters.GothTeam{},
+			&adapters.GothRole{},
+			&models.User{},
+			&models.Account{},
+			&models.Operator{},
+			&models.System{},
+			&models.Tag{},
+			&models.Cluster{},
+			&models.Token{},
+			&models.SigningKeyGroup{},
+		)
 	},
 }
