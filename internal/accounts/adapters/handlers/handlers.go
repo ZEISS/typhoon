@@ -2,9 +2,13 @@ package handlers
 
 import (
 	"context"
+	"errors"
 
+	seed "github.com/zeiss/gorm-seed"
+	"github.com/zeiss/typhoon/internal/accounts/controllers"
 	"github.com/zeiss/typhoon/internal/accounts/dto"
-	"github.com/zeiss/typhoon/internal/accounts/ports"
+	"gorm.io/gorm"
+
 	openapi "github.com/zeiss/typhoon/pkg/apis/accounts"
 )
 
@@ -12,12 +16,12 @@ var _ openapi.StrictServerInterface = (*AccountsHandler)(nil)
 
 // AccountsHandler ...
 type AccountsHandler struct {
-	ac ports.AccountsController
+	ac controllers.AccountsController
 }
 
 // NewAccountsHandler ...
-func NewAccountsHandler(ac ports.AccountsController) *AccountsHandler {
-	return &AccountsHandler{ac: ac}
+func NewAccountsHandler(ac controllers.AccountsController) *AccountsHandler {
+	return &AccountsHandler{ac}
 }
 
 // GetToken ...
@@ -25,8 +29,13 @@ func (h *AccountsHandler) GetAccountToken(ctx context.Context, req openapi.GetAc
 	query := dto.FromGetAccountTokenRequest(req)
 
 	token, err := h.ac.GetToken(ctx, query)
+	var queryError *seed.QueryError
+	if errors.As(err, &queryError) && errors.Is(queryError.Err, gorm.ErrRecordNotFound) {
+		return openapi.GetAccountToken404Response{}, nil
+	}
+
 	if err != nil {
-		return openapi.GetAccountToken404Response{}, err
+		return nil, err
 	}
 
 	return dto.ToGetAccountTokenResponse(token), nil

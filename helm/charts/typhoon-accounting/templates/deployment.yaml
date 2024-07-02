@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "typhoon.fullname" . }}
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount}}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "typhoon.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics
+        prometheus.io/port: "{{ (split ":" .Values.telemetry.metrics.addr)._1 }}"
+      labels:
+        {{- include "typhoon.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "typhoon.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{ if or (and .Values.database.applyMigrations .Values.database.waitForMigrations) .Values.extraInitContainers }}
+      initContainers:
+        {{- if and .Values.database.applyMigrations .Values.database.waitForMigrations }}
+        - name: wait-for-migration
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.initContainer.repository }}:{{ .Values.initContainer.tag }}"
+          imagePullPolicy: {{ .Values.initContainer.pullPolicy }}
+          args: ["job-wr", '{{ include "typhoon.fullname" . }}-migrate']
+          resources:
+            {{- toYaml .Values.database.migrations.resources | nindent 12 }}
+        {{- end }}
+        {{- with .Values.extraInitContainers }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args: ["run"]
+          ports:
+
+            - name: http
+              containerPort: {{ (split ":" .Values.http.addr)._1 }}
+              protocol: TCP
+
+          env:
+            {{- if .Values.database.uri }}
+            - name: TYPHOON_ACCOUNTS_DATABASE_URI
+              value: "{{ .Values.database.uri }}"
+            {{- else if .Values.database.uriSecret }}
+            - name: TYPHOON_ACCOUNTS_DATABASE_URI
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ .Values.database.uriSecret }}"
+                  key: "uri"
+            {{- end }}
+
+            {{- if .Values.database.prefix }}
+            - name: TYPHOON_ACCOUNTS_DATABASE_PREFIX
+              value: "{{ .Values.database.prefix }}"
+            {{- end }}
+
+            {{- if .Values.http.addr }}
+            - name: TYPHOON_ACCOUNTS_ADDR
+              value: "{{ .Values.http.addr }}"
+            {{- end }}
+
+            {{- with .Values.extraEnvVars }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+          {{- with .Values.extraVolumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+        {{- if .Values.sidecars }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.sidecars "context" $) | nindent 8 }}
+        {{- end }}
+
+      {{- with .Values.extraVolumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

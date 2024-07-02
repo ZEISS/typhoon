@@ -2,10 +2,10 @@ package systems
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/go-playground/validator/v10"
 	htmx "github.com/zeiss/fiber-htmx"
+	"github.com/zeiss/fiber-htmx/components/toasts"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
@@ -31,8 +31,16 @@ func NewCreateSystemController(store ports.Datastore) *CreateSystemControllerImp
 
 // Error ...
 func (l *CreateSystemControllerImpl) Error(err error) error {
-	fmt.Println(err)
-	return err
+	return toasts.RenderToasts(
+		l.Ctx(),
+		toasts.Toasts(
+			toasts.ToastsProps{},
+			toasts.ToastAlertError(
+				toasts.ToastProps{},
+				htmx.Text(err.Error()),
+			),
+		),
+	)
 }
 
 // Prepare ...
@@ -44,7 +52,7 @@ func (l *CreateSystemControllerImpl) Prepare() error {
 		return err
 	}
 
-	err = validate.Struct(&l.System)
+	err = validate.StructCtx(l.Context(), &l.System)
 	if err != nil {
 		return err
 	}

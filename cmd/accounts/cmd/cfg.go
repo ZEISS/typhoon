@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 )
 
@@ -19,32 +18,18 @@ type DB struct {
 
 // Flags contains the command line flags.
 type Flags struct {
-	Addr string
-	DB   *DB
-}
-
-// DSN for PostgreSQL.
-func (c *Config) DSN() string {
-	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable", c.Flags.DB.Addr, c.Flags.DB.Username, c.Flags.DB.Password, c.Flags.DB.Database, c.Flags.DB.Port)
+	Addr                string `envconfig:"TYPHOON_ACCOUNTS_ADDR" default:":8084"`
+	DatabaseURI         string `envconfig:"TYPHOON_ACCOUNTS_DATABASE_URI" default:""`
+	DatabaseTablePrefix string `envconfig:"TYPHOON_ACCOUNTS_DATABASE_TABLE_PREFIX" default:"typhoon_"`
 }
 
 // NewFlags ...
 func NewFlags() *Flags {
 	return &Flags{
-		DB: &DB{
-			Addr:     "host.docker.internal",
-			Database: "example",
-			Password: "example",
-			Port:     5432,
-			Username: "example",
-			Prefix:   "typhoon_",
-		},
+		Addr:                ":8084",
+		DatabaseURI:         "host=host.docker.internal user=example password=example dbname=example port=5432 sslmode=disable",
+		DatabaseTablePrefix: "typhoon_",
 	}
-}
-
-// Prefix ...
-func (c *Config) Prefix() string {
-	return c.Flags.DB.Prefix
 }
 
 // New ...

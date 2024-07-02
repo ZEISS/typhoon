@@ -4,9 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
-	"github.com/nats-io/nats.go"
 	"github.com/zeiss/fiber-htmx/components/tables"
 	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/web/ports"
@@ -16,21 +14,13 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-const (
-	accountUpdateFormat = "$SYS.ACCOUNT.%s.CLAIMS.UPDATE"
-)
-
 type database struct {
 	conn *gorm.DB
-	nc   *nats.Conn
 }
 
 // NewDatastore returns a new instance of db.
-func NewDB(conn *gorm.DB, nc *nats.Conn) (ports.Datastore, error) {
-	return &database{
-		conn: conn,
-		nc:   nc,
-	}, nil
+func NewDB(conn *gorm.DB) (ports.Datastore, error) {
+	return &database{conn: conn}, nil
 }
 
 // Close closes the database connection.
@@ -46,11 +36,12 @@ func (d *database) Close() error {
 // RunMigrations runs the database migrations.
 func (d *database) Migrate(ctx context.Context) error {
 	return d.conn.WithContext(ctx).AutoMigrate(
-		&adapters.GothUser{},
 		&adapters.GothAccount{},
-		&adapters.GothTeam{},
+		&adapters.GothUser{},
 		&adapters.GothSession{},
 		&adapters.GothVerificationToken{},
+		&adapters.GothTeam{},
+		&adapters.GothRole{},
 		&models.User{},
 		&models.Account{},
 		&models.Operator{},
@@ -70,7 +61,7 @@ func (d *database) ReadWriteTx(ctx context.Context, fn func(context.Context, por
 		return tx.Error
 	}
 
-	if err := fn(ctx, &datastoreTx{tx, d.nc}); err != nil {
+	if err := fn(ctx, &datastoreTx{tx}); err != nil {
 		tx.Rollback()
 	}
 
@@ -92,7 +83,7 @@ func (d *database) ReadTx(ctx context.Context, fn func(context.Context, ports.Re
 		return tx.Error
 	}
 
-	if err := fn(ctx, &datastoreTx{tx, d.nc}); err != nil {
+	if err := fn(ctx, &datastoreTx{tx}); err != nil {
 		tx.Rollback()
 	}
 
@@ -112,31 +103,26 @@ var _ ports.ReadWriteTx = (*datastoreTx)(nil)
 
 type datastoreTx struct {
 	tx *gorm.DB
-	nc *nats.Conn
 }
 
 // GetOperator is a method that returns an operator by ID.
 func (t *datastoreTx) GetOperator(ctx context.Context, operator *models.Operator) error {
-	return t.tx.Preload("Accounts").
-		Preload("SigningKeyGroups").
-		Preload("SigningKeyGroups.Key").
-		Preload("Key").
-		Preload("Token").
+	return t.tx.
+		Preload(clause.Associations).
+		Preload("SystemAccount.Key").
+		Preload("SystemAccount.Users").
+		Where(operator).
 		First(operator).Error
 }
 
 // CreateAccount is creating a new account.
 func (t *datastoreTx) CreateAccount(ctx context.Context, account *models.Account) error {
-	if err := t.tx.Preload("Accounts").
+	return t.tx.Preload("Accounts").
 		Preload("SigningKeyGroups").
 		Preload("SigningKeyGroups.Key").
 		Preload("Key").
 		Preload("Token").
-		Create(account).Error; err != nil {
-		return err
-	}
-
-	return t.nc.Publish(fmt.Sprintf(accountUpdateFormat, account.Token.ID), account.Token.Bytes())
+		Create(account).Error
 }
 
 // ListAccounts ...
@@ -180,7 +166,7 @@ func (t *datastoreTx) ListOperators(ctx context.Context, pagination *tables.Resu
 
 // CreateOperator ...
 func (t *datastoreTx) CreateOperator(ctx context.Context, operator *models.Operator) error {
-	return t.tx.Create(operator).Error
+	return t.tx.Session(&gorm.Session{FullSaveAssociations: true}).Create(operator).Error
 }
 
 // UpdateOperator ...
@@ -253,8 +239,8 @@ func (t *datastoreTx) UpdateSystem(ctx context.Context, system *models.System) e
 }
 
 // GetTeam is a method to get a team.
-func (t *datastoreTx) GetTeam(ctx context.Context, team *adapters.GothTeam) error {
-	return t.tx.First(team).Error
+func (t *datastoreTx) GetTeam(ctx context.Context, team *tables.Paginated[adapters.GothTeam]) error {
+	return t.tx.Preload("Users", tables.Paginate(&team.Value, team, t.tx)).Where(team.Value).First(&team.Value).Error
 }
 
 // ListTeams is a method that returns a list of teams

@@ -173,8 +173,8 @@ func (l *ShowAccountControllerImpl) Get() error {
 						),
 						nkeys.NKey(
 							nkeys.NKeyProps{
-								Title:     "Issuer",
-								PublicKey: acc.Operator.Key.ID,
+								Title: "Issuer",
+								// PublicKey: acc.Operator.Key.ID,
 							},
 						),
 					),

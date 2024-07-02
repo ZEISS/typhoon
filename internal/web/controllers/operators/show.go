@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/zeiss/typhoon/internal/api/models"
-	"github.com/zeiss/typhoon/internal/utils"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/components/nkeys"
 	"github.com/zeiss/typhoon/internal/web/components/operators"
@@ -15,8 +14,8 @@ import (
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/dropdowns"
-	"github.com/zeiss/fiber-htmx/components/forms"
 	"github.com/zeiss/fiber-htmx/components/icons"
+	"github.com/zeiss/fiber-htmx/components/tables"
 )
 
 // ShowOperatorControllerImpl ...
@@ -51,18 +50,7 @@ func (l *ShowOperatorControllerImpl) Get() error {
 		return err
 	}
 
-	skgs := []*models.SigningKeyGroup{}
-	for _, skg := range op.SigningKeyGroups {
-		skgs = append(skgs, &skg)
-	}
-
-	accs := []*models.Account{}
-	for _, acc := range op.Accounts {
-		accs = append(accs, &acc)
-	}
-
-	return htmx.RenderComp(
-		l.Ctx(),
+	return l.Render(
 		components.Page(
 			components.PageProps{
 				Boost: true,
@@ -123,7 +111,6 @@ func (l *ShowOperatorControllerImpl) Get() error {
 								),
 							),
 						),
-
 						cards.Actions(
 							cards.ActionsProps{},
 							dropdowns.Dropdown(
@@ -167,53 +154,6 @@ func (l *ShowOperatorControllerImpl) Get() error {
 						cards.BodyProps{},
 						cards.Title(
 							cards.TitleProps{},
-							htmx.Text("System Account"),
-						),
-						htmx.Form(
-							forms.FormControlLabel(
-								forms.FormControlLabelProps{},
-								forms.FormControlLabelText(
-									forms.FormControlLabelTextProps{
-										ClassNames: htmx.ClassNames{
-											"text-neutral-500": true,
-										},
-									},
-									forms.SelectBordered(
-										forms.SelectProps{},
-										htmx.HxPut(fmt.Sprintf("/operators/%s/system-account", op.ID)),
-										htmx.HxTarget("this"),
-										htmx.HxSwap("outerHTML"),
-										forms.Option(
-											forms.OptionProps{
-												Selected: true,
-												Disabled: true,
-											},
-											htmx.Text("Select account"),
-										),
-										htmx.Name("system_account_id"),
-										htmx.Group(
-											htmx.ForEach(accs, func(account *models.Account, idx int) htmx.Node {
-												return forms.Option(
-													forms.OptionProps{
-														Value:    account.ID.String(),
-														Selected: op.SystemAdminAccountID != nil && account.ID == utils.UUIDPtr(op.SystemAdminAccountID),
-													},
-													htmx.Text(account.Name),
-												)
-											})...,
-										),
-									),
-								),
-							),
-						),
-					),
-				),
-				cards.CardBordered(
-					cards.CardProps{},
-					cards.Body(
-						cards.BodyProps{},
-						cards.Title(
-							cards.TitleProps{},
 							htmx.Text("Details"),
 						),
 						nkeys.NKey(
@@ -230,12 +170,43 @@ func (l *ShowOperatorControllerImpl) Get() error {
 						cards.BodyProps{},
 						cards.Title(
 							cards.TitleProps{},
+							htmx.Text("System Account"),
+						),
+						nkeys.NKey(
+							nkeys.NKeyProps{
+								Title:     "ID",
+								PublicKey: op.SystemAccount.Key.ID,
+							},
+						),
+					),
+				),
+				cards.CardBordered(
+					cards.CardProps{},
+					cards.Body(
+						cards.BodyProps{},
+						cards.Title(
+							cards.TitleProps{},
+							htmx.Text("System Users"),
+						),
+						operators.UsersTable(
+							operators.UsersTableProps{
+								Users: tables.RowsPtr(op.SystemAccount.Users),
+							},
+						),
+					),
+				),
+				cards.CardBordered(
+					cards.CardProps{},
+					cards.Body(
+						cards.BodyProps{},
+						cards.Title(
+							cards.TitleProps{},
 							htmx.Text("Signing Key Groups"),
 						),
 
 						operators.SigningKeyGroupsTable(
 							operators.SigningKeyGroupsTableProps{
-								SigningKeyGroups: skgs,
+								SigningKeyGroups: tables.RowsPtr(op.SigningKeyGroups),
 							},
 						),
 						cards.Actions(
