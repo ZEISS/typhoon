@@ -48,10 +48,14 @@ initContainer:
 ## Configure extra options for Typhoon containers' liveness, readiness and startup probes
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
 
+service:
+  annotations: {}
+  type: ClusterIP
+  port: 8080
+
 database:
   prefix: typhoon_
-  address:
-  uri:
+  uri: postgres://craig:Q7gc8rEdS@zanzibar-cockroachdb-public:26257/defaultdb?sslmode=allow
   uriSecret:
   maxCacheSize:
   maxOpenConns:
