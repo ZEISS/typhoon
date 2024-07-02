@@ -36,11 +36,12 @@ func (d *database) Close() error {
 // RunMigrations runs the database migrations.
 func (d *database) Migrate(ctx context.Context) error {
 	return d.conn.WithContext(ctx).AutoMigrate(
-		&adapters.GothUser{},
 		&adapters.GothAccount{},
-		&adapters.GothTeam{},
+		&adapters.GothUser{},
 		&adapters.GothSession{},
 		&adapters.GothVerificationToken{},
+		&adapters.GothTeam{},
+		&adapters.GothRole{},
 		&models.User{},
 		&models.Account{},
 		&models.Operator{},

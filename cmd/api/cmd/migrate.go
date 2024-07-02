@@ -9,8 +9,6 @@ import (
 )
 
 var Migrate = &cobra.Command{
-	Use:   "migrate",
-	Short: "Migrate the database",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		conn, err := gorm.Open(postgres.Open(cfg.DSN()), &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{

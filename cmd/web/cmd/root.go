@@ -104,13 +104,10 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 			return err
 		}
 
-		gorm, err := adapter.New(conn)
-		if err != nil {
-			return err
-		}
+		ga := adapter.New(conn)
 
 		gothConfig := goth.Config{
-			Adapter:        gorm,
+			Adapter:        ga,
 			Secret:         goth.GenerateKey(),
 			CookieHTTPOnly: true,
 		}

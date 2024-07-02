@@ -11,7 +11,7 @@ require (
 	github.com/fsnotify/fsnotify v1.7.0
 	github.com/getkin/kin-openapi v0.125.0
 	github.com/go-playground/validator/v10 v10.22.0
-	github.com/gofiber/fiber/v2 v2.52.4
+	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/golang/mock v1.7.0-rc.1
 	github.com/golangci/golangci-lint v1.59.1
@@ -36,7 +36,7 @@ require (
 	github.com/wamuir/go-xslt v0.1.5
 	github.com/xdg-go/scram v1.0.2
 	github.com/zeiss/fiber-authz v1.0.31
-	github.com/zeiss/fiber-goth v1.2.5-0.20240627074038-6bbb515b112f
+	github.com/zeiss/fiber-goth v1.2.5
 	github.com/zeiss/fiber-htmx v1.3.18-0.20240628131553-334787f154e5
 	github.com/zeiss/gorm-seed v0.1.2
 	github.com/zeiss/snow-go v0.0.0-20240312201415-88f059622cff
