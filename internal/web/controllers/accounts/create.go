@@ -2,7 +2,6 @@ package accounts
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
@@ -83,12 +82,8 @@ func (l *CreateControllerImpl) Error(err error) error {
 
 // Post ...
 func (l *CreateControllerImpl) Post() error {
-	fmt.Println(l.Form)
-
 	account := models.Account{
 		Name:                           l.Form.Name,
-		OperatorID:                     l.Form.OperatorID,
-		TeamID:                         l.Form.TeamID,
 		Description:                    utils.StrPtr(l.Form.Description),
 		LimitJetStreamMaxDiskStorage:   utils.PrettyByteSize(l.Form.JetStreamMaxDiskStorage, l.Form.JetStreamMaxDiskStorageUnit),
 		LimitJetStreamMaxStreams:       l.Form.JetStreamMaxStreams,

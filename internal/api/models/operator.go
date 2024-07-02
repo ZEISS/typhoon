@@ -61,15 +61,16 @@ type Operator struct {
 	Key NKey `json:"key" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:operator"`
 	// Token is the JWT token used to authenticate the account.
 	Token Token `json:"token" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:operator"`
-	// SystemAdminAccount is the account that is used to manage the systems.
-	SystemAdminAccount   *Account   `json:"system_admin_account"`
-	SystemAdminAccountID *uuid.UUID `json:"system_admin_account_id"`
+	// SystemAccount is the account that is used to manage the systems.
+	SystemAccount Account `json:"system_account" gorm:"Constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	// SystemAccountID is the account that is used to manage the systems.
+	SystemAccountID uuid.UUID `json:"system_account_id" gorm:"type:uuid"`
+	// Accounts is the accounts that are associated with the operator.
+	Accounts []Account `json:"accounts" gorm:"many2many:operator_accounts;foreignKey:ID;joinForeignKey:OperatorID;joinReferences:AccountID"`
 	// Systems is the systems that are associated with the operator.
 	Systems []System `json:"systems" gorm:"foreignKey:OperatorID"`
 	// SigningKeyGroups is the list of signing key groups the account has.
 	SigningKeyGroups []SigningKeyGroup `json:"signing_key_groups" gorm:"many2many:operator_signing_key_groups;foreignKey:ID;joinForeignKey:OperatorID;joinReferences:SigningKeyGroupID"`
-	// Accounts is the list of accounts the operator has.
-	Accounts []Account `json:"accounts"`
 	// CreatedAt is the time the operator was created.
 	CreatedAt time.Time `json:"created_at"`
 	// UpdatedAt is the time the operator was updated.

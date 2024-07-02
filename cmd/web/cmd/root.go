@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/kelseyhightower/envconfig"
-	"github.com/nats-io/nats.go"
+	authz "github.com/zeiss/fiber-authz"
 	"github.com/zeiss/fiber-goth/providers"
 	"github.com/zeiss/fiber-goth/providers/github"
 	"github.com/zeiss/typhoon/internal/web/adapters/db"
@@ -18,6 +18,7 @@ import (
 	logger "github.com/gofiber/fiber/v2/middleware/logger"
 	requestid "github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/katallaxie/pkg/server"
+	openfga "github.com/openfga/go-sdk/client"
 	"github.com/spf13/cobra"
 	goth "github.com/zeiss/fiber-goth"
 	adapter "github.com/zeiss/fiber-goth/adapters/gorm"
@@ -27,14 +28,15 @@ import (
 )
 
 func init() {
+	Root.AddCommand(Migrate)
+
 	Root.PersistentFlags().StringVar(&cfg.Flags.Addr, "addr", ":3000", "addr")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Database, "db-database", cfg.Flags.DB.Database, "Database name")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Username, "db-username", cfg.Flags.DB.Username, "Database user")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Password, "db-password", cfg.Flags.DB.Password, "Database password")
 	Root.PersistentFlags().IntVar(&cfg.Flags.DB.Port, "db-port", cfg.Flags.DB.Port, "Database port")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Addr, "db-host", cfg.Flags.DB.Addr, "Database host")
-	Root.PersistentFlags().StringVar(&cfg.Flags.Nats.Credentials, "nats-credentials", cfg.Flags.Nats.Credentials, "NATS credentials")
-	Root.PersistentFlags().StringVar(&cfg.Flags.Nats.URL, "nats-url", cfg.Flags.Nats.URL, "NATS URL")
+	Root.PersistentFlags().StringVar(&cfg.Flags.FGA.ApiUrl, "fga-api-url", cfg.Flags.FGA.ApiUrl, "FGA API URL")
 
 	Root.SilenceUsage = true
 }
@@ -84,34 +86,33 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 			return err
 		}
 
-		nc, err := nats.Connect(cfg.Flags.Nats.URL, nats.UserCredentials(cfg.Flags.Nats.Credentials))
-		if err != nil {
-			return err
-		}
-		defer nc.Close()
-
-		store, err := db.NewDB(conn, nc)
-		if err != nil {
-			return err
-		}
-
-		err = store.Migrate(ctx)
+		fga, err := openfga.NewSdkClient(
+			&openfga.ClientConfiguration{
+				ApiUrl:               cfg.Flags.FGA.ApiUrl,
+				StoreId:              cfg.Flags.FGA.StoreID,
+				AuthorizationModelId: cfg.Flags.FGA.AuthorizationModelID,
+			},
+		)
 		if err != nil {
 			return err
 		}
 
-		gorm, err := adapter.New(conn)
+		auth := authz.NewFGA(fga)
+
+		store, err := db.NewDB(conn)
 		if err != nil {
 			return err
 		}
+
+		ga := adapter.New(conn)
 
 		gothConfig := goth.Config{
-			Adapter:        gorm,
+			Adapter:        ga,
 			Secret:         goth.GenerateKey(),
 			CookieHTTPOnly: true,
 		}
 
-		handlers := handlers.NewHandlers(store)
+		handlers := handlers.NewHandlers(store, auth)
 
 		app := fiber.New()
 		app.Use(requestid.New())
@@ -152,17 +153,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Delete("/operators/:id", handlers.DeleteOperator())
 		app.Get("/operators/:id/token", handlers.TokenOperator())
 		app.Get("/operators/:id/skgs/new", handlers.NewOperatorSkg())
-		app.Put("/operators/:id/system-account", handlers.UpdateSystemAccount())
 		app.Post("/operators/:id/skgs/create", handlers.CreateOperatorSkg())
-
-		// Accounts handler
-		app.Get("/accounts", handlers.ListAccounts())
-		app.Get("/accounts/new", handlers.NewAccount())
-		app.Post("/accounts/create", handlers.CreateAccount())
-		app.Get("/accounts/:id", handlers.ShowAccount())
-		app.Delete("/accounts/:id", handlers.DeleteAccount())
-		app.Get("/accounts/:id/token", handlers.GetAccountToken())
-		app.Get("/accounts/partials/operator-skgs", handlers.OperatorSkgsOptions())
 
 		// Users handler
 		app.Get("/users", handlers.ListUsers())
@@ -179,6 +170,18 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Get("/systems/new", handlers.NewSystem())
 		app.Get("/systems/:id", handlers.ShowSystem())
 		app.Delete("/systems/:id", handlers.DeleteSystem())
+
+		// Teams
+		team := app.Group("/teams/:team_id")
+
+		// Accounts handler
+		team.Get("/accounts", handlers.ListAccounts())
+		team.Get("/accounts/new", handlers.NewAccount())
+		team.Post("/accounts/create", handlers.CreateAccount())
+		team.Get("/accounts/:id", handlers.ShowAccount())
+		team.Delete("/accounts/:id", handlers.DeleteAccount())
+		team.Get("/accounts/:id/token", handlers.GetAccountToken())
+		team.Get("/accounts/partials/operator-skgs", handlers.OperatorSkgsOptions())
 
 		err = app.Listen(s.cfg.Flags.Addr)
 		if err != nil {

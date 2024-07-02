@@ -2,7 +2,6 @@ package teams
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/zeiss/fiber-goth/adapters"
 	"github.com/zeiss/typhoon/internal/web/ports"
@@ -29,12 +28,6 @@ func NewCreateTeamController(store ports.Datastore) *CreateTeamControllerImpl {
 	return &CreateTeamControllerImpl{
 		store: store,
 	}
-}
-
-// Error ...
-func (l *CreateTeamControllerImpl) Error(err error) error {
-	fmt.Println()
-	return err
 }
 
 // Prepare ...

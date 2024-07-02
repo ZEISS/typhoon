@@ -16,7 +16,7 @@ type SigningKeyGroup struct {
 	// Description is the description of the group.
 	Description string `json:"description" validate:"max=1024"`
 	// Key is the signing key of this group.
-	Key NKey `json:"key"`
+	Key NKey `json:"key" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:signing_key_group"`
 	// KeyID is the foreign key for the key.
 	KeyID string `json:"key_id" gorm:"foreignKey:ID"`
 	// CreatedAt is the time the group was created.
