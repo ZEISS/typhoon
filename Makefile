@@ -53,6 +53,10 @@ clean: ## Remove previous build.
 deploy: ## Deploy the application.
 	$(GO_KO) resolve -f $(BASE_DIR)/config > $(BASE_DIR)/typhoon.yaml
 
+.PHONY: snapshot
+snapshot: ## Create a snapshot release
+	$(GO_RELEASER) release --clean --snapshot
+
 .PHONY: release
 release: ## Release the application.
 	@mkdir -p $(OUTPUT_DIR)
@@ -64,6 +68,8 @@ ifeq ($(shell echo ${IMAGE_TAG} | egrep "${TAG_REGEX}"),${IMAGE_TAG})
 	$(GO_KO) resolve $(KOFLAGS) -B -t latest -f config/ -l '!typhoon.zeiss.com/crd-install' > /dev/null
 endif
 	$(GO_KO) resolve $(KOFLAGS) -B -t $(IMAGE_TAG) --tag-only -f config/ -l '!typhoon.zeiss.com/crd-install' >> $(OUTPUT_DIR)/typhoon-crds.yaml
+
+	$(GO_RELEASER) release --clean
 
 .PHONY: help
 help: ## Display this help screen.

@@ -1,0 +1,7 @@
+FROM scratch
+
+WORKDIR /
+
+COPY typhoon-web /main
+
+ENTRYPOINT ["/main"]

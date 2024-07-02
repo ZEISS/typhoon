@@ -1,4 +1,4 @@
-package cmd
+package config
 
 import (
 	"fmt"
@@ -7,8 +7,8 @@ import (
 
 var cfg = New()
 
-// DB ...
-type DB struct {
+// Database ...
+type Database struct {
 	Addr     string
 	Database string
 	Password string
@@ -19,19 +19,19 @@ type DB struct {
 
 // Flags contains the command line flags.
 type Flags struct {
-	Addr string
-	DB   *DB
+	Addr     string
+	Database *Database
 }
 
 // DSN for PostgreSQL.
 func (c *Config) DSN() string {
-	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable", c.Flags.DB.Addr, c.Flags.DB.Username, c.Flags.DB.Password, c.Flags.DB.Database, c.Flags.DB.Port)
+	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable", c.Flags.Database.Addr, c.Flags.Database.Username, c.Flags.Database.Password, c.Flags.Database.Database, c.Flags.Database.Port)
 }
 
 // NewFlags ...
 func NewFlags() *Flags {
 	return &Flags{
-		DB: &DB{
+		Database: &Database{
 			Addr:     "host.docker.internal",
 			Database: "example",
 			Password: "example",
@@ -44,7 +44,7 @@ func NewFlags() *Flags {
 
 // Prefix ...
 func (c *Config) Prefix() string {
-	return c.Flags.DB.Prefix
+	return c.Flags.Database.Prefix
 }
 
 // New ...

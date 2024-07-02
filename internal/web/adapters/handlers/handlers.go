@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	authz "github.com/zeiss/fiber-authz"
 	"github.com/zeiss/typhoon/internal/web/controllers/accounts"
 	pa "github.com/zeiss/typhoon/internal/web/controllers/accounts/partials"
 	"github.com/zeiss/typhoon/internal/web/controllers/dashboard"
@@ -24,11 +25,12 @@ var _ ports.Handlers = (*handlers)(nil)
 
 type handlers struct {
 	store ports.Datastore
+	authz authz.AuthzChecker
 }
 
 // NewHandlers ...
-func NewHandlers(store ports.Datastore) *handlers {
-	return &handlers{store}
+func NewHandlers(store ports.Datastore, authz authz.AuthzChecker) *handlers {
+	return &handlers{store, authz}
 }
 
 // Login ...
@@ -69,7 +71,7 @@ func (h *handlers) NewOperator() fiber.Handler {
 // CreateOperator ...
 func (h *handlers) CreateOperator() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return operators.NewOperatorController(h.store)
+		return operators.NewCreateController(h.store)
 	})
 }
 
@@ -200,13 +202,6 @@ func (h *handlers) DeleteUser() fiber.Handler {
 	})
 }
 
-// UpdateSystemAccount ...
-func (h *handlers) UpdateSystemAccount() fiber.Handler {
-	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return operators.NewUpdateSystemAccountController(h.store)
-	})
-}
-
 // GetAccountToken ...
 func (h *handlers) GetAccountToken() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
@@ -253,7 +248,7 @@ func (h *handlers) ShowSystem() fiber.Handler {
 func (h *handlers) ListTeams() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
 		return teams.NewTeamsListOperatorController(h.store)
-	})
+	}, htmx.Config{AuthzChecker: h.authz})
 }
 
 // NewTeam ...

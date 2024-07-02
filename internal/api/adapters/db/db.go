@@ -23,11 +23,12 @@ func NewDB(conn *gorm.DB) *DB {
 // RunMigrations ...
 func (db *DB) RunMigrations() error {
 	return db.conn.AutoMigrate(
-		&adapters.GothUser{},
 		&adapters.GothAccount{},
+		&adapters.GothUser{},
 		&adapters.GothSession{},
-		&adapters.GothTeam{},
 		&adapters.GothVerificationToken{},
+		&adapters.GothTeam{},
+		&adapters.GothRole{},
 		&models.User{},
 		&models.Account{},
 		&models.Operator{},

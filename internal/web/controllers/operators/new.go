@@ -1,19 +1,13 @@
 package operators
 
 import (
-	"context"
-
-	"github.com/go-playground/validator/v10"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/forms"
-	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
-
-var validate *validator.Validate
 
 // NewOperatorControllerImpl ...
 type NewOperatorControllerImpl struct {
@@ -23,59 +17,17 @@ type NewOperatorControllerImpl struct {
 
 // NewOperatorsController ...
 func NewOperatorController(store ports.Datastore) *NewOperatorControllerImpl {
-	return &NewOperatorControllerImpl{store, htmx.DefaultController{}}
-}
-
-// Prepare ...
-func (l *NewOperatorControllerImpl) Prepare() error {
-	validate = validator.New()
-
-	return nil
-}
-
-// Post ...
-func (l *NewOperatorControllerImpl) Post() error {
-	query := struct {
-		Name        string `json:"name" form:"name" validate:"required,min=3,max=100"`
-		Description string `json:"description" form:"description" validate:"required,min=3,max=1024"`
-	}{}
-
-	err := l.Ctx().BodyParser(&query)
-	if err != nil {
-		return err
-	}
-
-	err = validate.Struct(query)
-	if err != nil {
-		return err
-	}
-
-	op, err := models.NewOperator(query.Name, query.Description)
-	if err != nil {
-		return err
-	}
-
-	err = l.store.ReadWriteTx(l.Context(), func(ctx context.Context, tx ports.ReadWriteTx) error {
-		return tx.CreateOperator(ctx, &op)
-	})
-	if err != nil {
-		return err
-	}
-
-	htmx.Redirect(l.Ctx(), "/operators")
-
-	return nil
+	return &NewOperatorControllerImpl{store: store}
 }
 
 // Get ...
 func (l *NewOperatorControllerImpl) Get() error {
-	return htmx.RenderComp(
-		l.Ctx(),
+	return l.Render(
 		components.Page(
 			components.PageProps{},
 			components.Layout(
 				components.LayoutProps{
-					Path: l.Ctx().Path(),
+					Path: l.Path(),
 				},
 				htmx.FormElement(
 					htmx.HxPost("/operators/new"),
@@ -89,18 +41,12 @@ func (l *NewOperatorControllerImpl) Get() error {
 							),
 							forms.FormControl(
 								forms.FormControlProps{
-									ClassNames: htmx.ClassNames{
-										"py-4": true,
-									},
+									ClassNames: htmx.ClassNames{},
 								},
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
 									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"-my-4": true,
-											},
-										},
+										forms.FormControlLabelTextProps{},
 										htmx.Text("Name"),
 									),
 								),
@@ -133,17 +79,13 @@ func (l *NewOperatorControllerImpl) Get() error {
 								),
 								forms.FormControl(
 									forms.FormControlProps{
-										ClassNames: htmx.ClassNames{
-											"py-4": true,
-										},
+										ClassNames: htmx.ClassNames{},
 									},
 									forms.FormControlLabel(
 										forms.FormControlLabelProps{},
 										forms.FormControlLabelText(
 											forms.FormControlLabelTextProps{
-												ClassNames: htmx.ClassNames{
-													"-my-4": true,
-												},
+												ClassNames: htmx.ClassNames{},
 											},
 											htmx.Text("Description"),
 										),

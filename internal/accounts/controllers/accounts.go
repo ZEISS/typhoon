@@ -3,32 +3,40 @@ package controllers
 import (
 	"context"
 
+	seed "github.com/zeiss/gorm-seed"
 	"github.com/zeiss/typhoon/internal/accounts/dto"
-	"github.com/zeiss/typhoon/internal/accounts/models"
 	"github.com/zeiss/typhoon/internal/accounts/ports"
-	api "github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/api/models"
 )
 
-var _ ports.AccountsController = (*accountsController)(nil)
+var _ AccountsController = (*AccountsControllerImpl)(nil)
 
 // AccountsController ...
-type accountsController struct {
-	db ports.AccountsRepository
+type AccountsController interface {
+	// GetToken is a method that returns a token.
+	GetToken(ctx context.Context, query dto.GetAccountQuery) (models.Token, error)
+}
+
+// AccountsControllerImpl ...
+type AccountsControllerImpl struct {
+	store seed.Database[ports.ReadTx, ports.ReadWriteTx]
 }
 
 // NewAccountsController ...
-func NewAccountsController(db ports.AccountsRepository) *accountsController {
-	return &accountsController{db: db}
+func NewAccountsController(store seed.Database[ports.ReadTx, ports.ReadWriteTx]) *AccountsControllerImpl {
+	return &AccountsControllerImpl{store}
 }
 
 // GetToken ...
-func (c *accountsController) GetToken(ctx context.Context, query dto.GetAccountQuery) (models.AccountToken, error) {
-	token := api.Token{ID: query.ID.String()}
+func (c *AccountsControllerImpl) GetToken(ctx context.Context, query dto.GetAccountQuery) (models.Token, error) {
+	token := models.Token{ID: query.ID}
 
-	err := c.db.GetToken(ctx, &token)
+	err := c.store.ReadTx(ctx, func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.GetToken(ctx, &token)
+	})
 	if err != nil {
-		return models.AccountToken(token.Token), err
+		return token, err
 	}
 
-	return models.AccountToken(token.Token), nil
+	return token, nil
 }

@@ -10,23 +10,28 @@ var cfg = New()
 // DB ...
 type DB struct {
 	Addr     string `envconfig:"TYPHOON_DB_ADDR" default:"host.docker.internal"`
-	Database string `envconfig:"TYPHOON_DB_DATABASE" default:"example"`
-	Password string `envconfig:"TYPHOON_DB_PASSWORD" default:"example"`
-	Port     int    `envconfig:"TYPHOON_DB_PORT" default:"5432"`
-	Username string `envconfig:"TYPHOON_DB_USERNAME" default:"example"`
+	Username string `envconfig:"TYPHOON_DB_USERNAME" default:"root"`
+	Password string `envconfig:"TYPHOON_DB_PASSWORD" default:""`
+	Database string `envconfig:"TYPHOON_DB_DATABASE" default:"defaultdb"`
+	Port     int    `envconfig:"TYPHOON_DB_PORT" default:"26257"`
+	Prefix   string `envconfig:"TYPHOON_DB_PREFIX" default:"typhoon_"`
 }
 
 // Flags contains the command line flags.
 type Flags struct {
-	Addr string
-	Nats *Nats
+	Addr string `envconfig:"TYPHOON_ADDR" default:":3000"`
+	FGA  *FGA
 	DB   *DB
 }
 
-// Nats contains the NATS configuration.
-type Nats struct {
-	Credentials string `envconfig:"TYPHOON_NATS_CREDENTIALS" default:"sys.creds"`
-	URL         string `envconfig:"TYPHOON_NATS_URL" default:"nats://localhost:4222"`
+// FGA contains the OpenFGA configuration.
+type FGA struct {
+	// ApiUrl ...
+	ApiUrl string `envconfig:"TYPHOON_FGA_API_URL" default:"http://host.docker.internal:8080"`
+	// StoreId ...
+	StoreID string `envconfig:"TYPHOON_FGA_STORE_ID" default:""`
+	// AuthorizationModelId ...
+	AuthorizationModelID string `envconfig:"TYPHOON_FGA_AUTHORIZATION_MODEL_ID" default:""`
 }
 
 // DSN for PostgreSQL.
@@ -37,13 +42,14 @@ func (c *Config) DSN() string {
 // NewFlags ...
 func NewFlags() *Flags {
 	return &Flags{
-		Nats: &Nats{},
+		FGA: &FGA{},
 		DB: &DB{
 			Addr:     "host.docker.internal",
-			Database: "example",
-			Password: "example",
-			Port:     5432,
-			Username: "example",
+			Database: "defaultdb",
+			Password: "",
+			Port:     26257,
+			Username: "root",
+			Prefix:   "typhoon_",
 		},
 	}
 }
@@ -58,6 +64,11 @@ func New() *Config {
 // Config ...
 type Config struct {
 	Flags *Flags
+}
+
+// Prefix ...
+func (c *Config) Prefix() string {
+	return c.Flags.DB.Prefix
 }
 
 // Cwd returns the current working directory.

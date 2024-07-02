@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/nats-io/jwt"
+	"github.com/nats-io/jwt/v2"
 	"gorm.io/gorm"
 )
 
@@ -17,7 +17,7 @@ type User struct {
 	// Description is the description of the user.
 	Description string `json:"description" validate:"max=1024"`
 	// Key is the issuer key identifier.
-	Key NKey `json:"key" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:account"`
+	Key NKey `json:"key" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:user"`
 	// KeyID is the foreign key for the key.
 	KeyID string `json:"key_id" gorm:"foreignKey:ID"`
 	// Token is the JWT token used to authenticate the account.
