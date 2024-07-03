@@ -18,7 +18,7 @@ require (
 	github.com/google/cel-go v0.17.7
 	github.com/google/uuid v1.6.0
 	github.com/itchyny/gojq v0.12.14
-	github.com/katallaxie/pkg v0.6.5
+	github.com/katallaxie/pkg v0.6.6
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/logzio/logzio-go v1.0.6
 	github.com/nats-io/jwt v1.2.2
@@ -36,7 +36,7 @@ require (
 	github.com/wamuir/go-xslt v0.1.5
 	github.com/xdg-go/scram v1.0.2
 	github.com/zeiss/fiber-authz v1.0.31
-	github.com/zeiss/fiber-goth v1.2.5
+	github.com/zeiss/fiber-goth v1.2.6
 	github.com/zeiss/fiber-htmx v1.3.18-0.20240628131553-334787f154e5
 	github.com/zeiss/gorm-seed v0.1.2
 	github.com/zeiss/snow-go v0.0.0-20240312201415-88f059622cff

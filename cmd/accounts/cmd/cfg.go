@@ -25,11 +25,7 @@ type Flags struct {
 
 // NewFlags ...
 func NewFlags() *Flags {
-	return &Flags{
-		Addr:                ":8084",
-		DatabaseURI:         "host=host.docker.internal user=example password=example dbname=example port=5432 sslmode=disable",
-		DatabaseTablePrefix: "typhoon_",
-	}
+	return &Flags{}
 }
 
 // New ...
