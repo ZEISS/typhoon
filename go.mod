@@ -36,7 +36,7 @@ require (
 	github.com/wamuir/go-xslt v0.1.5
 	github.com/xdg-go/scram v1.0.2
 	github.com/zeiss/fiber-authz v1.0.31
-	github.com/zeiss/fiber-goth v1.2.6
+	github.com/zeiss/fiber-goth v1.2.8
 	github.com/zeiss/fiber-htmx v1.3.18-0.20240628131553-334787f154e5
 	github.com/zeiss/gorm-seed v0.1.2
 	github.com/zeiss/snow-go v0.0.0-20240312201415-88f059622cff
