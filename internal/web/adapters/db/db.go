@@ -47,6 +47,7 @@ func (d *database) Migrate(ctx context.Context) error {
 		&models.Operator{},
 		&models.System{},
 		&models.Tag{},
+		&models.NKey{},
 		&models.Cluster{},
 		&models.Token{},
 		&models.SigningKeyGroup{},
