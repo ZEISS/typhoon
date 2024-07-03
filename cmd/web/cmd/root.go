@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"os"
 
@@ -28,15 +29,19 @@ import (
 )
 
 func init() {
+	err := envconfig.Process("", cfg.Flags)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	Root.AddCommand(Migrate)
 
-	Root.PersistentFlags().StringVar(&cfg.Flags.Addr, "addr", ":3000", "addr")
-	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Database, "db-database", cfg.Flags.DB.Database, "Database name")
-	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Username, "db-username", cfg.Flags.DB.Username, "Database user")
-	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Password, "db-password", cfg.Flags.DB.Password, "Database password")
-	Root.PersistentFlags().IntVar(&cfg.Flags.DB.Port, "db-port", cfg.Flags.DB.Port, "Database port")
-	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Addr, "db-host", cfg.Flags.DB.Addr, "Database host")
-	Root.PersistentFlags().StringVar(&cfg.Flags.FGA.ApiUrl, "fga-api-url", cfg.Flags.FGA.ApiUrl, "FGA API URL")
+	Root.PersistentFlags().StringVar(&cfg.Flags.Addr, "addr", cfg.Flags.Addr, "addr")
+	Root.PersistentFlags().StringVar(&cfg.Flags.DatabaseURI, "db-uri", cfg.Flags.DatabaseURI, "Database URI")
+	Root.PersistentFlags().StringVar(&cfg.Flags.DatabaseTablePrefix, "db-table-prefix", cfg.Flags.DatabaseTablePrefix, "Database table prefix")
+	Root.PersistentFlags().StringVar(&cfg.Flags.FGAApiUrl, "fga-api-url", cfg.Flags.FGAApiUrl, "FGA API URL")
+	Root.PersistentFlags().StringVar(&cfg.Flags.FGAStoreID, "fga-store-id", cfg.Flags.FGAStoreID, "FGA Store ID")
+	Root.PersistentFlags().StringVar(&cfg.Flags.FGAAuthorizationModelID, "fga-authorization-model-id", cfg.Flags.FGAAuthorizationModelID, "FGA Authorization Model ID")
 
 	Root.SilenceUsage = true
 }
@@ -77,9 +82,9 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 	return func() error {
 		providers.RegisterProvider(github.New(os.Getenv("GITHUB_KEY"), os.Getenv("GITHUB_SECRET"), "http://localhost:3000/auth/github/callback"))
 
-		conn, err := gorm.Open(postgres.Open(cfg.DSN()), &gorm.Config{
+		conn, err := gorm.Open(postgres.Open(cfg.Flags.DatabaseURI), &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
-				TablePrefix: "typhoon_",
+				TablePrefix: cfg.Flags.DatabaseTablePrefix,
 			},
 		})
 		if err != nil {
@@ -88,9 +93,9 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 
 		fga, err := openfga.NewSdkClient(
 			&openfga.ClientConfiguration{
-				ApiUrl:               cfg.Flags.FGA.ApiUrl,
-				StoreId:              cfg.Flags.FGA.StoreID,
-				AuthorizationModelId: cfg.Flags.FGA.AuthorizationModelID,
+				ApiUrl:               cfg.Flags.FGAApiUrl,
+				StoreId:              cfg.Flags.FGAStoreID,
+				AuthorizationModelId: cfg.Flags.FGAAuthorizationModelID,
 			},
 		)
 		if err != nil {

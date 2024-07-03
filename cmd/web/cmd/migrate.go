@@ -13,9 +13,9 @@ var Migrate = &cobra.Command{
 	Use:   "migrate",
 	Short: "Migrate the database",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		conn, err := gorm.Open(postgres.Open(cfg.DSN()), &gorm.Config{
+		conn, err := gorm.Open(postgres.Open(cfg.Flags.DatabaseURI), &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
-				TablePrefix: cfg.Prefix(),
+				TablePrefix: cfg.Flags.DatabaseTablePrefix,
 			},
 		})
 		if err != nil {
