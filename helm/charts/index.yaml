@@ -2,6 +2,18 @@ apiVersion: v1
 entries:
   typhoon:
   - apiVersion: v2
+    appVersion: 0.1.36
+    created: "2024-07-03T10:44:39.079123648Z"
+    description: A Helm chart deploying Typhoon on Kubernetes
+    digest: 4bb97c50f82e9b3652cd6ab2ec512d14d9b7514db545f7a1e9c76065eea01d3c
+    name: typhoon
+    sources:
+    - https://github.com/zeiss/typhoon/tree/main/charts/typhoon
+    - https://github.com/zeiss/typhoon
+    urls:
+    - https://github.com/ZEISS/typhoon/releases/download/typhoon-0.1.36/typhoon-0.1.36.tgz
+    version: 0.1.36
+  - apiVersion: v2
     appVersion: 0.1.35
     created: "2024-07-03T10:08:55.906353252Z"
     description: A Helm chart deploying Typhoon on Kubernetes
@@ -158,6 +170,22 @@ entries:
     - https://github.com/ZEISS/typhoon/releases/download/typhoon-chart-0.1.23/typhoon-0.1.23.tgz
     version: 0.1.23
   typhoon-accounting:
+  - apiVersion: v2
+    appVersion: 0.1.36
+    created: "2024-07-03T10:44:39.192568367Z"
+    description: A Helm chart for the Typhoon accounting
+    digest: 6a4df63f361dd6440f402668a9105dc00d79c7cc124f631f7df1ee24dad65fe4
+    home: http://github.com/zeiss/typhoon
+    keywords:
+    - messaging
+    - jwt
+    - auth
+    name: typhoon-accounting
+    sources:
+    - https://github.com/zeiss/typhoon
+    urls:
+    - https://github.com/ZEISS/typhoon/releases/download/typhoon-accounting-0.1.36/typhoon-accounting-0.1.36.tgz
+    version: 0.1.36
   - apiVersion: v2
     appVersion: 0.1.35
     created: "2024-07-03T10:08:56.024496712Z"
@@ -334,4 +362,21 @@ entries:
     urls:
     - https://github.com/ZEISS/typhoon/releases/download/typhoon-accounting-0.1.25/typhoon-accounting-0.1.25.tgz
     version: 0.1.25
-generated: "2024-07-03T10:08:56.024636672Z"
+  typhoon-web:
+  - apiVersion: v2
+    appVersion: 0.1.36
+    created: "2024-07-03T10:44:39.300788121Z"
+    description: A Helm chart for the Typhoon Web application
+    digest: cb1565f3ca11856d8bf96320c3ccb668ae84a0de6993ac287c342fd9072aacc1
+    home: http://github.com/zeiss/typhoon
+    keywords:
+    - messaging
+    - jwt
+    - auth
+    name: typhoon-web
+    sources:
+    - https://github.com/zeiss/typhoon
+    urls:
+    - https://github.com/ZEISS/typhoon/releases/download/typhoon-web-0.1.36/typhoon-web-0.1.36.tgz
+    version: 0.1.36
+generated: "2024-07-03T10:44:39.301194549Z"
