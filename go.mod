@@ -21,7 +21,6 @@ require (
 	github.com/katallaxie/pkg v0.6.6
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/logzio/logzio-go v1.0.6
-	github.com/nats-io/jwt v1.2.2
 	github.com/nats-io/jwt/v2 v2.5.6
 	github.com/nats-io/nats.go v1.35.0
 	github.com/nats-io/nkeys v0.4.7
