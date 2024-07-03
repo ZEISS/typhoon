@@ -43,9 +43,11 @@ var Migrate = &cobra.Command{
 			&models.Operator{},
 			&models.System{},
 			&models.Tag{},
+			&models.NKey{},
 			&models.Cluster{},
 			&models.Token{},
 			&models.SigningKeyGroup{},
+			&models.UserLimits{},
 		)
 	},
 }
