@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/kelseyhightower/envconfig"
 	authz "github.com/zeiss/fiber-authz"
@@ -83,7 +82,7 @@ func NewWebSrv(cfg *Config) *WebSrv {
 // Start starts the server.
 func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.RunFunc) func() error {
 	return func() error {
-		providers.RegisterProvider(github.New(cfg.Flags.GothGitbubKey, os.Getenv("GITHUB_SECRET"), "http://loc:3000/auth/github/callback"))
+		providers.RegisterProvider(github.New(cfg.Flags.GothGitbubKey, cfg.Flags.GothGithubSecret, cfg.Flags.GothGithubCallback))
 
 		conn, err := gorm.Open(postgres.Open(cfg.Flags.DatabaseURI), &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
