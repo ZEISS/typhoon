@@ -84,8 +84,16 @@ http:
 fga:
   enabled: true
   uri:
+  uriSecret:
   storeId:
   authorizationModelId:
+
+goth:
+  github:
+    enabled: true
+    clientID:
+    clientSecret:
+    callbackUrl:
 
 nodeSelector: {}
 

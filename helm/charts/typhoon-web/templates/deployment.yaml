@@ -97,7 +97,20 @@ spec:
               value: "{{ .Values.fga.authorizationModelId }}"
             {{- end }}
 
-            {{- if .Values.http.tls.enabled }}
+            {{- if .Values.goth.github.clientID }}
+            - name: TYPHOON_WEB_GITHUB_CLIENT_ID
+              value: "{{ .Values.goth.github.clientID }}"
+            {{- end }}
+
+            {{- if .Values.goth.github.clientSecret }}
+            - name: TYPHOON_WEB_GITHUB_CLIENT_SECRET
+              value: "{{ .Values.goth.github.clientSecret }}"
+            {{- end }}
+
+            {{- if .Values.goth.github.callbackUrl }}
+            - name: TYPHOON_WEB_GITHUB_CALLBACK
+              value: "{{ .Values.goth.github.callbackUrl }}"
+            {{- end }}
 
             {{- with .Values.extraEnvVars }}
               {{- toYaml . | nindent 12 }}

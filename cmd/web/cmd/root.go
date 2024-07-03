@@ -42,6 +42,9 @@ func init() {
 	Root.PersistentFlags().StringVar(&cfg.Flags.FGAApiUrl, "fga-api-url", cfg.Flags.FGAApiUrl, "FGA API URL")
 	Root.PersistentFlags().StringVar(&cfg.Flags.FGAStoreID, "fga-store-id", cfg.Flags.FGAStoreID, "FGA Store ID")
 	Root.PersistentFlags().StringVar(&cfg.Flags.FGAAuthorizationModelID, "fga-authorization-model-id", cfg.Flags.FGAAuthorizationModelID, "FGA Authorization Model ID")
+	Root.PersistentFlags().StringVar(&cfg.Flags.GothGitbubKey, "github-key", cfg.Flags.GothGitbubKey, "GitHub Key")
+	Root.PersistentFlags().StringVar(&cfg.Flags.GothGithubSecret, "github-secret", cfg.Flags.GothGithubSecret, "GitHub Secret")
+	Root.PersistentFlags().StringVar(&cfg.Flags.GothGithubCallback, "github-callback", cfg.Flags.GothGithubCallback, "GitHub Callback")
 
 	Root.SilenceUsage = true
 }
@@ -80,7 +83,7 @@ func NewWebSrv(cfg *Config) *WebSrv {
 // Start starts the server.
 func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.RunFunc) func() error {
 	return func() error {
-		providers.RegisterProvider(github.New(os.Getenv("GITHUB_KEY"), os.Getenv("GITHUB_SECRET"), "http://localhost:3000/auth/github/callback"))
+		providers.RegisterProvider(github.New(cfg.Flags.GothGitbubKey, os.Getenv("GITHUB_SECRET"), "http://loc:3000/auth/github/callback"))
 
 		conn, err := gorm.Open(postgres.Open(cfg.Flags.DatabaseURI), &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
