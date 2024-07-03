@@ -82,17 +82,17 @@ spec:
               value: "{{ .Values.http.addr }}"
             {{- end }}
 
-            {{ - if .Values.fga.uri }}
+            {{- if .Values.fga.uri }}
             - name: TYPHOON_WEB_FGA_API_URL
               value: "{{ .Values.fga.uri }}"
             {{- end }}
 
-            {{ - if .Values.fga.storeId }}
+            {{- if .Values.fga.storeId }}
             - name: TYPHOON_WEB_FGA_STORE_ID
               value: "{{ .Values.fga.storeId }}"
             {{- end }}
 
-            {{ - if .Values.fga.authorizationModelId }}
+            {{- if .Values.fga.authorizationModelId }}
             - name: TYPHOON_WEB_FGA_AUTHORIZATION_MODEL_ID
               value: "{{ .Values.fga.authorizationModelId }}"
             {{- end }}
