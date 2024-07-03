@@ -103,7 +103,7 @@ spec:
             {{- end }}
 
             {{- if .Values.goth.github.clientSecret }}
-            - name: TYPHOON_WEB_GITHUB_CLIENT_SECRET
+            - name: TYPHOON_WEB_GITHUB_SECRET
               value: "{{ .Values.goth.github.clientSecret }}"
             {{- end }}
 
