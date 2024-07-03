@@ -24,7 +24,7 @@ type Flags struct {
 	FGAApiUrl               string `envconfig:"TYPHOON_WEB_FGA_API_URL" default:"http://host.docker.internal:8080"`
 	FGAStoreID              string `envconfig:"TYPHOON_WEB_FGA_STORE_ID" default:""`
 	FGAAuthorizationModelID string `envconfig:"TYPHOON_WEB_FGA_AUTHORIZATION_MODEL_ID" default:""`
-	GothGitbubKey           string `envconfig:"TYPHOON_WEB_GITHUB_KEY" default:""`
+	GothGitbubKey           string `envconfig:"TYPHOON_WEB_GITHUB_CLIENT_ID" default:""`
 	GothGithubSecret        string `envconfig:"TYPHOON_WEB_GITHUB_SECRET" default:""`
 	GothGithubCallback      string `envconfig:"TYPHOON_WEB_GITHUB_CALLBACK" default:"http://localhost:3000/auth/github/callback"`
 }
