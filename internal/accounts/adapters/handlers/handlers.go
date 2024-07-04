@@ -24,6 +24,11 @@ func NewAccountsHandler(ac controllers.AccountsController) *AccountsHandler {
 	return &AccountsHandler{ac}
 }
 
+// GetHelp ...
+func (h *AccountsHandler) GetHelp(ctx context.Context, req openapi.GetHelpRequestObject) (openapi.GetHelpResponseObject, error) {
+	return openapi.GetHelp200Response{}, nil // this is a test endpoint
+}
+
 // GetToken ...
 func (h *AccountsHandler) GetAccountToken(ctx context.Context, req openapi.GetAccountTokenRequestObject) (openapi.GetAccountTokenResponseObject, error) {
 	query := dto.FromGetAccountTokenRequest(req)
