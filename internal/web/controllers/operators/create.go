@@ -19,14 +19,15 @@ const (
 
 var validate *validator.Validate
 
-type createControllerBody struct {
-	Name        string `json:"name" form:"name" validate:"required,min=3,max=100"`
-	Description string `json:"description" form:"description" validate:"required,min=3,max=1024"`
+type CreateControllerBody struct {
+	Name             string `json:"name" form:"name" validate:"required,min=3,max=100"`
+	Description      string `json:"description" form:"description" validate:"required,min=3,max=1024"`
+	AccountServerURL string `json:"account_server_url" form:"account_server_url" validate:"url"`
 }
 
 // CreateControllerImpl ...
 type CreateControllerImpl struct {
-	body  createControllerBody
+	body  CreateControllerBody
 	store ports.Datastore
 	htmx.DefaultController
 }
@@ -72,6 +73,10 @@ func (l *CreateControllerImpl) Post() error {
 	operator, err := models.NewOperator(l.body.Name, l.body.Description)
 	if err != nil {
 		return err
+	}
+
+	if l.body.AccountServerURL != "" {
+		operator.AccountServerURL = l.body.AccountServerURL
 	}
 
 	// Create operator signing key group
@@ -168,6 +173,7 @@ func (l *CreateControllerImpl) Post() error {
 	// Create operator claim
 	oc := jwt.NewOperatorClaims(id)
 	oc.Name = operator.Name
+	oc.AccountServerURL = operator.AccountServerURL
 
 	for _, sk := range operator.SigningKeyGroups {
 		oc.SigningKeys.Add(sk.Key.ID, sk.Key.ID, sk.Key.ID)

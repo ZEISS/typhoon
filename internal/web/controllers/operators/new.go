@@ -77,45 +77,87 @@ func (l *NewOperatorControllerImpl) Get() error {
 										htmx.Text("The name must be from 3 to 100 characters. At least 3 characters must be non-whitespace."),
 									),
 								),
-								forms.FormControl(
-									forms.FormControlProps{
-										ClassNames: htmx.ClassNames{},
-									},
-									forms.FormControlLabel(
-										forms.FormControlLabelProps{},
-										forms.FormControlLabelText(
-											forms.FormControlLabelTextProps{
-												ClassNames: htmx.ClassNames{},
-											},
-											htmx.Text("Description"),
-										),
-									),
-									forms.FormControlLabel(
-										forms.FormControlLabelProps{},
-										forms.FormControlLabelText(
-											forms.FormControlLabelTextProps{
-												ClassNames: htmx.ClassNames{
-													"text-neutral-500": true,
-												},
-											},
-											htmx.Text("A brief description of the operator to provide context."),
-										),
-									),
-									forms.TextareaBordered(
-										forms.TextareaProps{
-											Name: "description",
+							),
+							forms.FormControl(
+								forms.FormControlProps{
+									ClassNames: htmx.ClassNames{},
+								},
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{},
 										},
+										htmx.Text("Description"),
 									),
-									forms.FormControlLabel(
-										forms.FormControlLabelProps{},
-										forms.FormControlLabelText(
-											forms.FormControlLabelTextProps{
-												ClassNames: htmx.ClassNames{
-													"text-neutral-500": true,
-												},
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												"text-neutral-500": true,
 											},
-											htmx.Text("The description must be from 3 to 1024 characters."),
-										),
+										},
+										htmx.Text("A brief description of the operator to provide context."),
+									),
+								),
+								forms.TextareaBordered(
+									forms.TextareaProps{
+										Name: "description",
+									},
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												"text-neutral-500": true,
+											},
+										},
+										htmx.Text("The description must be from 3 to 1024 characters."),
+									),
+								),
+							),
+						),
+					),
+					cards.CardBordered(
+						cards.CardProps{},
+						cards.Body(
+							cards.BodyProps{},
+							cards.Title(
+								cards.TitleProps{},
+								htmx.Text("Account Server"),
+							),
+							forms.FormControl(
+								forms.FormControlProps{
+									ClassNames: htmx.ClassNames{},
+								},
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												"text-neutral-500": true,
+											},
+										},
+										htmx.Text("The URL to the Account Server to use for authentication."),
+									),
+								),
+								forms.TextInputBordered(
+									forms.TextInputProps{
+										Name: "account_server_url",
+									},
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												"text-neutral-500": true,
+											},
+										},
+										htmx.Text("A valid URL with a scheme of http or https. Certificates need be valid."),
 									),
 								),
 							),

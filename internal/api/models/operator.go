@@ -65,6 +65,8 @@ type Operator struct {
 	SystemAccount Account `json:"system_account" gorm:"Constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	// SystemAccountID is the account that is used to manage the systems.
 	SystemAccountID uuid.UUID `json:"system_account_id" gorm:"type:uuid"`
+	// AccountServerURL is the URL of the account server.
+	AccountServerURL string `json:"account_server_url" form:"account_server_url" xml:"account_server_url" validate:"url"`
 	// Accounts is the accounts that are associated with the operator.
 	Accounts []Account `json:"accounts" gorm:"many2many:operator_accounts;foreignKey:ID;joinForeignKey:OperatorID;joinReferences:AccountID"`
 	// Systems is the systems that are associated with the operator.
