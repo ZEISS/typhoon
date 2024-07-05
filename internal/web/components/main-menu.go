@@ -84,16 +84,6 @@ func MainMenu(p MainMenuProps, children ...htmx.Node) htmx.Node {
 					htmx.Text("Operators"),
 				),
 			),
-			menus.MenuItem(
-				menus.MenuItemProps{},
-				menus.MenuLink(
-					menus.MenuLinkProps{
-						Href:   "/subscriptions",
-						Active: strings.HasPrefix(p.Path, "/subscriptions"),
-					},
-					htmx.Text("Subscriptions"),
-				),
-			),
 			menus.MenuTitle(
 				menus.MenuTitleProps{},
 				htmx.Text("Settings"),

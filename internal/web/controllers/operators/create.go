@@ -143,6 +143,7 @@ func (l *CreateControllerImpl) Post() error {
 	ac.Issuer = operator.Key.ID
 	ac.SigningKeys.Add(askg.Key.ID)
 
+	// Exports
 	ac.Exports = jwt.Exports{&jwt.Export{
 		Name:                 "account-monitoring-services",
 		Subject:              "$SYS.REQ.ACCOUNT.*.*",
@@ -230,6 +231,7 @@ func (l *CreateControllerImpl) Post() error {
 
 	// Associate user with account
 	account.Users = append(account.Users, user)
+	account.Signer = askg.Key
 
 	// Associate account with operator
 	operator.SystemAccount = account

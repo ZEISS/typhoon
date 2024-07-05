@@ -8,6 +8,15 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	// OperatorNKey is the operator nkey.
+	OperatorNKey OwnerType = "operator"
+	// AccountNKey is the account nkey.
+	AccountNKey OwnerType = "account"
+	// UserNKey is the user nkey.
+	UserNKey OwnerType = "user"
+)
+
 // NKey holds a private key and its metadata.
 type NKey struct {
 	// ID is the public key portion of the NKey.

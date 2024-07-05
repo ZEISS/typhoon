@@ -133,6 +133,16 @@ func AccountsTable(props AccountsTableProps, children ...htmx.Node) htmx.Node {
 					},
 				},
 				{
+					ID:          "owner",
+					AccessorKey: "ownwer",
+					Header: func(p tables.TableProps) htmx.Node {
+						return htmx.Th(htmx.Text("Owner"))
+					},
+					Cell: func(p tables.TableProps, row *models.Account) htmx.Node {
+						return htmx.Td(htmx.Text(string(row.OwnerType)))
+					},
+				},
+				{
 					Header: func(p tables.TableProps) htmx.Node {
 						return nil
 					},

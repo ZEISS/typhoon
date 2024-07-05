@@ -52,7 +52,6 @@ func (d *database) Migrate(ctx context.Context) error {
 		&models.Token{},
 		&models.SigningKeyGroup{},
 		&models.UserLimits{},
-		&models.Subscription{},
 	)
 }
 
@@ -142,8 +141,7 @@ func (t *datastoreTx) GetAccount(ctx context.Context, account *models.Account) e
 		Preload("SigningKeyGroups.Key").
 		Preload("Key").
 		Preload("Token").
-		Preload("Operator").
-		Preload("Operator.Key").
+		Preload("Signer").
 		First(account).Error
 }
 
@@ -263,9 +261,4 @@ func (t *datastoreTx) UpdateTeam(ctx context.Context, team *adapters.GothTeam) e
 // DeleteTeam is a method that deletes a team
 func (t *datastoreTx) DeleteTeam(ctx context.Context, team *adapters.GothTeam) error {
 	return t.tx.Delete(team).Error
-}
-
-// ListSubscriptions is a method that returns a list of subscriptions
-func (t *datastoreTx) ListSubscriptions(ctx context.Context, pagination *tables.Results[models.Subscription]) error {
-	return t.tx.Scopes(tables.PaginatedResults(&pagination.Rows, pagination, t.tx)).Find(&pagination.Rows).Error
 }

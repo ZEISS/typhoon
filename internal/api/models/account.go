@@ -7,6 +7,13 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	// OperatorAccount is the operator account.
+	OperatorAccount OwnerType = "operator"
+	// TeamAccount is the team account.
+	TeamAccount OwnerType = "team"
+)
+
 // Account ...
 type Account struct {
 	// ID is the unique identifier for the account.
@@ -27,6 +34,10 @@ type Account struct {
 	OwnerID uuid.UUID `json:"owner_id"`
 	// OwnerType is the type of the owner.
 	OwnerType OwnerType `json:"owner_type"`
+	// Signer is the signer for the account.
+	Signer NKey `json:"signer" gorm:"foreignKey:SignerID" validate:"-"`
+	// SignerID is the signer ID for the account.
+	SignerID string `json:"signer_id" form:"signer_id" validate:"-"`
 	// LimitJetStreamMaxDiskStorage is the limit for JetStream maximum disk storage.
 	LimitJetStreamMaxDiskStorage int64 `json:"limit_jetstream_max_disk_storage"`
 	// LimitJetStreamMaxStreams is the limit for JetStream maximum streams.

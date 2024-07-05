@@ -162,10 +162,6 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Get("/operators/:id/skgs/new", handlers.NewOperatorSkg())
 		app.Post("/operators/:id/skgs/create", handlers.CreateOperatorSkg())
 
-		// Subscriptions handler
-		app.Get("/subscriptions", handlers.ListSubscriptions())
-		app.Get("/subscriptions/new", handlers.NewSubscription())
-
 		// Users handler
 		app.Get("/users", handlers.ListUsers())
 		app.Get("/users/new", handlers.NewUser())
@@ -182,17 +178,17 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Get("/systems/:id", handlers.ShowSystem())
 		app.Delete("/systems/:id", handlers.DeleteSystem())
 
-		// Teams handler
-		team := app.Group("/teams/:team_id")
-
 		// Accounts handler
-		team.Get("/accounts", handlers.ListAccounts())
-		team.Get("/accounts/new", handlers.NewAccount())
-		team.Post("/accounts/create", handlers.CreateAccount())
-		team.Get("/accounts/:id", handlers.ShowAccount())
-		team.Delete("/accounts/:id", handlers.DeleteAccount())
-		team.Get("/accounts/:id/token", handlers.GetAccountToken())
-		team.Get("/accounts/partials/operator-skgs", handlers.OperatorSkgsOptions())
+		app.Get("/accounts", handlers.ListAccounts())
+		app.Get("/accounts/new", handlers.NewAccount())
+		app.Post("/accounts/create", handlers.CreateAccount())
+		app.Get("/accounts/:id", handlers.ShowAccount())
+		app.Delete("/accounts/:id", handlers.DeleteAccount())
+		app.Get("/accounts/:id/token", handlers.GetAccountToken())
+		app.Get("/accounts/partials/operator-skgs", handlers.OperatorSkgsOptions())
+
+		// Teams handler
+		// team := app.Group("/teams/:team_id")
 
 		err = app.Listen(s.cfg.Flags.Addr)
 		if err != nil {
