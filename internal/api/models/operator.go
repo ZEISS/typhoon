@@ -62,7 +62,7 @@ type Operator struct {
 	// Token is the JWT token used to authenticate the account.
 	Token Token `json:"token" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:operator"`
 	// SystemAccount is the account that is used to manage the systems.
-	SystemAccount Account `json:"system_account" gorm:"Constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	SystemAccount Account `json:"system_account" gorm:"contraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	// SystemAccountID is the account that is used to manage the systems.
 	SystemAccountID uuid.UUID `json:"system_account_id" gorm:"type:uuid"`
 	// AccountServerURL is the URL of the account server.

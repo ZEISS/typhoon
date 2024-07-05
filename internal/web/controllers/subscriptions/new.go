@@ -1,44 +1,38 @@
-package teams
+package subscriptions
 
 import (
-	"github.com/zeiss/typhoon/internal/web/components"
-	"github.com/zeiss/typhoon/internal/web/ports"
-
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/forms"
+	"github.com/zeiss/typhoon/internal/web/components"
+	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
-// NewTeamControllerImpl ...
-type NewTeamControllerImpl struct {
+// NewSubscriptionControllerImpl ...
+type NewSubscriptionControllerImpl struct {
 	store ports.Datastore
 	htmx.DefaultController
 }
 
-// NewTeamController ...
-func NewTeamController(store ports.Datastore) *NewTeamControllerImpl {
-	return &NewTeamControllerImpl{store: store}
+// NewSubscriptionController ...
+func NewSubscriptionController(store ports.Datastore) *NewSubscriptionControllerImpl {
+	return &NewSubscriptionControllerImpl{store: store}
 }
 
-// New ...
-func (p *NewTeamControllerImpl) Get() error {
-	return p.Render(
+// Get ...
+func (l *NewSubscriptionControllerImpl) Get() error {
+	return l.Render(
 		components.Page(
 			components.PageProps{},
 			components.Layout(
 				components.LayoutProps{
-					Path: p.Path(),
+					Path: l.Path(),
 				},
 				htmx.FormElement(
-					htmx.HxPost(""),
+					htmx.HxPost("/operators/new"),
 					cards.CardBordered(
-						cards.CardProps{
-							ClassNames: htmx.ClassNames{
-								"w-full": true,
-								"my-4":   true,
-							},
-						},
+						cards.CardProps{},
 						cards.Body(
 							cards.BodyProps{},
 							cards.Title(
@@ -46,7 +40,9 @@ func (p *NewTeamControllerImpl) Get() error {
 								htmx.Text("Properties"),
 							),
 							forms.FormControl(
-								forms.FormControlProps{},
+								forms.FormControlProps{
+									ClassNames: htmx.ClassNames{},
+								},
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
 									forms.FormControlLabelText(
@@ -62,7 +58,7 @@ func (p *NewTeamControllerImpl) Get() error {
 												"text-neutral-500": true,
 											},
 										},
-										htmx.Text("Give the team a great name."),
+										htmx.Text("A unique identifier for operator."),
 									),
 								),
 								forms.TextInputBordered(
@@ -83,55 +79,14 @@ func (p *NewTeamControllerImpl) Get() error {
 								),
 							),
 							forms.FormControl(
-								forms.FormControlProps{},
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{},
-										htmx.Text("Slug"),
-									),
-								),
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"text-neutral-500": true,
-											},
-										},
-										htmx.Text("A unique identifier of the team"),
-									),
-								),
-								forms.TextInputBordered(
-									forms.TextInputProps{
-										Name: "slug",
-									},
-								),
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"text-neutral-500": true,
-											},
-										},
-										htmx.Text("The slug must be from 3 to 100 characters. At least 3 characters must be non-whitespace."),
-									),
-								),
-							),
-							forms.FormControl(
 								forms.FormControlProps{
-									ClassNames: htmx.ClassNames{
-										"py-4": true,
-									},
+									ClassNames: htmx.ClassNames{},
 								},
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
 									forms.FormControlLabelText(
 										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"-my-4": true,
-											},
+											ClassNames: htmx.ClassNames{},
 										},
 										htmx.Text("Description"),
 									),
@@ -144,7 +99,7 @@ func (p *NewTeamControllerImpl) Get() error {
 												"text-neutral-500": true,
 											},
 										},
-										htmx.Text("A brief description of the team."),
+										htmx.Text("A brief description of the operator to provide context."),
 									),
 								),
 								forms.TextareaBordered(
@@ -167,12 +122,49 @@ func (p *NewTeamControllerImpl) Get() error {
 						),
 					),
 					cards.CardBordered(
-						cards.CardProps{
-							ClassNames: htmx.ClassNames{
-								"w-full": true,
-								"my-4":   true,
-							},
-						},
+						cards.CardProps{},
+						cards.Body(
+							cards.BodyProps{},
+							cards.Title(
+								cards.TitleProps{},
+								htmx.Text("Account Server"),
+							),
+							forms.FormControl(
+								forms.FormControlProps{
+									ClassNames: htmx.ClassNames{},
+								},
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												"text-neutral-500": true,
+											},
+										},
+										htmx.Text("The URL to the Account Server to use for authentication."),
+									),
+								),
+								forms.TextInputBordered(
+									forms.TextInputProps{
+										Name: "account_server_url",
+									},
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												"text-neutral-500": true,
+											},
+										},
+										htmx.Text("A valid URL with a scheme of http or https. Certificates need be valid."),
+									),
+								),
+							),
+						),
+					),
+					cards.CardBordered(
+						cards.CardProps{},
 						cards.Body(
 							cards.BodyProps{},
 							cards.Title(
@@ -184,7 +176,7 @@ func (p *NewTeamControllerImpl) Get() error {
 								buttons.Outline(
 									buttons.ButtonProps{},
 									htmx.Attribute("type", "submit"),
-									htmx.Text("Create Team"),
+									htmx.Text("Create Operator"),
 								),
 							),
 						),

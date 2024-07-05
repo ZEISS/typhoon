@@ -7,8 +7,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// AccountType
-
 // Account ...
 type Account struct {
 	// ID is the unique identifier for the account.
@@ -25,8 +23,10 @@ type Account struct {
 	SigningKeyGroups []SigningKeyGroup `json:"signing_key_groups" gorm:"many2many:account_signing_key_groups;foreignKey:ID;joinForeignKey:AccountID;joinReferences:SigningKeyGroupID"`
 	// Users is the list of users the account has.
 	Users []User `json:"users" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	// AccountType is the type of the account.
-	AccountType string `json:"account_type"`
+	// OwnerID is the owner of the token.
+	OwnerID uuid.UUID `json:"owner_id"`
+	// OwnerType is the type of the owner.
+	OwnerType OwnerType `json:"owner_type"`
 	// LimitJetStreamMaxDiskStorage is the limit for JetStream maximum disk storage.
 	LimitJetStreamMaxDiskStorage int64 `json:"limit_jetstream_max_disk_storage"`
 	// LimitJetStreamMaxStreams is the limit for JetStream maximum streams.

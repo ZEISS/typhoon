@@ -1,4 +1,4 @@
-package accounts
+package subscriptions
 
 import (
 	"fmt"
@@ -13,21 +13,21 @@ import (
 	"github.com/zeiss/typhoon/internal/api/models"
 )
 
-// AccountsTableProps ...
-type AccountsTableProps struct {
-	Accounts []*models.Account
-	Offset   int
-	Limit    int
-	Total    int
+// SubscriptionsTableProps ...
+type SubscriptionsTableProps struct {
+	Subscriptions []*models.Subscription
+	Offset        int
+	Limit         int
+	Total         int
 }
 
-// AccountsTable ...
-func AccountsTable(props AccountsTableProps, children ...htmx.Node) htmx.Node {
+// SubscriptionsTable ...
+func SubscriptionsTable(props SubscriptionsTableProps, children ...htmx.Node) htmx.Node {
 	return htmx.Div(
 		htmx.ClassNames{},
 		tables.Table(
 			tables.TableProps{
-				ID: "accounts-tables",
+				ID: "subscriptions-tables",
 				Pagination: tables.TablePagination(
 					tables.TablePaginationProps{},
 					tables.Pagination(
@@ -89,27 +89,16 @@ func AccountsTable(props AccountsTableProps, children ...htmx.Node) htmx.Node {
 							},
 						),
 					),
-					htmx.A(
-						htmx.Href("accounts/new"),
-						buttons.Outline(
-							buttons.ButtonProps{
-								ClassNames: htmx.ClassNames{
-									"btn-sm": true,
-								},
-							},
-							htmx.Text("Create Account"),
-						),
-					),
 				),
 			},
-			[]tables.ColumnDef[*models.Account]{
+			[]tables.ColumnDef[*models.Subscription]{
 				{
 					ID:          "id",
 					AccessorKey: "id",
 					Header: func(p tables.TableProps) htmx.Node {
 						return htmx.Th(htmx.Text("ID"))
 					},
-					Cell: func(p tables.TableProps, row *models.Account) htmx.Node {
+					Cell: func(p tables.TableProps, row *models.Subscription) htmx.Node {
 						return htmx.Td(
 							htmx.Text(row.ID.String()),
 						)
@@ -121,7 +110,7 @@ func AccountsTable(props AccountsTableProps, children ...htmx.Node) htmx.Node {
 					Header: func(p tables.TableProps) htmx.Node {
 						return htmx.Th(htmx.Text("Name"))
 					},
-					Cell: func(p tables.TableProps, row *models.Account) htmx.Node {
+					Cell: func(p tables.TableProps, row *models.Subscription) htmx.Node {
 						return htmx.Td(
 							links.Link(
 								links.LinkProps{
@@ -136,7 +125,7 @@ func AccountsTable(props AccountsTableProps, children ...htmx.Node) htmx.Node {
 					Header: func(p tables.TableProps) htmx.Node {
 						return nil
 					},
-					Cell: func(p tables.TableProps, row *models.Account) htmx.Node {
+					Cell: func(p tables.TableProps, row *models.Subscription) htmx.Node {
 						return htmx.Td(
 							dropdowns.Dropdown(
 								dropdowns.DropdownProps{},
@@ -167,7 +156,7 @@ func AccountsTable(props AccountsTableProps, children ...htmx.Node) htmx.Node {
 					},
 				},
 			},
-			props.Accounts,
+			props.Subscriptions,
 		),
 	)
 }

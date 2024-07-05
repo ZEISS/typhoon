@@ -2,8 +2,6 @@ package handlers
 
 import (
 	authz "github.com/zeiss/fiber-authz"
-	"github.com/zeiss/typhoon/internal/web/controllers/accounts"
-	pa "github.com/zeiss/typhoon/internal/web/controllers/accounts/partials"
 	"github.com/zeiss/typhoon/internal/web/controllers/dashboard"
 	"github.com/zeiss/typhoon/internal/web/controllers/login"
 	"github.com/zeiss/typhoon/internal/web/controllers/me"
@@ -11,7 +9,10 @@ import (
 	oskgs "github.com/zeiss/typhoon/internal/web/controllers/operators/skgs"
 	ot "github.com/zeiss/typhoon/internal/web/controllers/operators/tokens"
 	"github.com/zeiss/typhoon/internal/web/controllers/site/teams"
+	"github.com/zeiss/typhoon/internal/web/controllers/subscriptions"
 	"github.com/zeiss/typhoon/internal/web/controllers/systems"
+	"github.com/zeiss/typhoon/internal/web/controllers/teams/accounts"
+	pa "github.com/zeiss/typhoon/internal/web/controllers/teams/accounts/partials"
 	"github.com/zeiss/typhoon/internal/web/controllers/users"
 	"github.com/zeiss/typhoon/internal/web/controllers/users/credentials"
 	pu "github.com/zeiss/typhoon/internal/web/controllers/users/partials"
@@ -276,5 +277,19 @@ func (h *handlers) ShowTeam() fiber.Handler {
 func (h *handlers) DeleteTeam() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
 		return teams.NewTeamDeleteController(h.store)
+	})
+}
+
+// ListSubscriptions ...
+func (h *handlers) ListSubscriptions() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return subscriptions.NewListSubscriptionsController(h.store)
+	})
+}
+
+// NewSubscription ...
+func (h *handlers) NewSubscription() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return subscriptions.NewSubscriptionController(h.store)
 	})
 }

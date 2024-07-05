@@ -18,6 +18,8 @@ const (
 	AccountToken OwnerType = "account"
 	// User is the owner of the token.
 	UserToken OwnerType = "user"
+	// Team is the owner of the token.
+	TeamToken OwnerType = "team"
 )
 
 // Token is a model for storing the the JWT token used to authenticate the user.

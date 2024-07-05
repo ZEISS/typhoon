@@ -51,6 +51,8 @@ type ReadTx interface {
 	GetTeam(ctx context.Context, team *tables.Paginated[adapters.GothTeam]) error
 	// ListTeams is a method that returns a list of teams
 	ListTeams(ctx context.Context, results *tables.Results[adapters.GothTeam]) error
+	// ListSubscriptions is a method that returns a list of subscriptions
+	ListSubscriptions(ctx context.Context, results *tables.Results[models.Subscription]) error
 }
 
 // ReadWriteTx provides methods for transactional read and write operations.

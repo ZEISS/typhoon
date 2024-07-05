@@ -162,6 +162,10 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Get("/operators/:id/skgs/new", handlers.NewOperatorSkg())
 		app.Post("/operators/:id/skgs/create", handlers.CreateOperatorSkg())
 
+		// Subscriptions handler
+		app.Get("/subscriptions", handlers.ListSubscriptions())
+		app.Get("/subscriptions/new", handlers.NewSubscription())
+
 		// Users handler
 		app.Get("/users", handlers.ListUsers())
 		app.Get("/users/new", handlers.NewUser())
@@ -178,7 +182,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Get("/systems/:id", handlers.ShowSystem())
 		app.Delete("/systems/:id", handlers.DeleteSystem())
 
-		// Teams
+		// Teams handler
 		team := app.Group("/teams/:team_id")
 
 		// Accounts handler
