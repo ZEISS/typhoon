@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/oapi-codegen/runtime"
@@ -19,7 +20,7 @@ type ServerInterface interface {
 	GetHelp(c *fiber.Ctx) error
 	// Get account information
 	// (GET /accounts/{pubKey})
-	GetAccountToken(c *fiber.Ctx, pubKey PubKey) error
+	GetAccountToken(c *fiber.Ctx, pubKey PubKey, params GetAccountTokenParams) error
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -56,7 +57,25 @@ func (siw *ServerInterfaceWrapper) GetAccountToken(c *fiber.Ctx) error {
 
 	c.Context().SetUserValue(ApiKeyScopes, []string{})
 
-	return siw.Handler.GetAccountToken(c, pubKey)
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetAccountTokenParams
+
+	headers := c.GetReqHeaders()
+
+	// ------------- Optional header parameter "If-None-Match" -------------
+	if value, found := headers[http.CanonicalHeaderKey("If-None-Match")]; found {
+		var IfNoneMatch IfNoneMatch
+
+		err = runtime.BindStyledParameterWithOptions("simple", "If-None-Match", value, &IfNoneMatch, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false})
+		if err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter If-None-Match: %w", err).Error())
+		}
+
+		params.IfNoneMatch = &IfNoneMatch
+
+	}
+
+	return siw.Handler.GetAccountToken(c, pubKey, params)
 }
 
 // FiberServerOptions provides options for the Fiber server.
@@ -112,18 +131,27 @@ func (response GetHelpdefaultResponse) VisitGetHelpResponse(ctx *fiber.Ctx) erro
 
 type GetAccountTokenRequestObject struct {
 	PubKey PubKey `json:"pubKey"`
+	Params GetAccountTokenParams
 }
 
 type GetAccountTokenResponseObject interface {
 	VisitGetAccountTokenResponse(ctx *fiber.Ctx) error
 }
 
+type GetAccountToken200ResponseHeaders struct {
+	CacheControl string
+	ETag         string
+}
+
 type GetAccountToken200ApplicationjwtResponse struct {
 	Body          io.Reader
+	Headers       GetAccountToken200ResponseHeaders
 	ContentLength int64
 }
 
 func (response GetAccountToken200ApplicationjwtResponse) VisitGetAccountTokenResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Cache-Control", fmt.Sprint(response.Headers.CacheControl))
+	ctx.Response().Header.Set("ETag", fmt.Sprint(response.Headers.ETag))
 	ctx.Response().Header.Set("Content-Type", "application/jwt")
 	if response.ContentLength != 0 {
 		ctx.Response().Header.Set("Content-Length", fmt.Sprint(response.ContentLength))
@@ -211,10 +239,11 @@ func (sh *strictHandler) GetHelp(ctx *fiber.Ctx) error {
 }
 
 // GetAccountToken operation middleware
-func (sh *strictHandler) GetAccountToken(ctx *fiber.Ctx, pubKey PubKey) error {
+func (sh *strictHandler) GetAccountToken(ctx *fiber.Ctx, pubKey PubKey, params GetAccountTokenParams) error {
 	var request GetAccountTokenRequestObject
 
 	request.PubKey = pubKey
+	request.Params = params
 
 	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
 		return sh.ssi.GetAccountToken(ctx.UserContext(), request.(GetAccountTokenRequestObject))

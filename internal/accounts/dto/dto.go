@@ -26,6 +26,7 @@ func ToGetAccountTokenResponse(token models.Token) openapi.GetAccountTokenRespon
 	body := bytes.NewReader(token.Bytes())
 	res.Body = body
 	res.ContentLength = int64(len(token.Bytes()))
+	res.Headers.ETag = token.ID
 
 	return res
 }

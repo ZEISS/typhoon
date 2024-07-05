@@ -262,3 +262,8 @@ func (t *datastoreTx) UpdateTeam(ctx context.Context, team *adapters.GothTeam) e
 func (t *datastoreTx) DeleteTeam(ctx context.Context, team *adapters.GothTeam) error {
 	return t.tx.Delete(team).Error
 }
+
+// GetNKey is a method that returns an NKey by ID
+func (t *datastoreTx) GetNKey(ctx context.Context, nkey *models.NKey) error {
+	return t.tx.Where(nkey).First(nkey).Error
+}

@@ -54,8 +54,7 @@ func (l *OperatorSkgsOptionsImpl) Get() error {
 		skgs = append(skgs, &skg)
 	}
 
-	return htmx.RenderComp(
-		l.Ctx(),
+	return l.Render(
 		forms.SelectBordered(
 			forms.SelectProps{},
 			forms.Option(
@@ -72,6 +71,7 @@ func (l *OperatorSkgsOptionsImpl) Get() error {
 					return htmx.Option(
 						htmx.Attribute("value", e.KeyID),
 						htmx.Text(e.Name),
+						htmx.Value(e.KeyID),
 					)
 				})...,
 			),

@@ -56,9 +56,21 @@ paths:
         Get the account information for the given public key.
       parameters:
         - $ref: '#/components/parameters/pubKey'
+        - $ref: '#/components/parameters/ifNoneMatch'
       responses:
         '200':
           description: Account information
+          headers:
+            Cache-Control:
+              description: The cache control header.
+              example: "max-age: 86400, must-revalidate, private"
+              schema:
+                type: string
+            ETag:
+              description: The current ETag of the token.
+              example: "SN6ZQ37REZOIUOCSHNDP3X7E7B6ZMZ6XULX24KV23LMRSZLXD36A"
+              schema:
+                type: string
           content:
             application/jwt:
               schema:
@@ -83,6 +95,14 @@ components:
       in: path
       required: true
       description: The public key of the account.
+      schema:
+        type: string
+    ifNoneMatch:
+      name: If-None-Match
+      in: header
+      required: false
+      description: The ETag of the token.
+      example: SN6ZQ37REZOIUOCSHNDP3X7E7B6ZMZ6XULX24KV23LMRSZLXD36A
       schema:
         type: string
         

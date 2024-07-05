@@ -51,6 +51,8 @@ type ReadTx interface {
 	GetTeam(ctx context.Context, team *tables.Paginated[adapters.GothTeam]) error
 	// ListTeams is a method that returns a list of teams
 	ListTeams(ctx context.Context, results *tables.Results[adapters.GothTeam]) error
+	// GetNKey is a method that returns an NKey by ID
+	GetNKey(ctx context.Context, nkey *models.NKey) error
 }
 
 // ReadWriteTx provides methods for transactional read and write operations.

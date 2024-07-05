@@ -140,7 +140,7 @@ func (l *CreateControllerImpl) Post() error {
 	// Create account claim
 	ac := jwt.NewAccountClaims(aid)
 	ac.Name = "System Account"
-	ac.Issuer = operator.Key.ID
+	ac.Issuer = oskg.Key.ID
 	ac.SigningKeys.Add(askg.Key.ID)
 
 	// Exports
