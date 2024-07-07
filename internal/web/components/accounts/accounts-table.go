@@ -2,6 +2,7 @@ package accounts
 
 import (
 	"fmt"
+	"time"
 
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
@@ -140,6 +141,16 @@ func AccountsTable(props AccountsTableProps, children ...htmx.Node) htmx.Node {
 					},
 					Cell: func(p tables.TableProps, row *models.Account) htmx.Node {
 						return htmx.Td(htmx.Text(string(row.OwnerType)))
+					},
+				},
+				{
+					ID:          "created_at",
+					AccessorKey: "created_at",
+					Header: func(p tables.TableProps) htmx.Node {
+						return htmx.Th(htmx.Text("Created At"))
+					},
+					Cell: func(p tables.TableProps, row *models.Account) htmx.Node {
+						return htmx.Td(htmx.Text(row.CreatedAt.Format(time.RFC822)))
 					},
 				},
 				{

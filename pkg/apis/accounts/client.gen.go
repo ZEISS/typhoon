@@ -91,7 +91,7 @@ type ClientInterface interface {
 	GetHelp(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetAccountToken request
-	GetAccountToken(ctx context.Context, pubKey PubKey, params *GetAccountTokenParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetAccountToken(ctx context.Context, pubKey PubKey, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) GetHelp(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -106,8 +106,8 @@ func (c *Client) GetHelp(ctx context.Context, reqEditors ...RequestEditorFn) (*h
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetAccountToken(ctx context.Context, pubKey PubKey, params *GetAccountTokenParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetAccountTokenRequest(c.Server, pubKey, params)
+func (c *Client) GetAccountToken(ctx context.Context, pubKey PubKey, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAccountTokenRequest(c.Server, pubKey)
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +146,7 @@ func NewGetHelpRequest(server string) (*http.Request, error) {
 }
 
 // NewGetAccountTokenRequest generates requests for GetAccountToken
-func NewGetAccountTokenRequest(server string, pubKey PubKey, params *GetAccountTokenParams) (*http.Request, error) {
+func NewGetAccountTokenRequest(server string, pubKey PubKey) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -174,21 +174,6 @@ func NewGetAccountTokenRequest(server string, pubKey PubKey, params *GetAccountT
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
-	}
-
-	if params != nil {
-
-		if params.IfNoneMatch != nil {
-			var headerParam0 string
-
-			headerParam0, err = runtime.StyleParamWithLocation("simple", false, "If-None-Match", runtime.ParamLocationHeader, *params.IfNoneMatch)
-			if err != nil {
-				return nil, err
-			}
-
-			req.Header.Set("If-None-Match", headerParam0)
-		}
-
 	}
 
 	return req, nil
@@ -241,7 +226,7 @@ type ClientWithResponsesInterface interface {
 	GetHelpWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetHelpResponse, error)
 
 	// GetAccountTokenWithResponse request
-	GetAccountTokenWithResponse(ctx context.Context, pubKey PubKey, params *GetAccountTokenParams, reqEditors ...RequestEditorFn) (*GetAccountTokenResponse, error)
+	GetAccountTokenWithResponse(ctx context.Context, pubKey PubKey, reqEditors ...RequestEditorFn) (*GetAccountTokenResponse, error)
 }
 
 type GetHelpResponse struct {
@@ -296,8 +281,8 @@ func (c *ClientWithResponses) GetHelpWithResponse(ctx context.Context, reqEditor
 }
 
 // GetAccountTokenWithResponse request returning *GetAccountTokenResponse
-func (c *ClientWithResponses) GetAccountTokenWithResponse(ctx context.Context, pubKey PubKey, params *GetAccountTokenParams, reqEditors ...RequestEditorFn) (*GetAccountTokenResponse, error) {
-	rsp, err := c.GetAccountToken(ctx, pubKey, params, reqEditors...)
+func (c *ClientWithResponses) GetAccountTokenWithResponse(ctx context.Context, pubKey PubKey, reqEditors ...RequestEditorFn) (*GetAccountTokenResponse, error) {
+	rsp, err := c.GetAccountToken(ctx, pubKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}

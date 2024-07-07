@@ -3,13 +3,10 @@ package handlers
 import (
 	"context"
 	"errors"
-	"strings"
 
-	"github.com/nats-io/jwt/v2"
 	seed "github.com/zeiss/gorm-seed"
 	"github.com/zeiss/typhoon/internal/accounts/controllers"
 	"github.com/zeiss/typhoon/internal/accounts/dto"
-	"github.com/zeiss/typhoon/internal/utils"
 	"gorm.io/gorm"
 
 	openapi "github.com/zeiss/typhoon/pkg/apis/accounts"
@@ -46,14 +43,10 @@ func (h *AccountsHandler) GetAccountToken(ctx context.Context, req openapi.GetAc
 		return nil, err
 	}
 
-	claims, err := jwt.Decode(token.Token)
-	if err != nil {
-		return openapi.GetAccountToken404Response{}, nil
-	}
-
-	if req.Params.IfNoneMatch != nil && strings.Contains(utils.PtrStr(req.Params.IfNoneMatch), claims.Claims().ID) {
-		return openapi.GetAccountToken304Response{}, nil
-	}
+	// claims, err := jwt.Decode(token.Token)
+	// if err != nil {
+	// 	return openapi.GetAccountToken404Response{}, nil
+	// }
 
 	return dto.ToGetAccountTokenResponse(token), nil
 }
