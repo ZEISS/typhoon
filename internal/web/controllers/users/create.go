@@ -9,11 +9,8 @@ import (
 	"github.com/nats-io/jwt"
 	"github.com/nats-io/nkeys"
 	htmx "github.com/zeiss/fiber-htmx"
-	"github.com/zeiss/fiber-htmx/components/buttons"
-	"github.com/zeiss/fiber-htmx/components/cards"
-	"github.com/zeiss/fiber-htmx/components/forms"
+	"github.com/zeiss/fiber-htmx/components/toasts"
 	"github.com/zeiss/typhoon/internal/api/models"
-	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
@@ -53,6 +50,20 @@ func (l *CreateUserControllerImpl) Prepare() error {
 	}
 
 	return nil
+}
+
+// Error ...
+func (l *CreateUserControllerImpl) Error(err error) error {
+	return toasts.RenderToasts(
+		l.Ctx(),
+		toasts.Toasts(
+			toasts.ToastsProps{},
+			toasts.ToastAlertError(
+				toasts.ToastProps{},
+				htmx.Text(err.Error()),
+			),
+		),
+	)
 }
 
 // Post ...
@@ -128,138 +139,4 @@ func (l *CreateUserControllerImpl) Post() error {
 	htmx.Redirect(l.Ctx(), "/users")
 
 	return nil
-}
-
-// Get ...
-func (l *CreateUserControllerImpl) Get() error {
-	return htmx.RenderComp(
-		l.Ctx(),
-		components.Page(
-			components.PageProps{},
-			components.Layout(
-				components.LayoutProps{},
-				htmx.FormElement(
-					htmx.HxPost("/users/new"),
-					cards.CardBordered(
-						cards.CardProps{},
-						cards.Body(
-							cards.BodyProps{},
-							cards.Title(
-								cards.TitleProps{},
-								htmx.Text("Properties"),
-							),
-							forms.FormControl(
-								forms.FormControlProps{
-									ClassNames: htmx.ClassNames{
-										"py-4": true,
-									},
-								},
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"-my-4": true,
-											},
-										},
-										htmx.Text("Name"),
-									),
-								),
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"text-neutral-500": true,
-											},
-										},
-										htmx.Text("A unique identifier for operator."),
-									),
-								),
-								forms.TextInputBordered(
-									forms.TextInputProps{
-										Name: "name",
-									},
-								),
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"text-neutral-500": true,
-											},
-										},
-										htmx.Text("The name must be from 3 to 100 characters. At least 3 characters must be non-whitespace."),
-									),
-								),
-								forms.FormControl(
-									forms.FormControlProps{
-										ClassNames: htmx.ClassNames{
-											"py-4": true,
-										},
-									},
-									forms.FormControlLabel(
-										forms.FormControlLabelProps{},
-										forms.FormControlLabelText(
-											forms.FormControlLabelTextProps{
-												ClassNames: htmx.ClassNames{
-													"-my-4": true,
-												},
-											},
-											htmx.Text("Description"),
-										),
-									),
-									forms.FormControlLabel(
-										forms.FormControlLabelProps{},
-										forms.FormControlLabelText(
-											forms.FormControlLabelTextProps{
-												ClassNames: htmx.ClassNames{
-													"text-neutral-500": true,
-												},
-											},
-											htmx.Text("A brief description of the operator to provide context."),
-										),
-									),
-									forms.TextareaBordered(
-										forms.TextareaProps{
-											Name: "description",
-										},
-									),
-									forms.FormControlLabel(
-										forms.FormControlLabelProps{},
-										forms.FormControlLabelText(
-											forms.FormControlLabelTextProps{
-												ClassNames: htmx.ClassNames{
-													"text-neutral-500": true,
-												},
-											},
-											htmx.Text("The description must be from 3 to 1024 characters."),
-										),
-									),
-								),
-							),
-						),
-					),
-					cards.CardBordered(
-						cards.CardProps{},
-						cards.Body(
-							cards.BodyProps{},
-							cards.Title(
-								cards.TitleProps{},
-								htmx.Text("Tags - Optional"),
-							),
-							cards.Actions(
-								cards.ActionsProps{},
-								buttons.Outline(
-									buttons.ButtonProps{},
-									htmx.Attribute("type", "submit"),
-									htmx.Text("Create Operator"),
-								),
-							),
-						),
-					),
-				),
-			),
-		),
-	)
 }
