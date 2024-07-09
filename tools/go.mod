@@ -1,7 +1,7 @@
 module tools
 
 go 1.21
-toolchain go1.22.4
+toolchain go1.22.5
 
 require (
 	github.com/deepmap/oapi-codegen/v2 v2.1.0
@@ -12,7 +12,7 @@ require (
 	gotest.tools/gotestsum v1.11.0
 	k8s.io/code-generator v0.29.2
 	knative.dev/pkg v0.0.0-20240222182851-7594067e0eac
-	mvdan.cc/gofumpt v0.5.0
+	mvdan.cc/gofumpt v0.6.0
 )
 
 require (
