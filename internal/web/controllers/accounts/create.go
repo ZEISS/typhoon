@@ -44,10 +44,7 @@ type CreateControllerImpl struct {
 
 // NewCreateController ...
 func NewCreateController(store ports.Datastore) *CreateControllerImpl {
-	return &CreateControllerImpl{
-		store:                 store,
-		TransactionController: htmx.NewTransactionController(),
-	}
+	return &CreateControllerImpl{store: store}
 }
 
 // Prepare ...

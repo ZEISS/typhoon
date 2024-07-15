@@ -79,8 +79,7 @@ func (l *CreateControllerImpl) Post() error {
 		operator.AccountServerURL = l.body.AccountServerURL
 	}
 
-	// Create operator signing key group
-	oskg := models.SigningKeyGroup{Name: "Default", Description: "Default signing key group"}
+	// The operator public key
 	opk, err := nkeys.CreateOperator()
 	if err != nil {
 		return err
@@ -95,7 +94,32 @@ func (l *CreateControllerImpl) Post() error {
 	if err != nil {
 		return err
 	}
-	oskg.Key = models.NKey{ID: id, Seed: oseed}
+
+	// Add the private key.
+	operator.Key = models.NKey{ID: id, Seed: oseed}
+
+	// Create operator signing key group
+	oskg := models.SigningKeyGroup{Name: "Default", Description: "Default signing key group"}
+
+	sgpk, err := nkeys.CreateOperator()
+	if err != nil {
+		return err
+	}
+
+	sgkid, err := sgpk.PublicKey()
+	if err != nil {
+		return err
+	}
+
+	skgseed, err := sgpk.Seed()
+	if err != nil {
+		return err
+	}
+
+	oskg.Key = models.NKey{ID: sgkid, Seed: skgseed}
+	oskg.KeyID = sgkid
+
+	// Add the signing key group to the operator
 	operator.SigningKeyGroups = append(operator.SigningKeyGroups, oskg)
 
 	// Setup account
@@ -130,11 +154,13 @@ func (l *CreateControllerImpl) Post() error {
 		return err
 	}
 
-	skgseed, err := askgpk.Seed()
+	askgseed, err := askgpk.Seed()
 	if err != nil {
 		return err
 	}
-	askg.Key = models.NKey{ID: askgid, Seed: skgseed}
+
+	askg.Key = models.NKey{ID: askgid, Seed: askgseed}
+	askg.KeyID = askgid
 	account.SigningKeyGroups = append(account.SigningKeyGroups, askg)
 
 	// Create account claim
