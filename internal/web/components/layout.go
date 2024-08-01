@@ -12,12 +12,13 @@ import (
 	"github.com/zeiss/fiber-htmx/components/navbars"
 	"github.com/zeiss/fiber-htmx/components/swap"
 	"github.com/zeiss/fiber-htmx/components/toasts"
+	"github.com/zeiss/typhoon/internal/models"
 )
 
 // LayoutProps is the properties for the Layout component.
 type LayoutProps struct {
 	// Team is the teams to user adapters.
-	Team adapters.GothTeam
+	Team models.Team
 	User adapters.GothUser
 	Path string
 }
@@ -185,11 +186,6 @@ func Layout(p LayoutProps, children ...htmx.Node) htmx.Node {
 								"bg-base-200": false,
 							},
 						},
-						AccountSwitch(
-							AccountSwitchProps{
-								User: p.User,
-							},
-						),
 						dividers.Divider(
 							dividers.DividerProps{},
 						),

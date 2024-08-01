@@ -3,8 +3,8 @@ package teams
 import (
 	"context"
 
-	"github.com/zeiss/fiber-goth/adapters"
 	"github.com/zeiss/fiber-htmx/components/cards"
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/components/teams"
 	"github.com/zeiss/typhoon/internal/web/ports"
@@ -17,7 +17,7 @@ var _ = htmx.Controller(&ListTeamsControllerImpl{})
 
 // ListTeamsControllerImpl ...
 type ListTeamsControllerImpl struct {
-	teams tables.Results[adapters.GothTeam]
+	teams tables.Results[models.Team]
 	store ports.Datastore
 	htmx.DefaultController
 }
@@ -25,7 +25,7 @@ type ListTeamsControllerImpl struct {
 // NewTeamsListOperatorController ...
 func NewTeamsListOperatorController(store ports.Datastore) *ListTeamsControllerImpl {
 	return &ListTeamsControllerImpl{
-		teams: tables.Results[adapters.GothTeam]{Limit: 10},
+		teams: tables.Results[models.Team]{Limit: 10},
 		store: store,
 	}
 }

@@ -9,7 +9,8 @@ import (
 	"github.com/nats-io/nkeys"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/toasts"
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/pkg/cast"
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/utils"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
@@ -82,7 +83,7 @@ func (l *CreateControllerImpl) Error(err error) error {
 func (l *CreateControllerImpl) Post() error {
 	account := models.Account{
 		Name:                           l.Form.Name,
-		Description:                    utils.StrPtr(l.Form.Description),
+		Description:                    cast.Ptr(l.Form.Description),
 		LimitJetStreamMaxDiskStorage:   utils.PrettyByteSize(l.Form.JetStreamMaxDiskStorage, l.Form.JetStreamMaxDiskStorageUnit),
 		LimitJetStreamMaxStreams:       l.Form.JetStreamMaxStreams,
 		LimitJetStreamMaxConsumers:     l.Form.JetStreamMaxConsumers,

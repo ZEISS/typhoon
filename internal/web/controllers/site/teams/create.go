@@ -3,7 +3,7 @@ package teams
 import (
 	"context"
 
-	"github.com/zeiss/fiber-goth/adapters"
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/ports"
 
 	"github.com/go-playground/validator/v10"
@@ -18,7 +18,7 @@ var validate *validator.Validate
 
 // CreateTeamControllerImpl ...
 type CreateTeamControllerImpl struct {
-	team  adapters.GothTeam
+	team  models.Team
 	store ports.Datastore
 	htmx.DefaultController
 }

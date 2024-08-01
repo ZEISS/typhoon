@@ -3,7 +3,7 @@ package systems
 import (
 	"context"
 
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/components/systems"
 	"github.com/zeiss/typhoon/internal/web/ports"

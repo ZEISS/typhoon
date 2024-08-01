@@ -3,11 +3,10 @@ package accounts
 import (
 	"context"
 
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/ports"
 
-	"github.com/zeiss/fiber-goth/adapters"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
@@ -18,7 +17,7 @@ import (
 // NewAccountControllerImpl ...
 type NewAccountControllerImpl struct {
 	Results tables.Results[models.Operator]
-	Teams   tables.Results[adapters.GothTeam]
+	Teams   tables.Results[models.Team]
 	store   ports.Datastore
 	htmx.DefaultController
 }
@@ -86,7 +85,7 @@ func (l *NewAccountControllerImpl) Get() error {
 									),
 									htmx.Name("team_id"),
 									htmx.Group(
-										htmx.ForEach(l.Teams.GetRows(), func(operator *adapters.GothTeam, idx int) htmx.Node {
+										htmx.ForEach(l.Teams.GetRows(), func(operator *models.Team, idx int) htmx.Node {
 											return forms.Option(
 												forms.OptionProps{
 													Value: operator.ID.String(),

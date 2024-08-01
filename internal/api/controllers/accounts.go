@@ -6,9 +6,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/nats-io/jwt"
 	"github.com/nats-io/nkeys"
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/pkg/cast"
 	"github.com/zeiss/typhoon/internal/api/ports"
-	"github.com/zeiss/typhoon/internal/utils"
+	"github.com/zeiss/typhoon/internal/models"
 )
 
 // CreateAccountCommand ...
@@ -69,7 +69,7 @@ func NewAccountsController(db ports.Repositories) *accountsController {
 func (c *accountsController) CreateAccount(ctx context.Context, cmd CreateAccountCommand) (models.Account, error) {
 	account := models.Account{
 		Name:        cmd.Name,
-		Description: utils.StrPtr(cmd.Description),
+		Description: cast.Ptr(cmd.Description),
 	}
 
 	operator := models.Operator{

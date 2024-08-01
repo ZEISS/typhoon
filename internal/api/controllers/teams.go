@@ -4,9 +4,8 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/zeiss/fiber-goth/adapters"
-	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/api/ports"
+	"github.com/zeiss/typhoon/internal/models"
 )
 
 // CreateTeamCommand ...
@@ -38,13 +37,13 @@ var _ TeamsController = (*teamsController)(nil)
 // TeamsController ...
 type TeamsController interface {
 	// CreateTeam ...
-	CreateTeam(ctx context.Context, cmd CreateTeamCommand) (adapters.GothTeam, error)
+	CreateTeam(ctx context.Context, cmd CreateTeamCommand) (models.Team, error)
 	// DeleteTeam ...
 	DeleteTeam(ctx context.Context, cmd DeleteTeamCommand) error
 	// GetTeam ...
-	GetTeam(ctx context.Context, query GetTeamQuery) (adapters.GothTeam, error)
+	GetTeam(ctx context.Context, query GetTeamQuery) (models.Team, error)
 	// ListTeams ...
-	ListTeams(ctx context.Context, query ListTeamsQuery) (models.Pagination[adapters.GothTeam], error)
+	ListTeams(ctx context.Context, query ListTeamsQuery) (models.Pagination[models.Team], error)
 }
 
 type teamsController struct {
@@ -57,8 +56,8 @@ func NewTeamsController(db ports.Teams) *teamsController {
 }
 
 // CreateTeam ...
-func (c *teamsController) CreateTeam(ctx context.Context, cmd CreateTeamCommand) (adapters.GothTeam, error) {
-	team := adapters.GothTeam{
+func (c *teamsController) CreateTeam(ctx context.Context, cmd CreateTeamCommand) (models.Team, error) {
+	team := models.Team{
 		Name:        cmd.Name,
 		Description: cmd.Description,
 	}
@@ -73,7 +72,7 @@ func (c *teamsController) CreateTeam(ctx context.Context, cmd CreateTeamCommand)
 
 // DeleteTeam ...
 func (c *teamsController) DeleteTeam(ctx context.Context, cmd DeleteTeamCommand) error {
-	team := adapters.GothTeam{
+	team := models.Team{
 		ID: cmd.ID,
 	}
 
@@ -81,8 +80,8 @@ func (c *teamsController) DeleteTeam(ctx context.Context, cmd DeleteTeamCommand)
 }
 
 // GetTeam ...
-func (c *teamsController) GetTeam(ctx context.Context, query GetTeamQuery) (adapters.GothTeam, error) {
-	team := adapters.GothTeam{
+func (c *teamsController) GetTeam(ctx context.Context, query GetTeamQuery) (models.Team, error) {
+	team := models.Team{
 		ID: query.ID,
 	}
 
@@ -95,8 +94,8 @@ func (c *teamsController) GetTeam(ctx context.Context, query GetTeamQuery) (adap
 }
 
 // ListTeams ...
-func (c *teamsController) ListTeams(ctx context.Context, query ListTeamsQuery) (models.Pagination[adapters.GothTeam], error) {
-	pagination := models.Pagination[adapters.GothTeam]{
+func (c *teamsController) ListTeams(ctx context.Context, query ListTeamsQuery) (models.Pagination[models.Team], error) {
+	pagination := models.Pagination[models.Team]{
 		Offset: query.Offset,
 		Limit:  query.Limit,
 		Search: query.Search,

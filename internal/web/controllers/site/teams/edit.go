@@ -3,10 +3,10 @@ package teams
 import (
 	"context"
 
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/ports"
 
-	"github.com/zeiss/fiber-goth/adapters"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
@@ -16,7 +16,7 @@ import (
 
 // TeamEditControllerImpl ...
 type TeamEditControllerImpl struct {
-	team  tables.Paginated[adapters.GothTeam]
+	team  tables.Paginated[models.Team]
 	store ports.Datastore
 	htmx.DefaultController
 }

@@ -2,8 +2,8 @@ package db
 
 import (
 	"github.com/zeiss/fiber-goth/adapters"
-	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/api/ports"
+	"github.com/zeiss/typhoon/internal/models"
 
 	"gorm.io/gorm"
 )
@@ -27,8 +27,6 @@ func (db *DB) RunMigrations() error {
 		&adapters.GothUser{},
 		&adapters.GothSession{},
 		&adapters.GothVerificationToken{},
-		&adapters.GothTeam{},
-		&adapters.GothRole{},
 		&models.User{},
 		&models.Account{},
 		&models.Operator{},

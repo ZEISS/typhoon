@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/models"
 )
 
 // GetSystem is returning a system by its ID.

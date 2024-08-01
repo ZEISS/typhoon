@@ -28,7 +28,8 @@ type System struct {
 	// Clusters is the clusters that are associated with the system.
 	Clusters []Cluster `json:"clusters" gorm:"foreignKey:SystemID"`
 	// Operator is the operator this is associated with this system to operate.
-	Operator   Operator  `json:"operator" gorm:"foreignKey:OperatorID" validate:"-"`
+	Operator Operator `json:"operator" gorm:"foreignKey:OperatorID" validate:"-"`
+	// OperatorID is the operator ID that is associated with the system.
 	OperatorID uuid.UUID `json:"operator_id" form:"operator_id" validate:"required,uuid"`
 	// Tags is the tags that are associated with the system.
 	Tags []*Tag `json:"tags" gorm:"polymorphic:Taggable;polymorphicValue:system;" validate:"-"`

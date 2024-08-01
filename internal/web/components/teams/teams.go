@@ -3,7 +3,6 @@ package teams
 import (
 	"fmt"
 
-	"github.com/zeiss/fiber-goth/adapters"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/dropdowns"
@@ -11,6 +10,7 @@ import (
 	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tables"
+	"github.com/zeiss/typhoon/internal/models"
 )
 
 const (
@@ -19,7 +19,7 @@ const (
 
 // TeamsTableProps ...
 type TeamsTableProps struct {
-	Teams  []*adapters.GothTeam
+	Teams  []*models.Team
 	Offset int
 	Limit  int
 	Total  int
@@ -106,14 +106,14 @@ func TeamsTable(props TeamsTableProps, children ...htmx.Node) htmx.Node {
 					),
 				),
 			},
-			[]tables.ColumnDef[*adapters.GothTeam]{
+			[]tables.ColumnDef[*models.Team]{
 				{
 					ID:          "id",
 					AccessorKey: "id",
 					Header: func(p tables.TableProps) htmx.Node {
 						return htmx.Th(htmx.Text("ID"))
 					},
-					Cell: func(p tables.TableProps, row *adapters.GothTeam) htmx.Node {
+					Cell: func(p tables.TableProps, row *models.Team) htmx.Node {
 						return htmx.Td(
 							htmx.Text(row.ID.String()),
 						)
@@ -125,7 +125,7 @@ func TeamsTable(props TeamsTableProps, children ...htmx.Node) htmx.Node {
 					Header: func(p tables.TableProps) htmx.Node {
 						return htmx.Th(htmx.Text("Name"))
 					},
-					Cell: func(p tables.TableProps, row *adapters.GothTeam) htmx.Node {
+					Cell: func(p tables.TableProps, row *models.Team) htmx.Node {
 						return htmx.Td(
 							links.Link(
 								links.LinkProps{Href: fmt.Sprintf(showTeamsURLFormat, row.ID)},
@@ -135,25 +135,10 @@ func TeamsTable(props TeamsTableProps, children ...htmx.Node) htmx.Node {
 					},
 				},
 				{
-					ID:          "slug",
-					AccessorKey: "slug",
-					Header: func(p tables.TableProps) htmx.Node {
-						return htmx.Th(htmx.Text("Slug"))
-					},
-					Cell: func(p tables.TableProps, row *adapters.GothTeam) htmx.Node {
-						return htmx.Td(
-							links.Link(
-								links.LinkProps{Href: fmt.Sprintf(showTeamsURLFormat, row.ID)},
-								htmx.Text(row.Slug),
-							),
-						)
-					},
-				},
-				{
 					Header: func(p tables.TableProps) htmx.Node {
 						return nil
 					},
-					Cell: func(p tables.TableProps, row *adapters.GothTeam) htmx.Node {
+					Cell: func(p tables.TableProps, row *models.Team) htmx.Node {
 						return htmx.Td(
 							dropdowns.Dropdown(
 								dropdowns.DropdownProps{},

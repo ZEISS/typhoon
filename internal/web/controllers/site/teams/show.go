@@ -4,20 +4,19 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/zeiss/fiber-goth/adapters"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tables"
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/components"
-	"github.com/zeiss/typhoon/internal/web/components/teams"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
 // TeamShowControllerImpl ...
 type TeamShowControllerImpl struct {
-	team  tables.Paginated[adapters.GothTeam]
+	team  tables.Paginated[models.Team]
 	store ports.Datastore
 	htmx.DefaultController
 }
@@ -168,20 +167,20 @@ func (p *TeamShowControllerImpl) Get() error {
 						),
 					),
 				),
-				cards.CardBordered(
-					cards.CardProps{},
-					cards.Body(
-						cards.BodyProps{},
-						teams.UsersTable(
-							teams.UsersTableProps{
-								Users:  tables.RowsPtr(p.team.Value.Users),
-								Offset: p.team.GetOffset(),
-								Limit:  p.team.GetLimit(),
-								// Total:  p.team.GetLen(),
-							},
-						),
-					),
-				),
+				// cards.CardBordered(
+				// 	cards.CardProps{},
+				// 	cards.Body(
+				// 		cards.BodyProps{},
+				// 		teams.UsersTable(
+				// 			teams.UsersTableProps{
+				// 				Users:  tables.RowsPtr(p.team.Value.Users),
+				// 				Offset: p.team.GetOffset(),
+				// 				Limit:  p.team.GetLimit(),
+				// 				// Total:  p.team.GetLen(),
+				// 			},
+				// 		),
+				// 	),
+				// ),
 			),
 		),
 	)

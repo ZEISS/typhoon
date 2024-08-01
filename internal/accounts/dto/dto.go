@@ -3,7 +3,7 @@ package dto
 import (
 	"bytes"
 
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/models"
 	openapi "github.com/zeiss/typhoon/pkg/apis/accounts"
 )
 

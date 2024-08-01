@@ -1,10 +1,9 @@
 package dto
 
 import (
-	"github.com/zeiss/fiber-goth/adapters"
+	"github.com/zeiss/pkg/cast"
 	"github.com/zeiss/typhoon/internal/api/controllers"
-	"github.com/zeiss/typhoon/internal/api/models"
-	"github.com/zeiss/typhoon/internal/utils"
+	"github.com/zeiss/typhoon/internal/models"
 	openapi "github.com/zeiss/typhoon/pkg/apis"
 )
 
@@ -12,18 +11,18 @@ import (
 func FromCreateTeamRequest(req openapi.CreateTeamRequestObject) controllers.CreateTeamCommand {
 	return controllers.CreateTeamCommand{
 		Name:        req.Body.Name,
-		Description: utils.PtrStr(req.Body.Description),
+		Description: cast.Value(req.Body.Description),
 	}
 }
 
 // ToCreateTeamResponse ...
-func ToCreateTeamResponse(team adapters.GothTeam) openapi.CreateTeam201JSONResponse {
+func ToCreateTeamResponse(team models.Team) openapi.CreateTeam201JSONResponse {
 	res := openapi.CreateTeam201JSONResponse{}
-	res.Id = utils.PtrUUID(team.ID)
+	res.Id = cast.Ptr(team.ID)
 	res.Name = team.Name
-	res.CreatedAt = utils.PtrTime(team.CreatedAt)
-	res.UpdatedAt = utils.PtrTime(team.UpdatedAt)
-	res.DeletedAt = utils.PtrTime(team.DeletedAt.Time)
+	res.CreatedAt = cast.Ptr(team.CreatedAt)
+	res.UpdatedAt = cast.Ptr(team.UpdatedAt)
+	res.DeletedAt = cast.Ptr(team.DeletedAt.Time)
 
 	return res
 }
@@ -36,14 +35,14 @@ func FromGetTeamRequest(req openapi.GetTeamRequestObject) controllers.GetTeamQue
 }
 
 // ToGetTeamResponse ...
-func ToGetTeamResponse(team adapters.GothTeam) openapi.GetTeam200JSONResponse {
+func ToGetTeamResponse(team models.Team) openapi.GetTeam200JSONResponse {
 	res := openapi.GetTeam200JSONResponse{}
-	res.Id = utils.PtrUUID(team.ID)
+	res.Id = cast.Ptr(team.ID)
 	res.Name = team.Name
-	res.Description = utils.StrPtr(team.Description)
-	res.CreatedAt = utils.PtrTime(team.CreatedAt)
-	res.UpdatedAt = utils.PtrTime(team.UpdatedAt)
-	res.DeletedAt = utils.PtrTime(team.DeletedAt.Time)
+	res.Description = cast.Ptr(team.Description)
+	res.CreatedAt = cast.Ptr(team.CreatedAt)
+	res.UpdatedAt = cast.Ptr(team.UpdatedAt)
+	res.DeletedAt = cast.Ptr(team.DeletedAt.Time)
 
 	return res
 }
@@ -66,19 +65,19 @@ func FromListTeamsRequest(req openapi.ListTeamsRequestObject) controllers.ListTe
 }
 
 // ToListTeamsResponse ...
-func ToListTeamsResponse(pagination models.Pagination[adapters.GothTeam]) openapi.ListTeams200JSONResponse {
+func ToListTeamsResponse(pagination models.Pagination[models.Team]) openapi.ListTeams200JSONResponse {
 	res := openapi.ListTeams200JSONResponse{}
-	res.Limit = utils.PtrInt(pagination.Limit)
-	res.Offset = utils.PtrInt(pagination.Offset)
+	res.Limit = cast.Ptr(pagination.Limit)
+	res.Offset = cast.Ptr(pagination.Offset)
 
 	teams := make([]openapi.Team, 0, len(pagination.Rows))
 	for _, team := range pagination.Rows {
 		teams = append(teams, openapi.Team{
-			Id:        utils.PtrUUID(team.ID),
+			Id:        cast.Ptr(team.ID),
 			Name:      team.Name,
-			CreatedAt: utils.PtrTime(team.CreatedAt),
-			UpdatedAt: utils.PtrTime(team.UpdatedAt),
-			DeletedAt: utils.PtrTime(team.DeletedAt.Time),
+			CreatedAt: cast.Ptr(team.CreatedAt),
+			UpdatedAt: cast.Ptr(team.UpdatedAt),
+			DeletedAt: cast.Ptr(team.DeletedAt.Time),
 		})
 	}
 	res.Results = &teams

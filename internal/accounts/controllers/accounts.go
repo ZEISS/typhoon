@@ -3,10 +3,10 @@ package controllers
 import (
 	"context"
 
-	seed "github.com/zeiss/gorm-seed"
+	"github.com/zeiss/pkg/dbx"
 	"github.com/zeiss/typhoon/internal/accounts/dto"
 	"github.com/zeiss/typhoon/internal/accounts/ports"
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/models"
 )
 
 var _ AccountsController = (*AccountsControllerImpl)(nil)
@@ -19,11 +19,11 @@ type AccountsController interface {
 
 // AccountsControllerImpl ...
 type AccountsControllerImpl struct {
-	store seed.Database[ports.ReadTx, ports.ReadWriteTx]
+	store dbx.Database[ports.ReadTx, ports.ReadWriteTx]
 }
 
 // NewAccountsController ...
-func NewAccountsController(store seed.Database[ports.ReadTx, ports.ReadWriteTx]) *AccountsControllerImpl {
+func NewAccountsController(store dbx.Database[ports.ReadTx, ports.ReadWriteTx]) *AccountsControllerImpl {
 	return &AccountsControllerImpl{store}
 }
 

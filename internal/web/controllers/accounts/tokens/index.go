@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	htmx "github.com/zeiss/fiber-htmx"
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
