@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/zeiss/fiber-htmx/components/cards"
+	"github.com/zeiss/fiber-htmx/components/tailwind"
 	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/components/operators"
@@ -56,7 +57,11 @@ func (l *ListOperatorsController) Get() error {
 					Path: l.Ctx().Path(),
 				},
 				cards.CardBordered(
-					cards.CardProps{},
+					cards.CardProps{
+						ClassNames: htmx.ClassNames{
+							tailwind.M2: true,
+						},
+					},
 					cards.Body(
 						cards.BodyProps{},
 						operators.OperatorsTable(

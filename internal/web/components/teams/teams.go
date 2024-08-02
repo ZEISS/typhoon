@@ -11,10 +11,7 @@ import (
 	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tables"
 	"github.com/zeiss/typhoon/internal/models"
-)
-
-const (
-	showTeamsURLFormat = "/site/teams/%s"
+	"github.com/zeiss/typhoon/internal/utils"
 )
 
 // TeamsTableProps ...
@@ -94,7 +91,7 @@ func TeamsTable(props TeamsTableProps, children ...htmx.Node) htmx.Node {
 						),
 					),
 					htmx.A(
-						htmx.Href("/site/teams/new"),
+						htmx.Href("/teams/new"),
 						buttons.Outline(
 							buttons.ButtonProps{
 								ClassNames: htmx.ClassNames{
@@ -128,7 +125,7 @@ func TeamsTable(props TeamsTableProps, children ...htmx.Node) htmx.Node {
 					Cell: func(p tables.TableProps, row *models.Team) htmx.Node {
 						return htmx.Td(
 							links.Link(
-								links.LinkProps{Href: fmt.Sprintf(showTeamsURLFormat, row.ID)},
+								links.LinkProps{Href: fmt.Sprintf(utils.ShowTeamUrlFormat, row.ID)},
 								htmx.Text(row.Name),
 							),
 						)

@@ -14,7 +14,7 @@ type Team struct {
 	// Name is the name of the team.
 	Name string `json:"name" validate:"required,alphanum,min=3,max=128"`
 	// Description is the description of the team.
-	Description string `json:"description" validate:"max=255"`
+	Description string `json:"description" validate:"max=1024"`
 	// CreatedAt is the creation time of the team.
 	CreatedAt time.Time `json:"created_at"`
 	// UpdatedAt is the update time of the team.
@@ -22,3 +22,5 @@ type Team struct {
 	// DeletedAt is the deletion time of the team.
 	DeletedAt gorm.DeletedAt `json:"deleted_at"`
 }
+
+//

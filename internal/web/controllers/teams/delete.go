@@ -38,5 +38,5 @@ func (p *TeamDeleteControllerImpl) Prepare() error {
 
 // Delete ...
 func (p *TeamDeleteControllerImpl) Delete() error {
-	return p.Redirect("/site/teams")
+	return p.Redirect("/teams")
 }
