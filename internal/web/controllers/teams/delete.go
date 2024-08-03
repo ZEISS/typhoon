@@ -18,10 +18,7 @@ type TeamDeleteControllerImpl struct {
 
 // NewTeamDeleteController ...
 func NewTeamDeleteController(store ports.Datastore) *TeamDeleteControllerImpl {
-	return &TeamDeleteControllerImpl{
-		team:  models.Team{},
-		store: store,
-	}
+	return &TeamDeleteControllerImpl{store: store}
 }
 
 // Prepare ...

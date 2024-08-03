@@ -38,6 +38,8 @@ type Account struct {
 	Signer NKey `json:"signer" gorm:"foreignKey:SignerID" validate:"-"`
 	// SignerID is the signer ID for the account.
 	SignerID string `json:"signer_id" form:"signer_id" validate:"-"`
+	// LimitJetStreamEnabled indicates if JetStream is enabled.
+	LimitJetStreamEnabled bool `json:"limit_jetstream_enabled"`
 	// LimitJetStreamMaxDiskStorage is the limit for JetStream maximum disk storage.
 	LimitJetStreamMaxDiskStorage int64 `json:"limit_jetstream_max_disk_storage"`
 	// LimitJetStreamMaxStreams is the limit for JetStream maximum streams.

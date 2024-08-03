@@ -151,7 +151,7 @@ func (t *datastoreTx) UpdateAccount(ctx context.Context, account *models.Account
 
 // DeleteAccount ...
 func (t *datastoreTx) DeleteAccount(ctx context.Context, account *models.Account) error {
-	return t.tx.Select(clause.Associations).Delete(account).Error
+	return t.tx.Debug().Delete(account).Error
 }
 
 // ListOperators ...
