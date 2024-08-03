@@ -49,9 +49,9 @@ require (
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.11
 	helm.sh/helm v2.17.0+incompatible
-	k8s.io/api v0.29.0
+	k8s.io/api v0.30.3
 	k8s.io/apimachinery v0.30.3
-	k8s.io/client-go v0.29.0
+	k8s.io/client-go v0.30.3
 	k8s.io/utils v0.0.0-20230726121419-3b25d923346b
 	knative.dev/eventing v0.31.1-0.20220523181303-c3e13967001f
 	knative.dev/networking v0.0.0-20240220074405-630e71a2dbc7
