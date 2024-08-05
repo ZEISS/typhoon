@@ -160,8 +160,8 @@ func TestBayeux(t *testing.T) {
 			case <-dispatcher.eof:
 			}
 
-			require.Len(t, tc.expectedConnectResponses, len(dispatcher.dispatchedEvents), "Unexpected number of responses from connect")
-			require.Len(t, tc.expectedConnectErrors, len(dispatcher.dispatchedErrors), "Unexpected number of errors from dispatcher")
+			require.Len(t, dispatcher.dispatchedEvents, tc.expectedConnectResponses, "Unexpected number of responses from connect")
+			require.Len(t, dispatcher.dispatchedErrors, tc.expectedConnectErrors, "Unexpected number of errors from dispatcher")
 		})
 	}
 }
