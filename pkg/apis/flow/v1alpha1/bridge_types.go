@@ -49,6 +49,7 @@ type BridgeList struct {
 	Items           []Bridge `json:"items"`
 }
 
+// nolint:unused,deadcode
 type isBridgeObject_BridgeObject interface {
 	isBridgeObject_BridgeObject()
 }

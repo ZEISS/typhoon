@@ -150,7 +150,7 @@ func TestBayeux(t *testing.T) {
 
 			go func() {
 				clientErr := b.Start(ctx)
-				require.Nil(t, clientErr, "The bayeux client failed")
+				require.NoError(t, clientErr, "The bayeux client failed")
 			}()
 
 			select {
@@ -160,8 +160,8 @@ func TestBayeux(t *testing.T) {
 			case <-dispatcher.eof:
 			}
 
-			require.Equal(t, tc.expectedConnectResponses, len(dispatcher.dispatchedEvents), "Unexpected number of responses from connect")
-			require.Equal(t, tc.expectedConnectErrors, len(dispatcher.dispatchedErrors), "Unexpected number of errors from dispatcher")
+			require.Len(t, tc.expectedConnectResponses, len(dispatcher.dispatchedEvents), "Unexpected number of responses from connect")
+			require.Len(t, tc.expectedConnectErrors, len(dispatcher.dispatchedErrors), "Unexpected number of errors from dispatcher")
 		})
 	}
 }

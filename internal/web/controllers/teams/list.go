@@ -35,7 +35,7 @@ func NewTeamsListOperatorController(store ports.Datastore) *ListTeamsControllerI
 func (l *ListTeamsControllerImpl) Prepare() error {
 	err := l.Ctx().QueryParser(&l.teams)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	return l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {

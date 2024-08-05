@@ -28,8 +28,8 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 	env := envAcc.(*envAccessor)
 
 	t := &http.Transport{
-		TLSClientConfig: &tls.Config{ // #nosec G402
-			InsecureSkipVerify: env.SkipVerify,
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: env.SkipVerify, // nolint:gosec
 		},
 	}
 
@@ -47,7 +47,7 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 
 	httpClient := &http.Client{Transport: t}
 
-	httpRequest, err := http.NewRequest(env.Method, env.Endpoint, nil)
+	httpRequest, err := http.NewRequestWithContext(ctx, env.Method, env.Endpoint, nil)
 	if err != nil {
 		logger.Panicw("Cannot build request", zap.Error(err))
 	}

@@ -58,7 +58,7 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 		targetce.ReplierWithStatefulHeaders(env.BridgeIdentifier),
 		targetce.ReplierWithStaticDataContentType(cloudevents.ApplicationXML),
 		targetce.ReplierWithStaticErrorDataContentType(*cloudevents.StringOfApplicationJSON()),
-		targetce.ReplierWithPayloadPolicy(targetce.PayloadPolicy(targetce.PayloadPolicyAlways)))
+		targetce.ReplierWithPayloadPolicy(targetce.PayloadPolicyAlways))
 	if err != nil {
 		logger.Panicf("Error creating CloudEvents replier: %v", err)
 	}
@@ -95,6 +95,7 @@ func (a *xsltTransformAdapter) Start(ctx context.Context) error {
 	return a.ceClient.StartReceiver(ctx, a.dispatch)
 }
 
+// nolint:gocyclo
 func (a *xsltTransformAdapter) dispatch(ctx context.Context, event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
 	isStructuredTransform := event.Type() == v1alpha1.EventTypeXSLTTransformation
 	if isStructuredTransform && !a.xsltOverride {
@@ -134,7 +135,7 @@ func (a *xsltTransformAdapter) dispatch(ctx context.Context, event cloudevents.E
 	res, err := style.Transform(xmlin)
 	if err != nil {
 		return a.replier.Error(&event, targetce.ErrorCodeRequestValidation,
-			fmt.Errorf("error processing XML with XSLT: %v", err), nil)
+			fmt.Errorf("error processing XML with XSLT: %w", err), nil)
 	}
 
 	if a.sink != "" {

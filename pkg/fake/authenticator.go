@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/getkin/kin-openapi/openapi3filter"
-	"github.com/gofiber/fiber/v2"
 	middleware "github.com/oapi-codegen/fiber-middleware"
 )
 
@@ -17,14 +16,15 @@ const (
 	AuthCtx contextKey = iota
 )
 
+// NewAuthenticator returns a new authenticator.
 func NewAuthenticator() openapi3filter.AuthenticationFunc {
-	return func(ctx context.Context, input *openapi3filter.AuthenticationInput) error {
-		return Authenticate(middleware.GetFiberContext(ctx), input)
-	}
+	return Authenticate
 }
 
 // Authenticate is a fake implementation of the authenticator.
-func Authenticate(ctx *fiber.Ctx, input *openapi3filter.AuthenticationInput) error {
+func Authenticate(ctx context.Context, input *openapi3filter.AuthenticationInput) error {
+	c := middleware.GetFiberContext(ctx)
+
 	if input.SecuritySchemeName != "apiKey" {
 		return fmt.Errorf("security scheme %s != 'apiKey'", input.SecuritySchemeName)
 	}
@@ -38,10 +38,11 @@ func Authenticate(ctx *fiber.Ctx, input *openapi3filter.AuthenticationInput) err
 		return fmt.Errorf("invalid API key")
 	}
 
-	usrCtx := ctx.UserContext()
+	usrCtx := c.UserContext()
 	authCtx := context.WithValue(usrCtx, AuthCtx, key)
 
-	ctx.SetUserContext(authCtx)
+	// nolint:contextcheck
+	c.SetUserContext(authCtx)
 
 	return nil
 }

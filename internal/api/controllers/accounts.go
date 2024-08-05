@@ -66,6 +66,7 @@ func NewAccountsController(db ports.Repositories) *accountsController {
 }
 
 // CreateAccount ...
+// nolint:gocyclo
 func (c *accountsController) CreateAccount(ctx context.Context, cmd CreateAccountCommand) (models.Account, error) {
 	account := models.Account{
 		Name:        cmd.Name,

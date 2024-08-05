@@ -81,6 +81,7 @@ func (l *CreateControllerImpl) Error(err error) error {
 }
 
 // Post ...
+// nolint:gocyclo
 func (l *CreateControllerImpl) Post() error {
 	account := models.Account{
 		Name:                           l.Form.Name,
@@ -128,7 +129,7 @@ func (l *CreateControllerImpl) Post() error {
 	skg.Key = models.NKey{ID: skgid, Seed: skgseed}
 	account.SigningKeyGroups = append(account.SigningKeyGroups, skg)
 
-	osgk := models.NKey{ID: string(l.Form.OperatorSigningKeyGroupID)}
+	osgk := models.NKey{ID: l.Form.OperatorSigningKeyGroupID}
 
 	err = l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
 		return tx.GetNKey(ctx, &osgk)

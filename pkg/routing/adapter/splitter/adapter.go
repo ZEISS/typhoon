@@ -117,10 +117,11 @@ func (h *Handler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 			e.SetExtension(key, value)
 		}
 		// we may want to keep responses and send them back to the source
-		_, err := h.sendEvent(ctx, request.Header, s.Status.SinkURI.String(), e)
+		res, err := h.sendEvent(ctx, request.Header, s.Status.SinkURI.String(), e)
 		if err != nil {
 			h.logger.Errorw("Failed to send the event", zap.Error(err))
 		}
+		defer res.Body.Close()
 	}
 
 	writer.WriteHeader(http.StatusOK)

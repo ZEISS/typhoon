@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/url"
 	"time"
@@ -102,8 +103,8 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 // newClient returns a Splunk HEC client.
 func newClient(hecURL url.URL, hecToken, index, hostname string, skipTLSVerify bool) *splunk.Client {
 	httpTransport := &http.Transport{
-		TLSClientConfig: &tls.Config{ // #nosec G402
-			InsecureSkipVerify: skipTLSVerify,
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: skipTLSVerify, // nolint:gosec
 		},
 	}
 	httpClient := &http.Client{
@@ -169,7 +170,8 @@ func (a *adapter) receive(ctx context.Context, event cloudevents.Event) cloudeve
 // extractHTTPStatus attempts to extract the HTTP status code from the given
 // error, returns "400 Bad Request" otherwise.
 func (a *adapter) extractHTTPStatus(err error) int {
-	if splunkErr, ok := err.(*splunk.EventCollectorResponse); ok {
+	splunkErr := &splunk.EventCollectorResponse{}
+	if errors.As(err, &splunkErr) {
 		code, err := splunkErr.Code.HTTPCode()
 		if err != nil {
 			a.logger.Warnw("Couldn't determine HTTP status code", zap.Error(err))

@@ -150,15 +150,18 @@ func (t *adapter) receiveAndSend(ctx context.Context, event cloudevents.Event) e
 
 	result, err := t.applyTransformations(event)
 	if err != nil {
+		// nolint:contextcheck
 		t.sr.ReportProcessingError(false, ceTypeTag, ceSrcTag)
 		return err
 	}
 
 	if result := t.client.Send(ctx, *result); !cloudevents.IsACK(result) {
+		// nolint:contextcheck
 		t.sr.ReportProcessingError(false, ceTypeTag, ceSrcTag)
 		return result
 	}
 
+	// nolint:contextcheck
 	t.sr.ReportProcessingSuccess(ceTypeTag, ceSrcTag)
 	return nil
 }

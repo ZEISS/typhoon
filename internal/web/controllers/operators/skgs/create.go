@@ -92,7 +92,7 @@ func (l *CreateSkgsControllerImpl) Post() error {
 	}
 
 	err = l.store.ReadWriteTx(l.Context(), func(ctx context.Context, tx ports.ReadWriteTx) error {
-		return tx.UpdateOperator(l.Context(), &op)
+		return tx.UpdateOperator(ctx, &op)
 	})
 	if err != nil {
 		return err

@@ -47,8 +47,7 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 
 	t := &http.Transport{
 		TLSClientConfig: &tls.Config{
-			// nolint:G402
-			InsecureSkipVerify: env.SkipVerify,
+			InsecureSkipVerify: env.SkipVerify, // nolint:gosec
 		},
 	}
 
@@ -157,7 +156,7 @@ func (a *httpAdapter) dispatch(ctx context.Context, event cloudevents.Event) (*c
 		u.Path = path.Join(u.Path, rd.PathSuffix)
 	}
 
-	req, err := http.NewRequest(a.method, u.String(), bytes.NewBuffer(rd.Body))
+	req, err := http.NewRequestWithContext(ctx, a.method, u.String(), bytes.NewBuffer(rd.Body))
 	if err != nil {
 		return nil, a.errorHTTPResult(http.StatusInternalServerError, "Could not create HTTP request: %w", err)
 	}

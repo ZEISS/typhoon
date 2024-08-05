@@ -56,8 +56,8 @@ func (l *ShowAccountControllerImpl) Get() error {
 				}
 
 				skgs := []*models.SigningKeyGroup{}
-				for _, skg := range account.SigningKeyGroups {
-					skgs = append(skgs, &skg)
+				for i := range account.SigningKeyGroups {
+					skgs = append(skgs, skgs[i])
 				}
 
 				return htmx.Fragment(

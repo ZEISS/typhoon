@@ -65,7 +65,7 @@ func runHandler(ctx context.Context, s *http.Server) error {
 	}()
 
 	handleServerError := func(err error) error {
-		if err != http.ErrServerClosed {
+		if errors.Is(err, http.ErrServerClosed) {
 			return fmt.Errorf("during server runtime: %w", err)
 		}
 		return nil
@@ -78,6 +78,7 @@ func runHandler(ctx context.Context, s *http.Server) error {
 		ctx, cancel := context.WithTimeout(context.Background(), serverShutdownGracePeriod)
 		defer cancel()
 
+		// nolint:contextcheck
 		if err := s.Shutdown(ctx); err != nil {
 			return fmt.Errorf("during server shutdown: %w", err)
 		}

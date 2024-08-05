@@ -85,7 +85,7 @@ func (d *Delete) retrieveString(eventID, key string) string {
 }
 
 // nolint:gocyclo
-func (d *Delete) parse(data interface{}, key, path string) (interface{}, error) {
+func (d *Delete) parse(data interface{}, key, path string) (interface{}, error) { //nolint:unparam
 	output := make(map[string]interface{})
 	// TODO: keep only one filter call
 	if d.filter(path, data) {

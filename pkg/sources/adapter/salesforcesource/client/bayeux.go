@@ -119,13 +119,16 @@ func (b *bayeux) init() error {
 // autheticating, handshaking, subscripting, and then connecting and
 // sending data to the dispatcher until the connection is no longer valid.
 // The process is stopped by cancelling the passed context.
+// nolint:gocyclo
 func (b *bayeux) Start(ctx context.Context) error {
 	// Received context is used for all HTTP calls and
 	// at the connect loop to cancel processing.
 	b.mutex.Lock()
 	b.ctx = ctx
+
 	b.mutex.Unlock()
 
+	// nolint:staticcheck
 	bom := wait.NewExponentialBackoffManager(time.Second, time.Second*60, time.Second*100, 2, 0, &clock.RealClock{})
 
 	// Connect loop will run until context is done
@@ -214,7 +217,7 @@ func (b *bayeux) Start(ctx context.Context) error {
 	for {
 		select {
 		case msg := <-b.msgCh:
-			b.dispatcher.DispatchEvent(b.ctx, msg)
+			b.dispatcher.DispatchEvent(ctx, msg)
 			r, ok := b.subsReplays[msg.Channel]
 			if ok {
 				atomic.StoreInt64(r, msg.Data.Event.ReplayID)

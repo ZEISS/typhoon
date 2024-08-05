@@ -103,6 +103,7 @@ func newCEL(expr string, vars []Variable) (cel.Program, error) {
 		return nil, iss.Err()
 	}
 
+	// nolint:staticcheck
 	if !proto.Equal(ast.ResultType(), decls.Bool) {
 		return nil, fmt.Errorf("expression %q must return bool type, got %s", expr, ast.ResultType().String())
 	}

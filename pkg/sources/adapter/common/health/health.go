@@ -3,6 +3,7 @@ package health
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"sync"
@@ -67,7 +68,7 @@ func Start(ctx context.Context) {
 	}()
 
 	handleServerError := func(err error) {
-		if err != http.ErrServerClosed {
+		if errors.Is(err, http.ErrServerClosed) {
 			logging.FromContext(ctx).Errorw("Error during runtime of health server", zap.Error(err))
 		}
 	}
@@ -77,6 +78,7 @@ func Start(ctx context.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), gracefulHandlerShutdown)
 		defer cancel()
 
+		// nolint:contextcheck
 		if err := server.Shutdown(ctx); err != nil {
 			logging.FromContext(ctx).Errorw("Error during shutdown of health server", zap.Error(err))
 		}

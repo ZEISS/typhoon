@@ -25,7 +25,6 @@ type envAccessor struct {
 	instance string `envconfig:"SERVICENOW_INSTANCE"`
 	user     string `envconfig:"SERVICENOW_BASICAUTH_USER"`
 	password string `envconfig:"SERVICENOW_BASICAUTH_PASSWORD"`
-	source   string `envconfig:"SERVICENOW_SOURCE"`
 }
 
 var _ pkgadapter.Adapter = (*snowAdapter)(nil)

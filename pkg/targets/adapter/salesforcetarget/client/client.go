@@ -22,7 +22,7 @@ const (
 )
 
 // salesforceVersion is returned from Salesforce when
-// successfuly querying the data services endpoint.
+// successfully querying the data services endpoint.
 type salesforceVersion struct {
 	Version string
 	Label   string
@@ -80,7 +80,7 @@ func WithHTTPClient(httpClient *http.Client) Options {
 // Authenticate and performs checks regarding
 // the Salesforce version
 func (c *SalesforceClient) Authenticate(ctx context.Context) error {
-	creds, err := c.auth.CreateOrRenewCredentials()
+	creds, err := c.auth.CreateOrRenewCredentials(ctx)
 
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
@@ -104,6 +104,7 @@ func (c *SalesforceClient) Authenticate(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("could not retrieve available versions: %w", err)
 	}
+	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
 		return c.manageAPIError(res)
@@ -132,7 +133,7 @@ func (c *SalesforceClient) Authenticate(ctx context.Context) error {
 }
 
 // Do method will use the Salesforce API using the passed parameters
-// adding only authentication header and the host. It is the caller responsability
+// adding only authentication header and the host. It is the caller responsibility
 // to add all toher elements to the call.
 //
 // This can be useful when a previous API call returned an URL that contains the
@@ -194,9 +195,9 @@ func (c *SalesforceClient) doCall(ctx context.Context, method, urlPath string, q
 }
 
 type salesforceError struct {
-	Fields    []string
-	Message   string
-	ErrorCode string
+	Fields    []string `json:"fields"`
+	Message   string   `json:"message"`
+	ErrorCode string   `json:"errorCode"`
 }
 
 // doNonLockingCall is not thread safe and should only be used if the client lock has been previously acquired.

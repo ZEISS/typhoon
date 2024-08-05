@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"crypto/rsa"
 	"encoding/json"
 	"errors"
@@ -79,7 +80,7 @@ func NewJWTAuthenticator(certKey, clientID, user, server string, client *http.Cl
 }
 
 // NewCredentials generates a new set of credentials.
-func (j *JWTAuthenticator) NewCredentials() (*Credentials, error) {
+func (j *JWTAuthenticator) NewCredentials(ctx context.Context) (*Credentials, error) {
 	// expiry needs to be set to 3 minutes or less
 	// See: https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm
 	j.claims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Minute * 3))
@@ -95,7 +96,7 @@ func (j *JWTAuthenticator) NewCredentials() (*Credentials, error) {
 		"assertion":  []string{signedToken},
 	}
 
-	req, err := http.NewRequest("POST", j.authURL, strings.NewReader(form.Encode()))
+	req, err := http.NewRequestWithContext(ctx, "POST", j.authURL, strings.NewReader(form.Encode()))
 	if err != nil {
 		return nil, fmt.Errorf("could not build authentication request: %w", err)
 	}
@@ -119,7 +120,7 @@ func (j *JWTAuthenticator) NewCredentials() (*Credentials, error) {
 	c := &Credentials{}
 	err = json.NewDecoder(res.Body).Decode(c)
 	if err != nil {
-		return nil, fmt.Errorf("could not decode authentication response into credentails: %w", err)
+		return nil, fmt.Errorf("could not decode authentication response into credentials: %w", err)
 	}
 
 	return c, nil
@@ -131,6 +132,6 @@ func (j *JWTAuthenticator) RefreshCredentials() (*Credentials, error) {
 }
 
 // CreateOrRenewCredentials will always create a new set of credentials.
-func (j *JWTAuthenticator) CreateOrRenewCredentials() (*Credentials, error) {
-	return j.NewCredentials()
+func (j *JWTAuthenticator) CreateOrRenewCredentials(ctx context.Context) (*Credentials, error) {
+	return j.NewCredentials(ctx)
 }

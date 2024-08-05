@@ -58,8 +58,8 @@ type Advice struct {
 // that the adapter needs to figure out the subject for the CloudEvent.
 type ChangeDataCapturePayload struct {
 	ChangeEventHeader struct {
-		EntityName string
-		ChangeType string
+		EntityName string `json:"entityName"`
+		ChangeType string `json:"changeType"`
 	} `json:"ChangeEventHeader"`
 }
 

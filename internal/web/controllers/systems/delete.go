@@ -42,7 +42,7 @@ func (l *DeleteSystemControllerImpl) Delete() error {
 	sys := models.System{ID: l.Params.ID}
 
 	err := l.store.ReadWriteTx(l.Context(), func(ctx context.Context, tx ports.ReadWriteTx) error {
-		return tx.DeleteSystem(l.Context(), &sys)
+		return tx.DeleteSystem(ctx, &sys)
 	})
 	if err != nil {
 		return err

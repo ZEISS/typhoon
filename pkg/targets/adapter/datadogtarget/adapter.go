@@ -91,22 +91,22 @@ func (a *datadogAdapter) Start(ctx context.Context) error {
 func (a *datadogAdapter) dispatch(ctx context.Context, event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
 	switch typ := event.Type(); typ {
 	case v1alpha1.EventTypeDatadogMetric:
-		return a.postMetric(event)
+		return a.postMetric(ctx, event)
 	case v1alpha1.EventTypeDatadogEvent:
-		return a.postEvent(event)
+		return a.postEvent(ctx, event)
 	case v1alpha1.EventTypeDatadogLog:
-		return a.postLog(event)
+		return a.postLog(ctx, event)
 	default:
 		return a.replier.Error(&event, targetce.ErrorCodeEventContext, fmt.Errorf("event type %q is not supported", typ), nil)
 	}
 }
 
-func (a *datadogAdapter) postLog(event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
+func (a *datadogAdapter) postLog(ctx context.Context, event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
 	if err := event.DataAs(&LogData{}); err != nil {
 		return a.replier.Error(&event, targetce.ErrorCodeRequestParsing, err, nil)
 	}
 
-	request, err := newLogsAPIRequest(a.apiLogsURL, "/v1/input", a.apiKey, event.Data())
+	request, err := newLogsAPIRequest(ctx, a.apiLogsURL, "/v1/input", a.apiKey, event.Data())
 	if err != nil {
 		return a.replier.Error(&event, targetce.ErrorCodeAdapterProcess, err, nil)
 	}
@@ -131,12 +131,12 @@ func (a *datadogAdapter) postLog(event cloudevents.Event) (*cloudevents.Event, c
 	return a.replier.Ok(&event, resBody)
 }
 
-func (a *datadogAdapter) postEvent(event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
+func (a *datadogAdapter) postEvent(ctx context.Context, event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
 	if err := event.DataAs(&EventData{}); err != nil {
 		return a.replier.Error(&event, targetce.ErrorCodeRequestParsing, err, nil)
 	}
 
-	request, err := newAPIRequest(a.apiURL, "/api/v1/events", a.apiKey, event.Data())
+	request, err := newAPIRequest(ctx, a.apiURL, "/api/v1/events", a.apiKey, event.Data())
 	if err != nil {
 		return a.replier.Error(&event, targetce.ErrorCodeAdapterProcess, err, nil)
 	}
@@ -161,12 +161,12 @@ func (a *datadogAdapter) postEvent(event cloudevents.Event) (*cloudevents.Event,
 	return a.replier.Ok(&event, resBody)
 }
 
-func (a *datadogAdapter) postMetric(event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
+func (a *datadogAdapter) postMetric(ctx context.Context, event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
 	if err := event.DataAs(&MetricData{}); err != nil {
 		return a.replier.Error(&event, targetce.ErrorCodeRequestParsing, err, nil)
 	}
 
-	request, err := newAPIRequest(a.apiURL, "/api/v1/series", a.apiKey, event.Data())
+	request, err := newAPIRequest(ctx, a.apiURL, "/api/v1/series", a.apiKey, event.Data())
 	if err != nil {
 		return a.replier.Error(&event, targetce.ErrorCodeAdapterProcess, err, nil)
 	}
@@ -192,18 +192,18 @@ func (a *datadogAdapter) postMetric(event cloudevents.Event) (*cloudevents.Event
 }
 
 // newAPIRequest returns a POST http.Request that is ready to send to the Datadog general-purpose API.
-func newAPIRequest(host, path, apiKey string, body []byte) (*http.Request, error) {
-	return newAPIRequestWithHost(host, path, apiKey, body)
+func newAPIRequest(ctx context.Context, host, path, apiKey string, body []byte) (*http.Request, error) {
+	return newAPIRequestWithHost(ctx, host, path, apiKey, body)
 }
 
 // newLogsAPIRequest returns a POST http.Request that is ready to send to the Datadog logs API.
-func newLogsAPIRequest(host, path, apiKey string, body []byte) (*http.Request, error) {
-	return newAPIRequestWithHost(host, path, apiKey, body)
+func newLogsAPIRequest(ctx context.Context, host, path, apiKey string, body []byte) (*http.Request, error) {
+	return newAPIRequestWithHost(ctx, host, path, apiKey, body)
 }
 
 // newAPIRequestWithHost returns a POST http.Request that is ready to send to the Datadog API.
-func newAPIRequestWithHost(host, path, apiKey string, body []byte) (*http.Request, error) {
-	req, err := http.NewRequest(http.MethodPost, host+path, bytes.NewReader(body))
+func newAPIRequestWithHost(ctx context.Context, host, path, apiKey string, body []byte) (*http.Request, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, host+path, bytes.NewReader(body))
 	if err != nil {
 		return nil, err
 	}

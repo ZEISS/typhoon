@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -95,7 +96,7 @@ func (a *ceAdapter) senderClientUpdater(url, path, username string) fs.WatchCall
 		}
 
 		if username != "" {
-			password, err := os.ReadFile(path)
+			password, err := os.ReadFile(filepath.Clean(path))
 			if err != nil {
 				a.logger.Errorw("Could not read the mounted password at the specific path", zap.Error(err))
 				return
@@ -145,15 +146,18 @@ func (a *ceAdapter) dispatch(ctx context.Context, event cloudevents.Event) (*clo
 	if a.senderClient == nil {
 		err := fmt.Errorf("CloudEvents client not intialized. Please, make sure that authentication secret is available")
 		a.logger.Errorw("Failed to send event", zap.Error(err))
+		// nolint:contextcheck
 		a.sr.ReportProcessingError(true, ceTypeTag, ceSrcTag)
 		return nil, err
 	}
 
 	re, r := a.senderClient.Request(ctx, event)
 	if cloudevents.IsNACK(r) {
+		// nolint:contextcheck
 		a.sr.ReportProcessingError(true, ceTypeTag, ceSrcTag)
 		a.logger.Errorw("Could not send event to destination", zap.Error(r))
 	} else {
+		// nolint:contextcheck
 		a.sr.ReportProcessingSuccess(ceTypeTag, ceSrcTag)
 	}
 

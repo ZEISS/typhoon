@@ -47,8 +47,8 @@ func (l *AccountSkgsOptionsImpl) Get() error {
 	}
 
 	skgs := make([]*models.SigningKeyGroup, 0)
-	for _, skg := range account.SigningKeyGroups {
-		skgs = append(skgs, &skg)
+	for i := range account.SigningKeyGroups {
+		skgs = append(skgs, skgs[i])
 	}
 
 	return htmx.RenderComp(

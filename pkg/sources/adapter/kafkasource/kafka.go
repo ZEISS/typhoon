@@ -17,7 +17,7 @@ type consumerGroupHandler struct {
 	adapter *kafkasourceAdapter
 }
 
-func (a *kafkasourceAdapter) emitEvent(_ context.Context, msg sarama.ConsumerMessage) error {
+func (a *kafkasourceAdapter) emitEvent(ctx context.Context, msg sarama.ConsumerMessage) error {
 	event := cloudevents.NewEvent(cloudevents.VersionV1)
 	event.SetType(eventType)
 	event.SetSubject("kafka/event")
@@ -28,7 +28,7 @@ func (a *kafkasourceAdapter) emitEvent(_ context.Context, msg sarama.ConsumerMes
 		return fmt.Errorf("failed to set event data: %w", err)
 	}
 
-	if result := a.ceClient.Send(context.Background(), event); !cloudevents.IsACK(result) {
+	if result := a.ceClient.Send(ctx, event); !cloudevents.IsACK(result) {
 		return result
 	}
 	return nil
