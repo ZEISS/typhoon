@@ -7,7 +7,12 @@ import (
 	"gorm.io/gorm"
 )
 
-// AccountType
+const (
+	// OperatorAccount is the operator account.
+	OperatorAccount OwnerType = "operator"
+	// TeamAccount is the team account.
+	TeamAccount OwnerType = "team"
+)
 
 // Account ...
 type Account struct {
@@ -25,8 +30,16 @@ type Account struct {
 	SigningKeyGroups []SigningKeyGroup `json:"signing_key_groups" gorm:"many2many:account_signing_key_groups;foreignKey:ID;joinForeignKey:AccountID;joinReferences:SigningKeyGroupID"`
 	// Users is the list of users the account has.
 	Users []User `json:"users" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	// AccountType is the type of the account.
-	AccountType string `json:"account_type"`
+	// OwnerID is the owner of the token.
+	OwnerID uuid.UUID `json:"owner_id"`
+	// OwnerType is the type of the owner.
+	OwnerType OwnerType `json:"owner_type"`
+	// Signer is the signer for the account.
+	Signer NKey `json:"signer" gorm:"foreignKey:SignerID" validate:"-"`
+	// SignerID is the signer ID for the account.
+	SignerID string `json:"signer_id" form:"signer_id" validate:"-"`
+	// LimitJetStreamEnabled indicates if JetStream is enabled.
+	LimitJetStreamEnabled bool `json:"limit_jetstream_enabled"`
 	// LimitJetStreamMaxDiskStorage is the limit for JetStream maximum disk storage.
 	LimitJetStreamMaxDiskStorage int64 `json:"limit_jetstream_max_disk_storage"`
 	// LimitJetStreamMaxStreams is the limit for JetStream maximum streams.

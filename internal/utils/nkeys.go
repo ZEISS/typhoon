@@ -1,6 +1,9 @@
 package utils
 
-import "github.com/nats-io/nkeys"
+import (
+	"github.com/nats-io/nkeys"
+	"github.com/zeiss/pkg/stringx"
+)
 
 // CreateNKeyPair creates a new NKey pair.
 func CreateNKeyPair(p nkeys.PrefixByte) (nkeys.KeyPair, error) {
@@ -14,5 +17,5 @@ func CreateNKeyPair(p nkeys.PrefixByte) (nkeys.KeyPair, error) {
 
 // ShortPubKey returns the first 8 characters of the public key.
 func ShortPubKey(pubKey string) string {
-	return FirstN(pubKey, 8)
+	return stringx.FirstN(pubKey, 8)
 }

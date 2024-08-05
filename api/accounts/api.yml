@@ -32,6 +32,20 @@ tags:
       These are the account endpoints.
 
 paths:
+  /accounts/:
+    get:
+      tags:
+        - Help
+      operationId: getHelp
+      summary: This is a test endpoint
+      description: |-
+        This endpoint is used to test the endpoint
+      responses:
+        '200':
+          description: Sucessful test
+        default:
+          description: Unexpected error
+
   /accounts/{pubKey}:
     get:
       tags:
@@ -45,6 +59,17 @@ paths:
       responses:
         '200':
           description: Account information
+          headers:
+            Cache-Control:
+              description: The cache control header.
+              example: "max-age: 86400, must-revalidate, private"
+              schema:
+                type: string
+            ETag:
+              description: The current ETag of the token.
+              example: "SN6ZQ37REZOIUOCSHNDP3X7E7B6ZMZ6XULX24KV23LMRSZLXD36A"
+              schema:
+                type: string
           content:
             application/jwt:
               schema:

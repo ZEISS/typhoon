@@ -1,4 +1,4 @@
-FROM scratch
+FROM cgr.dev/chainguard/static:latest
 
 WORKDIR /
 

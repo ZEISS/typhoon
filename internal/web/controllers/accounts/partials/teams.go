@@ -3,16 +3,16 @@ package partials
 import (
 	"context"
 
-	"github.com/zeiss/fiber-goth/adapters"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/forms"
 	"github.com/zeiss/fiber-htmx/components/tables"
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
 // TeamsOptionsImpl ...
 type TeamsOptionsImpl struct {
-	teams tables.Results[adapters.GothTeam]
+	teams tables.Results[models.Team]
 	store ports.Datastore
 	htmx.DefaultController
 }
@@ -46,7 +46,7 @@ func (l *TeamsOptionsImpl) Get() error {
 			htmx.ID("account-skgs"),
 			htmx.Name("account_skgs_id"),
 			htmx.Group(
-				htmx.ForEach(l.teams.GetRows(), func(e *adapters.GothTeam, idx int) htmx.Node {
+				htmx.ForEach(l.teams.GetRows(), func(e *models.Team, idx int) htmx.Node {
 					return htmx.Option(
 						htmx.Attribute("value", e.ID.String()),
 						htmx.Text(e.Name),

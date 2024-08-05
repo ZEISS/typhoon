@@ -3,10 +3,10 @@ package database
 import (
 	"context"
 
+	"github.com/zeiss/pkg/dbx"
 	"github.com/zeiss/typhoon/internal/accounts/ports"
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/models"
 
-	seed "github.com/zeiss/gorm-seed"
 	"gorm.io/gorm"
 )
 
@@ -22,7 +22,7 @@ func (r *readTxImpl) GetToken(ctx context.Context, token *models.Token) error {
 }
 
 // NewReadTx ...
-func NewReadTx() seed.ReadTxFactory[ports.ReadTx] {
+func NewReadTx() dbx.ReadTxFactory[ports.ReadTx] {
 	return func(db *gorm.DB) (ports.ReadTx, error) {
 		return &readTxImpl{conn: db}, nil
 	}
@@ -34,7 +34,7 @@ type writeTxImpl struct {
 }
 
 // NewWriteTx ...
-func NewWriteTx() seed.ReadWriteTxFactory[ports.ReadWriteTx] {
+func NewWriteTx() dbx.ReadWriteTxFactory[ports.ReadWriteTx] {
 	return func(db *gorm.DB) (ports.ReadWriteTx, error) {
 		return &writeTxImpl{conn: db}, nil
 	}

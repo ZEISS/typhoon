@@ -3,7 +3,7 @@ package ports
 import (
 	"context"
 
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/models"
 )
 
 // Users ...

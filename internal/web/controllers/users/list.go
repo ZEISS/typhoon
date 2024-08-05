@@ -6,7 +6,8 @@ import (
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/tables"
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/fiber-htmx/components/tailwind"
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/components/users"
 	"github.com/zeiss/typhoon/internal/web/ports"
@@ -55,7 +56,11 @@ func (l *ListUsersController) Get() error {
 					Path: l.Path(),
 				},
 				cards.CardBordered(
-					cards.CardProps{},
+					cards.CardProps{
+						ClassNames: htmx.ClassNames{
+							tailwind.M2: true,
+						},
+					},
 					cards.Body(
 						cards.BodyProps{},
 						users.UsersTable(

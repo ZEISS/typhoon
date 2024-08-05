@@ -4,7 +4,7 @@ import (
 	"context"
 	"io"
 
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/models"
 
 	"github.com/zeiss/fiber-goth/adapters"
 	"github.com/zeiss/fiber-htmx/components/tables"
@@ -48,9 +48,11 @@ type ReadTx interface {
 	// ListSystems is a method that returns a list of systems
 	ListSystems(ctx context.Context, results *tables.Results[models.System]) error
 	// GetTeam is a method to get a team.
-	GetTeam(ctx context.Context, team *tables.Paginated[adapters.GothTeam]) error
+	GetTeam(ctx context.Context, team *models.Team) error
 	// ListTeams is a method that returns a list of teams
-	ListTeams(ctx context.Context, results *tables.Results[adapters.GothTeam]) error
+	ListTeams(ctx context.Context, results *tables.Results[models.Team]) error
+	// GetNKey is a method that returns an NKey by ID
+	GetNKey(ctx context.Context, nkey *models.NKey) error
 }
 
 // ReadWriteTx provides methods for transactional read and write operations.
@@ -80,11 +82,11 @@ type ReadWriteTx interface {
 	// DeleteSystem is a method that deletes a system
 	DeleteSystem(ctx context.Context, system *models.System) error
 	// CreateTeam is a method to create a team.
-	CreateTeam(ctx context.Context, team *adapters.GothTeam) error
+	CreateTeam(ctx context.Context, team *models.Team) error
 	// UpdateTeam is a method to update a team.
-	UpdateTeam(ctx context.Context, team *adapters.GothTeam) error
+	UpdateTeam(ctx context.Context, team *models.Team) error
 	// DeleteTeam is a method to delete a team.
-	DeleteTeam(ctx context.Context, team *adapters.GothTeam) error
+	DeleteTeam(ctx context.Context, team *models.Team) error
 
 	ReadTx
 }

@@ -3,23 +3,19 @@ package teams
 import (
 	"fmt"
 
-	"github.com/zeiss/fiber-goth/adapters"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
-	"github.com/zeiss/fiber-htmx/components/dropdowns"
 	"github.com/zeiss/fiber-htmx/components/forms"
 	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tables"
-)
-
-const (
-	showTeamsURLFormat = "/site/teams/%s"
+	"github.com/zeiss/typhoon/internal/models"
+	"github.com/zeiss/typhoon/internal/utils"
 )
 
 // TeamsTableProps ...
 type TeamsTableProps struct {
-	Teams  []*adapters.GothTeam
+	Teams  []*models.Team
 	Offset int
 	Limit  int
 	Total  int
@@ -94,7 +90,7 @@ func TeamsTable(props TeamsTableProps, children ...htmx.Node) htmx.Node {
 						),
 					),
 					htmx.A(
-						htmx.Href("/site/teams/new"),
+						htmx.Href("/teams/new"),
 						buttons.Outline(
 							buttons.ButtonProps{
 								ClassNames: htmx.ClassNames{
@@ -106,14 +102,14 @@ func TeamsTable(props TeamsTableProps, children ...htmx.Node) htmx.Node {
 					),
 				),
 			},
-			[]tables.ColumnDef[*adapters.GothTeam]{
+			[]tables.ColumnDef[*models.Team]{
 				{
 					ID:          "id",
 					AccessorKey: "id",
 					Header: func(p tables.TableProps) htmx.Node {
 						return htmx.Th(htmx.Text("ID"))
 					},
-					Cell: func(p tables.TableProps, row *adapters.GothTeam) htmx.Node {
+					Cell: func(p tables.TableProps, row *models.Team) htmx.Node {
 						return htmx.Td(
 							htmx.Text(row.ID.String()),
 						)
@@ -125,26 +121,11 @@ func TeamsTable(props TeamsTableProps, children ...htmx.Node) htmx.Node {
 					Header: func(p tables.TableProps) htmx.Node {
 						return htmx.Th(htmx.Text("Name"))
 					},
-					Cell: func(p tables.TableProps, row *adapters.GothTeam) htmx.Node {
+					Cell: func(p tables.TableProps, row *models.Team) htmx.Node {
 						return htmx.Td(
 							links.Link(
-								links.LinkProps{Href: fmt.Sprintf(showTeamsURLFormat, row.ID)},
+								links.LinkProps{Href: fmt.Sprintf(utils.ShowTeamUrlFormat, row.ID)},
 								htmx.Text(row.Name),
-							),
-						)
-					},
-				},
-				{
-					ID:          "slug",
-					AccessorKey: "slug",
-					Header: func(p tables.TableProps) htmx.Node {
-						return htmx.Th(htmx.Text("Slug"))
-					},
-					Cell: func(p tables.TableProps, row *adapters.GothTeam) htmx.Node {
-						return htmx.Td(
-							links.Link(
-								links.LinkProps{Href: fmt.Sprintf(showTeamsURLFormat, row.ID)},
-								htmx.Text(row.Slug),
 							),
 						)
 					},
@@ -153,31 +134,26 @@ func TeamsTable(props TeamsTableProps, children ...htmx.Node) htmx.Node {
 					Header: func(p tables.TableProps) htmx.Node {
 						return nil
 					},
-					Cell: func(p tables.TableProps, row *adapters.GothTeam) htmx.Node {
+					Cell: func(p tables.TableProps, row *models.Team) htmx.Node {
 						return htmx.Td(
-							dropdowns.Dropdown(
-								dropdowns.DropdownProps{},
-								dropdowns.DropdownButton(
-									dropdowns.DropdownButtonProps{},
-									icons.BoltOutline(
-										icons.IconProps{},
-									),
-								),
-								dropdowns.DropdownMenuItems(
-									dropdowns.DropdownMenuItemsProps{},
-									dropdowns.DropdownMenuItem(
-										dropdowns.DropdownMenuItemProps{},
-										buttons.Error(
-											buttons.ButtonProps{
-												ClassNames: htmx.ClassNames{
-													"btn-sm": true,
-												},
-											},
-											htmx.HxDelete(fmt.Sprintf("/systems/%s", row.ID)),
-											htmx.HxConfirm("Are you sure you want to delete this system?"),
-											htmx.Text("Delete"),
-										),
-									),
+							buttons.Button(
+								buttons.ButtonProps{
+									ClassNames: htmx.ClassNames{
+										"btn-sm": true,
+									},
+								},
+								htmx.HxDelete(fmt.Sprintf(utils.DeleteTeamUrlFormat, row.ID)),
+								htmx.HxConfirm("Are you sure you want to delete this team?"),
+								htmx.HxTarget("closest tr"),
+								htmx.HxSwap("outerHTML swap:1s"),
+								icons.TrashOutline(
+									icons.IconProps{
+										ClassNames: htmx.ClassNames{
+											"w-6 h-6": false,
+											"w-4":     true,
+											"h-4":     true,
+										},
+									},
 								),
 							),
 						)

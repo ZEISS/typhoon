@@ -4,7 +4,7 @@ import (
 	"context"
 	"io"
 
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/models"
 )
 
 // Migration is a method that runs the migration.

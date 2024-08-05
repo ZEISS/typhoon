@@ -3,13 +3,15 @@ package accounts
 import (
 	"context"
 
-	htmx "github.com/zeiss/fiber-htmx"
-	"github.com/zeiss/fiber-htmx/components/cards"
-	"github.com/zeiss/fiber-htmx/components/tables"
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/components/accounts"
 	"github.com/zeiss/typhoon/internal/web/ports"
+
+	htmx "github.com/zeiss/fiber-htmx"
+	"github.com/zeiss/fiber-htmx/components/cards"
+	"github.com/zeiss/fiber-htmx/components/tables"
+	"github.com/zeiss/fiber-htmx/components/tailwind"
 )
 
 var _ = htmx.Controller(&ListAccountsController{})
@@ -24,11 +26,7 @@ type ListAccountsController struct {
 
 // NewListAccountsController ...
 func NewListAccountsController(store ports.Datastore) *ListAccountsController {
-	return &ListAccountsController{
-		Results:           tables.Results[models.Account]{Limit: 10},
-		DefaultController: htmx.DefaultController{},
-		store:             store,
-	}
+	return &ListAccountsController{store: store}
 }
 
 // Prepare ...
@@ -55,7 +53,11 @@ func (l *ListAccountsController) Get() error {
 					Path: l.Path(),
 				},
 				cards.CardBordered(
-					cards.CardProps{},
+					cards.CardProps{
+						ClassNames: htmx.ClassNames{
+							tailwind.M2: true,
+						},
+					},
 					cards.Body(
 						cards.BodyProps{},
 						accounts.AccountsTable(

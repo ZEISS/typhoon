@@ -6,8 +6,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/nats-io/jwt"
 	"github.com/nats-io/nkeys"
-	"github.com/zeiss/typhoon/internal/api/models"
 	"github.com/zeiss/typhoon/internal/api/ports"
+	"github.com/zeiss/typhoon/internal/models"
 )
 
 var _ OperatorsController = (*OperatorsControllerImpl)(nil)

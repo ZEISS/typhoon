@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"context"
+	"log"
 
+	"github.com/kelseyhightower/envconfig"
 	"github.com/zeiss/typhoon/internal/accounts/adapters/database"
 	"github.com/zeiss/typhoon/internal/accounts/adapters/handlers"
 	"github.com/zeiss/typhoon/internal/accounts/controllers"
@@ -12,17 +14,24 @@ import (
 	"github.com/gofiber/fiber/v2"
 	logger "github.com/gofiber/fiber/v2/middleware/logger"
 	requestid "github.com/gofiber/fiber/v2/middleware/requestid"
-	"github.com/katallaxie/pkg/server"
 	middleware "github.com/oapi-codegen/fiber-middleware"
 	"github.com/spf13/cobra"
 	authz "github.com/zeiss/fiber-authz"
-	seed "github.com/zeiss/gorm-seed"
+	"github.com/zeiss/pkg/dbx"
+	"github.com/zeiss/pkg/server"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 )
 
 func init() {
+	err := envconfig.Process("", cfg.Flags)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	Root.AddCommand(Migrate)
+
 	Root.PersistentFlags().StringVar(&cfg.Flags.Addr, "addr", cfg.Flags.Addr, "addr")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DatabaseURI, "db-uri", cfg.Flags.DatabaseURI, "Database URI")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DatabaseTablePrefix, "db-table-prefix", cfg.Flags.DatabaseTablePrefix, "Database table prefix")
@@ -65,7 +74,7 @@ func (s *AccountsSrv) Start(ctx context.Context, ready server.ReadyFunc, run ser
 			return err
 		}
 
-		store, err := seed.NewDatabase(conn, database.NewReadTx(), database.NewWriteTx())
+		store, err := dbx.NewDatabase(conn, database.NewReadTx(), database.NewWriteTx())
 		if err != nil {
 			return err
 		}

@@ -6,7 +6,7 @@ import (
 	"errors"
 
 	"github.com/zeiss/fiber-htmx/components/tables"
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/ports"
 
 	"github.com/zeiss/fiber-goth/adapters"
@@ -40,13 +40,13 @@ func (d *database) Migrate(ctx context.Context) error {
 		&adapters.GothUser{},
 		&adapters.GothSession{},
 		&adapters.GothVerificationToken{},
-		&adapters.GothTeam{},
-		&adapters.GothRole{},
+		&models.Team{},
 		&models.User{},
 		&models.Account{},
 		&models.Operator{},
 		&models.System{},
 		&models.Tag{},
+		&models.NKey{},
 		&models.Cluster{},
 		&models.Token{},
 		&models.SigningKeyGroup{},
@@ -140,8 +140,7 @@ func (t *datastoreTx) GetAccount(ctx context.Context, account *models.Account) e
 		Preload("SigningKeyGroups.Key").
 		Preload("Key").
 		Preload("Token").
-		Preload("Operator").
-		Preload("Operator.Key").
+		Preload("Signer").
 		First(account).Error
 }
 
@@ -152,7 +151,7 @@ func (t *datastoreTx) UpdateAccount(ctx context.Context, account *models.Account
 
 // DeleteAccount ...
 func (t *datastoreTx) DeleteAccount(ctx context.Context, account *models.Account) error {
-	return t.tx.Select(clause.Associations).Delete(account).Error
+	return t.tx.Debug().Delete(account).Error
 }
 
 // ListOperators ...
@@ -239,26 +238,31 @@ func (t *datastoreTx) UpdateSystem(ctx context.Context, system *models.System) e
 }
 
 // GetTeam is a method to get a team.
-func (t *datastoreTx) GetTeam(ctx context.Context, team *tables.Paginated[adapters.GothTeam]) error {
-	return t.tx.Preload("Users", tables.Paginate(&team.Value, team, t.tx)).Where(team.Value).First(&team.Value).Error
+func (t *datastoreTx) GetTeam(ctx context.Context, team *models.Team) error {
+	return t.tx.Where(team).First(team).Error
 }
 
 // ListTeams is a method that returns a list of teams
-func (t *datastoreTx) ListTeams(ctx context.Context, pagination *tables.Results[adapters.GothTeam]) error {
+func (t *datastoreTx) ListTeams(ctx context.Context, pagination *tables.Results[models.Team]) error {
 	return t.tx.Scopes(tables.PaginatedResults(&pagination.Rows, pagination, t.tx)).Find(&pagination.Rows).Error
 }
 
 // CreateTeam is a method that creates a new team
-func (t *datastoreTx) CreateTeam(ctx context.Context, team *adapters.GothTeam) error {
+func (t *datastoreTx) CreateTeam(ctx context.Context, team *models.Team) error {
 	return t.tx.Create(team).Error
 }
 
 // UpdateTeam is a method that updates a team
-func (t *datastoreTx) UpdateTeam(ctx context.Context, team *adapters.GothTeam) error {
+func (t *datastoreTx) UpdateTeam(ctx context.Context, team *models.Team) error {
 	return t.tx.Save(team).Error
 }
 
 // DeleteTeam is a method that deletes a team
-func (t *datastoreTx) DeleteTeam(ctx context.Context, team *adapters.GothTeam) error {
+func (t *datastoreTx) DeleteTeam(ctx context.Context, team *models.Team) error {
 	return t.tx.Delete(team).Error
+}
+
+// GetNKey is a method that returns an NKey by ID
+func (t *datastoreTx) GetNKey(ctx context.Context, nkey *models.NKey) error {
+	return t.tx.Where(nkey).First(nkey).Error
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/nats-io/nkeys"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/toasts"
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
@@ -19,14 +19,15 @@ const (
 
 var validate *validator.Validate
 
-type createControllerBody struct {
-	Name        string `json:"name" form:"name" validate:"required,min=3,max=100"`
-	Description string `json:"description" form:"description" validate:"required,min=3,max=1024"`
+type CreateControllerBody struct {
+	Name             string `json:"name" form:"name" validate:"required,min=3,max=100"`
+	Description      string `json:"description" form:"description" validate:"required,min=3,max=1024"`
+	AccountServerURL string `json:"account_server_url" form:"account_server_url" validate:"url"`
 }
 
 // CreateControllerImpl ...
 type CreateControllerImpl struct {
-	body  createControllerBody
+	body  CreateControllerBody
 	store ports.Datastore
 	htmx.DefaultController
 }
@@ -74,8 +75,11 @@ func (l *CreateControllerImpl) Post() error {
 		return err
 	}
 
-	// Create operator signing key group
-	oskg := models.SigningKeyGroup{Name: "Default", Description: "Default signing key group"}
+	if l.body.AccountServerURL != "" {
+		operator.AccountServerURL = l.body.AccountServerURL
+	}
+
+	// The operator public key
 	opk, err := nkeys.CreateOperator()
 	if err != nil {
 		return err
@@ -90,7 +94,32 @@ func (l *CreateControllerImpl) Post() error {
 	if err != nil {
 		return err
 	}
-	oskg.Key = models.NKey{ID: id, Seed: oseed}
+
+	// Add the private key.
+	operator.Key = models.NKey{ID: id, Seed: oseed}
+
+	// Create operator signing key group
+	oskg := models.SigningKeyGroup{Name: "Default", Description: "Default signing key group"}
+
+	sgpk, err := nkeys.CreateOperator()
+	if err != nil {
+		return err
+	}
+
+	sgkid, err := sgpk.PublicKey()
+	if err != nil {
+		return err
+	}
+
+	skgseed, err := sgpk.Seed()
+	if err != nil {
+		return err
+	}
+
+	oskg.Key = models.NKey{ID: sgkid, Seed: skgseed}
+	oskg.KeyID = sgkid
+
+	// Add the signing key group to the operator
 	operator.SigningKeyGroups = append(operator.SigningKeyGroups, oskg)
 
 	// Setup account
@@ -125,19 +154,22 @@ func (l *CreateControllerImpl) Post() error {
 		return err
 	}
 
-	skgseed, err := askgpk.Seed()
+	askgseed, err := askgpk.Seed()
 	if err != nil {
 		return err
 	}
-	askg.Key = models.NKey{ID: askgid, Seed: skgseed}
+
+	askg.Key = models.NKey{ID: askgid, Seed: askgseed}
+	askg.KeyID = askgid
 	account.SigningKeyGroups = append(account.SigningKeyGroups, askg)
 
 	// Create account claim
 	ac := jwt.NewAccountClaims(aid)
 	ac.Name = "System Account"
-	ac.Issuer = operator.Key.ID
+	ac.Issuer = oskg.Key.ID
 	ac.SigningKeys.Add(askg.Key.ID)
 
+	// Exports
 	ac.Exports = jwt.Exports{&jwt.Export{
 		Name:                 "account-monitoring-services",
 		Subject:              "$SYS.REQ.ACCOUNT.*.*",
@@ -168,6 +200,7 @@ func (l *CreateControllerImpl) Post() error {
 	// Create operator claim
 	oc := jwt.NewOperatorClaims(id)
 	oc.Name = operator.Name
+	oc.AccountServerURL = operator.AccountServerURL
 
 	for _, sk := range operator.SigningKeyGroups {
 		oc.SigningKeys.Add(sk.Key.ID, sk.Key.ID, sk.Key.ID)
@@ -224,6 +257,7 @@ func (l *CreateControllerImpl) Post() error {
 
 	// Associate user with account
 	account.Users = append(account.Users, user)
+	account.Signer = askg.Key
 
 	// Associate account with operator
 	operator.SystemAccount = account
