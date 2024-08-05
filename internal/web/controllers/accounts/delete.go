@@ -13,36 +13,27 @@ var _ = htmx.Controller(&DeleteAccountControllerImpl{})
 
 // DeleteAccountControllerImpl ...
 type DeleteAccountControllerImpl struct {
-	ID uuid.UUID `json:"name" form:"name" params:"id" validate:"required,uuid"`
-
 	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewDeleteAccountController ...
 func NewDeleteAccountController(store ports.Datastore) *DeleteAccountControllerImpl {
-	return &DeleteAccountControllerImpl{
-		store:             store,
-		DefaultController: htmx.DefaultController{},
-	}
+	return &DeleteAccountControllerImpl{store: store}
 }
 
 // Delete ...
 func (l *DeleteAccountControllerImpl) Delete() error {
-	err := l.BindParams(l)
+	var params struct {
+		ID uuid.UUID `param:"id"`
+	}
+
+	err := l.BindParams(&params)
 	if err != nil {
 		return err
 	}
 
-	account := models.Account{ID: l.ID}
-	err = l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
-		return tx.GetAccount(ctx, &account)
+	return l.store.ReadWriteTx(l.Context(), func(ctx context.Context, tx ports.ReadWriteTx) error {
+		return tx.DeleteAccount(ctx, &models.Account{ID: params.ID})
 	})
-	if err != nil {
-		return err
-	}
-
-	htmx.Redirect(l.Ctx(), "/accounts")
-
-	return nil
 }

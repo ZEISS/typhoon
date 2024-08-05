@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	authz "github.com/zeiss/fiber-authz"
 	"github.com/zeiss/typhoon/internal/web/controllers/accounts"
 	pa "github.com/zeiss/typhoon/internal/web/controllers/accounts/partials"
 	"github.com/zeiss/typhoon/internal/web/controllers/dashboard"
@@ -10,14 +9,15 @@ import (
 	"github.com/zeiss/typhoon/internal/web/controllers/operators"
 	oskgs "github.com/zeiss/typhoon/internal/web/controllers/operators/skgs"
 	ot "github.com/zeiss/typhoon/internal/web/controllers/operators/tokens"
-	"github.com/zeiss/typhoon/internal/web/controllers/site/teams"
 	"github.com/zeiss/typhoon/internal/web/controllers/systems"
+	"github.com/zeiss/typhoon/internal/web/controllers/teams"
 	"github.com/zeiss/typhoon/internal/web/controllers/users"
 	"github.com/zeiss/typhoon/internal/web/controllers/users/credentials"
 	pu "github.com/zeiss/typhoon/internal/web/controllers/users/partials"
 	"github.com/zeiss/typhoon/internal/web/ports"
 
 	"github.com/gofiber/fiber/v2"
+	authz "github.com/zeiss/fiber-authz"
 	htmx "github.com/zeiss/fiber-htmx"
 )
 

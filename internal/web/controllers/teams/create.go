@@ -2,16 +2,14 @@ package teams
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/zeiss/typhoon/internal/models"
+	"github.com/zeiss/typhoon/internal/utils"
 	"github.com/zeiss/typhoon/internal/web/ports"
 
 	"github.com/go-playground/validator/v10"
 	htmx "github.com/zeiss/fiber-htmx"
-)
-
-const (
-	listTeamURL = "/site/teams"
 )
 
 var validate *validator.Validate
@@ -51,5 +49,5 @@ func (l *CreateTeamControllerImpl) Prepare() error {
 
 // Post ...
 func (l *CreateTeamControllerImpl) Post() error {
-	return l.Redirect(listTeamURL)
+	return l.Redirect(fmt.Sprintf(utils.ShowTeamUrlFormat, l.team.ID))
 }

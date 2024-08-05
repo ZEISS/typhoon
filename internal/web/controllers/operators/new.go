@@ -161,16 +161,6 @@ func (l *NewOperatorControllerImpl) Get() error {
 									),
 								),
 							),
-						),
-					),
-					cards.CardBordered(
-						cards.CardProps{},
-						cards.Body(
-							cards.BodyProps{},
-							cards.Title(
-								cards.TitleProps{},
-								htmx.Text("Tags - Optional"),
-							),
 							cards.Actions(
 								cards.ActionsProps{},
 								buttons.Outline(

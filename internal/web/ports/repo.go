@@ -48,7 +48,7 @@ type ReadTx interface {
 	// ListSystems is a method that returns a list of systems
 	ListSystems(ctx context.Context, results *tables.Results[models.System]) error
 	// GetTeam is a method to get a team.
-	GetTeam(ctx context.Context, team *tables.Paginated[models.Team]) error
+	GetTeam(ctx context.Context, team *models.Team) error
 	// ListTeams is a method that returns a list of teams
 	ListTeams(ctx context.Context, results *tables.Results[models.Team]) error
 	// GetNKey is a method that returns an NKey by ID

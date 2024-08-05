@@ -2,6 +2,7 @@ package accounts
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
@@ -10,8 +11,8 @@ import (
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/toasts"
 	"github.com/zeiss/pkg/cast"
+	"github.com/zeiss/pkg/conv"
 	"github.com/zeiss/typhoon/internal/models"
-	"github.com/zeiss/typhoon/internal/utils"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
@@ -84,10 +85,11 @@ func (l *CreateControllerImpl) Post() error {
 	account := models.Account{
 		Name:                           l.Form.Name,
 		Description:                    cast.Ptr(l.Form.Description),
-		LimitJetStreamMaxDiskStorage:   utils.PrettyByteSize(l.Form.JetStreamMaxDiskStorage, l.Form.JetStreamMaxDiskStorageUnit),
+		LimitJetStreamEnabled:          l.Form.JetStreamEnable,
+		LimitJetStreamMaxDiskStorage:   conv.ByteSizes(l.Form.JetStreamMaxDiskStorage, l.Form.JetStreamMaxDiskStorageUnit),
 		LimitJetStreamMaxStreams:       l.Form.JetStreamMaxStreams,
 		LimitJetStreamMaxConsumers:     l.Form.JetStreamMaxConsumers,
-		LimitJetStreamMaxStreamBytes:   utils.PrettyByteSize(l.Form.JetStreamMaxStreamSize, l.Form.JetStreamMaxStreamSizeUnit),
+		LimitJetStreamMaxStreamBytes:   conv.ByteSizes(l.Form.JetStreamMaxStreamSize, l.Form.JetStreamMaxStreamSizeUnit),
 		LimitJetStreamMaxBytesRequired: l.Form.JetStreamMaxBytesRequired,
 	}
 
@@ -144,13 +146,22 @@ func (l *CreateControllerImpl) Post() error {
 	ac.Name = l.Form.Name
 	ac.Issuer = osgk.ID
 	ac.SigningKeys.Add(skg.Key.ID)
-	ac.Limits.JetStreamLimits.DiskStorage = -1
-	ac.Limits.JetStreamLimits.Streams = -1
+
+	if l.Form.JetStreamEnable {
+		ac.Limits.JetStreamLimits.DiskStorage = -1
+		ac.Limits.JetStreamLimits.Streams = -1
+
+		ac.Limits.JetStreamLimits.DiskStorage = account.LimitJetStreamMaxDiskStorage
+		ac.Limits.JetStreamLimits.Streams = account.LimitJetStreamMaxStreams
+		ac.Limits.JetStreamLimits.MaxAckPending = account.LimitJetStreamMaxAckPending
+		ac.Limits.JetStreamLimits.Consumer = account.LimitJetStreamMaxConsumers
+	}
 
 	token, err := ac.Encode(osk)
 	if err != nil {
 		return err
 	}
+
 	account.Token = models.Token{ID: id, Token: token}
 	account.Signer = osgk
 	account.OwnerType = models.TeamAccount
@@ -163,7 +174,5 @@ func (l *CreateControllerImpl) Post() error {
 		return err
 	}
 
-	htmx.Redirect(l.Ctx(), "/accounts")
-
-	return nil
+	return l.Redirect(fmt.Sprintf("/accounts/%s", account.ID))
 }

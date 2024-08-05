@@ -151,7 +151,7 @@ func (t *datastoreTx) UpdateAccount(ctx context.Context, account *models.Account
 
 // DeleteAccount ...
 func (t *datastoreTx) DeleteAccount(ctx context.Context, account *models.Account) error {
-	return t.tx.Select(clause.Associations).Delete(account).Error
+	return t.tx.Debug().Delete(account).Error
 }
 
 // ListOperators ...
@@ -238,8 +238,8 @@ func (t *datastoreTx) UpdateSystem(ctx context.Context, system *models.System) e
 }
 
 // GetTeam is a method to get a team.
-func (t *datastoreTx) GetTeam(ctx context.Context, team *tables.Paginated[models.Team]) error {
-	return t.tx.Preload("Users", tables.Paginate(&team.Value, team, t.tx)).Where(team.Value).First(&team.Value).Error
+func (t *datastoreTx) GetTeam(ctx context.Context, team *models.Team) error {
+	return t.tx.Where(team).First(team).Error
 }
 
 // ListTeams is a method that returns a list of teams

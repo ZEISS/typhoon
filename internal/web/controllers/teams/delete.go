@@ -9,23 +9,20 @@ import (
 	htmx "github.com/zeiss/fiber-htmx"
 )
 
-// TeamUserDeleteControllerImpl ...
-type TeamUserDeleteControllerImpl struct {
+// TeamDeleteControllerImpl ...
+type TeamDeleteControllerImpl struct {
 	team  models.Team
 	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewTeamDeleteController ...
-func NewTeamDeleteController(store ports.Datastore) *TeamUserDeleteControllerImpl {
-	return &TeamUserDeleteControllerImpl{
-		team:  models.Team{},
-		store: store,
-	}
+func NewTeamDeleteController(store ports.Datastore) *TeamDeleteControllerImpl {
+	return &TeamDeleteControllerImpl{store: store}
 }
 
 // Prepare ...
-func (p *TeamUserDeleteControllerImpl) Prepare() error {
+func (p *TeamDeleteControllerImpl) Prepare() error {
 	err := p.BindParams(&p.team)
 	if err != nil {
 		return err
@@ -37,6 +34,6 @@ func (p *TeamUserDeleteControllerImpl) Prepare() error {
 }
 
 // Delete ...
-func (p *TeamUserDeleteControllerImpl) Delete() error {
-	return p.Redirect("/site/teams")
+func (p *TeamDeleteControllerImpl) Delete() error {
+	return p.Redirect("/teams")
 }

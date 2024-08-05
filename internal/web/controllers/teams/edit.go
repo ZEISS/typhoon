@@ -11,12 +11,11 @@ import (
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/forms"
-	"github.com/zeiss/fiber-htmx/components/tables"
 )
 
 // TeamEditControllerImpl ...
 type TeamEditControllerImpl struct {
-	team  tables.Paginated[models.Team]
+	team  models.Team
 	store ports.Datastore
 	htmx.DefaultController
 }
@@ -91,7 +90,7 @@ func (p *TeamEditControllerImpl) Get() error {
 								forms.TextInputBordered(
 									forms.TextInputProps{
 										Name:     "name",
-										Value:    p.team.Value.Name,
+										Value:    p.team.Name,
 										Disabled: true,
 									},
 								),
@@ -138,7 +137,7 @@ func (p *TeamEditControllerImpl) Get() error {
 								forms.TextInputBordered(
 									forms.TextInputProps{
 										Name:  "description",
-										Value: p.team.Value.Description,
+										Value: p.team.Description,
 									},
 								),
 								forms.FormControlLabel(
