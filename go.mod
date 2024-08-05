@@ -19,7 +19,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/itchyny/gojq v0.12.16
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/logzio/logzio-go v1.0.6
+	github.com/logzio/logzio-go v1.0.7
 	github.com/nats-io/jwt v1.2.2
 	github.com/nats-io/jwt/v2 v2.5.6
 	github.com/nats-io/nats.go v1.35.0
