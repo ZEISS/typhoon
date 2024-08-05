@@ -17,11 +17,11 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	logger "github.com/gofiber/fiber/v2/middleware/logger"
 	requestid "github.com/gofiber/fiber/v2/middleware/requestid"
-	"github.com/katallaxie/pkg/server"
 	openfga "github.com/openfga/go-sdk/client"
 	"github.com/spf13/cobra"
 	goth "github.com/zeiss/fiber-goth"
 	adapter "github.com/zeiss/fiber-goth/adapters/gorm"
+	"github.com/zeiss/pkg/server"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -140,14 +140,12 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Get("/", handlers.Dashboard())
 
 		// Site handler
-		site := app.Group("/site")
-
-		// Teams handler
-		site.Get("/teams", handlers.ListTeams())
-		site.Get("/teams/new", handlers.NewTeam())
-		site.Post("/teams/new", handlers.CreateTeam())
-		site.Get("/teams/:id", handlers.ShowTeam())
-		site.Delete("/teams/:id", handlers.DeleteTeam())
+		teams := app.Group("/teams")
+		teams.Get("/", handlers.ListTeams())
+		teams.Get("/new", handlers.NewTeam())
+		teams.Post("/new", handlers.CreateTeam())
+		teams.Get("/:id", handlers.ShowTeam())
+		teams.Delete("/:id", handlers.DeleteTeam())
 
 		// Me handler
 		app.Get("/me", handlers.Me())

@@ -6,53 +6,58 @@ import (
 	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/forms"
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/fiber-htmx/components/tables"
+	"github.com/zeiss/fiber-htmx/components/toasts"
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
 // OperatorSkgsOptionsImpl ...
 type OperatorSkgsOptionsImpl struct {
-	OperatorID uuid.UUID `json:"operator_id" form:"operator_id" query:"operator_id" validate:"required,uuid"`
-
-	store ports.Datastore
+	operator models.Operator
+	store    ports.Datastore
 	htmx.DefaultController
 }
 
 // NewOperatorSkgsOptions ...
 func NewOperatorSkgsOptions(store ports.Datastore) *OperatorSkgsOptionsImpl {
-	return &OperatorSkgsOptionsImpl{
-		store:             store,
-		DefaultController: htmx.DefaultController{},
-	}
+	return &OperatorSkgsOptionsImpl{store: store}
+}
+
+// Error ...
+func (l *OperatorSkgsOptionsImpl) Error(err error) error {
+	return toasts.RenderToasts(
+		l.Ctx(),
+		toasts.Toasts(
+			toasts.ToastsProps{},
+			toasts.ToastAlertError(
+				toasts.ToastProps{},
+				htmx.Text(err.Error()),
+			),
+		),
+	)
 }
 
 // Prepare ...
 func (l *OperatorSkgsOptionsImpl) Prepare() error {
-	err := l.Ctx().QueryParser(l)
+	var operator struct {
+		ID uuid.UUID `json:"operator_id" form:"operator_id" query:"operator_id" validate:"required,uuid"`
+	}
+
+	err := l.Ctx().QueryParser(&operator)
 	if err != nil {
 		return err
 	}
 
-	return nil
+	l.operator.ID = operator.ID
+
+	return l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+		return tx.GetOperator(ctx, &l.operator)
+	})
 }
 
 // Get ...
 func (l *OperatorSkgsOptionsImpl) Get() error {
-	operator := models.Operator{
-		ID: l.OperatorID,
-	}
-
-	err := l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
-		return tx.GetOperator(ctx, &operator)
-	})
-	if err != nil {
-		return err
-	}
-
-	skgs := make([]*models.SigningKeyGroup, 0)
-	for _, skg := range operator.SigningKeyGroups {
-		skgs = append(skgs, &skg)
-	}
 
 	return l.Render(
 		forms.SelectBordered(
@@ -67,7 +72,7 @@ func (l *OperatorSkgsOptionsImpl) Get() error {
 			htmx.ID("operator-skgs"),
 			htmx.Name("operator_skgs_id"),
 			htmx.Group(
-				htmx.ForEach(skgs, func(e *models.SigningKeyGroup, idx int) htmx.Node {
+				htmx.ForEach(tables.RowsPtr(l.operator.SigningKeyGroups), func(e *models.SigningKeyGroup, idx int) htmx.Node {
 					return htmx.Option(
 						htmx.Attribute("value", e.KeyID),
 						htmx.Text(e.Name),

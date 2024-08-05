@@ -5,12 +5,12 @@ import (
 
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
-	"github.com/zeiss/fiber-htmx/components/dropdowns"
 	"github.com/zeiss/fiber-htmx/components/forms"
 	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tables"
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/models"
+	"github.com/zeiss/typhoon/internal/utils"
 )
 
 // OperatorsTableProps ...
@@ -140,29 +140,24 @@ func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node 
 					},
 					Cell: func(p tables.TableProps, row *models.Operator) htmx.Node {
 						return htmx.Td(
-							dropdowns.Dropdown(
-								dropdowns.DropdownProps{},
-								dropdowns.DropdownButton(
-									dropdowns.DropdownButtonProps{},
-									icons.BoltOutline(
-										icons.IconProps{},
-									),
-								),
-								dropdowns.DropdownMenuItems(
-									dropdowns.DropdownMenuItemsProps{},
-									dropdowns.DropdownMenuItem(
-										dropdowns.DropdownMenuItemProps{},
-										buttons.Error(
-											buttons.ButtonProps{
-												ClassNames: htmx.ClassNames{
-													"btn-sm": true,
-												},
-											},
-											htmx.HxDelete(fmt.Sprintf("/operators/%s", row.ID)),
-											htmx.HxConfirm("Are you sure you want to delete this operator?"),
-											htmx.Text("Delete"),
-										),
-									),
+							buttons.Button(
+								buttons.ButtonProps{
+									ClassNames: htmx.ClassNames{
+										"btn-sm": true,
+									},
+								},
+								htmx.HxDelete(fmt.Sprintf(utils.DeleteOperatorUrlFormat, row.ID)),
+								htmx.HxConfirm("Are you sure you want to delete this operator?"),
+								htmx.HxTarget("closest tr"),
+								htmx.HxSwap("outerHTML swap:1s"),
+								icons.TrashOutline(
+									icons.IconProps{
+										ClassNames: htmx.ClassNames{
+											"w-6 h-6": false,
+											"w-4":     true,
+											"h-4":     true,
+										},
+									},
 								),
 							),
 						)

@@ -14,11 +14,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 	logger "github.com/gofiber/fiber/v2/middleware/logger"
 	requestid "github.com/gofiber/fiber/v2/middleware/requestid"
-	"github.com/katallaxie/pkg/server"
 	middleware "github.com/oapi-codegen/fiber-middleware"
 	"github.com/spf13/cobra"
 	authz "github.com/zeiss/fiber-authz"
-	seed "github.com/zeiss/gorm-seed"
+	"github.com/zeiss/pkg/dbx"
+	"github.com/zeiss/pkg/server"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -74,7 +74,7 @@ func (s *AccountsSrv) Start(ctx context.Context, ready server.ReadyFunc, run ser
 			return err
 		}
 
-		store, err := seed.NewDatabase(conn, database.NewReadTx(), database.NewWriteTx())
+		store, err := dbx.NewDatabase(conn, database.NewReadTx(), database.NewWriteTx())
 		if err != nil {
 			return err
 		}

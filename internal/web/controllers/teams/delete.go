@@ -3,25 +3,22 @@ package teams
 import (
 	"context"
 
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/ports"
 
-	"github.com/zeiss/fiber-goth/adapters"
 	htmx "github.com/zeiss/fiber-htmx"
 )
 
 // TeamDeleteControllerImpl ...
 type TeamDeleteControllerImpl struct {
-	team  adapters.GothTeam
+	team  models.Team
 	store ports.Datastore
 	htmx.DefaultController
 }
 
 // NewTeamDeleteController ...
 func NewTeamDeleteController(store ports.Datastore) *TeamDeleteControllerImpl {
-	return &TeamDeleteControllerImpl{
-		team:  adapters.GothTeam{},
-		store: store,
-	}
+	return &TeamDeleteControllerImpl{store: store}
 }
 
 // Prepare ...
@@ -38,5 +35,5 @@ func (p *TeamDeleteControllerImpl) Prepare() error {
 
 // Delete ...
 func (p *TeamDeleteControllerImpl) Delete() error {
-	return p.Redirect("/site/teams")
+	return p.Redirect("/teams")
 }

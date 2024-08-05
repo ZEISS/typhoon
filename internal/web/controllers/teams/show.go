@@ -4,20 +4,19 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/zeiss/fiber-goth/adapters"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/links"
-	"github.com/zeiss/fiber-htmx/components/tables"
+	"github.com/zeiss/fiber-htmx/components/tailwind"
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/components"
-	"github.com/zeiss/typhoon/internal/web/components/teams"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
 // TeamShowControllerImpl ...
 type TeamShowControllerImpl struct {
-	team  tables.Paginated[adapters.GothTeam]
+	team  models.Team
 	store ports.Datastore
 	htmx.DefaultController
 }
@@ -31,7 +30,7 @@ func NewTeamShowController(store ports.Datastore) *TeamShowControllerImpl {
 
 // Prepare ...
 func (p *TeamShowControllerImpl) Prepare() error {
-	err := p.BindParams(&p.team.Value)
+	err := p.BindParams(&p.team)
 	if err != nil {
 		return err
 	}
@@ -54,7 +53,11 @@ func (p *TeamShowControllerImpl) Get() error {
 				components.Wrap(
 					components.WrapProps{},
 					cards.CardBordered(
-						cards.CardProps{},
+						cards.CardProps{
+							ClassNames: htmx.ClassNames{
+								tailwind.M2: true,
+							},
+						},
 						cards.Body(
 							cards.BodyProps{},
 							cards.Title(
@@ -75,7 +78,7 @@ func (p *TeamShowControllerImpl) Get() error {
 										htmx.Text("ID"),
 									),
 									htmx.H3(
-										htmx.Text(p.team.Value.ID.String()),
+										htmx.Text(p.team.ID.String()),
 									),
 								),
 								htmx.Div(
@@ -91,7 +94,7 @@ func (p *TeamShowControllerImpl) Get() error {
 										htmx.Text("Name"),
 									),
 									htmx.H3(
-										htmx.Text(p.team.Value.Name),
+										htmx.Text(p.team.Name),
 									),
 								),
 								htmx.Div(
@@ -107,7 +110,7 @@ func (p *TeamShowControllerImpl) Get() error {
 										htmx.Text("Description"),
 									),
 									htmx.H3(
-										htmx.Text(p.team.Value.Description),
+										htmx.Text(p.team.Description),
 									),
 								),
 								htmx.Div(
@@ -124,7 +127,7 @@ func (p *TeamShowControllerImpl) Get() error {
 									),
 									htmx.H3(
 										htmx.Text(
-											p.team.Value.CreatedAt.Format("2006-01-02 15:04:05"),
+											p.team.CreatedAt.Format("2006-01-02 15:04:05"),
 										),
 									),
 								),
@@ -142,7 +145,7 @@ func (p *TeamShowControllerImpl) Get() error {
 									),
 									htmx.H3(
 										htmx.Text(
-											p.team.Value.UpdatedAt.Format("2006-01-02 15:04:05"),
+											p.team.UpdatedAt.Format("2006-01-02 15:04:05"),
 										),
 									),
 								),
@@ -154,7 +157,7 @@ func (p *TeamShowControllerImpl) Get() error {
 										ClassNames: htmx.ClassNames{
 											"btn-outline": true,
 										},
-										Href: fmt.Sprintf("%s/edit", p.team.Value.ID),
+										Href: fmt.Sprintf("%s/edit", p.team.ID),
 									},
 									htmx.Text("Edit"),
 								),
@@ -165,20 +168,6 @@ func (p *TeamShowControllerImpl) Get() error {
 									htmx.Text("Delete"),
 								),
 							),
-						),
-					),
-				),
-				cards.CardBordered(
-					cards.CardProps{},
-					cards.Body(
-						cards.BodyProps{},
-						teams.UsersTable(
-							teams.UsersTableProps{
-								Users:  tables.RowsPtr(p.team.Value.Users),
-								Offset: p.team.GetOffset(),
-								Limit:  p.team.GetLimit(),
-								// Total:  p.team.GetLen(),
-							},
 						),
 					),
 				),

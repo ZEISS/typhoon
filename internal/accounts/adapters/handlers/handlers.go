@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	seed "github.com/zeiss/gorm-seed"
+	"github.com/zeiss/pkg/dbx"
 	"github.com/zeiss/typhoon/internal/accounts/controllers"
 	"github.com/zeiss/typhoon/internal/accounts/dto"
 	"gorm.io/gorm"
@@ -34,7 +34,7 @@ func (h *AccountsHandler) GetAccountToken(ctx context.Context, req openapi.GetAc
 	query := dto.FromGetAccountTokenRequest(req)
 
 	token, err := h.ac.GetToken(ctx, query)
-	var queryError *seed.QueryError
+	var queryError *dbx.QueryError
 	if errors.As(err, &queryError) && errors.Is(queryError.Err, gorm.ErrRecordNotFound) {
 		return openapi.GetAccountToken404Response{}, nil
 	}

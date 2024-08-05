@@ -3,18 +3,17 @@ package ports
 import (
 	"context"
 
-	"github.com/zeiss/fiber-goth/adapters"
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/models"
 )
 
 // Teams is the interface that wraps the methods to access data.
 type Teams interface {
 	// CreateTeam creates a new team.
-	CreateTeam(ctx context.Context, team *adapters.GothTeam) error
+	CreateTeam(ctx context.Context, team *models.Team) error
 	// GetTeam returns the team with the given id.
-	GetTeam(ctx context.Context, team *adapters.GothTeam) error
+	GetTeam(ctx context.Context, team *models.Team) error
 	// DeleteTeam deletes the team with the given id.
-	DeleteTeam(ctx context.Context, team *adapters.GothTeam) error
+	DeleteTeam(ctx context.Context, team *models.Team) error
 	// ListTeams returns all teams.
-	ListTeams(ctx context.Context, pagination *models.Pagination[adapters.GothTeam]) error
+	ListTeams(ctx context.Context, pagination *models.Pagination[models.Team]) error
 }

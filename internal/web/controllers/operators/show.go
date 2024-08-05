@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/components/nkeys"
 	"github.com/zeiss/typhoon/internal/web/components/operators"
