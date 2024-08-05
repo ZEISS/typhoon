@@ -37,12 +37,12 @@ jobs:
         name: Test Reports
         path: .test/reports/**
 
-  # lint:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-go@v5
-  #       with:
-  #         go-version-file: ./go.mod
-  #         check-latest: true
-  #     - run: make lint
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+          check-latest: true
+      - run: make lint
