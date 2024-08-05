@@ -17,7 +17,7 @@ require (
 	github.com/golangci/golangci-lint v1.59.1
 	github.com/google/cel-go v0.21.0
 	github.com/google/uuid v1.6.0
-	github.com/itchyny/gojq v0.12.14
+	github.com/itchyny/gojq v0.12.16
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/logzio/logzio-go v1.0.6
 	github.com/nats-io/jwt v1.2.2
@@ -184,7 +184,7 @@ require (
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/invopop/yaml v0.3.1 // indirect
-	github.com/itchyny/timefmt-go v0.1.5 // indirect
+	github.com/itchyny/timefmt-go v0.1.6 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.5.5 // indirect
