@@ -1,10 +1,10 @@
 package dashboard
 
 import (
+	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/typhoon/internal/web/components"
 
 	htmx "github.com/zeiss/fiber-htmx"
-	"github.com/zeiss/fiber-htmx/components/stats"
 )
 
 // IndexDashboardController ...
@@ -26,15 +26,15 @@ func (l *IndexDashboardController) Get() error {
 			},
 			components.Layout(
 				components.LayoutProps{
-					Path: l.Ctx().Path(),
+					Path: l.Path(),
 				},
-				components.Wrap(
-					components.WrapProps{},
-					stats.Stats(
-						stats.StatsProps{},
-						stats.Title(
-							stats.TitleProps{},
-							htmx.Text("Dashboard"),
+				cards.CardBordered(
+					cards.CardProps{},
+					cards.Body(
+						cards.BodyProps{},
+						cards.Title(
+							cards.TitleProps{},
+							htmx.Text("Welcome to Typhoon"),
 						),
 					),
 				),

@@ -4,7 +4,7 @@ import (
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/tooltips"
-	"github.com/zeiss/typhoon/internal/utils"
+	"github.com/zeiss/pkg/stringx"
 )
 
 // NKeyProps are the properties of the NKey display component.
@@ -49,7 +49,7 @@ func NKey(props NKeyProps, children ...htmx.Node) htmx.Node {
 					DataTip:    props.PublicKey,
 				},
 				htmx.Text(
-					utils.FirstN(props.PublicKey, 8),
+					stringx.FirstN(props.PublicKey, 8),
 				),
 			),
 		),

@@ -1,0 +1,78 @@
+{{- if .Values.database.applyMigrations -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "typhoon.fullname" . }}-migrate
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+  {{- with .Values.migrate.labels }}
+    {{- toYaml . | nindent 4}}
+  {{- end}}
+  {{- with .Values.migrate.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  template:
+    metadata:
+      {{- with .Values.migrate.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.migrate.labels }}
+      labels:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "typhoon.serviceAccountName" . }}
+      containers:
+        - name: migrate-database
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          args: ["migrate"]
+          env:
+            {{- if .Values.database.uri }}
+            - name: TYPHOON_ACCOUNTS_DATABASE_URI
+              value: "{{ .Values.database.uri }}"
+            {{- else if .Values.database.uriSecret }}
+            - name: TYPHOON_ACCOUNTS_DATABASE_URI
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ .Values.database.uriSecret }}"
+                  key: "uri"
+            {{- end }}
+
+            {{- if .Values.migrate.timeout }}
+            - name: typhoon_TIMEOUT
+              value: "{{ .Values.migrate.timeout }}"
+            {{- end }}
+
+            {{- with .Values.extraEnvVars }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+          resources:
+            {{- toYaml .Values.database.migrations.resources | nindent 12 }}
+        {{- if .Values.migrate.sidecars }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.migrate.sidecars "context" $) | nindent 8 }}
+        {{- end }}
+      restartPolicy: Never
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  backoffLimit: 1
+{{- end }}

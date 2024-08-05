@@ -12,10 +12,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	logger "github.com/gofiber/fiber/v2/middleware/logger"
 	requestid "github.com/gofiber/fiber/v2/middleware/requestid"
-	"github.com/katallaxie/pkg/server"
 	middleware "github.com/oapi-codegen/fiber-middleware"
 	"github.com/spf13/cobra"
 	authz "github.com/zeiss/fiber-authz"
+	"github.com/zeiss/pkg/server"
 	openapi "github.com/zeiss/typhoon/pkg/apis"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -23,12 +23,15 @@ import (
 )
 
 func init() {
+	Root.AddCommand(Migrate)
+
 	Root.PersistentFlags().StringVar(&cfg.Flags.Addr, "addr", ":8080", "addr")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Addr, "db-addr", cfg.Flags.DB.Addr, "Database address")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Database, "db-database", cfg.Flags.DB.Database, "Database name")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Username, "db-username", cfg.Flags.DB.Username, "Database user")
 	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Password, "db-password", cfg.Flags.DB.Password, "Database password")
 	Root.PersistentFlags().IntVar(&cfg.Flags.DB.Port, "db-port", cfg.Flags.DB.Port, "Database port")
+	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Prefix, "db-prefix", cfg.Flags.DB.Prefix, "Database prefix")
 
 	Root.SilenceUsage = true
 }
@@ -61,7 +64,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 	return func() error {
 		conn, err := gorm.Open(postgres.Open(cfg.DSN()), &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
-				TablePrefix: "typhoon_",
+				TablePrefix: cfg.Prefix(),
 			},
 		})
 		if err != nil {
@@ -69,11 +72,6 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		}
 
 		db := db.NewDB(conn)
-		err = db.RunMigrations()
-		if err != nil {
-			return err
-		}
-
 		build := adapters.NewBuild()
 
 		swagger, err := openapi.GetSwagger()

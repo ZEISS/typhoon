@@ -1,0 +1,7 @@
+FROM cgr.dev/chainguard/static:latest
+
+WORKDIR /
+
+COPY typhoon-web /main
+
+ENTRYPOINT ["/main"]

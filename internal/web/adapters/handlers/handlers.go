@@ -9,14 +9,15 @@ import (
 	"github.com/zeiss/typhoon/internal/web/controllers/operators"
 	oskgs "github.com/zeiss/typhoon/internal/web/controllers/operators/skgs"
 	ot "github.com/zeiss/typhoon/internal/web/controllers/operators/tokens"
-	"github.com/zeiss/typhoon/internal/web/controllers/site/teams"
 	"github.com/zeiss/typhoon/internal/web/controllers/systems"
+	"github.com/zeiss/typhoon/internal/web/controllers/teams"
 	"github.com/zeiss/typhoon/internal/web/controllers/users"
 	"github.com/zeiss/typhoon/internal/web/controllers/users/credentials"
 	pu "github.com/zeiss/typhoon/internal/web/controllers/users/partials"
 	"github.com/zeiss/typhoon/internal/web/ports"
 
 	"github.com/gofiber/fiber/v2"
+	authz "github.com/zeiss/fiber-authz"
 	htmx "github.com/zeiss/fiber-htmx"
 )
 
@@ -24,11 +25,12 @@ var _ ports.Handlers = (*handlers)(nil)
 
 type handlers struct {
 	store ports.Datastore
+	authz authz.AuthzChecker
 }
 
 // NewHandlers ...
-func NewHandlers(store ports.Datastore) *handlers {
-	return &handlers{store}
+func NewHandlers(store ports.Datastore, authz authz.AuthzChecker) *handlers {
+	return &handlers{store, authz}
 }
 
 // Login ...
@@ -69,7 +71,7 @@ func (h *handlers) NewOperator() fiber.Handler {
 // CreateOperator ...
 func (h *handlers) CreateOperator() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return operators.NewOperatorController(h.store)
+		return operators.NewCreateController(h.store)
 	})
 }
 
@@ -200,13 +202,6 @@ func (h *handlers) DeleteUser() fiber.Handler {
 	})
 }
 
-// UpdateSystemAccount ...
-func (h *handlers) UpdateSystemAccount() fiber.Handler {
-	return htmx.NewHxControllerHandler(func() htmx.Controller {
-		return operators.NewUpdateSystemAccountController(h.store)
-	})
-}
-
 // GetAccountToken ...
 func (h *handlers) GetAccountToken() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
@@ -253,7 +248,7 @@ func (h *handlers) ShowSystem() fiber.Handler {
 func (h *handlers) ListTeams() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
 		return teams.NewTeamsListOperatorController(h.store)
-	})
+	}, htmx.Config{AuthzChecker: h.authz})
 }
 
 // NewTeam ...

@@ -3,10 +3,11 @@ package credentials
 import (
 	"bytes"
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
@@ -28,6 +29,7 @@ func NewIndexUserCredentialsController(store ports.Datastore) *IndexUserCredenti
 
 // Error ...
 func (l *IndexUserCredentialsControllerImpl) Error(err error) error {
+	fmt.Println(err)
 	return nil
 }
 
@@ -50,6 +52,8 @@ func (l *IndexUserCredentialsControllerImpl) Get() error {
 	if err != nil {
 		return err
 	}
+
+	fmt.Println(bb)
 
 	r := bytes.NewReader(bb)
 

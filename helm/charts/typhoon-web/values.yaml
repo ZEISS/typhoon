@@ -1,0 +1,130 @@
+replicaCount: 3
+
+image:
+  repository: ghcr.io/zeiss/typhoon/web
+  pullPolicy: Always
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+annotations: {}
+
+podAnnotations: {}
+
+extraEnvVars: []
+extraVolumes: []
+extraVolumeMounts: []
+extraInitContainers: []
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+
+initContainer:
+  repository: groundnuty/k8s-wait-for
+  tag: "v2.0"
+  pullPolicy: IfNotPresent
+
+## Configure extra options for Typhoon containers' liveness, readiness and startup probes
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
+
+service:
+  annotations: {}
+  type: ClusterIP
+  port: 8080
+
+database:
+  prefix: typhoon_
+  uri:
+  uriSecret:
+  maxCacheSize:
+  maxOpenConns:
+  maxIdleConns:
+  connMaxIdleTime:
+  connMaxLifetime:
+  applyMigrations: true
+  waitForMigrations: true
+  migrations:
+    resources: {}
+    image:
+      repository: groundnuty/k8s-wait-for
+      pullPolicy: Always
+      tag: "v2.0"
+
+http:
+  enabled: true
+  addr: 0.0.0.0:8080
+  tls:
+    enabled: false
+    cert:
+    key:
+  upstreamTimeout:
+  corsAllowedOrigins: ["*"]
+  corsAllowedHeaders: ["*"]
+
+fga:
+  enabled: true
+  uri:
+  uriSecret:
+  storeId:
+  authorizationModelId:
+
+goth:
+  github:
+    enabled: true
+    clientID:
+    clientSecret:
+    callbackUrl:
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+# @param sidecars Add additional sidecar containers to the pods
+# Example:
+# sidecars:
+#   - name: your-image-name
+#     image: your-image
+#     imagePullPolicy: Always
+#     ports:
+#       - name: portname
+#         containerPort: 1234
+sidecars: []
+migrate:
+  sidecars: []
+  annotations:
+    helm.sh/hook: "post-install, post-upgrade, post-rollback, post-delete"
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: "before-hook-creation"
+  labels: {}
+  timeout:

@@ -14,6 +14,9 @@ import (
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// This is a test endpoint
+	// (GET /accounts/)
+	GetHelp(c *fiber.Ctx) error
 	// Get account information
 	// (GET /accounts/{pubKey})
 	GetAccountToken(c *fiber.Ctx, pubKey PubKey) error
@@ -25,6 +28,16 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc fiber.Handler
+
+// GetHelp operation middleware
+func (siw *ServerInterfaceWrapper) GetHelp(c *fiber.Ctx) error {
+
+	c.Context().SetUserValue(BearerAuthScopes, []string{})
+
+	c.Context().SetUserValue(ApiKeyScopes, []string{})
+
+	return siw.Handler.GetHelp(c)
+}
 
 // GetAccountToken operation middleware
 func (siw *ServerInterfaceWrapper) GetAccountToken(c *fiber.Ctx) error {
@@ -67,8 +80,34 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 		router.Use(m)
 	}
 
+	router.Get(options.BaseURL+"/accounts/", wrapper.GetHelp)
+
 	router.Get(options.BaseURL+"/accounts/:pubKey", wrapper.GetAccountToken)
 
+}
+
+type GetHelpRequestObject struct {
+}
+
+type GetHelpResponseObject interface {
+	VisitGetHelpResponse(ctx *fiber.Ctx) error
+}
+
+type GetHelp200Response struct {
+}
+
+func (response GetHelp200Response) VisitGetHelpResponse(ctx *fiber.Ctx) error {
+	ctx.Status(200)
+	return nil
+}
+
+type GetHelpdefaultResponse struct {
+	StatusCode int
+}
+
+func (response GetHelpdefaultResponse) VisitGetHelpResponse(ctx *fiber.Ctx) error {
+	ctx.Status(response.StatusCode)
+	return nil
 }
 
 type GetAccountTokenRequestObject struct {
@@ -79,12 +118,20 @@ type GetAccountTokenResponseObject interface {
 	VisitGetAccountTokenResponse(ctx *fiber.Ctx) error
 }
 
+type GetAccountToken200ResponseHeaders struct {
+	CacheControl string
+	ETag         string
+}
+
 type GetAccountToken200ApplicationjwtResponse struct {
 	Body          io.Reader
+	Headers       GetAccountToken200ResponseHeaders
 	ContentLength int64
 }
 
 func (response GetAccountToken200ApplicationjwtResponse) VisitGetAccountTokenResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Cache-Control", fmt.Sprint(response.Headers.CacheControl))
+	ctx.Response().Header.Set("ETag", fmt.Sprint(response.Headers.ETag))
 	ctx.Response().Header.Set("Content-Type", "application/jwt")
 	if response.ContentLength != 0 {
 		ctx.Response().Header.Set("Content-Length", fmt.Sprint(response.ContentLength))
@@ -125,6 +172,9 @@ func (response GetAccountTokendefaultResponse) VisitGetAccountTokenResponse(ctx 
 
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
+	// This is a test endpoint
+	// (GET /accounts/)
+	GetHelp(ctx context.Context, request GetHelpRequestObject) (GetHelpResponseObject, error)
 	// Get account information
 	// (GET /accounts/{pubKey})
 	GetAccountToken(ctx context.Context, request GetAccountTokenRequestObject) (GetAccountTokenResponseObject, error)
@@ -141,6 +191,31 @@ func NewStrictHandler(ssi StrictServerInterface, middlewares []StrictMiddlewareF
 type strictHandler struct {
 	ssi         StrictServerInterface
 	middlewares []StrictMiddlewareFunc
+}
+
+// GetHelp operation middleware
+func (sh *strictHandler) GetHelp(ctx *fiber.Ctx) error {
+	var request GetHelpRequestObject
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.GetHelp(ctx.UserContext(), request.(GetHelpRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetHelp")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(GetHelpResponseObject); ok {
+		if err := validResponse.VisitGetHelpResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
 }
 
 // GetAccountToken operation middleware

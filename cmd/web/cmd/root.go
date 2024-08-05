@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"context"
+	"log"
 	"net/http"
-	"os"
 
 	"github.com/kelseyhightower/envconfig"
-	"github.com/nats-io/nats.go"
+	authz "github.com/zeiss/fiber-authz"
 	"github.com/zeiss/fiber-goth/providers"
 	"github.com/zeiss/fiber-goth/providers/github"
 	"github.com/zeiss/typhoon/internal/web/adapters/db"
@@ -17,24 +17,33 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	logger "github.com/gofiber/fiber/v2/middleware/logger"
 	requestid "github.com/gofiber/fiber/v2/middleware/requestid"
-	"github.com/katallaxie/pkg/server"
+	openfga "github.com/openfga/go-sdk/client"
 	"github.com/spf13/cobra"
 	goth "github.com/zeiss/fiber-goth"
 	adapter "github.com/zeiss/fiber-goth/adapters/gorm"
+	"github.com/zeiss/pkg/server"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 )
 
 func init() {
-	Root.PersistentFlags().StringVar(&cfg.Flags.Addr, "addr", ":3000", "addr")
-	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Database, "db-database", cfg.Flags.DB.Database, "Database name")
-	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Username, "db-username", cfg.Flags.DB.Username, "Database user")
-	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Password, "db-password", cfg.Flags.DB.Password, "Database password")
-	Root.PersistentFlags().IntVar(&cfg.Flags.DB.Port, "db-port", cfg.Flags.DB.Port, "Database port")
-	Root.PersistentFlags().StringVar(&cfg.Flags.DB.Addr, "db-host", cfg.Flags.DB.Addr, "Database host")
-	Root.PersistentFlags().StringVar(&cfg.Flags.Nats.Credentials, "nats-credentials", cfg.Flags.Nats.Credentials, "NATS credentials")
-	Root.PersistentFlags().StringVar(&cfg.Flags.Nats.URL, "nats-url", cfg.Flags.Nats.URL, "NATS URL")
+	err := envconfig.Process("", cfg.Flags)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	Root.AddCommand(Migrate)
+
+	Root.PersistentFlags().StringVar(&cfg.Flags.Addr, "addr", cfg.Flags.Addr, "addr")
+	Root.PersistentFlags().StringVar(&cfg.Flags.DatabaseURI, "db-uri", cfg.Flags.DatabaseURI, "Database URI")
+	Root.PersistentFlags().StringVar(&cfg.Flags.DatabaseTablePrefix, "db-table-prefix", cfg.Flags.DatabaseTablePrefix, "Database table prefix")
+	Root.PersistentFlags().StringVar(&cfg.Flags.FGAApiUrl, "fga-api-url", cfg.Flags.FGAApiUrl, "FGA API URL")
+	Root.PersistentFlags().StringVar(&cfg.Flags.FGAStoreID, "fga-store-id", cfg.Flags.FGAStoreID, "FGA Store ID")
+	Root.PersistentFlags().StringVar(&cfg.Flags.FGAAuthorizationModelID, "fga-authorization-model-id", cfg.Flags.FGAAuthorizationModelID, "FGA Authorization Model ID")
+	Root.PersistentFlags().StringVar(&cfg.Flags.GothGitbubKey, "github-key", cfg.Flags.GothGitbubKey, "GitHub Key")
+	Root.PersistentFlags().StringVar(&cfg.Flags.GothGithubSecret, "github-secret", cfg.Flags.GothGithubSecret, "GitHub Secret")
+	Root.PersistentFlags().StringVar(&cfg.Flags.GothGithubCallback, "github-callback", cfg.Flags.GothGithubCallback, "GitHub Callback")
 
 	Root.SilenceUsage = true
 }
@@ -73,45 +82,44 @@ func NewWebSrv(cfg *Config) *WebSrv {
 // Start starts the server.
 func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.RunFunc) func() error {
 	return func() error {
-		providers.RegisterProvider(github.New(os.Getenv("GITHUB_KEY"), os.Getenv("GITHUB_SECRET"), "http://localhost:3000/auth/github/callback"))
+		providers.RegisterProvider(github.New(cfg.Flags.GothGitbubKey, cfg.Flags.GothGithubSecret, cfg.Flags.GothGithubCallback))
 
-		conn, err := gorm.Open(postgres.Open(cfg.DSN()), &gorm.Config{
+		conn, err := gorm.Open(postgres.Open(cfg.Flags.DatabaseURI), &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
-				TablePrefix: "typhoon_",
+				TablePrefix: cfg.Flags.DatabaseTablePrefix,
 			},
 		})
 		if err != nil {
 			return err
 		}
 
-		nc, err := nats.Connect(cfg.Flags.Nats.URL, nats.UserCredentials(cfg.Flags.Nats.Credentials))
-		if err != nil {
-			return err
-		}
-		defer nc.Close()
-
-		store, err := db.NewDB(conn, nc)
-		if err != nil {
-			return err
-		}
-
-		err = store.Migrate(ctx)
+		fga, err := openfga.NewSdkClient(
+			&openfga.ClientConfiguration{
+				ApiUrl:               cfg.Flags.FGAApiUrl,
+				StoreId:              cfg.Flags.FGAStoreID,
+				AuthorizationModelId: cfg.Flags.FGAAuthorizationModelID,
+			},
+		)
 		if err != nil {
 			return err
 		}
 
-		gorm, err := adapter.New(conn)
+		auth := authz.NewFGA(fga)
+
+		store, err := db.NewDB(conn)
 		if err != nil {
 			return err
 		}
+
+		ga := adapter.New(conn)
 
 		gothConfig := goth.Config{
-			Adapter:        gorm,
+			Adapter:        ga,
 			Secret:         goth.GenerateKey(),
 			CookieHTTPOnly: true,
 		}
 
-		handlers := handlers.NewHandlers(store)
+		handlers := handlers.NewHandlers(store, auth)
 
 		app := fiber.New()
 		app.Use(requestid.New())
@@ -132,14 +140,12 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Get("/", handlers.Dashboard())
 
 		// Site handler
-		site := app.Group("/site")
-
-		// Teams handler
-		site.Get("/teams", handlers.ListTeams())
-		site.Get("/teams/new", handlers.NewTeam())
-		site.Post("/teams/new", handlers.CreateTeam())
-		site.Get("/teams/:id", handlers.ShowTeam())
-		site.Delete("/teams/:id", handlers.DeleteTeam())
+		teams := app.Group("/teams")
+		teams.Get("/", handlers.ListTeams())
+		teams.Get("/new", handlers.NewTeam())
+		teams.Post("/new", handlers.CreateTeam())
+		teams.Get("/:id", handlers.ShowTeam())
+		teams.Delete("/:id", handlers.DeleteTeam())
 
 		// Me handler
 		app.Get("/me", handlers.Me())
@@ -152,17 +158,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Delete("/operators/:id", handlers.DeleteOperator())
 		app.Get("/operators/:id/token", handlers.TokenOperator())
 		app.Get("/operators/:id/skgs/new", handlers.NewOperatorSkg())
-		app.Put("/operators/:id/system-account", handlers.UpdateSystemAccount())
 		app.Post("/operators/:id/skgs/create", handlers.CreateOperatorSkg())
-
-		// Accounts handler
-		app.Get("/accounts", handlers.ListAccounts())
-		app.Get("/accounts/new", handlers.NewAccount())
-		app.Post("/accounts/create", handlers.CreateAccount())
-		app.Get("/accounts/:id", handlers.ShowAccount())
-		app.Delete("/accounts/:id", handlers.DeleteAccount())
-		app.Get("/accounts/:id/token", handlers.GetAccountToken())
-		app.Get("/accounts/partials/operator-skgs", handlers.OperatorSkgsOptions())
 
 		// Users handler
 		app.Get("/users", handlers.ListUsers())
@@ -180,11 +176,17 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Get("/systems/:id", handlers.ShowSystem())
 		app.Delete("/systems/:id", handlers.DeleteSystem())
 
-		// Teams
-		teams := app.Group("/teams/:team_id")
+		// Accounts handler
+		app.Get("/accounts", handlers.ListAccounts())
+		app.Get("/accounts/new", handlers.NewAccount())
+		app.Post("/accounts/create", handlers.CreateAccount())
+		app.Get("/accounts/:id", handlers.ShowAccount())
+		app.Delete("/accounts/:id", handlers.DeleteAccount())
+		app.Get("/accounts/:id/token", handlers.GetAccountToken())
+		app.Get("/accounts/partials/operator-skgs", handlers.OperatorSkgsOptions())
 
-		// Accounts ...
-		teams.Get("/", handlers.ShowTeam())
+		// Teams handler
+		// team := app.Group("/teams/:team_id")
 
 		err = app.Listen(s.cfg.Flags.Addr)
 		if err != nil {

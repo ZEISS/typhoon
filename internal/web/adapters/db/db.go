@@ -4,11 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
-	"github.com/nats-io/nats.go"
 	"github.com/zeiss/fiber-htmx/components/tables"
-	"github.com/zeiss/typhoon/internal/api/models"
+	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/web/ports"
 
 	"github.com/zeiss/fiber-goth/adapters"
@@ -16,21 +14,13 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-const (
-	accountUpdateFormat = "$SYS.ACCOUNT.%s.CLAIMS.UPDATE"
-)
-
 type database struct {
 	conn *gorm.DB
-	nc   *nats.Conn
 }
 
 // NewDatastore returns a new instance of db.
-func NewDB(conn *gorm.DB, nc *nats.Conn) (ports.Datastore, error) {
-	return &database{
-		conn: conn,
-		nc:   nc,
-	}, nil
+func NewDB(conn *gorm.DB) (ports.Datastore, error) {
+	return &database{conn: conn}, nil
 }
 
 // Close closes the database connection.
@@ -46,16 +36,17 @@ func (d *database) Close() error {
 // RunMigrations runs the database migrations.
 func (d *database) Migrate(ctx context.Context) error {
 	return d.conn.WithContext(ctx).AutoMigrate(
-		&adapters.GothUser{},
 		&adapters.GothAccount{},
-		&adapters.GothTeam{},
+		&adapters.GothUser{},
 		&adapters.GothSession{},
 		&adapters.GothVerificationToken{},
+		&models.Team{},
 		&models.User{},
 		&models.Account{},
 		&models.Operator{},
 		&models.System{},
 		&models.Tag{},
+		&models.NKey{},
 		&models.Cluster{},
 		&models.Token{},
 		&models.SigningKeyGroup{},
@@ -70,7 +61,7 @@ func (d *database) ReadWriteTx(ctx context.Context, fn func(context.Context, por
 		return tx.Error
 	}
 
-	if err := fn(ctx, &datastoreTx{tx, d.nc}); err != nil {
+	if err := fn(ctx, &datastoreTx{tx}); err != nil {
 		tx.Rollback()
 	}
 
@@ -92,7 +83,7 @@ func (d *database) ReadTx(ctx context.Context, fn func(context.Context, ports.Re
 		return tx.Error
 	}
 
-	if err := fn(ctx, &datastoreTx{tx, d.nc}); err != nil {
+	if err := fn(ctx, &datastoreTx{tx}); err != nil {
 		tx.Rollback()
 	}
 
@@ -112,31 +103,26 @@ var _ ports.ReadWriteTx = (*datastoreTx)(nil)
 
 type datastoreTx struct {
 	tx *gorm.DB
-	nc *nats.Conn
 }
 
 // GetOperator is a method that returns an operator by ID.
 func (t *datastoreTx) GetOperator(ctx context.Context, operator *models.Operator) error {
-	return t.tx.Preload("Accounts").
-		Preload("SigningKeyGroups").
-		Preload("SigningKeyGroups.Key").
-		Preload("Key").
-		Preload("Token").
+	return t.tx.
+		Preload(clause.Associations).
+		Preload("SystemAccount.Key").
+		Preload("SystemAccount.Users").
+		Where(operator).
 		First(operator).Error
 }
 
 // CreateAccount is creating a new account.
 func (t *datastoreTx) CreateAccount(ctx context.Context, account *models.Account) error {
-	if err := t.tx.Preload("Accounts").
+	return t.tx.Preload("Accounts").
 		Preload("SigningKeyGroups").
 		Preload("SigningKeyGroups.Key").
 		Preload("Key").
 		Preload("Token").
-		Create(account).Error; err != nil {
-		return err
-	}
-
-	return t.nc.Publish(fmt.Sprintf(accountUpdateFormat, account.Token.ID), account.Token.Bytes())
+		Create(account).Error
 }
 
 // ListAccounts ...
@@ -154,8 +140,7 @@ func (t *datastoreTx) GetAccount(ctx context.Context, account *models.Account) e
 		Preload("SigningKeyGroups.Key").
 		Preload("Key").
 		Preload("Token").
-		Preload("Operator").
-		Preload("Operator.Key").
+		Preload("Signer").
 		First(account).Error
 }
 
@@ -166,7 +151,7 @@ func (t *datastoreTx) UpdateAccount(ctx context.Context, account *models.Account
 
 // DeleteAccount ...
 func (t *datastoreTx) DeleteAccount(ctx context.Context, account *models.Account) error {
-	return t.tx.Select(clause.Associations).Delete(account).Error
+	return t.tx.Debug().Delete(account).Error
 }
 
 // ListOperators ...
@@ -180,7 +165,7 @@ func (t *datastoreTx) ListOperators(ctx context.Context, pagination *tables.Resu
 
 // CreateOperator ...
 func (t *datastoreTx) CreateOperator(ctx context.Context, operator *models.Operator) error {
-	return t.tx.Create(operator).Error
+	return t.tx.Session(&gorm.Session{FullSaveAssociations: true}).Create(operator).Error
 }
 
 // UpdateOperator ...
@@ -253,26 +238,31 @@ func (t *datastoreTx) UpdateSystem(ctx context.Context, system *models.System) e
 }
 
 // GetTeam is a method to get a team.
-func (t *datastoreTx) GetTeam(ctx context.Context, team *adapters.GothTeam) error {
-	return t.tx.First(team).Error
+func (t *datastoreTx) GetTeam(ctx context.Context, team *models.Team) error {
+	return t.tx.Where(team).First(team).Error
 }
 
 // ListTeams is a method that returns a list of teams
-func (t *datastoreTx) ListTeams(ctx context.Context, pagination *tables.Results[adapters.GothTeam]) error {
+func (t *datastoreTx) ListTeams(ctx context.Context, pagination *tables.Results[models.Team]) error {
 	return t.tx.Scopes(tables.PaginatedResults(&pagination.Rows, pagination, t.tx)).Find(&pagination.Rows).Error
 }
 
 // CreateTeam is a method that creates a new team
-func (t *datastoreTx) CreateTeam(ctx context.Context, team *adapters.GothTeam) error {
+func (t *datastoreTx) CreateTeam(ctx context.Context, team *models.Team) error {
 	return t.tx.Create(team).Error
 }
 
 // UpdateTeam is a method that updates a team
-func (t *datastoreTx) UpdateTeam(ctx context.Context, team *adapters.GothTeam) error {
+func (t *datastoreTx) UpdateTeam(ctx context.Context, team *models.Team) error {
 	return t.tx.Save(team).Error
 }
 
 // DeleteTeam is a method that deletes a team
-func (t *datastoreTx) DeleteTeam(ctx context.Context, team *adapters.GothTeam) error {
+func (t *datastoreTx) DeleteTeam(ctx context.Context, team *models.Team) error {
 	return t.tx.Delete(team).Error
+}
+
+// GetNKey is a method that returns an NKey by ID
+func (t *datastoreTx) GetNKey(ctx context.Context, nkey *models.NKey) error {
+	return t.tx.Where(nkey).First(nkey).Error
 }

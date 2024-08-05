@@ -44,10 +44,10 @@ func MainMenu(p MainMenuProps, children ...htmx.Node) htmx.Node {
 				menus.MenuItemProps{},
 				menus.MenuLink(
 					menus.MenuLinkProps{
-						Href:   "/operators",
-						Active: strings.HasPrefix(p.Path, "/operators"),
+						Href:   "/teams",
+						Active: strings.HasPrefix(p.Path, "/teams"),
 					},
-					htmx.Text("Operators"),
+					htmx.Text("Teams"),
 				),
 			),
 			menus.MenuItem(
@@ -72,7 +72,7 @@ func MainMenu(p MainMenuProps, children ...htmx.Node) htmx.Node {
 			),
 			menus.MenuTitle(
 				menus.MenuTitleProps{},
-				htmx.Text("Systems & Connectivity"),
+				htmx.Text("System & Operators"),
 			),
 			menus.MenuItem(
 				menus.MenuItemProps{},
@@ -84,18 +84,14 @@ func MainMenu(p MainMenuProps, children ...htmx.Node) htmx.Node {
 					htmx.Text("Systems"),
 				),
 			),
-			menus.MenuTitle(
-				menus.MenuTitleProps{},
-				htmx.Text("Settings"),
-			),
 			menus.MenuItem(
 				menus.MenuItemProps{},
 				menus.MenuLink(
 					menus.MenuLinkProps{
-						Href:   "/site/teams",
-						Active: strings.HasPrefix(p.Path, "/site/teams"),
+						Href:   "/operators",
+						Active: strings.HasPrefix(p.Path, "/operators"),
 					},
-					htmx.Text("Teams"),
+					htmx.Text("Operators"),
 				),
 			),
 		),

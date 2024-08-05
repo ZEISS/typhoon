@@ -3,9 +3,9 @@ package dto
 import (
 	"bytes"
 
+	"github.com/zeiss/pkg/cast"
 	"github.com/zeiss/typhoon/internal/api/controllers"
-	"github.com/zeiss/typhoon/internal/api/models"
-	"github.com/zeiss/typhoon/internal/utils"
+	"github.com/zeiss/typhoon/internal/models"
 	openapi "github.com/zeiss/typhoon/pkg/apis"
 )
 
@@ -21,11 +21,11 @@ func FromCreateUserRequest(req openapi.CreateUserRequestObject) controllers.Crea
 func ToCreateUserResponse(user models.User) openapi.CreateUser201JSONResponse {
 	res := openapi.CreateUser201JSONResponse{}
 
-	res.Id = utils.PtrUUID(user.ID)
+	res.Id = cast.Ptr(user.ID)
 	res.Name = user.Name
-	res.UpdatedAt = utils.PtrTime(user.UpdatedAt)
-	res.CreatedAt = utils.PtrTime(user.CreatedAt)
-	res.DeletedAt = utils.PtrTime(user.DeletedAt.Time)
+	res.UpdatedAt = cast.Ptr(user.UpdatedAt)
+	res.CreatedAt = cast.Ptr(user.CreatedAt)
+	res.DeletedAt = cast.Ptr(user.DeletedAt.Time)
 
 	return res
 }
@@ -33,7 +33,7 @@ func ToCreateUserResponse(user models.User) openapi.CreateUser201JSONResponse {
 // FromListUsersRequest ...
 func FromListUsersRequest(req openapi.ListUsersRequestObject) controllers.ListUsersQuery {
 	return controllers.ListUsersQuery{
-		AccountID: utils.UUIDPtr(req.Body.AccountId),
+		AccountID: cast.Value(req.Body.AccountId),
 	}
 }
 
@@ -44,16 +44,16 @@ func ToListUsersResponse(pagination models.Pagination[models.User]) openapi.List
 	results := []openapi.User{}
 	for _, user := range pagination.Rows {
 		results = append(results, openapi.User{
-			Id:        utils.PtrUUID(user.ID),
+			Id:        cast.Ptr(user.ID),
 			Name:      user.Name,
-			CreatedAt: utils.PtrTime(user.CreatedAt),
-			UpdatedAt: utils.PtrTime(user.UpdatedAt),
-			DeletedAt: utils.PtrTime(user.DeletedAt.Time),
+			CreatedAt: cast.Ptr(user.CreatedAt),
+			UpdatedAt: cast.Ptr(user.UpdatedAt),
+			DeletedAt: cast.Ptr(user.DeletedAt.Time),
 		})
 	}
-	res.Limit = utils.PtrInt(pagination.Limit)
-	res.Offset = utils.PtrInt(pagination.Offset)
-	res.Total = utils.PtrInt(pagination.TotalRows)
+	res.Limit = cast.Ptr(pagination.Limit)
+	res.Offset = cast.Ptr(pagination.Offset)
+	res.Total = cast.Ptr(pagination.TotalRows)
 	res.Results = &results
 
 	return res
@@ -88,11 +88,11 @@ func FromGetUserRequest(req openapi.GetUserRequestObject) controllers.GetUserQue
 func ToGetUserResponse(user models.User) openapi.GetUser200JSONResponse {
 	res := openapi.GetUser200JSONResponse{}
 
-	res.Id = utils.PtrUUID(user.ID)
+	res.Id = cast.Ptr(user.ID)
 	res.Name = user.Name
-	res.CreatedAt = utils.PtrTime(user.CreatedAt)
-	res.UpdatedAt = utils.PtrTime(user.UpdatedAt)
-	res.DeletedAt = utils.PtrTime(user.DeletedAt.Time)
+	res.CreatedAt = cast.Ptr(user.CreatedAt)
+	res.UpdatedAt = cast.Ptr(user.UpdatedAt)
+	res.DeletedAt = cast.Ptr(user.DeletedAt.Time)
 
 	return res
 }

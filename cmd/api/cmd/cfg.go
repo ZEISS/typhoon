@@ -14,6 +14,7 @@ type DB struct {
 	Password string
 	Port     int
 	Username string
+	Prefix   string
 }
 
 // Flags contains the command line flags.
@@ -36,8 +37,14 @@ func NewFlags() *Flags {
 			Password: "example",
 			Port:     5432,
 			Username: "example",
+			Prefix:   "typhoon_",
 		},
 	}
+}
+
+// Prefix ...
+func (c *Config) Prefix() string {
+	return c.Flags.DB.Prefix
 }
 
 // New ...

@@ -1,0 +1,146 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "typhoon.fullname" . }}
+  labels:
+    {{- include "typhoon.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount}}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "typhoon.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "typhoon.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "typhoon.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{ if or (and .Values.database.applyMigrations .Values.database.waitForMigrations) .Values.extraInitContainers }}
+      initContainers:
+        {{- if and .Values.database.applyMigrations .Values.database.waitForMigrations }}
+        - name: wait-for-migration
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.initContainer.repository }}:{{ .Values.initContainer.tag }}"
+          imagePullPolicy: {{ .Values.initContainer.pullPolicy }}
+          args: ["job-wr", '{{ include "typhoon.fullname" . }}-migrate']
+          resources:
+            {{- toYaml .Values.database.migrations.resources | nindent 12 }}
+        {{- end }}
+        {{- with .Values.extraInitContainers }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args: []
+          ports:
+
+            - name: http
+              containerPort: {{ (split ":" .Values.http.addr)._1 }}
+              protocol: TCP
+
+          env:
+            {{- if .Values.database.uri }}
+            - name: TYPHOON_WEB_DATABASE_URI
+              value: "{{ .Values.database.uri }}"
+            {{- else if .Values.database.uriSecret }}
+            - name: TYPHOON_WEB_DATABASE_URI
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ .Values.database.uriSecret }}"
+                  key: "uri"
+            {{- end }}
+
+            {{- if .Values.database.prefix }}
+            - name: TYPHOON_WEB_DATABASE_PREFIX
+              value: "{{ .Values.database.prefix }}"
+            {{- end }}
+
+            {{- if .Values.http.addr }}
+            - name: TYPHOON_WEB_ADDR
+              value: "{{ .Values.http.addr }}"
+            {{- end }}
+
+            {{- if .Values.fga.uri }}
+            - name: TYPHOON_WEB_FGA_API_URL
+              value: "{{ .Values.fga.uri }}"
+            {{- end }}
+
+            {{- if .Values.fga.storeId }}
+            - name: TYPHOON_WEB_FGA_STORE_ID
+              value: "{{ .Values.fga.storeId }}"
+            {{- end }}
+
+            {{- if .Values.fga.authorizationModelId }}
+            - name: TYPHOON_WEB_FGA_AUTHORIZATION_MODEL_ID
+              value: "{{ .Values.fga.authorizationModelId }}"
+            {{- end }}
+
+            {{- if .Values.goth.github.clientID }}
+            - name: TYPHOON_WEB_GITHUB_CLIENT_ID
+              value: "{{ .Values.goth.github.clientID }}"
+            {{- end }}
+
+            {{- if .Values.goth.github.clientSecret }}
+            - name: TYPHOON_WEB_GITHUB_SECRET
+              value: "{{ .Values.goth.github.clientSecret }}"
+            {{- end }}
+
+            {{- if .Values.goth.github.callbackUrl }}
+            - name: TYPHOON_WEB_GITHUB_CALLBACK
+              value: "{{ .Values.goth.github.callbackUrl }}"
+            {{- end }}
+
+            {{- with .Values.extraEnvVars }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+          {{- with .Values.extraVolumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+        {{- if .Values.sidecars }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.sidecars "context" $) | nindent 8 }}
+        {{- end }}
+
+      {{- with .Values.extraVolumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -87,8 +87,23 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
+	// GetHelp request
+	GetHelp(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetAccountToken request
 	GetAccountToken(ctx context.Context, pubKey PubKey, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+func (c *Client) GetHelp(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetHelpRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
 }
 
 func (c *Client) GetAccountToken(ctx context.Context, pubKey PubKey, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -101,6 +116,33 @@ func (c *Client) GetAccountToken(ctx context.Context, pubKey PubKey, reqEditors 
 		return nil, err
 	}
 	return c.Client.Do(req)
+}
+
+// NewGetHelpRequest generates requests for GetHelp
+func NewGetHelpRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/accounts/")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
 }
 
 // NewGetAccountTokenRequest generates requests for GetAccountToken
@@ -180,8 +222,32 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
+	// GetHelpWithResponse request
+	GetHelpWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetHelpResponse, error)
+
 	// GetAccountTokenWithResponse request
 	GetAccountTokenWithResponse(ctx context.Context, pubKey PubKey, reqEditors ...RequestEditorFn) (*GetAccountTokenResponse, error)
+}
+
+type GetHelpResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r GetHelpResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetHelpResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
 }
 
 type GetAccountTokenResponse struct {
@@ -205,6 +271,15 @@ func (r GetAccountTokenResponse) StatusCode() int {
 	return 0
 }
 
+// GetHelpWithResponse request returning *GetHelpResponse
+func (c *ClientWithResponses) GetHelpWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetHelpResponse, error) {
+	rsp, err := c.GetHelp(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetHelpResponse(rsp)
+}
+
 // GetAccountTokenWithResponse request returning *GetAccountTokenResponse
 func (c *ClientWithResponses) GetAccountTokenWithResponse(ctx context.Context, pubKey PubKey, reqEditors ...RequestEditorFn) (*GetAccountTokenResponse, error) {
 	rsp, err := c.GetAccountToken(ctx, pubKey, reqEditors...)
@@ -212,6 +287,22 @@ func (c *ClientWithResponses) GetAccountTokenWithResponse(ctx context.Context, p
 		return nil, err
 	}
 	return ParseGetAccountTokenResponse(rsp)
+}
+
+// ParseGetHelpResponse parses an HTTP response from a GetHelpWithResponse call
+func ParseGetHelpResponse(rsp *http.Response) (*GetHelpResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetHelpResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
 }
 
 // ParseGetAccountTokenResponse parses an HTTP response from a GetAccountTokenWithResponse call

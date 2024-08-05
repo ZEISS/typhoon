@@ -3,21 +3,23 @@ package accounts
 import (
 	"context"
 
-	"github.com/zeiss/fiber-goth/adapters"
+	"github.com/zeiss/typhoon/internal/models"
+	"github.com/zeiss/typhoon/internal/web/components"
+	"github.com/zeiss/typhoon/internal/web/ports"
+
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/forms"
 	"github.com/zeiss/fiber-htmx/components/tables"
-	"github.com/zeiss/typhoon/internal/api/models"
-	"github.com/zeiss/typhoon/internal/web/components"
-	"github.com/zeiss/typhoon/internal/web/ports"
+	"github.com/zeiss/fiber-htmx/components/tailwind"
+	"github.com/zeiss/pkg/conv"
 )
 
 // NewAccountControllerImpl ...
 type NewAccountControllerImpl struct {
 	Results tables.Results[models.Operator]
-	Teams   tables.Results[adapters.GothTeam]
+	Teams   tables.Results[models.Team]
 	store   ports.Datastore
 	htmx.DefaultController
 }
@@ -60,9 +62,7 @@ func (l *NewAccountControllerImpl) Get() error {
 								htmx.Text("Properties"),
 							),
 							forms.FormControl(
-								forms.FormControlProps{
-									ClassNames: htmx.ClassNames{},
-								},
+								forms.FormControlProps{},
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
 									forms.FormControlLabelText(
@@ -85,7 +85,7 @@ func (l *NewAccountControllerImpl) Get() error {
 									),
 									htmx.Name("team_id"),
 									htmx.Group(
-										htmx.ForEach(l.Teams.GetRows(), func(operator *adapters.GothTeam, idx int) htmx.Node {
+										htmx.ForEach(l.Teams.GetRows(), func(operator *models.Team, idx int) htmx.Node {
 											return forms.Option(
 												forms.OptionProps{
 													Value: operator.ID.String(),
@@ -167,20 +167,10 @@ func (l *NewAccountControllerImpl) Get() error {
 										htmx.Text("Name"),
 									),
 								),
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"text-neutral-500": true,
-											},
-										},
-										htmx.Text("A unique identifier for the account."),
-									),
-								),
 								forms.TextInputBordered(
 									forms.TextInputProps{
-										Name: "name",
+										Name:        "name",
+										Placeholder: "Start giving it a name ...",
 									},
 								),
 								forms.FormControlLabel(
@@ -188,10 +178,10 @@ func (l *NewAccountControllerImpl) Get() error {
 									forms.FormControlLabelText(
 										forms.FormControlLabelTextProps{
 											ClassNames: htmx.ClassNames{
-												"text-neutral-500": true,
+												tailwind.TextNeutral500: true,
 											},
 										},
-										htmx.Text("The name must be from 3 to 100 characters. At least 3 characters must be non-whitespace."),
+										htmx.Text("The name must be from 3 to 255 characters. At least 3 characters must be non-whitespace."),
 									),
 								),
 							),
@@ -200,16 +190,9 @@ func (l *NewAccountControllerImpl) Get() error {
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
 									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{},
-										htmx.Text("Description"),
-									),
-								),
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
 										forms.FormControlLabelTextProps{
 											ClassNames: htmx.ClassNames{
-												"text-neutral-500": true,
+												tailwind.TextNeutral500: true,
 											},
 										},
 										htmx.Text("A brief description of the acount to provide context."),
@@ -217,7 +200,8 @@ func (l *NewAccountControllerImpl) Get() error {
 								),
 								forms.TextareaBordered(
 									forms.TextareaProps{
-										Name: "description",
+										Name:        "description",
+										Placeholder: "Start typing a description ...",
 									},
 								),
 								forms.FormControlLabel(
@@ -253,10 +237,11 @@ func (l *NewAccountControllerImpl) Get() error {
 								),
 								forms.Toggle(
 									forms.ToggleProps{
+										Name:    "jetstream_enable",
 										Checked: true,
+										Value:   conv.String(true),
 									},
 									htmx.ID("jetstream_enable"),
-									htmx.Name("jetstream_enable"),
 								),
 							),
 							forms.FormControl(
