@@ -385,6 +385,7 @@ func adapterOverrideOptions(overrides *v1alpha1.AdapterOverrides) []resource.Obj
 // toQuantity converts corev1.ResourceList to separate CPU and Memory quantities.
 func toQuantity(resources corev1.ResourceList) (cpu *kres.Quantity, mem *kres.Quantity) {
 	for k, v := range resources {
+		// nolint:exhaustive
 		switch k {
 		case corev1.ResourceCPU:
 			v := v

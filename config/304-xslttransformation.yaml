@@ -75,7 +75,7 @@ spec:
                 - required: [valueFromSecret]
                 - required: [valueFromConfigMap]
               allowPerEventXSLT:
-                description: Whether the XSLT informed at the spec can be overriden at each CloudEvent.
+                description: Whether the XSLT informed at the spec can be overridden at each CloudEvent.
                 type: boolean
               sink:
                 description: The destination of events emitted by the component. If left empty, the events will be sent back

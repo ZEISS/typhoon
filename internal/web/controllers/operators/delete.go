@@ -41,7 +41,7 @@ func (l *DeleteOperatorController) Delete() error {
 
 	op := models.Operator{ID: l.ID}
 	err = l.store.ReadWriteTx(l.Context(), func(ctx context.Context, tx ports.ReadWriteTx) error {
-		return tx.DeleteOperator(l.Context(), &op)
+		return tx.DeleteOperator(ctx, &op)
 	})
 	if err != nil {
 		return err

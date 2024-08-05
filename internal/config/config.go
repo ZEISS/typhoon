@@ -5,16 +5,14 @@ import (
 	"os"
 )
 
-var cfg = New()
-
 // Database ...
 type Database struct {
 	Addr     string
 	Database string
 	Password string
 	Port     int
-	Username string
 	Prefix   string
+	Username string
 }
 
 // Flags contains the command line flags.

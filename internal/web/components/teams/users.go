@@ -10,8 +10,6 @@ import (
 	"github.com/zeiss/fiber-htmx/components/tables"
 )
 
-const ()
-
 // UsersTableProps ...
 type UsersTableProps struct {
 	Users  []*adapters.GothUser

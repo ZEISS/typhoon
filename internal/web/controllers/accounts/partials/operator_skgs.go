@@ -58,7 +58,6 @@ func (l *OperatorSkgsOptionsImpl) Prepare() error {
 
 // Get ...
 func (l *OperatorSkgsOptionsImpl) Get() error {
-
 	return l.Render(
 		forms.SelectBordered(
 			forms.SelectProps{},

@@ -35,11 +35,11 @@ var (
 // XSLTTransformationSpec defines the desired state of the component.
 type XSLTTransformationSpec struct {
 	// XSLT document that will be used by default for transformation.
-	// Can be omited if the XSLT is informed at each event.
+	// Can be omitted if the XSLT is informed at each event.
 	// +optional
 	XSLT *ValueFromField `json:"xslt,omitempty"`
 
-	// Whether the default XSLT can be overriden at each event
+	// Whether the default XSLT can be overridden at each event
 	// +optional
 	AllowPerEventXSLT *bool `json:"allowPerEventXSLT,omitempty"`
 

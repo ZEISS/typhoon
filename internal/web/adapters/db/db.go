@@ -98,8 +98,10 @@ func (d *database) ReadTx(ctx context.Context, fn func(context.Context, ports.Re
 	return nil
 }
 
-var _ ports.ReadTx = (*datastoreTx)(nil)
-var _ ports.ReadWriteTx = (*datastoreTx)(nil)
+var (
+	_ ports.ReadTx      = (*datastoreTx)(nil)
+	_ ports.ReadWriteTx = (*datastoreTx)(nil)
+)
 
 type datastoreTx struct {
 	tx *gorm.DB

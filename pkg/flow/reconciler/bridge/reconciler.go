@@ -22,8 +22,7 @@ var _ reconcilerv1alpha1.Interface = (*Reconciler)(nil)
 
 // ReconcileKind implements Interface.ReconcileKind.
 func (r *Reconciler) ReconcileKind(ctx context.Context, trg *v1alpha1.Bridge) reconciler.Event {
-	// inject target into context for usage in reconciliation logic
-	ctx = commonv1alpha1.WithReconcilable(ctx, trg)
+	commonv1alpha1.WithReconcilable(ctx, trg)
 
 	return nil
 }

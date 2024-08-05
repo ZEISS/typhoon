@@ -59,8 +59,8 @@ func (p *Pagination[R]) GetSort() string {
 // GetRows returns the rows as pointers.
 func (p *Pagination[R]) GetRows() []*R {
 	rows := make([]*R, 0, len(p.Rows))
-	for _, row := range p.Rows {
-		rows = append(rows, &row)
+	for i := range p.Rows {
+		rows = append(rows, rows[i])
 	}
 
 	return rows

@@ -69,6 +69,7 @@ func (l *CreateControllerImpl) Error(err error) error {
 }
 
 // Post ...
+// nolint:gocyclo
 func (l *CreateControllerImpl) Post() error {
 	operator, err := models.NewOperator(l.body.Name, l.body.Description)
 	if err != nil {

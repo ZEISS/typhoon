@@ -32,7 +32,7 @@ func NewMeController(store ports.Datastore) *MeController {
 // Prepare ...
 func (m *MeController) Prepare() error {
 	return m.store.ReadTx(m.Context(), func(ctx context.Context, tx ports.ReadTx) error {
-		return tx.GetProfile(m.Context(), &m.User)
+		return tx.GetProfile(ctx, &m.User)
 	})
 }
 

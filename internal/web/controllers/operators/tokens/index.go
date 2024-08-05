@@ -40,6 +40,10 @@ func (l *IndexOperatorTokenControllerImpl) Get() error {
 		return tx.GetOperator(ctx, &operator)
 	})
 
+	if err != nil {
+		return err
+	}
+
 	r := strings.NewReader(operator.Token.Token)
 
 	l.Ctx().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s.jwt", operator.Name))

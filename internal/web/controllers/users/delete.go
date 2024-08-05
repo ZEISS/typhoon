@@ -36,7 +36,7 @@ func (l *DeleteUserControllerImpl) Delete() error {
 
 	user := models.User{ID: l.ID}
 	err = l.store.ReadWriteTx(l.Context(), func(ctx context.Context, tx ports.ReadWriteTx) error {
-		return tx.DeleteUser(l.Context(), &user)
+		return tx.DeleteUser(ctx, &user)
 	})
 	if err != nil {
 		return err

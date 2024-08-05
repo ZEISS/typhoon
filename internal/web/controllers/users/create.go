@@ -67,6 +67,7 @@ func (l *CreateUserControllerImpl) Error(err error) error {
 }
 
 // Post ...
+// nolint:gocyclo
 func (l *CreateUserControllerImpl) Post() error {
 	user := models.User{
 		Name:        l.Name,

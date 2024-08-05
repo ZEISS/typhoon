@@ -274,7 +274,7 @@ func TestJiraEvents(t *testing.T) {
 			}()
 
 			in, err := createInEvent(tc.inType, tc.inData)
-			require.Nil(t, err, "Could not create incoming event")
+			require.NoError(t, err, "Could not create incoming event")
 
 			send <- *in
 

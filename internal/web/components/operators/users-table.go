@@ -14,8 +14,6 @@ import (
 	"github.com/zeiss/typhoon/internal/utils"
 )
 
-const ()
-
 // UsersTableProps ...
 type UsersTableProps struct {
 	Users  []*models.User

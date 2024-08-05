@@ -37,7 +37,7 @@ func (l *IndexLoginController) Get() error {
 				htmx.Section(
 					htmx.Merge(
 						htmx.ClassNames{
-							"bg-gray-50 ":      true,
+							"bg-gray-50":       true,
 							"dark:bg-gray-900": true,
 						},
 					),
