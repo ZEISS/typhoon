@@ -22,7 +22,7 @@ require (
 	github.com/logzio/logzio-go v1.0.7
 	github.com/nats-io/jwt v1.2.2
 	github.com/nats-io/jwt/v2 v2.5.6
-	github.com/nats-io/nats.go v1.35.0
+	github.com/nats-io/nats.go v1.36.0
 	github.com/nats-io/nkeys v0.4.7
 	github.com/oapi-codegen/fiber-middleware v1.0.2
 	github.com/oapi-codegen/runtime v1.1.1
