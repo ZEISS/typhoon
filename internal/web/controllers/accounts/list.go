@@ -44,15 +44,13 @@ func (l *ListAccountsController) Prepare() error {
 // Prepare ...
 func (l *ListAccountsController) Get() error {
 	return l.Render(
-		components.Page(
-			components.PageProps{
+		components.DefaultLayout(
+			components.DefaultLayoutProps{
 				Title: "Accounts",
+				Path:  l.Path(),
 			},
-			components.Layout(
-				components.LayoutProps{
-					Path: l.Path(),
-				},
-				cards.CardBordered(
+			func() htmx.Node {
+				return cards.CardBordered(
 					cards.CardProps{
 						ClassNames: htmx.ClassNames{
 							tailwind.M2: true,
@@ -69,8 +67,8 @@ func (l *ListAccountsController) Get() error {
 							},
 						),
 					),
-				),
-			),
+				)
+			},
 		),
 	)
 }
