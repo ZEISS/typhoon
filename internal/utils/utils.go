@@ -6,4 +6,5 @@ const (
 	ShowAccountUrlFormat    = "/accounts/%s"
 	DeleteAccountUrlFormat  = "/accounts/%s"
 	DeleteOperatorUrlFormat = "/operators/%s"
+	DownloadTokenAccountUrl = "/accounts/%s/token"
 )

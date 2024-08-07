@@ -51,4 +51,6 @@ jobs:
           cache-dependency-path: |
             go.sum
             tools/go.sum
+      - run: |
+          sudo apt-get install libxml2-dev libxslt1-dev
       - run: make lint
