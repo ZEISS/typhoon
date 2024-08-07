@@ -25,11 +25,7 @@ type ListSystemsController struct {
 
 // NewListSystemsController ...
 func NewListSystemsController(store ports.Datastore) *ListSystemsController {
-	return &ListSystemsController{
-		Results:           tables.Results[models.System]{Limit: 10},
-		DefaultController: htmx.DefaultController{},
-		store:             store,
-	}
+	return &ListSystemsController{store: store}
 }
 
 // Prepare ...
@@ -46,18 +42,19 @@ func (l *ListSystemsController) Prepare() error {
 
 // Get ...
 func (l *ListSystemsController) Get() error {
-	return l.Render( // render the html using htmx
-		components.Page(
-			components.PageProps{
+	return l.Render(
+		components.DefaultLayout(
+			components.DefaultLayoutProps{
 				Title: "Systems",
-				Boost: true,
+				Path:  l.Path(),
 			},
-			components.Layout(
-				components.LayoutProps{
-					Path: l.Path(), // get the current path
-				},
-				cards.CardBordered(
-					cards.CardProps{},
+			func() htmx.Node {
+				return cards.CardBordered(
+					cards.CardProps{
+						ClassNames: htmx.ClassNames{
+							"m-2": true,
+						},
+					},
 					cards.Body(
 						cards.BodyProps{},
 						systems.SystemsTable(
@@ -69,8 +66,8 @@ func (l *ListSystemsController) Get() error {
 							},
 						),
 					),
-				),
-			),
+				)
+			},
 		),
 	)
 }

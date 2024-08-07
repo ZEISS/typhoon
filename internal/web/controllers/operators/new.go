@@ -5,6 +5,7 @@ import (
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/forms"
+	"github.com/zeiss/fiber-htmx/components/tailwind"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
@@ -23,16 +24,20 @@ func NewOperatorController(store ports.Datastore) *NewOperatorControllerImpl {
 // Get ...
 func (l *NewOperatorControllerImpl) Get() error {
 	return l.Render(
-		components.Page(
-			components.PageProps{},
-			components.Layout(
-				components.LayoutProps{
-					Path: l.Path(),
-				},
-				htmx.FormElement(
+		components.DefaultLayout(
+			components.DefaultLayoutProps{
+				Title: "New Operator",
+				Path:  l.Path(),
+			},
+			func() htmx.Node {
+				return htmx.FormElement(
 					htmx.HxPost("/operators/new"),
 					cards.CardBordered(
-						cards.CardProps{},
+						cards.CardProps{
+							ClassNames: htmx.ClassNames{
+								tailwind.M2: true,
+							},
+						},
 						cards.Body(
 							cards.BodyProps{},
 							cards.Title(
@@ -50,20 +55,10 @@ func (l *NewOperatorControllerImpl) Get() error {
 										htmx.Text("Name"),
 									),
 								),
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"text-neutral-500": true,
-											},
-										},
-										htmx.Text("A unique identifier for operator."),
-									),
-								),
 								forms.TextInputBordered(
 									forms.TextInputProps{
-										Name: "name",
+										Name:        "name",
+										Placeholder: "Indiana Jones, Luke Skywalker, etc.",
 									},
 								),
 								forms.FormControlLabel(
@@ -91,20 +86,10 @@ func (l *NewOperatorControllerImpl) Get() error {
 										htmx.Text("Description"),
 									),
 								),
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"text-neutral-500": true,
-											},
-										},
-										htmx.Text("A brief description of the operator to provide context."),
-									),
-								),
 								forms.TextareaBordered(
 									forms.TextareaProps{
-										Name: "description",
+										Name:        "description",
+										Placeholder: "In a galaxy far, far away...",
 									},
 								),
 								forms.FormControlLabel(
@@ -122,7 +107,11 @@ func (l *NewOperatorControllerImpl) Get() error {
 						),
 					),
 					cards.CardBordered(
-						cards.CardProps{},
+						cards.CardProps{
+							ClassNames: htmx.ClassNames{
+								tailwind.M2: true,
+							},
+						},
 						cards.Body(
 							cards.BodyProps{},
 							cards.Title(
@@ -130,23 +119,11 @@ func (l *NewOperatorControllerImpl) Get() error {
 								htmx.Text("Account Server"),
 							),
 							forms.FormControl(
-								forms.FormControlProps{
-									ClassNames: htmx.ClassNames{},
-								},
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"text-neutral-500": true,
-											},
-										},
-										htmx.Text("The URL to the Account Server to use for authentication."),
-									),
-								),
+								forms.FormControlProps{},
 								forms.TextInputBordered(
 									forms.TextInputProps{
-										Name: "account_server_url",
+										Name:        "account_server_url",
+										Placeholder: "https://example.com:8080",
 									},
 								),
 								forms.FormControlLabel(
@@ -171,8 +148,8 @@ func (l *NewOperatorControllerImpl) Get() error {
 							),
 						),
 					),
-				),
-			),
+				)
+			},
 		),
 	)
 }

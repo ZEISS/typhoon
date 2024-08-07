@@ -4,12 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/uuid"
-	"github.com/zeiss/fiber-htmx/components/buttons"
-	"github.com/zeiss/fiber-htmx/components/cards"
-	"github.com/zeiss/fiber-htmx/components/icons"
-	"github.com/zeiss/fiber-htmx/components/tailwind"
-	"github.com/zeiss/pkg/cast"
 	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/utils"
 	"github.com/zeiss/typhoon/internal/web/components"
@@ -17,7 +11,13 @@ import (
 	"github.com/zeiss/typhoon/internal/web/components/nkeys"
 	"github.com/zeiss/typhoon/internal/web/ports"
 
+	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
+	"github.com/zeiss/fiber-htmx/components/buttons"
+	"github.com/zeiss/fiber-htmx/components/cards"
+	"github.com/zeiss/fiber-htmx/components/icons"
+	"github.com/zeiss/fiber-htmx/components/tailwind"
+	"github.com/zeiss/pkg/cast"
 )
 
 // ShowAccountControllerImpl ...
@@ -82,7 +82,7 @@ func (l *ShowAccountControllerImpl) Get() error {
 										htmx.ClassNames{
 											"text-gray-500": true,
 										},
-										htmx.Text("DescripNtion"),
+										htmx.Text("Name"),
 									),
 									htmx.H3(
 										htmx.Text(account.Name),

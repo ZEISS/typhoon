@@ -5,7 +5,6 @@ import (
 
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
-	"github.com/zeiss/fiber-htmx/components/dropdowns"
 	"github.com/zeiss/fiber-htmx/components/forms"
 	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/links"
@@ -175,39 +174,81 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 					},
 					Cell: func(p tables.TableProps, row *models.User) htmx.Node {
 						return htmx.Td(
-							dropdowns.Dropdown(
-								dropdowns.DropdownProps{},
-								dropdowns.DropdownButton(
-									dropdowns.DropdownButtonProps{},
-									icons.BoltOutline(
-										icons.IconProps{},
-									),
+							htmx.ClassNames{},
+							htmx.A(
+								htmx.ClassNames{
+									"btn":    true,
+									"btn-sm": true,
+									"mx-2":   true,
+								},
+								htmx.Href(fmt.Sprintf(utils.DownloadCredentialsUserUrlFormat, row.ID)),
+								icons.ArrowDownOnSquareOutline(
+									icons.IconProps{
+										ClassNames: htmx.ClassNames{
+											"w-6": false,
+											"h-6": false,
+											"w-4": true,
+											"h-4": true,
+										},
+									},
 								),
-								dropdowns.DropdownMenuItems(
-									dropdowns.DropdownMenuItemsProps{},
-									dropdowns.DropdownMenuItem(
-										dropdowns.DropdownMenuItemProps{},
-										htmx.A(
-											htmx.Href(fmt.Sprintf("/users/%s/credentials", row.ID)),
-											htmx.Text("Get Credentials"),
-										),
-									),
-									dropdowns.DropdownMenuItem(
-										dropdowns.DropdownMenuItemProps{},
-										buttons.Error(
-											buttons.ButtonProps{
-												ClassNames: htmx.ClassNames{
-													"btn-sm": true,
-												},
-											},
-											htmx.HxDelete(fmt.Sprintf("/users/%s", row.ID)),
-											htmx.HxConfirm("Are you sure you want to delete this user?"),
-											htmx.Text("Delete"),
-										),
-									),
+							),
+							buttons.Button(
+								buttons.ButtonProps{
+									ClassNames: htmx.ClassNames{
+										"btn-sm": true,
+									},
+								},
+								htmx.HxDelete(fmt.Sprintf(utils.DeleteUserUrlFormat, row.ID)),
+								htmx.HxConfirm("Are you sure you want to delete this user?"),
+								htmx.HxTarget("closest tr"),
+								htmx.HxSwap("outerHTML swap:1s"),
+								icons.TrashOutline(
+									icons.IconProps{
+										ClassNames: htmx.ClassNames{
+											"w-6 h-6": false,
+											"w-4":     true,
+											"h-4":     true,
+										},
+									},
 								),
 							),
 						)
+
+						// return htmx.Td(
+						// 	dropdowns.Dropdown(
+						// 		dropdowns.DropdownProps{},
+						// 		dropdowns.DropdownButton(
+						// 			dropdowns.DropdownButtonProps{},
+						// 			icons.BoltOutline(
+						// 				icons.IconProps{},
+						// 			),
+						// 		),
+						// 		dropdowns.DropdownMenuItems(
+						// 			dropdowns.DropdownMenuItemsProps{},
+						// 			dropdowns.DropdownMenuItem(
+						// 				dropdowns.DropdownMenuItemProps{},
+						// 				htmx.A(
+						// 					htmx.Href(fmt.Sprintf("/users/%s/credentials", row.ID)),
+						// 					htmx.Text("Get Credentials"),
+						// 				),
+						// 			),
+						// 			dropdowns.DropdownMenuItem(
+						// 				dropdowns.DropdownMenuItemProps{},
+						// 				buttons.Error(
+						// 					buttons.ButtonProps{
+						// 						ClassNames: htmx.ClassNames{
+						// 							"btn-sm": true,
+						// 						},
+						// 					},
+						// 					htmx.HxDelete(fmt.Sprintf("/users/%s", row.ID)),
+						// 					htmx.HxConfirm("Are you sure you want to delete this user?"),
+						// 					htmx.Text("Delete"),
+						// 				),
+						// 			),
+						// 		),
+						// 	),
+						// )
 					},
 				},
 			},
