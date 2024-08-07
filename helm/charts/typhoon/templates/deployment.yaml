@@ -28,7 +28,7 @@ spec:
       containers:
         - name: controller
           terminationMessagePolicy: FallbackToLogsOnError
-          image: "{{ .Values.global.image.repository }}/controller:{{ .Values.global.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.global.image.repository }}/controller:v{{ .Values.global.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           env:
             - name: SYSTEM_NAMESPACE
