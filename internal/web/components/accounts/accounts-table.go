@@ -92,12 +92,8 @@ func AccountsTable(props AccountsTableProps, children ...htmx.Node) htmx.Node {
 					),
 					htmx.A(
 						htmx.Href("accounts/new"),
-						buttons.Outline(
-							buttons.ButtonProps{
-								ClassNames: htmx.ClassNames{
-									"btn-sm": true,
-								},
-							},
+						buttons.Button(
+							buttons.ButtonProps{},
 							htmx.Text("Create Account"),
 						),
 					),

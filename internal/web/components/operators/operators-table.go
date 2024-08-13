@@ -93,12 +93,8 @@ func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node 
 					),
 					htmx.A(
 						htmx.Href("/operators/new"),
-						buttons.Outline(
-							buttons.ButtonProps{
-								ClassNames: htmx.ClassNames{
-									"btn-sm": true,
-								},
-							},
+						buttons.Button(
+							buttons.ButtonProps{},
 							htmx.Text("Create Operator"),
 						),
 					),

@@ -35,15 +35,15 @@ require (
 	github.com/wamuir/go-xslt v0.1.5
 	github.com/xdg-go/scram v1.0.2
 	github.com/zeiss/fiber-authz v1.0.33
-	github.com/zeiss/fiber-goth v1.2.8
+	github.com/zeiss/fiber-goth v1.2.11
 	github.com/zeiss/fiber-htmx v1.3.21-0.20240806072406-fcc22017a231
-	github.com/zeiss/pkg v0.1.7-0.20240802122243-e784cdbbb776
+	github.com/zeiss/pkg v0.1.7
 	github.com/zeiss/snow-go v0.0.0-20240312201415-88f059622cff
 	go.opencensus.io v0.24.0
 	go.uber.org/zap v1.27.0
-	golang.org/x/mod v0.19.0
+	golang.org/x/mod v0.20.0
 	golang.org/x/net v0.27.0
-	golang.org/x/oauth2 v0.21.0
+	golang.org/x/oauth2 v0.22.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20240604185151-ef581f913117
 	google.golang.org/protobuf v1.34.1
 	gorm.io/driver/postgres v1.5.9

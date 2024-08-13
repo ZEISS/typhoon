@@ -91,12 +91,8 @@ func TeamsTable(props TeamsTableProps, children ...htmx.Node) htmx.Node {
 					),
 					htmx.A(
 						htmx.Href("/teams/new"),
-						buttons.Outline(
-							buttons.ButtonProps{
-								ClassNames: htmx.ClassNames{
-									"btn-sm": true,
-								},
-							},
+						buttons.Button(
+							buttons.ButtonProps{},
 							htmx.Text("Create Team"),
 						),
 					),

@@ -96,12 +96,8 @@ func SystemsTable(props SystemsTableProps, children ...htmx.Node) htmx.Node {
 					),
 					htmx.A(
 						htmx.Href("/systems/new"),
-						buttons.Outline(
-							buttons.ButtonProps{
-								ClassNames: htmx.ClassNames{
-									"btn-sm": true,
-								},
-							},
+						buttons.Button(
+							buttons.ButtonProps{},
 							htmx.Text("Create System"),
 						),
 					),

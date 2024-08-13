@@ -96,12 +96,8 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 					),
 					htmx.A(
 						htmx.Href("/users/new"),
-						buttons.Outline(
-							buttons.ButtonProps{
-								ClassNames: htmx.ClassNames{
-									"btn-sm": true,
-								},
-							},
+						buttons.Button(
+							buttons.ButtonProps{},
 							htmx.Text("Create User"),
 						),
 					),

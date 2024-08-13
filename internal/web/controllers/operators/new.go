@@ -2,9 +2,11 @@ package operators
 
 import (
 	htmx "github.com/zeiss/fiber-htmx"
+	"github.com/zeiss/fiber-htmx/components/alpine"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/forms"
+	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/tailwind"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/ports"
@@ -140,10 +142,107 @@ func (l *NewOperatorControllerImpl) Get() error {
 							),
 							cards.Actions(
 								cards.ActionsProps{},
-								buttons.Outline(
+								buttons.Button(
 									buttons.ButtonProps{},
 									htmx.Attribute("type", "submit"),
 									htmx.Text("Create Operator"),
+								),
+							),
+						),
+					),
+					cards.CardBordered(
+						cards.CardProps{
+							ClassNames: htmx.ClassNames{
+								"my-2": true,
+								"mx-2": true,
+							},
+						},
+						cards.Body(
+							cards.BodyProps{},
+							cards.Title(
+								cards.TitleProps{},
+								htmx.Text("Tags - Optional"),
+							),
+							htmx.Div(
+								alpine.XData(`{
+						tags: [],
+						addTag(tag) {
+						  this.tags.push({name: '', value: ''});
+						},
+						removeTag(index) {
+						  this.tags.splice(index, 1);
+						}
+					  }`),
+								htmx.Template(
+									alpine.XFor("(tag, index) in tags"),
+									htmx.Attribute(":key", "index"),
+									htmx.Div(
+										htmx.ClassNames{
+											tailwind.Flex:    true,
+											tailwind.SpaceX4: true,
+										},
+										forms.FormControl(
+											forms.FormControlProps{
+												ClassNames: htmx.ClassNames{},
+											},
+											forms.TextInputBordered(
+												forms.TextInputProps{},
+												alpine.XModel("tag.name"),
+												alpine.XBind("name", "`tags.${index}.name`"),
+											),
+											forms.FormControlLabel(
+												forms.FormControlLabelProps{},
+												forms.FormControlLabelText(
+													forms.FormControlLabelTextProps{
+														ClassNames: htmx.ClassNames{
+															"text-neutral-500": true,
+														},
+													},
+													htmx.Text("Key is a unique identifier. At least 3 characters must be non-whitespace."),
+												),
+											),
+										),
+										forms.FormControl(
+											forms.FormControlProps{
+												ClassNames: htmx.ClassNames{},
+											},
+											forms.TextInputBordered(
+												forms.TextInputProps{},
+												alpine.XModel("tag.value"),
+												alpine.XBind("name", "`tags.${index}.value`"),
+											),
+											forms.FormControlLabel(
+												forms.FormControlLabelProps{},
+												forms.FormControlLabelText(
+													forms.FormControlLabelTextProps{
+														ClassNames: htmx.ClassNames{
+															"text-neutral-500": true,
+														},
+													},
+													htmx.Text("Value is a unique value for the key."),
+												),
+											),
+										),
+										buttons.Button(
+											buttons.ButtonProps{
+												Type: "button",
+											},
+											alpine.XOn("click", "removeTag(index)"),
+											icons.TrashOutline(
+												icons.IconProps{},
+											),
+										),
+									),
+								),
+								cards.Actions(
+									cards.ActionsProps{},
+									buttons.Button(
+										buttons.ButtonProps{
+											Type: "button",
+										},
+										alpine.XOn("click", "addTag()"),
+										htmx.Text("Add Tag"),
+									),
 								),
 							),
 						),

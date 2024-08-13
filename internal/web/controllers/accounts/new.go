@@ -8,9 +8,13 @@ import (
 	"github.com/zeiss/typhoon/internal/web/ports"
 
 	htmx "github.com/zeiss/fiber-htmx"
+	"github.com/zeiss/fiber-htmx/components/alpine"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
+	"github.com/zeiss/fiber-htmx/components/dropdowns"
 	"github.com/zeiss/fiber-htmx/components/forms"
+	"github.com/zeiss/fiber-htmx/components/icons"
+	"github.com/zeiss/fiber-htmx/components/loading"
 	"github.com/zeiss/fiber-htmx/components/tables"
 	"github.com/zeiss/fiber-htmx/components/tailwind"
 	"github.com/zeiss/pkg/conv"
@@ -43,18 +47,20 @@ func (l *NewAccountControllerImpl) Prepare() error {
 
 // Get ...
 func (l *NewAccountControllerImpl) Get() error {
-	return htmx.RenderComp(
-		l.Ctx(),
-		components.Page(
-			components.PageProps{
+	return l.Render(
+		components.DefaultLayout(
+			components.DefaultLayoutProps{
 				Title: "New Account",
 				Path:  l.Path(),
 			},
-			components.Layout(
-				components.LayoutProps{},
-				htmx.FormElement(
+			func() htmx.Node {
+				return htmx.FormElement(
 					cards.CardBordered(
-						cards.CardProps{},
+						cards.CardProps{
+							ClassNames: htmx.ClassNames{
+								tailwind.M2: true,
+							},
+						},
 						cards.Body(
 							cards.BodyProps{},
 							cards.Title(
@@ -63,6 +69,127 @@ func (l *NewAccountControllerImpl) Get() error {
 							),
 							forms.FormControl(
 								forms.FormControlProps{},
+								dropdowns.Dropdown(
+									dropdowns.DropdownProps{},
+									alpine.XData(`{
+            filter: '',
+            show: false,
+            selected: null,
+            focusedOptionIndex: null,
+            options: null,
+            close() { 
+              this.show = false;
+              this.filter = this.selectedName();
+              this.focusedOptionIndex = this.selected ? this.focusedOptionIndex : null;
+            },
+            open() { 
+              this.show = true; 
+              this.filter = '';
+            },
+            toggle() { 
+              if (this.show) {
+                this.close();
+              }
+              else {
+                this.open()
+              }
+            },
+            isOpen() { return this.show === true },
+            selectedName() { return this.selected ? this.selected.name.first + ' ' + this.selected.name.last : this.filter; },
+            classOption(id, index) {
+              const isSelected = this.selected ? (id == this.selected.login.uuid) : false;
+              const isFocused = (index == this.focusedOptionIndex);
+              return {
+                'cursor-pointer w-full border-gray-100 border-b hover:bg-blue-50': true,
+                'bg-blue-100': isSelected,
+                'bg-blue-50': isFocused
+              };
+            },
+            fetchOptions() {
+              fetch('https://randomuser.me/api/?results=5')
+                .then(response => response.json())
+                .then(data => this.options = data);
+            },
+            filteredOptions() {
+              return this.options
+                ? this.options.results.filter(option => {
+                    return (option.name.first.toLowerCase().indexOf(this.filter) > -1) 
+                      || (option.name.last.toLowerCase().indexOf(this.filter) > -1)
+                      || (option.email.toLowerCase().indexOf(this.filter) > -1)
+                })
+               : {}
+            },
+            onOptionClick(index) {
+              this.focusedOptionIndex = index;
+              this.selectOption();
+            },
+            selectOption() {
+              this.focusedOptionIndex = this.focusedOptionIndex ?? 0;
+              const selected = this.filteredOptions()[this.focusedOptionIndex]
+              if (this.selected && this.selected.login.uuid == selected.login.uuid) {
+                this.filter = '';
+                this.selected = null;
+              }
+              else {
+                this.selected = selected;
+                this.filter = this.selectedName();
+              }
+              this.close();
+            },
+            focusPrevOption() {
+              if (!this.isOpen()) {
+                return;
+              }
+              const optionsNum = Object.keys(this.filteredOptions()).length - 1;
+              if (this.focusedOptionIndex > 0 && this.focusedOptionIndex <= optionsNum) {
+                this.focusedOptionIndex--;
+              }
+              else if (this.focusedOptionIndex == 0) {
+                this.focusedOptionIndex = optionsNum;
+              }
+            },
+            focusNextOption() {
+              const optionsNum = Object.keys(this.filteredOptions()).length - 1;
+              if (!this.isOpen()) {
+                this.open();
+              }
+              if (this.focusedOptionIndex == null || this.focusedOptionIndex == optionsNum) {
+                this.focusedOptionIndex = 0;
+              }
+              else if (this.focusedOptionIndex >= 0 && this.focusedOptionIndex < optionsNum) {
+                this.focusedOptionIndex++;
+              }
+            }
+        }`),
+									alpine.XInit("fetchOptions()"),
+									forms.TextInputBordered(
+										forms.TextInputProps{
+											Placeholder: "Please select a team",
+										},
+										alpine.XModel("filter"),
+										loading.Spinner(
+											loading.SpinnerProps{},
+										),
+									),
+									dropdowns.DropdownMenuItems(
+										dropdowns.DropdownMenuItemsProps{
+											ClassNames: htmx.ClassNames{
+												tailwind.WFull: true,
+											},
+										},
+
+										htmx.Template(
+											alpine.XFor("(option, index) in filteredOptions()"),
+											dropdowns.DropdownMenuItem(
+												dropdowns.DropdownMenuItemProps{},
+												htmx.Div(
+													alpine.XOn("click", "onOptionClick(index)"),
+													alpine.XText("`${option.name.first}`"),
+												),
+											),
+										),
+									),
+								),
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
 									forms.FormControlLabelText(
@@ -170,7 +297,7 @@ func (l *NewAccountControllerImpl) Get() error {
 								forms.TextInputBordered(
 									forms.TextInputProps{
 										Name:        "name",
-										Placeholder: "Start giving it a name ...",
+										Placeholder: "Jarvis, Skynet, etc.",
 									},
 								),
 								forms.FormControlLabel(
@@ -201,7 +328,7 @@ func (l *NewAccountControllerImpl) Get() error {
 								forms.TextareaBordered(
 									forms.TextareaProps{
 										Name:        "description",
-										Placeholder: "Start typing a description ...",
+										Placeholder: "A super cool tool that does amazing things ...",
 									},
 								),
 								forms.FormControlLabel(
@@ -219,7 +346,11 @@ func (l *NewAccountControllerImpl) Get() error {
 						),
 					),
 					cards.CardBordered(
-						cards.CardProps{},
+						cards.CardProps{
+							ClassNames: htmx.ClassNames{
+								tailwind.M2: true,
+							},
+						},
 						cards.Body(
 							cards.BodyProps{},
 							cards.Title(
@@ -430,19 +561,9 @@ func (l *NewAccountControllerImpl) Get() error {
 									htmx.Name("jetstream_max_bytes_required"),
 								),
 							),
-						),
-					),
-					cards.CardBordered(
-						cards.CardProps{},
-						cards.Body(
-							cards.BodyProps{},
-							cards.Title(
-								cards.TitleProps{},
-								htmx.Text("Tags - Optional"),
-							),
 							cards.Actions(
 								cards.ActionsProps{},
-								buttons.Outline(
+								buttons.Button(
 									buttons.ButtonProps{},
 									htmx.Action("."),
 									htmx.HxPost("/accounts/create"),
@@ -453,8 +574,147 @@ func (l *NewAccountControllerImpl) Get() error {
 							),
 						),
 					),
-				),
-			),
+					cards.CardBordered(
+						cards.CardProps{
+							ClassNames: htmx.ClassNames{
+								tailwind.M2: true,
+							},
+						},
+						cards.Body(
+							cards.BodyProps{},
+							cards.Title(
+								cards.TitleProps{},
+								htmx.Text("Account Server"),
+							),
+							forms.FormControl(
+								forms.FormControlProps{},
+								forms.TextInputBordered(
+									forms.TextInputProps{
+										Name:        "account_server_url",
+										Placeholder: "https://example.com:8080",
+									},
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												"text-neutral-500": true,
+											},
+										},
+										htmx.Text("A valid URL with a scheme of http or https. Certificates need be valid."),
+									),
+								),
+							),
+							cards.Actions(
+								cards.ActionsProps{},
+								buttons.Button(
+									buttons.ButtonProps{},
+									htmx.Attribute("type", "submit"),
+									htmx.Text("Create Operator"),
+								),
+							),
+						),
+					),
+					cards.CardBordered(
+						cards.CardProps{
+							ClassNames: htmx.ClassNames{
+								"my-2": true,
+								"mx-2": true,
+							},
+						},
+						cards.Body(
+							cards.BodyProps{},
+							cards.Title(
+								cards.TitleProps{},
+								htmx.Text("Tags - Optional"),
+							),
+							htmx.Div(
+								alpine.XData(`{
+						tags: [],
+						addTag(tag) {
+						  this.tags.push({name: '', value: ''});
+						},
+						removeTag(index) {
+						  this.tags.splice(index, 1);
+						}
+					  }`),
+								htmx.Template(
+									alpine.XFor("(tag, index) in tags"),
+									htmx.Attribute(":key", "index"),
+									htmx.Div(
+										htmx.ClassNames{
+											tailwind.Flex:    true,
+											tailwind.SpaceX4: true,
+										},
+										forms.FormControl(
+											forms.FormControlProps{
+												ClassNames: htmx.ClassNames{},
+											},
+											forms.TextInputBordered(
+												forms.TextInputProps{},
+												alpine.XModel("tag.name"),
+												alpine.XBind("name", "`tags.${index}.name`"),
+											),
+											forms.FormControlLabel(
+												forms.FormControlLabelProps{},
+												forms.FormControlLabelText(
+													forms.FormControlLabelTextProps{
+														ClassNames: htmx.ClassNames{
+															"text-neutral-500": true,
+														},
+													},
+													htmx.Text("Key is a unique identifier. At least 3 characters must be non-whitespace."),
+												),
+											),
+										),
+										forms.FormControl(
+											forms.FormControlProps{
+												ClassNames: htmx.ClassNames{},
+											},
+											forms.TextInputBordered(
+												forms.TextInputProps{},
+												alpine.XModel("tag.value"),
+												alpine.XBind("name", "`tags.${index}.value`"),
+											),
+											forms.FormControlLabel(
+												forms.FormControlLabelProps{},
+												forms.FormControlLabelText(
+													forms.FormControlLabelTextProps{
+														ClassNames: htmx.ClassNames{
+															"text-neutral-500": true,
+														},
+													},
+													htmx.Text("Value is a unique value for the key."),
+												),
+											),
+										),
+										buttons.Button(
+											buttons.ButtonProps{
+												Type: "button",
+											},
+											alpine.XOn("click", "removeTag(index)"),
+											icons.TrashOutline(
+												icons.IconProps{},
+											),
+										),
+									),
+								),
+								cards.Actions(
+									cards.ActionsProps{},
+									buttons.Button(
+										buttons.ButtonProps{
+											Type: "button",
+										},
+										alpine.XOn("click", "addTag()"),
+										htmx.Text("Add Tag"),
+									),
+								),
+							),
+						),
+					),
+				)
+			},
 		),
 	)
 }

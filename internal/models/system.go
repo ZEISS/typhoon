@@ -31,8 +31,8 @@ type System struct {
 	Operator Operator `json:"operator" gorm:"foreignKey:OperatorID" validate:"-"`
 	// OperatorID is the operator ID that is associated with the system.
 	OperatorID uuid.UUID `json:"operator_id" form:"operator_id" validate:"required,uuid"`
-	// Tags is the tags that are associated with the system.
-	Tags []*Tag `json:"tags" gorm:"polymorphic:Taggable;polymorphicValue:system;" validate:"-"`
+	// Tags are the tags associated with the environment
+	Tags []Tag `json:"tags" gorm:"many2many:system_tags;"`
 	// CreatedAt is the time the system was created.
 	CreatedAt time.Time `json:"created_at"`
 	// UpdatedAt is the time the system was updated.

@@ -19,8 +19,6 @@ servers:
   - url: http://localhost:8080/api/v1
     description: Development server
 tags:
-  - name: Server
-    description: These are administrative operations.
   - name: Operator
     description: These are the operators that manage Typhoon.
   - name: Account
@@ -31,11 +29,45 @@ tags:
     description: These are the users that manage Typhonn.
   - name: System
     description: These are the system managed by Typhoon.
-  - name: Team
-    description: These are the teams that are using Typhoon.
-  - name: Triggers
-    description: These are the triggers that are used to send events to Typhoon.
 paths:
+  /_health:
+    get:
+      tags:
+        - Liveness
+      summary: Get system health status
+      operationId: getHealth
+      responses:
+        '200':
+          description: System is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '500':
+          description: System is down
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /_ready:
+    get:
+      tags:
+        - Readiness
+      summary: Get system readiness
+      operationId: getReady
+      responses:
+        '200':
+          description: System is ready to accept traffic
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '500':
+          description: System not ready to accept traffic
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
   /version:
     get:
       summary: Returns the current version of the API.
@@ -1208,6 +1240,13 @@ components:
       in: header
       name: X-API-Key
   schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        errorMessage:
+          type: string
     NKey:
       description: |
         An NKey is the private key of a NATS account.
@@ -1538,6 +1577,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Team'
+    securitySchemes:
+      openId:
+        type: http
+        scheme: bearer
+        bearerFormat: JWT
     Error:
       type: object
       required:
@@ -1614,5 +1658,4 @@ components:
           description: Creation date and time
           example: '2021-01-30T08:30:00Z'
 security:
-  - bearerAuth: []
-  - apiKey: []
+  - openId: []

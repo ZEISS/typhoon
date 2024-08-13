@@ -10,6 +10,7 @@ type PageProps struct {
 	Path     string
 	Boost    bool
 	Children []htmx.Node
+	Head     []htmx.Node
 }
 
 // Page is a whole document to output.
@@ -21,7 +22,7 @@ func Page(props PageProps, children ...htmx.Node) htmx.Node {
 			Attributes: []htmx.Node{
 				htmx.DataAttribute("theme", "light"),
 			},
-			Head: []htmx.Node{
+			Head: append([]htmx.Node{
 				htmx.Link(
 					htmx.Attribute("href", "https://cdn.jsdelivr.net/npm/daisyui/dist/full.css"),
 					htmx.Attribute("rel", "stylesheet"),
@@ -38,7 +39,11 @@ func Page(props PageProps, children ...htmx.Node) htmx.Node {
 					htmx.Attribute("src", "https://unpkg.com/hyperscript.org@0.9.12"),
 					htmx.Attribute("type", "application/javascript"),
 				),
-			},
+				htmx.Script(
+					htmx.Attribute("src", "//unpkg.com/alpinejs"),
+					htmx.Defer(),
+				),
+			}, props.Head...),
 		},
 		htmx.Body(
 			htmx.HxBoost(props.Boost),
