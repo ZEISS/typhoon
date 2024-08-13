@@ -1227,10 +1227,8 @@ github.com/zeiss/fiber-authz v1.0.33 h1:KZnVTxG+VoQLowoCqoMwam/5H4PVu89rn9ZJ2AGO
 github.com/zeiss/fiber-authz v1.0.33/go.mod h1:oVkhY0X9/xFa0Pu3BuEU8ubE7pAQmIjFMUwUGD2pQqc=
 github.com/zeiss/fiber-goth v1.2.11 h1:24EiIKF1iPrmlspbW/BylcqVyj4Ltwzmx9DM7pRs6R4=
 github.com/zeiss/fiber-goth v1.2.11/go.mod h1:9NuXxIeKZgmk3dfl7HWbZK/eAfukvjMCHHacGo0m84Y=
-github.com/zeiss/fiber-htmx v1.3.21-0.20240806072406-fcc22017a231 h1:ARsivK9WNdGdvtCYM02+9h+WM8DrKxpzfiX96pI5IXQ=
-github.com/zeiss/fiber-htmx v1.3.21-0.20240806072406-fcc22017a231/go.mod h1:Epw8nmQeR61cEAI3mmvBe77vttXRm6AFoUzZog0T8ag=
-github.com/zeiss/pkg v0.1.6 h1:VTbzKg+Yj54swWgTevnNgR7tmEqw5gGwsSsxeSIfwE0=
-github.com/zeiss/pkg v0.1.6/go.mod h1:soMcxMxuhfHDni3KGF/diy90dqWhRI2uLNlKHV3IxPk=
+github.com/zeiss/fiber-htmx v1.3.21 h1:VqnG5ltV8eB+Bs1k4DEV3VeMIIQpsvd5Jr80MvCyjMQ=
+github.com/zeiss/fiber-htmx v1.3.21/go.mod h1:T1E+nc3y/B3SXTglNrQOxmZVqkIqHVMzS46KGNf5m28=
 github.com/zeiss/pkg v0.1.7 h1:P+kCMcZy/I7JgnXGWv/oidhj/47klSqk7xtF2/t02yc=
 github.com/zeiss/pkg v0.1.7/go.mod h1:XQjoOM7oJAp065CC4Cd5lD2AXZ51cL9nYrNjs7mDmI4=
 github.com/zeiss/snow-go v0.0.0-20240312201415-88f059622cff h1:IguG+jnCnFyAzZ8Fp+6v2lJNvUFPfu8Q2UUgSFw4doU=
@@ -1364,8 +1362,6 @@ golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91
 golang.org/x/mod v0.6.0/go.mod h1:4mET923SAdbXp2ki8ey+zGs1SLqsuM2Y0uvdZR/fUNI=
 golang.org/x/mod v0.7.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
 golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
-golang.org/x/mod v0.19.0 h1:fEdghXQSo20giMthA7cd28ZC+jts4amQ3YMXiP5oMQ8=
-golang.org/x/mod v0.19.0/go.mod h1:hTbmBsO62+eylJbnUtE2MGJUyE7QWk4xUqPFrRgJ+7c=
 golang.org/x/mod v0.20.0 h1:utOm6MM3R3dnawAiJgn0y+xvuYRsm1RKM/4giyfDgV0=
 golang.org/x/mod v0.20.0/go.mod h1:hTbmBsO62+eylJbnUtE2MGJUyE7QWk4xUqPFrRgJ+7c=
 golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
