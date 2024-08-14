@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/zeiss/typhoon/internal/web/controllers/accounts"
 	pa "github.com/zeiss/typhoon/internal/web/controllers/accounts/partials"
+	"github.com/zeiss/typhoon/internal/web/controllers/accounts/search"
 	"github.com/zeiss/typhoon/internal/web/controllers/dashboard"
 	"github.com/zeiss/typhoon/internal/web/controllers/login"
 	"github.com/zeiss/typhoon/internal/web/controllers/me"
@@ -276,5 +277,12 @@ func (h *handlers) ShowTeam() fiber.Handler {
 func (h *handlers) DeleteTeam() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
 		return teams.NewTeamDeleteController(h.store)
+	})
+}
+
+// SeachTeams ...
+func (h *handlers) AccountTeamSearch() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return search.NewSearchTeamsController(h.store)
 	})
 }

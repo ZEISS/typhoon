@@ -72,4 +72,6 @@ type Handlers interface {
 	ShowTeam() fiber.Handler
 	// DeleteTeam ...
 	DeleteTeam() fiber.Handler
+	// AccountTeamSearch ...
+	AccountTeamSearch() fiber.Handler
 }

@@ -18,6 +18,7 @@ import (
 	"github.com/zeiss/fiber-htmx/components/tables"
 	"github.com/zeiss/fiber-htmx/components/tailwind"
 	"github.com/zeiss/pkg/conv"
+	"github.com/zeiss/pkg/errorx"
 )
 
 // NewAccountControllerImpl ...
@@ -54,6 +55,13 @@ func (l *NewAccountControllerImpl) Get() error {
 				Path:  l.Path(),
 			},
 			func() htmx.Node {
+				teams := tables.Results[models.Team]{}
+				errorx.Panic(l.BindQuery(&teams))
+
+				errorx.Panic(l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+					return tx.ListTeams(ctx, &teams)
+				}))
+
 				return htmx.FormElement(
 					cards.CardBordered(
 						cards.CardProps{
@@ -72,104 +80,42 @@ func (l *NewAccountControllerImpl) Get() error {
 								dropdowns.Dropdown(
 									dropdowns.DropdownProps{},
 									alpine.XData(`{
-            filter: '',
-            show: false,
-            selected: null,
-            focusedOptionIndex: null,
-            options: null,
-            close() { 
-              this.show = false;
-              this.filter = this.selectedName();
-              this.focusedOptionIndex = this.selected ? this.focusedOptionIndex : null;
-            },
-            open() { 
-              this.show = true; 
-              this.filter = '';
-            },
-            toggle() { 
-              if (this.show) {
-                this.close();
-              }
-              else {
-                this.open()
-              }
-            },
-            isOpen() { return this.show === true },
-            selectedName() { return this.selected ? this.selected.name.first + ' ' + this.selected.name.last : this.filter; },
-            classOption(id, index) {
-              const isSelected = this.selected ? (id == this.selected.login.uuid) : false;
-              const isFocused = (index == this.focusedOptionIndex);
-              return {
-                'cursor-pointer w-full border-gray-100 border-b hover:bg-blue-50': true,
-                'bg-blue-100': isSelected,
-                'bg-blue-50': isFocused
-              };
-            },
-            fetchOptions() {
-              fetch('https://randomuser.me/api/?results=5')
-                .then(response => response.json())
-                .then(data => this.options = data);
-            },
-            filteredOptions() {
-              return this.options
-                ? this.options.results.filter(option => {
-                    return (option.name.first.toLowerCase().indexOf(this.filter) > -1) 
-                      || (option.name.last.toLowerCase().indexOf(this.filter) > -1)
-                      || (option.email.toLowerCase().indexOf(this.filter) > -1)
-                })
-               : {}
-            },
-            onOptionClick(index) {
-              this.focusedOptionIndex = index;
-              this.selectOption();
-            },
-            selectOption() {
-              this.focusedOptionIndex = this.focusedOptionIndex ?? 0;
-              const selected = this.filteredOptions()[this.focusedOptionIndex]
-              if (this.selected && this.selected.login.uuid == selected.login.uuid) {
-                this.filter = '';
-                this.selected = null;
-              }
-              else {
-                this.selected = selected;
-                this.filter = this.selectedName();
-              }
-              this.close();
-            },
-            focusPrevOption() {
-              if (!this.isOpen()) {
-                return;
-              }
-              const optionsNum = Object.keys(this.filteredOptions()).length - 1;
-              if (this.focusedOptionIndex > 0 && this.focusedOptionIndex <= optionsNum) {
-                this.focusedOptionIndex--;
-              }
-              else if (this.focusedOptionIndex == 0) {
-                this.focusedOptionIndex = optionsNum;
-              }
-            },
-            focusNextOption() {
-              const optionsNum = Object.keys(this.filteredOptions()).length - 1;
-              if (!this.isOpen()) {
-                this.open();
-              }
-              if (this.focusedOptionIndex == null || this.focusedOptionIndex == optionsNum) {
-                this.focusedOptionIndex = 0;
-              }
-              else if (this.focusedOptionIndex >= 0 && this.focusedOptionIndex < optionsNum) {
-                this.focusedOptionIndex++;
-              }
-            }
-        }`),
-									alpine.XInit("fetchOptions()"),
-									forms.TextInputBordered(
-										forms.TextInputProps{
-											Placeholder: "Please select a team",
+										selected: {},
+										onOptionClick(id, name) {
+									   		this.selected = { id, name };
+									    },
+									}`),
+									htmx.Div(
+										htmx.ClassNames{
+											tailwind.Flex:          true,
+											tailwind.SpaceX4:       true,
+											tailwind.JustifyCenter: true,
 										},
-										alpine.XModel("filter"),
-										loading.Spinner(
-											loading.SpinnerProps{},
+										forms.TextInputBordered(
+											forms.TextInputProps{
+												Placeholder: "Search a team ...",
+												Name:        "search",
+											},
+											alpine.XModel("selected.name"),
+											alpine.XRef("button"),
+											htmx.HxPost("/accounts/search/teams"),
+											htmx.HxTarget("#search-results"),
+											htmx.HxTrigger("keyup changed delay:500ms"),
+											htmx.HxIndicator(".htmx-indicator"),
 										),
+										loading.Spinner(
+											loading.SpinnerProps{
+												ClassNames: htmx.ClassNames{
+													"htmx-indicator": true,
+												},
+											},
+										),
+									),
+
+									htmx.Input(
+										htmx.Name("team_id"),
+										htmx.Type("hidden"),
+										alpine.XModel("selected.id"),
 									),
 									dropdowns.DropdownMenuItems(
 										dropdowns.DropdownMenuItemsProps{
@@ -177,49 +123,19 @@ func (l *NewAccountControllerImpl) Get() error {
 												tailwind.WFull: true,
 											},
 										},
-
-										htmx.Template(
-											alpine.XFor("(option, index) in filteredOptions()"),
-											dropdowns.DropdownMenuItem(
-												dropdowns.DropdownMenuItemProps{},
-												htmx.Div(
-													alpine.XOn("click", "onOptionClick(index)"),
-													alpine.XText("`${option.name.first}`"),
-												),
-											),
+										htmx.ID("search-results"),
+										htmx.Group(
+											htmx.ForEach(tables.RowsPtr(teams.Rows), func(e *models.Team, idx int) htmx.Node {
+												return dropdowns.DropdownMenuItem(
+													dropdowns.DropdownMenuItemProps{},
+													htmx.A(
+														htmx.Text(e.Name),
+														htmx.Value(e.ID.String()),
+														alpine.XOn("click", "onOptionClick($event.target.getAttribute('value'), $event.target.innerText)"),
+													),
+												)
+											})...,
 										),
-									),
-								),
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{},
-										},
-										htmx.Text("Team"),
-									),
-								),
-								forms.SelectBordered(
-									forms.SelectProps{},
-									htmx.Required(),
-									htmx.HxValidate(true),
-									forms.Option(
-										forms.OptionProps{
-											Selected: true,
-											Disabled: true,
-										},
-										htmx.Text("Select a team"),
-									),
-									htmx.Name("team_id"),
-									htmx.Group(
-										htmx.ForEach(l.Teams.GetRows(), func(operator *models.Team, idx int) htmx.Node {
-											return forms.Option(
-												forms.OptionProps{
-													Value: operator.ID.String(),
-												},
-												htmx.Text(operator.Name),
-											)
-										})...,
 									),
 								),
 							),

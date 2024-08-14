@@ -1,4 +1,4 @@
-package accounts
+package search
 
 import (
 	"context"
@@ -8,7 +8,10 @@ import (
 	"github.com/zeiss/typhoon/internal/web/ports"
 
 	htmx "github.com/zeiss/fiber-htmx"
+	"github.com/zeiss/fiber-htmx/components/alpine"
+	"github.com/zeiss/fiber-htmx/components/dropdowns"
 	"github.com/zeiss/fiber-htmx/components/tables"
+	"github.com/zeiss/fiber-htmx/components/toasts"
 	"github.com/zeiss/pkg/errorx"
 )
 
@@ -25,8 +28,22 @@ func NewSearchTeamsController(store ports.Datastore) *SearchTeamsControllerImpl 
 	return &SearchTeamsControllerImpl{store: store}
 }
 
+// Error ...
+func (l *SearchTeamsControllerImpl) Error(err error) error {
+	return toasts.RenderToasts(
+		l.Ctx(),
+		toasts.Toasts(
+			toasts.ToastsProps{},
+			toasts.ToastAlertError(
+				toasts.ToastProps{},
+				htmx.Text(err.Error()),
+			),
+		),
+	)
+}
+
 // Prepare ...
-func (l *SearchTeamsControllerImpl) Get() error {
+func (l *SearchTeamsControllerImpl) Post() error {
 	return l.Render(
 		htmx.Fallback(
 			htmx.ErrorBoundary(
@@ -40,9 +57,13 @@ func (l *SearchTeamsControllerImpl) Get() error {
 
 					return htmx.Fragment(
 						htmx.ForEach(tables.RowsPtr(results.Rows), func(e *models.Team, idx int) htmx.Node {
-							return htmx.Option(
-								htmx.Text(e.Name),
-								htmx.Value(e.ID.String()),
+							return dropdowns.DropdownMenuItem(
+								dropdowns.DropdownMenuItemProps{},
+								htmx.A(
+									htmx.Text(e.Name),
+									htmx.Value(e.ID.String()),
+									alpine.XOn("click", "onOptionClick($event.target.getAttribute('value'), $event.target.innerText)"),
+								),
 							)
 						})...,
 					)

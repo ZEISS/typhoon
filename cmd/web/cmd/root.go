@@ -180,6 +180,7 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Get("/accounts", handlers.ListAccounts())
 		app.Get("/accounts/new", handlers.NewAccount())
 		app.Post("/accounts/create", handlers.CreateAccount())
+		app.Post("/accounts/search/teams", handlers.AccountTeamSearch())
 		app.Get("/accounts/:id", handlers.ShowAccount())
 		app.Delete("/accounts/:id", handlers.DeleteAccount())
 		app.Get("/accounts/:id/token", handlers.GetAccountToken())
