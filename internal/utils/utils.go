@@ -9,4 +9,5 @@ const (
 	DeleteUserUrlFormat              = "/users/%s"
 	DownloadTokenAccountUrl          = "/accounts/%s/token"
 	DownloadCredentialsUserUrlFormat = "/users/%s/credentials"
+	EdtiTeamsUrlFormat               = "/teams/%s/edit"
 )

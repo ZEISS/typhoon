@@ -146,6 +146,8 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		teams.Post("/new", handlers.CreateTeam())
 		teams.Get("/:id", handlers.ShowTeam())
 		teams.Delete("/:id", handlers.DeleteTeam())
+		teams.Get("/:id/edit", handlers.EditTeam())
+		teams.Post("/:id/edit", handlers.UpdateTeam())
 
 		// Me handler
 		app.Get("/me", handlers.Me())

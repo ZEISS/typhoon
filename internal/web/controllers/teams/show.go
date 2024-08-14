@@ -7,10 +7,11 @@ import (
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
-	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tailwind"
 	"github.com/zeiss/typhoon/internal/models"
+	"github.com/zeiss/typhoon/internal/utils"
 	"github.com/zeiss/typhoon/internal/web/components"
+	"github.com/zeiss/typhoon/internal/web/components/teams"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
 
@@ -43,21 +44,21 @@ func (p *TeamShowControllerImpl) Prepare() error {
 // Get ...
 func (p *TeamShowControllerImpl) Get() error {
 	return p.Render(
-		components.Page(
-			components.PageProps{},
-			components.Layout(
-				components.LayoutProps{
-					Path: p.Path(),
-					User: p.Session().User,
-				},
-				components.Wrap(
-					components.WrapProps{},
+		components.DefaultLayout(
+			components.DefaultLayoutProps{
+				Title: "Team",
+				Path:  p.Path(),
+			},
+			func() htmx.Node {
+				return htmx.Fragment(
 					cards.CardBordered(
 						cards.CardProps{
 							ClassNames: htmx.ClassNames{
 								tailwind.M2: true,
 							},
 						},
+						htmx.HxTarget("this"),
+						htmx.HxSwap("outerHTML"),
 						cards.Body(
 							cards.BodyProps{},
 							cards.Title(
@@ -65,22 +66,6 @@ func (p *TeamShowControllerImpl) Get() error {
 								htmx.Text("Overview"),
 							),
 							htmx.Div(
-								htmx.Div(
-									htmx.ClassNames{
-										"flex":     true,
-										"flex-col": true,
-										"py-2":     true,
-									},
-									htmx.H4(
-										htmx.ClassNames{
-											"text-gray-500": true,
-										},
-										htmx.Text("ID"),
-									),
-									htmx.H3(
-										htmx.Text(p.team.ID.String()),
-									),
-								),
 								htmx.Div(
 									htmx.ClassNames{
 										"flex":     true,
@@ -113,55 +98,18 @@ func (p *TeamShowControllerImpl) Get() error {
 										htmx.Text(p.team.Description),
 									),
 								),
-								htmx.Div(
-									htmx.ClassNames{
-										"flex":     true,
-										"flex-col": true,
-										"py-2":     true,
-									},
-									htmx.H4(
-										htmx.ClassNames{
-											"text-gray-500": true,
-										},
-										htmx.Text("Created at"),
-									),
-									htmx.H3(
-										htmx.Text(
-											p.team.CreatedAt.Format("2006-01-02 15:04:05"),
-										),
-									),
-								),
-								htmx.Div(
-									htmx.ClassNames{
-										"flex":     true,
-										"flex-col": true,
-										"py-2":     true,
-									},
-									htmx.H4(
-										htmx.ClassNames{
-											"text-gray-500": true,
-										},
-										htmx.Text("Updated at"),
-									),
-									htmx.H3(
-										htmx.Text(
-											p.team.UpdatedAt.Format("2006-01-02 15:04:05"),
-										),
-									),
-								),
 							),
 							cards.Actions(
 								cards.ActionsProps{},
-								links.Button(
-									links.LinkProps{
-										ClassNames: htmx.ClassNames{
-											"btn-outline": true,
-										},
-										Href: fmt.Sprintf("%s/edit", p.team.ID),
+								buttons.Button(
+									buttons.ButtonProps{
+										Type: "button",
 									},
 									htmx.Text("Edit"),
+									htmx.HxGet(fmt.Sprintf(utils.EdtiTeamsUrlFormat, p.team.ID)),
+									htmx.HxSwap("outerHTML"),
 								),
-								buttons.Outline(
+								buttons.Button(
 									buttons.ButtonProps{},
 									htmx.HxDelete(""),
 									htmx.HxConfirm("Are you sure you want to delete this team?"),
@@ -170,8 +118,13 @@ func (p *TeamShowControllerImpl) Get() error {
 							),
 						),
 					),
-				),
-			),
+					teams.MetaCard(
+						teams.MetaCardProps{
+							Team: p.team,
+						},
+					),
+				)
+			},
 		),
 	)
 }

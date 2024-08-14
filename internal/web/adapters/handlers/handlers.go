@@ -286,3 +286,17 @@ func (h *handlers) AccountTeamSearch() fiber.Handler {
 		return search.NewSearchTeamsController(h.store)
 	})
 }
+
+// EditTeam ...
+func (h *handlers) EditTeam() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return teams.NewTeamEditController(h.store)
+	})
+}
+
+// UpdateTeam ...
+func (h *handlers) UpdateTeam() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return teams.NewTeamEditController(h.store)
+	})
+}

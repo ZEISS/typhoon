@@ -19,6 +19,7 @@ import (
 	"github.com/zeiss/fiber-htmx/components/tailwind"
 	"github.com/zeiss/pkg/conv"
 	"github.com/zeiss/pkg/errorx"
+	"github.com/zeiss/pkg/slices"
 )
 
 // NewAccountControllerImpl ...
@@ -124,17 +125,26 @@ func (l *NewAccountControllerImpl) Get() error {
 											},
 										},
 										htmx.ID("search-results"),
-										htmx.Group(
-											htmx.ForEach(tables.RowsPtr(teams.Rows), func(e *models.Team, idx int) htmx.Node {
-												return dropdowns.DropdownMenuItem(
-													dropdowns.DropdownMenuItemProps{},
-													htmx.A(
-														htmx.Text(e.Name),
-														htmx.Value(e.ID.String()),
-														alpine.XOn("click", "onOptionClick($event.target.getAttribute('value'), $event.target.innerText)"),
-													),
-												)
-											})...,
+										htmx.IfElse(
+											!slices.Size(0, teams.Rows),
+											htmx.Group(
+												htmx.ForEach(tables.RowsPtr(teams.Rows), func(e *models.Team, idx int) htmx.Node {
+													return dropdowns.DropdownMenuItem(
+														dropdowns.DropdownMenuItemProps{},
+														htmx.A(
+															htmx.Text(e.Name),
+															htmx.Value(e.ID.String()),
+															alpine.XOn("click", "onOptionClick($event.target.getAttribute('value'), $event.target.innerText)"),
+														),
+													)
+												})...,
+											),
+											dropdowns.DropdownMenuItem(
+												dropdowns.DropdownMenuItemProps{},
+												htmx.A(
+													htmx.Text("No teams found"),
+												),
+											),
 										),
 									),
 								),
