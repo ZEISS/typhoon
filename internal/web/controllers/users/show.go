@@ -39,6 +39,7 @@ func (l *ShowUserControllerImpl) Get() error {
 			components.DefaultLayoutProps{
 				Title: "Users",
 				Path:  l.Path(),
+				User:  l.Session().User,
 			},
 			func() htmx.Node {
 				err := l.BindParams(l)

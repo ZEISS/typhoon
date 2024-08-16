@@ -47,6 +47,7 @@ func (l *ListSystemsController) Get() error {
 			components.DefaultLayoutProps{
 				Title: "Systems",
 				Path:  l.Path(),
+				User:  l.Session().User,
 			},
 			func() htmx.Node {
 				return cards.CardBordered(

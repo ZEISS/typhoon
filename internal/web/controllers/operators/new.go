@@ -30,6 +30,7 @@ func (l *NewOperatorControllerImpl) Get() error {
 			components.DefaultLayoutProps{
 				Title: "New Operator",
 				Path:  l.Path(),
+				User:  l.Session().User,
 			},
 			func() htmx.Node {
 				return htmx.FormElement(

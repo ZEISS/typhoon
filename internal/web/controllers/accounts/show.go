@@ -38,6 +38,7 @@ func (l *ShowAccountControllerImpl) Get() error {
 			components.DefaultLayoutProps{
 				Title: "Account",
 				Path:  l.Path(),
+				User:  l.Session().User,
 			},
 			func() htmx.Node {
 				var params struct {

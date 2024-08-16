@@ -52,6 +52,7 @@ func (l *NewSystemControllerImpl) Get() error {
 			components.DefaultLayoutProps{
 				Title: "New System",
 				Path:  l.Path(),
+				User:  l.Session().User,
 			},
 			func() htmx.Node {
 				return htmx.FormElement(

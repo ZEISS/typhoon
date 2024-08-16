@@ -41,6 +41,8 @@ func (l *ShowOperatorControllerImpl) Get() error {
 		components.DefaultLayout(
 			components.DefaultLayoutProps{
 				Title: "Operator",
+				Path:  l.Path(),
+				User:  l.Session().User,
 			},
 			func() htmx.Node {
 				err := l.BindParams(l)

@@ -1,14 +1,17 @@
 package components
 
 import (
+	"github.com/zeiss/fiber-goth/adapters"
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/avatars"
 	"github.com/zeiss/fiber-htmx/components/dropdowns"
+	"github.com/zeiss/pkg/cast"
 )
 
 // ProfileMenuProps ...
 type ProfileMenuProps struct {
 	ClassNames htmx.ClassNames
+	User       adapters.GothUser
 }
 
 // ProfileMenu ...
@@ -33,7 +36,7 @@ func ProfileMenu(p ProfileMenuProps, children ...htmx.Node) htmx.Node {
 			avatars.AvatarRoundSmall(
 				avatars.AvatarProps{},
 				htmx.Img(
-					htmx.Attribute("src", "https://avatars.githubusercontent.com/u/570959?v=4"),
+					htmx.Attribute("src", cast.Value(p.User.Image)),
 				),
 			),
 		),
@@ -44,6 +47,10 @@ func ProfileMenu(p ProfileMenuProps, children ...htmx.Node) htmx.Node {
 				htmx.A(
 					htmx.Attribute("href", "/me"),
 					htmx.Text("Profile"),
+				),
+				htmx.A(
+					htmx.Attribute("href", "/logout"),
+					htmx.Text("Logout"),
 				),
 			),
 		),

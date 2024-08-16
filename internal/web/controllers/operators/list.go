@@ -48,33 +48,34 @@ func (l *ListOperatorsController) Prepare() error {
 // Prepare ...
 func (l *ListOperatorsController) Get() error {
 	return l.Render(
-		components.Page(
-			components.PageProps{
+		components.DefaultLayout(
+			components.DefaultLayoutProps{
 				Title: "Operators",
+				Path:  l.Path(),
+				User:  l.Session().User,
 			},
-			components.Layout(
-				components.LayoutProps{
-					Path: l.Ctx().Path(),
-				},
-				cards.CardBordered(
-					cards.CardProps{
-						ClassNames: htmx.ClassNames{
-							tailwind.M2: true,
-						},
-					},
-					cards.Body(
-						cards.BodyProps{},
-						operators.OperatorsTable(
-							operators.OperatorsTableProps{
-								Operators: l.Results.GetRows(),
-								Offset:    l.Results.GetOffset(),
-								Limit:     l.Results.GetLimit(),
-								Total:     l.Results.GetLen(),
+			func() htmx.Node {
+				return htmx.Fragment(
+					cards.CardBordered(
+						cards.CardProps{
+							ClassNames: htmx.ClassNames{
+								tailwind.M2: true,
 							},
+						},
+						cards.Body(
+							cards.BodyProps{},
+							operators.OperatorsTable(
+								operators.OperatorsTableProps{
+									Operators: l.Results.GetRows(),
+									Offset:    l.Results.GetOffset(),
+									Limit:     l.Results.GetLimit(),
+									Total:     l.Results.GetLen(),
+								},
+							),
 						),
 					),
-				),
-			),
+				)
+			},
 		),
 	)
 }

@@ -26,6 +26,7 @@ func (l *IndexDashboardController) Get() error {
 			components.DefaultLayoutProps{
 				Title: "Dashboard",
 				Path:  l.Path(),
+				User:  l.Session().User,
 			},
 			func() htmx.Node {
 				return cards.CardBordered(

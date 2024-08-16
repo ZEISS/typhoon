@@ -48,6 +48,7 @@ func (l *ListAccountsController) Get() error {
 			components.DefaultLayoutProps{
 				Title: "Accounts",
 				Path:  l.Path(),
+				User:  l.Session().User,
 			},
 			func() htmx.Node {
 				return cards.CardBordered(

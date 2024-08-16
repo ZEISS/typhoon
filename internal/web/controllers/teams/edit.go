@@ -15,6 +15,7 @@ import (
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/forms"
 	"github.com/zeiss/fiber-htmx/components/tailwind"
+	"github.com/zeiss/fiber-htmx/components/toasts"
 )
 
 // TeamEditControllerImpl ...
@@ -135,7 +136,14 @@ func (p *TeamEditControllerImpl) Post() error {
 				},
 			),
 			func(err error) htmx.Node {
-				return htmx.Text(err.Error())
+				htmx.ReSwap(p.Ctx(), "none")
+				return toasts.Toasts(
+					toasts.ToastsProps{},
+					toasts.ToastAlertError(
+						toasts.ToastProps{},
+						htmx.Text(err.Error()),
+					),
+				)
 			},
 		),
 	)

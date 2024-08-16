@@ -48,6 +48,7 @@ func (p *TeamShowControllerImpl) Get() error {
 			components.DefaultLayoutProps{
 				Title: "Team",
 				Path:  p.Path(),
+				User:  p.Session().User,
 			},
 			func() htmx.Node {
 				return htmx.Fragment(

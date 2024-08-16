@@ -54,6 +54,7 @@ func (l *NewAccountControllerImpl) Get() error {
 			components.DefaultLayoutProps{
 				Title: "New Account",
 				Path:  l.Path(),
+				User:  l.Session().User,
 			},
 			func() htmx.Node {
 				teams := tables.Results[models.Team]{}
@@ -496,48 +497,6 @@ func (l *NewAccountControllerImpl) Get() error {
 									htmx.HxTargetError("#alerts"),
 									htmx.Attribute("type", "submit"),
 									htmx.Text("Create Account"),
-								),
-							),
-						),
-					),
-					cards.CardBordered(
-						cards.CardProps{
-							ClassNames: htmx.ClassNames{
-								tailwind.M2: true,
-							},
-						},
-						cards.Body(
-							cards.BodyProps{},
-							cards.Title(
-								cards.TitleProps{},
-								htmx.Text("Account Server"),
-							),
-							forms.FormControl(
-								forms.FormControlProps{},
-								forms.TextInputBordered(
-									forms.TextInputProps{
-										Name:        "account_server_url",
-										Placeholder: "https://example.com:8080",
-									},
-								),
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"text-neutral-500": true,
-											},
-										},
-										htmx.Text("A valid URL with a scheme of http or https. Certificates need be valid."),
-									),
-								),
-							),
-							cards.Actions(
-								cards.ActionsProps{},
-								buttons.Button(
-									buttons.ButtonProps{},
-									htmx.Attribute("type", "submit"),
-									htmx.Text("Create Operator"),
 								),
 							),
 						),
