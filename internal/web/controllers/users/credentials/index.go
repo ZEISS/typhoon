@@ -3,7 +3,6 @@ package credentials
 import (
 	"bytes"
 	"context"
-	"fmt"
 
 	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
@@ -27,12 +26,6 @@ func NewIndexUserCredentialsController(store ports.Datastore) *IndexUserCredenti
 	}
 }
 
-// Error ...
-func (l *IndexUserCredentialsControllerImpl) Error(err error) error {
-	fmt.Println(err)
-	return nil
-}
-
 // Get ...
 func (l *IndexUserCredentialsControllerImpl) Get() error {
 	err := l.BindParams(l)
@@ -52,8 +45,6 @@ func (l *IndexUserCredentialsControllerImpl) Get() error {
 	if err != nil {
 		return err
 	}
-
-	fmt.Println(bb)
 
 	r := bytes.NewReader(bb)
 

@@ -53,6 +53,16 @@ type ReadTx interface {
 	ListTeams(ctx context.Context, results *tables.Results[models.Team]) error
 	// GetNKey is a method that returns an NKey by ID
 	GetNKey(ctx context.Context, nkey *models.NKey) error
+	// GetTotalNumberOfAccounts is a method that returns the total number of accounts
+	GetTotalNumberOfAccounts(ctx context.Context, total *int64) error
+	// GetTotalNumberOfOperators is a method that returns the total number of operators
+	GetTotalNumberOfOperators(ctx context.Context, total *int64) error
+	// GetTotalNumberOfSystems is a method that returns the total number of systems
+	GetTotalNumberOfSystems(ctx context.Context, total *int64) error
+	// GetTotalNumberOfTeams is a method that returns the total number of teams
+	GetTotalNumberOfTeams(ctx context.Context, total *int64) error
+	// GetTotalNumberOfUsers is a method that returns the total number of users
+	GetTotalNumberOfUsers(ctx context.Context, total *int64) error
 }
 
 // ReadWriteTx provides methods for transactional read and write operations.

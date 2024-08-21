@@ -5,10 +5,10 @@ import (
 
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
-	"github.com/zeiss/fiber-htmx/components/forms"
 	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tables"
+	"github.com/zeiss/pkg/stringx"
 	"github.com/zeiss/typhoon/internal/models"
 	"github.com/zeiss/typhoon/internal/utils"
 )
@@ -20,6 +20,7 @@ const (
 
 // UsersTableProps ...
 type UsersTableProps struct {
+	URL    string
 	Users  []*models.User
 	Offset int
 	Limit  int
@@ -32,21 +33,17 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 		htmx.ClassNames{},
 		tables.Table(
 			tables.TableProps{
-				ID: "accounts-tables",
+				ID: "users-tables",
 				Pagination: tables.TablePagination(
 					tables.TablePaginationProps{},
 					tables.Pagination(
-						tables.PaginationProps{
-							Offset: props.Offset,
-							Limit:  props.Limit,
-							Total:  props.Total,
-						},
+						tables.PaginationProps{},
 						tables.Prev(
 							tables.PaginationProps{
 								Total:  props.Total,
 								Offset: props.Offset,
 								Limit:  props.Limit,
-								URL:    "/users",
+								URL:    props.URL,
 							},
 						),
 
@@ -56,7 +53,7 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 								Offset: props.Offset,
 								Limit:  props.Limit,
 								Limits: tables.DefaultLimits,
-								URL:    "/users",
+								URL:    props.URL,
 							},
 						),
 						tables.Next(
@@ -64,7 +61,7 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 								Total:  props.Total,
 								Offset: props.Offset,
 								Limit:  props.Limit,
-								URL:    "/users",
+								URL:    props.URL,
 							},
 						),
 					),
@@ -75,8 +72,6 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 							"flex":            true,
 							"items-center":    true,
 							"justify-between": true,
-							"px-5":            true,
-							"pt-5":            true,
 						},
 					},
 					htmx.Div(
@@ -85,12 +80,11 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 							"items-center": true,
 							"gap-3":        true,
 						},
-						forms.TextInputBordered(
-							forms.TextInputProps{
-								ClassNames: htmx.ClassNames{
-									"input-sm": true,
-								},
-								Placeholder: "Search ...",
+						tables.Search(
+							tables.SearchProps{
+								Placeholder: "Search users...",
+								Name:        "search",
+								URL:         props.URL,
 							},
 						),
 					),
@@ -124,7 +118,7 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 						return htmx.Th(htmx.Text("Public Key"))
 					},
 					Cell: func(p tables.TableProps, row *models.User) htmx.Node {
-						return htmx.Td(htmx.Text(utils.ShortPubKey(row.Key.ID)))
+						return htmx.Td(htmx.Text(stringx.FirstN(row.Key.ID, 8)))
 					},
 				},
 				{
@@ -173,40 +167,22 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 							htmx.ClassNames{},
 							htmx.A(
 								htmx.ClassNames{
-									"btn":    true,
-									"btn-sm": true,
-									"mx-2":   true,
+									"btn":  true,
+									"mx-2": true,
 								},
 								htmx.Href(fmt.Sprintf(utils.DownloadCredentialsUserUrlFormat, row.ID)),
 								icons.ArrowDownOnSquareOutline(
-									icons.IconProps{
-										ClassNames: htmx.ClassNames{
-											"w-6": false,
-											"h-6": false,
-											"w-4": true,
-											"h-4": true,
-										},
-									},
+									icons.IconProps{},
 								),
 							),
 							buttons.Button(
-								buttons.ButtonProps{
-									ClassNames: htmx.ClassNames{
-										"btn-sm": true,
-									},
-								},
+								buttons.ButtonProps{},
 								htmx.HxDelete(fmt.Sprintf(utils.DeleteUserUrlFormat, row.ID)),
 								htmx.HxConfirm("Are you sure you want to delete this user?"),
 								htmx.HxTarget("closest tr"),
 								htmx.HxSwap("outerHTML swap:1s"),
 								icons.TrashOutline(
-									icons.IconProps{
-										ClassNames: htmx.ClassNames{
-											"w-6 h-6": false,
-											"w-4":     true,
-											"h-4":     true,
-										},
-									},
+									icons.IconProps{},
 								),
 							),
 						)

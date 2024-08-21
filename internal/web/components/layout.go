@@ -88,7 +88,6 @@ func Layout(p LayoutProps, children ...htmx.Node) htmx.Node {
 										drawers.DrawerOpenProps{
 											ID: "global-drawer",
 											ClassNames: htmx.ClassNames{
-												"btn-sm":      true,
 												"btn-square":  true,
 												"btn-primary": false,
 											},

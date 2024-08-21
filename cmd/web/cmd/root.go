@@ -137,7 +137,13 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Get("/logout", goth.NewLogoutHandler(gothConfig))
 
 		// Root handler
-		app.Get("/", handlers.Dashboard())
+		dashboard := app.Group("/")
+		dashboard.Get("/", handlers.Dashboard())
+		dashboard.Get("/stats/accounts", handlers.GetTotalNumberOfAccounts())
+		dashboard.Get("/stats/operators", handlers.GetTotalNumberOfOperators())
+		dashboard.Get("/stats/systems", handlers.GetTotalNumberOfSystems())
+		dashboard.Get("/stats/users", handlers.GetTotalNumberOfUsers())
+		dashboard.Get("/stats/teams", handlers.GetTotalNumberOfTeams())
 
 		// Site handler
 		teams := app.Group("/teams")
