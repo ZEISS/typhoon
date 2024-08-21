@@ -14,6 +14,7 @@ import (
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/forms"
+	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tailwind"
 	"github.com/zeiss/fiber-htmx/components/toasts"
 )
@@ -228,6 +229,16 @@ func (p *TeamEditControllerImpl) Get() error {
 					),
 					cards.Actions(
 						cards.ActionsProps{},
+						links.Link(
+							links.LinkProps{
+								ClassNames: htmx.ClassNames{
+									"btn":       true,
+									"btn-ghost": true,
+								},
+								Href: fmt.Sprintf(utils.ShowTeamUrlFormat, p.team.ID),
+							},
+							htmx.Text("Cancel"),
+						),
 						buttons.Button(
 							buttons.ButtonProps{
 								Type: "button",

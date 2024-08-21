@@ -36,7 +36,7 @@ require (
 	github.com/xdg-go/scram v1.0.2
 	github.com/zeiss/fiber-authz v1.0.33
 	github.com/zeiss/fiber-goth v1.2.11
-	github.com/zeiss/fiber-htmx v1.3.23
+	github.com/zeiss/fiber-htmx v1.3.24-0.20240821201648-9dfa52da47ac
 	github.com/zeiss/pkg v0.1.8-0.20240820122414-ce95f079ee32
 	github.com/zeiss/snow-go v0.0.0-20240312201415-88f059622cff
 	go.opencensus.io v0.24.0

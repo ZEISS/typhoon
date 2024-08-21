@@ -114,19 +114,11 @@ func (l *NewUserControllerImpl) Get() error {
 									),
 								),
 								forms.FormControl(
-									forms.FormControlProps{
-										ClassNames: htmx.ClassNames{
-											"py-4": true,
-										},
-									},
+									forms.FormControlProps{},
 									forms.FormControlLabel(
 										forms.FormControlLabelProps{},
 										forms.FormControlLabelText(
-											forms.FormControlLabelTextProps{
-												ClassNames: htmx.ClassNames{
-													"-my-4": true,
-												},
-											},
+											forms.FormControlLabelTextProps{},
 											htmx.Text("Signing Key Group"),
 										),
 									),
@@ -153,20 +145,10 @@ func (l *NewUserControllerImpl) Get() error {
 										),
 									),
 								),
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												"text-neutral-500": true,
-											},
-										},
-										htmx.Text("A unique identifier for the account."),
-									),
-								),
 								forms.TextInputBordered(
 									forms.TextInputProps{
-										Name: "name",
+										Name:        "name",
+										Placeholder: "Indy Jones, Lara Croft, Nathan Drake ...",
 									},
 								),
 								forms.FormControlLabel(
@@ -181,19 +163,11 @@ func (l *NewUserControllerImpl) Get() error {
 									),
 								),
 								forms.FormControl(
-									forms.FormControlProps{
-										ClassNames: htmx.ClassNames{
-											"py-4": true,
-										},
-									},
+									forms.FormControlProps{},
 									forms.FormControlLabel(
 										forms.FormControlLabelProps{},
 										forms.FormControlLabelText(
-											forms.FormControlLabelTextProps{
-												ClassNames: htmx.ClassNames{
-													"-my-4": true,
-												},
-											},
+											forms.FormControlLabelTextProps{},
 											htmx.Text("Description"),
 										),
 									),
@@ -210,7 +184,8 @@ func (l *NewUserControllerImpl) Get() error {
 									),
 									forms.TextareaBordered(
 										forms.TextareaProps{
-											Name: "description",
+											Name:        "description",
+											Placeholder: "An adventurer that explores ancient ruins and solves puzzles ...",
 										},
 									),
 									forms.FormControlLabel(

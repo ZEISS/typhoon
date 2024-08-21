@@ -12,25 +12,25 @@ import (
 	"github.com/zeiss/pkg/conv"
 )
 
-var _ = htmx.Controller(&SearchTeamsControllerImpl{})
+var _ = htmx.Controller(&SearchOperatorsControllerImpl{})
 
 // Search ...
-type SearchTeamsControllerImpl struct {
-	teams tables.Results[models.Team]
-	store ports.Datastore
+type SearchOperatorsControllerImpl struct {
+	operators tables.Results[models.Operator]
+	store     ports.Datastore
 	htmx.DefaultController
 }
 
-// NewSearchTeamsController ...
-func NewSearchTeamsController(store ports.Datastore) *SearchTeamsControllerImpl {
-	return &SearchTeamsControllerImpl{
-		teams: tables.Results[models.Team]{SearchFields: []string{"name"}},
-		store: store,
+// NewSearchOperatorsController ...
+func NewSearchOperatorsController(store ports.Datastore) *SearchOperatorsControllerImpl {
+	return &SearchOperatorsControllerImpl{
+		operators: tables.Results[models.Operator]{SearchFields: []string{"name"}},
+		store:     store,
 	}
 }
 
 // Error ...
-func (l *SearchTeamsControllerImpl) Error(err error) error {
+func (l *SearchOperatorsControllerImpl) Error(err error) error {
 	return toasts.RenderToasts(
 		l.Ctx(),
 		toasts.Toasts(
@@ -44,33 +44,33 @@ func (l *SearchTeamsControllerImpl) Error(err error) error {
 }
 
 // Prepare ...
-func (l *SearchTeamsControllerImpl) Prepare() error {
+func (l *SearchOperatorsControllerImpl) Prepare() error {
 	var params struct {
-		TeamID string `json:"team" form:"team" query:"team" validate:"required"`
+		OperatorID string `json:"operator" form:"operator" query:"operator" validate:"required"`
 	}
 
 	err := l.BindQuery(&params)
 	if err != nil {
 		return err
 	}
-	l.teams.Search = params.TeamID
+	l.operators.Search = params.OperatorID
 
 	return l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
-		return tx.ListTeams(ctx, &l.teams)
+		return tx.ListOperators(ctx, &l.operators)
 	})
 }
 
 // Get ...
-func (l *SearchTeamsControllerImpl) Get() error {
+func (l *SearchOperatorsControllerImpl) Get() error {
 	return l.Render(
 		htmx.Fragment(
-			htmx.ForEach(l.teams.GetRows(), func(e *models.Team, idx int) htmx.Node {
+			htmx.ForEach(l.operators.GetRows(), func(e *models.Operator, idx int) htmx.Node {
 				return htmx.Option(
 					htmx.Value(e.Name),
 					htmx.Text(conv.String(e.ID)),
 					htmx.Input(
 						htmx.Type("hidden"),
-						htmx.Name("team_id"),
+						htmx.Name("operator_id"),
 						htmx.Value(conv.String(e.ID)),
 					),
 				)

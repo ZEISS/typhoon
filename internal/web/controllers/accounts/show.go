@@ -105,42 +105,6 @@ func (l *ShowAccountControllerImpl) Get() error {
 										htmx.Text(cast.Value(account.Description)),
 									),
 								),
-								htmx.Div(
-									htmx.ClassNames{
-										"flex":     true,
-										"flex-col": true,
-										"py-2":     true,
-									},
-									htmx.H4(
-										htmx.ClassNames{
-											"text-gray-500": true,
-										},
-										htmx.Text("Created at"),
-									),
-									htmx.H3(
-										htmx.Text(
-											account.CreatedAt.Format("2006-01-02 15:04:05"),
-										),
-									),
-								),
-								htmx.Div(
-									htmx.ClassNames{
-										"flex":     true,
-										"flex-col": true,
-										"py-2":     true,
-									},
-									htmx.H4(
-										htmx.ClassNames{
-											"text-gray-500": true,
-										},
-										htmx.Text("Updated at"),
-									),
-									htmx.H3(
-										htmx.Text(
-											account.UpdatedAt.Format("2006-01-02 15:04:05"),
-										),
-									),
-								),
 							),
 							cards.Actions(
 								cards.ActionsProps{},
@@ -188,6 +152,42 @@ func (l *ShowAccountControllerImpl) Get() error {
 									// PublicKey: acc.Operator.Key.ID,
 								},
 							),
+							htmx.Div(
+								htmx.ClassNames{
+									"flex":     true,
+									"flex-col": true,
+									"py-2":     true,
+								},
+								htmx.H4(
+									htmx.ClassNames{
+										"text-gray-500": true,
+									},
+									htmx.Text("Created at"),
+								),
+								htmx.H3(
+									htmx.Text(
+										account.CreatedAt.Format("2006-01-02 15:04:05"),
+									),
+								),
+							),
+							htmx.Div(
+								htmx.ClassNames{
+									"flex":     true,
+									"flex-col": true,
+									"py-2":     true,
+								},
+								htmx.H4(
+									htmx.ClassNames{
+										"text-gray-500": true,
+									},
+									htmx.Text("Updated at"),
+								),
+								htmx.H3(
+									htmx.Text(
+										account.UpdatedAt.Format("2006-01-02 15:04:05"),
+									),
+								),
+							),
 						),
 					),
 					cards.CardBordered(
@@ -202,7 +202,6 @@ func (l *ShowAccountControllerImpl) Get() error {
 								cards.TitleProps{},
 								htmx.Text("Signing Key Groups"),
 							),
-
 							accounts.SigningKeyGroupsTable(
 								accounts.SigningKeyGroupsTableProps{
 									SigningKeyGroups: cast.PtrSlice(account.SigningKeyGroups...),

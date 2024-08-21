@@ -288,6 +288,13 @@ func (h *handlers) AccountTeamSearch() fiber.Handler {
 	})
 }
 
+// OperatorSearch ...
+func (h *handlers) OperatorSearch() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return search.NewSearchOperatorsController(h.store)
+	})
+}
+
 // EditTeam ...
 func (h *handlers) EditTeam() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {

@@ -61,6 +61,8 @@ func (l *OperatorSkgsOptionsImpl) Get() error {
 	return l.Render(
 		forms.SelectBordered(
 			forms.SelectProps{},
+			htmx.HxGet("/accounts/partials/operator-skgs"),
+			htmx.HxTrigger("change from:input[name=operator]"),
 			forms.Option(
 				forms.OptionProps{
 					Selected: true,
@@ -68,6 +70,9 @@ func (l *OperatorSkgsOptionsImpl) Get() error {
 				},
 				htmx.Text("Select an signing key group"),
 			),
+			htmx.Target("this"),
+			htmx.HxValidate(true),
+			htmx.HxInclude("[name='operator_id']"),
 			htmx.ID("operator-skgs"),
 			htmx.Name("operator_skgs_id"),
 			htmx.Group(
