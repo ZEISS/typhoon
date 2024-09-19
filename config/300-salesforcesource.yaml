@@ -42,42 +42,38 @@ spec:
             type: object
             properties:
               auth:
-                description: Authentication method to interact with the Salesforce API.
                 type: object
+                description: Authentication method to interact with the Salesforce API.
                 properties:
-                  auth:
-                    type: object
-                    description: Authentication method to interact with the Salesforce API.
-                    properties:
-                      clientID:
-                        description: Salesforce client ID.
-                        type: string
-                      clientSecret:
-                  instanaceURL:
-                    description: Salesforce instance URL.
+                  clientID:
+                    description: Salesforce client ID.
                     type: string
+                  clientSecret:
+              instanaceURL:
+                description: Salesforce instance URL.
+                type: string
+                properties:
+                  value:
+                    description: Literal value of the certificate key.
+                    type: string
+                  valueFromSecret:
+                    description: A reference to a Kubernetes Secret containing the certificate key.
+                    type: object
                     properties:
-                      value:
-                        description: Literal value of the certificate key.
+                      name:
                         type: string
-                      valueFromSecret:
-                        description: A reference to a Kubernetes Secret containing the certificate key.
-                        type: object
-                        properties:
-                          name:
-                            type: string
-                          key:
-                            type: string
-                        required:
-                        - name
-                        - key
-                    oneOf:
-                    - required: [value]
-                    - required: [valueFromSecret]
-                required:
-                - clientID
-                - instanceURL
-                - auth
+                      key:
+                        type: string
+                    required:
+                    - name
+                    - key
+                oneOf:
+                - required: [value]
+                - required: [valueFromSecret]
+              required:
+              - clientID
+              - instanceURL
+              - auth
               apiVersion:
                 description: Salesforce API version.
                 type: string
