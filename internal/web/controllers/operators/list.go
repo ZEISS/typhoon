@@ -18,30 +18,28 @@ var _ = htmx.Controller(&ListOperatorsController{})
 
 // ListOperatorsController ...
 type ListOperatorsController struct {
-	Results tables.Results[models.Operator]
-
-	store ports.Datastore
+	operators tables.Results[models.Operator]
+	store     ports.Datastore
 	htmx.DefaultController
 }
 
 // NewListOperatorsController ...
 func NewListOperatorsController(store ports.Datastore) *ListOperatorsController {
 	return &ListOperatorsController{
-		Results:           tables.Results[models.Operator]{Limit: 10},
-		store:             store,
-		DefaultController: htmx.DefaultController{},
+		operators: tables.Results[models.Operator]{Limit: 10, SearchFields: []string{"name"}},
+		store:     store,
 	}
 }
 
 // Prepare ...
 func (l *ListOperatorsController) Prepare() error {
-	err := l.Ctx().QueryParser(&l.Results)
+	err := l.Ctx().QueryParser(&l.operators)
 	if err != nil {
 		return err
 	}
 
 	return l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
-		return tx.ListOperators(ctx, &l.Results)
+		return tx.ListOperators(ctx, &l.operators)
 	})
 }
 
@@ -66,10 +64,11 @@ func (l *ListOperatorsController) Get() error {
 							cards.BodyProps{},
 							operators.OperatorsTable(
 								operators.OperatorsTableProps{
-									Operators: l.Results.GetRows(),
-									Offset:    l.Results.GetOffset(),
-									Limit:     l.Results.GetLimit(),
-									Total:     l.Results.GetLen(),
+									Operators: l.operators.GetRows(),
+									Offset:    l.operators.GetOffset(),
+									Limit:     l.operators.GetLimit(),
+									Total:     l.operators.GetLen(),
+									URL:       l.OriginalURL(),
 								},
 							),
 						),

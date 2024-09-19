@@ -5,6 +5,7 @@ import (
 	pa "github.com/zeiss/typhoon/internal/web/controllers/accounts/partials"
 	"github.com/zeiss/typhoon/internal/web/controllers/accounts/search"
 	"github.com/zeiss/typhoon/internal/web/controllers/dashboard"
+	"github.com/zeiss/typhoon/internal/web/controllers/dashboard/stats"
 	"github.com/zeiss/typhoon/internal/web/controllers/login"
 	"github.com/zeiss/typhoon/internal/web/controllers/me"
 	"github.com/zeiss/typhoon/internal/web/controllers/operators"
@@ -287,6 +288,13 @@ func (h *handlers) AccountTeamSearch() fiber.Handler {
 	})
 }
 
+// OperatorSearch ...
+func (h *handlers) OperatorSearch() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return search.NewSearchOperatorsController(h.store)
+	})
+}
+
 // EditTeam ...
 func (h *handlers) EditTeam() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
@@ -298,5 +306,40 @@ func (h *handlers) EditTeam() fiber.Handler {
 func (h *handlers) UpdateTeam() fiber.Handler {
 	return htmx.NewHxControllerHandler(func() htmx.Controller {
 		return teams.NewTeamEditController(h.store)
+	})
+}
+
+// GetTotalNumberOfAccounts ...
+func (h *handlers) GetTotalNumberOfAccounts() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return stats.NewAccountsStatsController(h.store)
+	})
+}
+
+// GetTotalNumberOfOperators ...
+func (h *handlers) GetTotalNumberOfOperators() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return stats.NewOperatorsStatsController(h.store)
+	})
+}
+
+// GetTotalNumberOfSystems ...
+func (h *handlers) GetTotalNumberOfSystems() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return stats.NewSystemsStatsController(h.store)
+	})
+}
+
+// GetTotalNumberOfTeams ...
+func (h *handlers) GetTotalNumberOfTeams() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return stats.NewTeamsStatsController(h.store)
+	})
+}
+
+// GetTotalNumberOfUsers ...
+func (h *handlers) GetTotalNumberOfUsers() fiber.Handler {
+	return htmx.NewHxControllerHandler(func() htmx.Controller {
+		return stats.NewUsersStatsController(h.store)
 	})
 }

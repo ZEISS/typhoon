@@ -2,8 +2,10 @@ package dashboard
 
 import (
 	"github.com/zeiss/fiber-htmx/components/cards"
+	"github.com/zeiss/fiber-htmx/components/loading"
 	"github.com/zeiss/fiber-htmx/components/stats"
 	"github.com/zeiss/fiber-htmx/components/tailwind"
+	"github.com/zeiss/typhoon/internal/utils"
 	"github.com/zeiss/typhoon/internal/web/components"
 
 	htmx "github.com/zeiss/fiber-htmx"
@@ -51,7 +53,11 @@ func (l *IndexDashboardController) Get() error {
 								),
 								stats.Value(
 									stats.ValueProps{},
-									htmx.Text("0"),
+									htmx.HxGet(utils.GetDashboardStatsAccountsUrlFormat),
+									htmx.HxTrigger("load"),
+									loading.Spinner(
+										loading.SpinnerProps{},
+									),
 								),
 							),
 							stats.Stat(
@@ -62,7 +68,11 @@ func (l *IndexDashboardController) Get() error {
 								),
 								stats.Value(
 									stats.ValueProps{},
-									htmx.Text("0"),
+									htmx.HxGet(utils.GetDashboardStatsTeamsUrlFormat),
+									htmx.HxTrigger("load"),
+									loading.Spinner(
+										loading.SpinnerProps{},
+									),
 								),
 							),
 							stats.Stat(
@@ -73,7 +83,11 @@ func (l *IndexDashboardController) Get() error {
 								),
 								stats.Value(
 									stats.ValueProps{},
-									htmx.Text("0"),
+									htmx.HxGet(utils.GetDashboardStatsUsersUrlFormat),
+									htmx.HxTrigger("load"),
+									loading.Spinner(
+										loading.SpinnerProps{},
+									),
 								),
 							),
 						),

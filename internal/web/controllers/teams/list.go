@@ -26,7 +26,7 @@ type ListTeamsControllerImpl struct {
 // NewTeamsListOperatorController ...
 func NewTeamsListOperatorController(store ports.Datastore) *ListTeamsControllerImpl {
 	return &ListTeamsControllerImpl{
-		teams: tables.Results[models.Team]{Limit: 10},
+		teams: tables.Results[models.Team]{SearchFields: []string{"name"}},
 		store: store,
 	}
 }
@@ -68,6 +68,7 @@ func (l *ListTeamsControllerImpl) Get() error {
 									Offset: l.teams.GetOffset(),
 									Limit:  l.teams.GetLimit(),
 									Total:  l.teams.GetLen(),
+									URL:    l.OriginalURL(),
 								},
 							),
 						),

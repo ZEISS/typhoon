@@ -6,20 +6,16 @@ import (
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/dropdowns"
-	"github.com/zeiss/fiber-htmx/components/forms"
 	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tables"
 	"github.com/zeiss/typhoon/internal/models"
-)
-
-const (
-	showSystemURLFormat   = "/systems/%s"
-	showOperatorURLFormat = "/operators/%s"
+	"github.com/zeiss/typhoon/internal/utils"
 )
 
 // SystemsTableProps ...
 type SystemsTableProps struct {
+	URL     string
 	Systems []*models.System
 	Offset  int
 	Limit   int
@@ -36,17 +32,13 @@ func SystemsTable(props SystemsTableProps, children ...htmx.Node) htmx.Node {
 				Pagination: tables.TablePagination(
 					tables.TablePaginationProps{},
 					tables.Pagination(
-						tables.PaginationProps{
-							Offset: props.Offset,
-							Limit:  props.Limit,
-							Total:  props.Total,
-						},
+						tables.PaginationProps{},
 						tables.Prev(
 							tables.PaginationProps{
 								Total:  props.Total,
 								Offset: props.Offset,
 								Limit:  props.Limit,
-								URL:    "/systems",
+								URL:    props.URL,
 							},
 						),
 
@@ -56,7 +48,7 @@ func SystemsTable(props SystemsTableProps, children ...htmx.Node) htmx.Node {
 								Offset: props.Offset,
 								Limit:  props.Limit,
 								Limits: tables.DefaultLimits,
-								URL:    "/systems",
+								URL:    props.URL,
 							},
 						),
 						tables.Next(
@@ -64,7 +56,7 @@ func SystemsTable(props SystemsTableProps, children ...htmx.Node) htmx.Node {
 								Total:  props.Total,
 								Offset: props.Offset,
 								Limit:  props.Limit,
-								URL:    "/systems",
+								URL:    props.URL,
 							},
 						),
 					),
@@ -75,8 +67,6 @@ func SystemsTable(props SystemsTableProps, children ...htmx.Node) htmx.Node {
 							"flex":            true,
 							"items-center":    true,
 							"justify-between": true,
-							"px-5":            true,
-							"pt-5":            true,
 						},
 					},
 					htmx.Div(
@@ -85,12 +75,11 @@ func SystemsTable(props SystemsTableProps, children ...htmx.Node) htmx.Node {
 							"items-center": true,
 							"gap-3":        true,
 						},
-						forms.TextInputBordered(
-							forms.TextInputProps{
-								ClassNames: htmx.ClassNames{
-									"input-sm": true,
-								},
-								Placeholder: "Search ...",
+						tables.Search(
+							tables.SearchProps{
+								Name:        "search",
+								Placeholder: "Search systems ...",
+								URL:         props.URL,
 							},
 						),
 					),
@@ -125,7 +114,7 @@ func SystemsTable(props SystemsTableProps, children ...htmx.Node) htmx.Node {
 					Cell: func(p tables.TableProps, row *models.System) htmx.Node {
 						return htmx.Td(
 							links.Link(
-								links.LinkProps{Href: fmt.Sprintf(showSystemURLFormat, row.ID)},
+								links.LinkProps{Href: fmt.Sprintf(utils.ShowSystemUrlFormat, row.ID)},
 								htmx.Text(row.Name),
 							),
 						)
@@ -140,7 +129,7 @@ func SystemsTable(props SystemsTableProps, children ...htmx.Node) htmx.Node {
 					Cell: func(p tables.TableProps, row *models.System) htmx.Node {
 						return htmx.Td(
 							links.Link(
-								links.LinkProps{Href: fmt.Sprintf(showOperatorURLFormat, row.Operator.ID)},
+								links.LinkProps{Href: fmt.Sprintf(utils.ShowOperatorUrlFormat, row.Operator.ID)},
 								htmx.Text(row.Operator.Name),
 							),
 						)
@@ -165,11 +154,7 @@ func SystemsTable(props SystemsTableProps, children ...htmx.Node) htmx.Node {
 									dropdowns.DropdownMenuItem(
 										dropdowns.DropdownMenuItemProps{},
 										buttons.Error(
-											buttons.ButtonProps{
-												ClassNames: htmx.ClassNames{
-													"btn-sm": true,
-												},
-											},
+											buttons.ButtonProps{},
 											htmx.HxDelete(fmt.Sprintf("/systems/%s", row.ID)),
 											htmx.HxConfirm("Are you sure you want to delete this system?"),
 											htmx.Text("Delete"),

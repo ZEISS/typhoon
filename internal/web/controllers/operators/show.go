@@ -4,16 +4,17 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/zeiss/pkg/errorx"
 	"github.com/zeiss/typhoon/internal/models"
+	"github.com/zeiss/typhoon/internal/utils"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/components/nkeys"
 	"github.com/zeiss/typhoon/internal/web/components/operators"
 	"github.com/zeiss/typhoon/internal/web/ports"
 
-	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
+	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
-	"github.com/zeiss/fiber-htmx/components/dropdowns"
 	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/tables"
 	"github.com/zeiss/fiber-htmx/components/tailwind"
@@ -21,8 +22,6 @@ import (
 
 // ShowOperatorControllerImpl ...
 type ShowOperatorControllerImpl struct {
-	ID uuid.UUID `json:"name" form:"name" validate:"required:uuid"`
-
 	store ports.Datastore
 	htmx.DefaultController
 }
@@ -30,8 +29,7 @@ type ShowOperatorControllerImpl struct {
 // NewShowOperatorController ...
 func NewShowOperatorController(store ports.Datastore) *ShowOperatorControllerImpl {
 	return &ShowOperatorControllerImpl{
-		store:             store,
-		DefaultController: htmx.DefaultController{},
+		store: store,
 	}
 }
 
@@ -45,19 +43,13 @@ func (l *ShowOperatorControllerImpl) Get() error {
 				User:  l.Session().User,
 			},
 			func() htmx.Node {
-				err := l.BindParams(l)
-				if err != nil {
-					panic(err)
-				}
+				op := models.Operator{}
+				err := l.BindParams(&op)
+				errorx.Panic(err)
 
-				op := models.Operator{ID: l.ID}
-
-				err = l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+				errorx.Panic(l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
 					return tx.GetOperator(ctx, &op)
-				})
-				if err != nil {
-					panic(err)
-				}
+				}))
 
 				return htmx.Fragment(
 					cards.CardBordered(
@@ -76,8 +68,21 @@ func (l *ShowOperatorControllerImpl) Get() error {
 								htmx.H1(
 									htmx.Text(op.Name),
 								),
-								htmx.P(
-									htmx.Text(op.Description),
+								htmx.Div(
+									htmx.ClassNames{
+										"flex":     true,
+										"flex-col": true,
+										"py-2":     true,
+									},
+									htmx.H4(
+										htmx.ClassNames{
+											"text-gray-500": true,
+										},
+										htmx.Text("Description"),
+									),
+									htmx.H3(
+										htmx.Text(op.Description),
+									),
 								),
 								htmx.Div(
 									htmx.ClassNames{
@@ -118,43 +123,32 @@ func (l *ShowOperatorControllerImpl) Get() error {
 							),
 							cards.Actions(
 								cards.ActionsProps{},
-								dropdowns.Dropdown(
-									dropdowns.DropdownProps{
-										ClassNames: htmx.ClassNames{
-											"dropdown-end": true,
-										},
+								htmx.A(
+									htmx.ClassNames{
+										"btn": true,
 									},
-									dropdowns.DropdownButton(
-										dropdowns.DropdownButtonProps{},
-										icons.BoltOutline(
-											icons.IconProps{},
-										),
-										htmx.Text("Actions"),
+									htmx.Href(fmt.Sprintf(utils.DownloadTokenOperatorUrl, op.ID)),
+									icons.ArrowDownOnSquareOutline(
+										icons.IconProps{},
 									),
-									dropdowns.DropdownMenuItems(
-										dropdowns.DropdownMenuItemsProps{},
-										dropdowns.DropdownMenuItem(
-											dropdowns.DropdownMenuItemProps{},
-											htmx.A(
-												htmx.Href(fmt.Sprintf("/operators/%s/token", op.ID)),
-												htmx.Text("Download JWT Token"),
-											),
-										),
-										dropdowns.DropdownMenuItem(
-											dropdowns.DropdownMenuItemProps{},
-											htmx.A(
-												htmx.HxDelete(fmt.Sprintf("/operators/%s", op.ID)),
-												htmx.HxConfirm("Are you sure you want to delete this operator?"),
-												htmx.Text("Delete"),
-											),
-										),
+								),
+								buttons.Button(
+									buttons.ButtonProps{},
+									htmx.HxDelete(fmt.Sprintf(utils.DeleteOperatorUrlFormat, op.ID)),
+									htmx.HxConfirm("Are you sure you want to delete this operator?"),
+									icons.TrashOutline(
+										icons.IconProps{},
 									),
 								),
 							),
 						),
 					),
 					cards.CardBordered(
-						cards.CardProps{},
+						cards.CardProps{
+							ClassNames: htmx.ClassNames{
+								tailwind.M2: true,
+							},
+						},
 						cards.Body(
 							cards.BodyProps{},
 							cards.Title(
@@ -170,7 +164,11 @@ func (l *ShowOperatorControllerImpl) Get() error {
 						),
 					),
 					cards.CardBordered(
-						cards.CardProps{},
+						cards.CardProps{
+							ClassNames: htmx.ClassNames{
+								tailwind.M2: true,
+							},
+						},
 						cards.Body(
 							cards.BodyProps{},
 							cards.Title(

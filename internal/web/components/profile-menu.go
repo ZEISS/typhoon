@@ -28,7 +28,6 @@ func ProfileMenu(p ProfileMenuProps, children ...htmx.Node) htmx.Node {
 		dropdowns.DropdownButton(
 			dropdowns.DropdownButtonProps{
 				ClassNames: htmx.ClassNames{
-					"btn-sm":     true,
 					"btn-circle": true,
 					"btn-ghost":  true,
 				},

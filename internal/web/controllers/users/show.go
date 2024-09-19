@@ -8,10 +8,10 @@ import (
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
-	"github.com/zeiss/fiber-htmx/components/dropdowns"
 	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/tooltips"
 	"github.com/zeiss/typhoon/internal/models"
+	"github.com/zeiss/typhoon/internal/utils"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/ports"
 )
@@ -127,40 +127,21 @@ func (l *ShowUserControllerImpl) Get() error {
 							),
 							cards.Actions(
 								cards.ActionsProps{},
-								dropdowns.Dropdown(
-									dropdowns.DropdownProps{
-										ClassNames: htmx.ClassNames{
-											"dropdown-end": true,
-										},
+								htmx.A(
+									htmx.ClassNames{
+										"btn": true,
 									},
-									dropdowns.DropdownButton(
-										dropdowns.DropdownButtonProps{},
-										icons.BoltOutline(
-											icons.IconProps{},
-										),
-										htmx.Text("Actions"),
+									htmx.Href(fmt.Sprintf(utils.DownloadCredentialsUserUrlFormat, user.ID)),
+									icons.ArrowDownOnSquareOutline(
+										icons.IconProps{},
 									),
-									dropdowns.DropdownMenuItems(
-										dropdowns.DropdownMenuItemsProps{},
-										dropdowns.DropdownMenuItem(
-											dropdowns.DropdownMenuItemProps{},
-											htmx.A(
-												htmx.Href(fmt.Sprintf("/users/%s/credentials", user.ID)),
-												htmx.Text("Get Credentials"),
-											),
-										),
-										dropdowns.DropdownMenuItem(
-											dropdowns.DropdownMenuItemProps{},
-											buttons.Error(
-												buttons.ButtonProps{
-													ClassNames: htmx.ClassNames{
-														"btn-sm": true,
-													},
-												},
-												htmx.HxDelete(fmt.Sprintf("/users/%s", user.ID)),
-												htmx.Text("Delete User"),
-											),
-										),
+								),
+								buttons.Button(
+									buttons.ButtonProps{},
+									htmx.HxDelete(fmt.Sprintf(utils.DeleteUserUrlFormat, user.ID)),
+									htmx.HxConfirm("Are you sure you want to delete this operator?"),
+									icons.TrashOutline(
+										icons.IconProps{},
 									),
 								),
 							),

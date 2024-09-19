@@ -10,8 +10,8 @@ import (
 	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tables"
+	"github.com/zeiss/pkg/stringx"
 	"github.com/zeiss/typhoon/internal/models"
-	"github.com/zeiss/typhoon/internal/utils"
 )
 
 // UsersTableProps ...
@@ -86,18 +86,14 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 								ClassNames: htmx.ClassNames{
 									"input-sm": true,
 								},
-								Placeholder: "Search ...",
+								Placeholder: "Search users ...",
 							},
 						),
 					),
 					htmx.A(
 						htmx.Href("/users/new"),
 						buttons.Outline(
-							buttons.ButtonProps{
-								ClassNames: htmx.ClassNames{
-									"btn-sm": true,
-								},
-							},
+							buttons.ButtonProps{},
 							htmx.Text("Create User"),
 						),
 					),
@@ -124,7 +120,7 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 						return htmx.Th(htmx.Text("Public Key"))
 					},
 					Cell: func(p tables.TableProps, row *models.User) htmx.Node {
-						return htmx.Td(htmx.Text(utils.ShortPubKey(row.Key.ID)))
+						return htmx.Td(htmx.Text(stringx.FirstN(row.Key.ID, 8)))
 					},
 				},
 				{
@@ -168,11 +164,7 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 									dropdowns.DropdownMenuItem(
 										dropdowns.DropdownMenuItemProps{},
 										buttons.Error(
-											buttons.ButtonProps{
-												ClassNames: htmx.ClassNames{
-													"btn-sm": true,
-												},
-											},
+											buttons.ButtonProps{},
 											htmx.HxDelete(fmt.Sprintf("/users/%s", row.ID)),
 											htmx.HxConfirm("Are you sure you want to delete this user?"),
 											htmx.Text("Delete"),

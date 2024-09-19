@@ -5,7 +5,6 @@ import (
 
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
-	"github.com/zeiss/fiber-htmx/components/forms"
 	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tables"
@@ -15,6 +14,7 @@ import (
 
 // OperatorsTableProps ...
 type OperatorsTableProps struct {
+	URL       string
 	Operators []*models.Operator
 	Offset    int
 	Limit     int
@@ -33,17 +33,13 @@ func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node 
 				Pagination: tables.TablePagination(
 					tables.TablePaginationProps{},
 					tables.Pagination(
-						tables.PaginationProps{
-							Offset: props.Offset,
-							Limit:  props.Limit,
-							Total:  props.Total,
-						},
+						tables.PaginationProps{},
 						tables.Prev(
 							tables.PaginationProps{
 								Total:  props.Total,
 								Offset: props.Offset,
 								Limit:  props.Limit,
-								URL:    "/operators",
+								URL:    props.URL,
 							},
 						),
 
@@ -53,7 +49,7 @@ func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node 
 								Offset: props.Offset,
 								Limit:  props.Limit,
 								Limits: tables.DefaultLimits,
-								URL:    "/operators",
+								URL:    props.URL,
 							},
 						),
 						tables.Next(
@@ -61,7 +57,7 @@ func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node 
 								Total:  props.Total,
 								Offset: props.Offset,
 								Limit:  props.Limit,
-								URL:    "/operators",
+								URL:    props.URL,
 							},
 						),
 					),
@@ -72,8 +68,6 @@ func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node 
 							"flex":            true,
 							"items-center":    true,
 							"justify-between": true,
-							"px-5":            true,
-							"pt-5":            true,
 						},
 					},
 					htmx.Div(
@@ -82,12 +76,11 @@ func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node 
 							"items-center": true,
 							"gap-3":        true,
 						},
-						forms.TextInputBordered(
-							forms.TextInputProps{
-								ClassNames: htmx.ClassNames{
-									"input-sm": true,
-								},
-								Placeholder: "Search ...",
+						tables.Search(
+							tables.SearchProps{
+								URL:         props.URL,
+								Name:        "search",
+								Placeholder: "Search operators...",
 							},
 						),
 					),
@@ -137,23 +130,13 @@ func OperatorsTable(props OperatorsTableProps, children ...htmx.Node) htmx.Node 
 					Cell: func(p tables.TableProps, row *models.Operator) htmx.Node {
 						return htmx.Td(
 							buttons.Button(
-								buttons.ButtonProps{
-									ClassNames: htmx.ClassNames{
-										"btn-sm": true,
-									},
-								},
+								buttons.ButtonProps{},
 								htmx.HxDelete(fmt.Sprintf(utils.DeleteOperatorUrlFormat, row.ID)),
 								htmx.HxConfirm("Are you sure you want to delete this operator?"),
 								htmx.HxTarget("closest tr"),
 								htmx.HxSwap("outerHTML swap:1s"),
 								icons.TrashOutline(
-									icons.IconProps{
-										ClassNames: htmx.ClassNames{
-											"w-6 h-6": false,
-											"w-4":     true,
-											"h-4":     true,
-										},
-									},
+									icons.IconProps{},
 								),
 							),
 						)

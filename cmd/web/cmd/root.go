@@ -137,7 +137,13 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Get("/logout", goth.NewLogoutHandler(gothConfig))
 
 		// Root handler
-		app.Get("/", handlers.Dashboard())
+		dashboard := app.Group("/")
+		dashboard.Get("/", handlers.Dashboard())
+		dashboard.Get("/stats/accounts", handlers.GetTotalNumberOfAccounts())
+		dashboard.Get("/stats/operators", handlers.GetTotalNumberOfOperators())
+		dashboard.Get("/stats/systems", handlers.GetTotalNumberOfSystems())
+		dashboard.Get("/stats/users", handlers.GetTotalNumberOfUsers())
+		dashboard.Get("/stats/teams", handlers.GetTotalNumberOfTeams())
 
 		// Site handler
 		teams := app.Group("/teams")
@@ -182,7 +188,8 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		app.Get("/accounts", handlers.ListAccounts())
 		app.Get("/accounts/new", handlers.NewAccount())
 		app.Post("/accounts/create", handlers.CreateAccount())
-		app.Post("/accounts/search/teams", handlers.AccountTeamSearch())
+		app.Get("/accounts/search/teams", handlers.AccountTeamSearch())
+		app.Get("/accounts/search/operators", handlers.OperatorSearch())
 		app.Get("/accounts/:id", handlers.ShowAccount())
 		app.Delete("/accounts/:id", handlers.DeleteAccount())
 		app.Get("/accounts/:id/token", handlers.GetAccountToken())

@@ -17,8 +17,7 @@ var _ = htmx.Controller(&ListUsersController{})
 
 // ListUsersController ...
 type ListUsersController struct {
-	Results tables.Results[models.User]
-
+	users tables.Results[models.User]
 	store ports.Datastore
 	htmx.DefaultController
 }
@@ -26,21 +25,20 @@ type ListUsersController struct {
 // NewListUsersController ...
 func NewListUsersController(store ports.Datastore) *ListUsersController {
 	return &ListUsersController{
-		Results:           tables.Results[models.User]{Limit: 10},
-		DefaultController: htmx.DefaultController{},
-		store:             store,
+		users: tables.Results[models.User]{SearchFields: []string{"name"}},
+		store: store,
 	}
 }
 
 // Prepare ...
 func (l *ListUsersController) Prepare() error {
-	err := l.BindQuery(&l.Results)
+	err := l.BindQuery(&l.users)
 	if err != nil {
 		return err
 	}
 
 	return l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
-		return tx.ListUsers(ctx, &l.Results)
+		return tx.ListUsers(ctx, &l.users)
 	})
 }
 
@@ -64,10 +62,11 @@ func (l *ListUsersController) Get() error {
 						cards.BodyProps{},
 						users.UsersTable(
 							users.UsersTableProps{
-								Users:  l.Results.GetRows(),
-								Offset: l.Results.GetOffset(),
-								Limit:  l.Results.GetLimit(),
-								Total:  l.Results.GetLen(),
+								Users:  l.users.GetRows(),
+								Offset: l.users.GetOffset(),
+								Limit:  l.users.GetLimit(),
+								Total:  l.users.GetLen(),
+								URL:    l.OriginalURL(),
 							},
 						),
 					),

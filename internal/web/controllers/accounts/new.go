@@ -11,7 +11,6 @@ import (
 	"github.com/zeiss/fiber-htmx/components/alpine"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
-	"github.com/zeiss/fiber-htmx/components/dropdowns"
 	"github.com/zeiss/fiber-htmx/components/forms"
 	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/loading"
@@ -19,7 +18,6 @@ import (
 	"github.com/zeiss/fiber-htmx/components/tailwind"
 	"github.com/zeiss/pkg/conv"
 	"github.com/zeiss/pkg/errorx"
-	"github.com/zeiss/pkg/slices"
 )
 
 // NewAccountControllerImpl ...
@@ -78,75 +76,40 @@ func (l *NewAccountControllerImpl) Get() error {
 								htmx.Text("Properties"),
 							),
 							forms.FormControl(
-								forms.FormControlProps{},
-								dropdowns.Dropdown(
-									dropdowns.DropdownProps{},
-									alpine.XData(`{
-										selected: {},
-										onOptionClick(id, name) {
-									   		this.selected = { id, name };
-									    },
-									}`),
-									htmx.Div(
-										htmx.ClassNames{
-											tailwind.Flex:          true,
-											tailwind.SpaceX4:       true,
-											tailwind.JustifyCenter: true,
+								forms.FormControlProps{
+									ClassNames: htmx.ClassNames{},
+								},
+								htmx.Div(
+									htmx.ClassNames{
+										tailwind.Flex:           true,
+										tailwind.JustifyBetween: true,
+									},
+									forms.Datalist(
+										forms.DatalistProps{
+											ID:          "teams",
+											Name:        "team",
+											Placeholder: "Select team ...",
+											URL:         "/accounts/search/teams",
 										},
-										forms.TextInputBordered(
-											forms.TextInputProps{
-												Placeholder: "Search a team ...",
-												Name:        "search",
-											},
-											alpine.XModel("selected.name"),
-											alpine.XRef("button"),
-											htmx.HxPost("/accounts/search/teams"),
-											htmx.HxTarget("#search-results"),
-											htmx.HxTrigger("keyup changed delay:500ms"),
-											htmx.HxIndicator(".htmx-indicator"),
-										),
-										loading.Spinner(
-											loading.SpinnerProps{
-												ClassNames: htmx.ClassNames{
-													"htmx-indicator": true,
-												},
-											},
-										),
 									),
-
-									htmx.Input(
-										htmx.Name("team_id"),
-										htmx.Type("hidden"),
-										alpine.XModel("selected.id"),
-									),
-									dropdowns.DropdownMenuItems(
-										dropdowns.DropdownMenuItemsProps{
+									loading.Spinner(
+										loading.SpinnerProps{
 											ClassNames: htmx.ClassNames{
-												tailwind.WFull: true,
+												"htmx-indicator": true,
+												tailwind.M2:      true,
 											},
 										},
-										htmx.ID("search-results"),
-										htmx.IfElse(
-											!slices.Size(0, teams.Rows),
-											htmx.Group(
-												htmx.ForEach(tables.RowsPtr(teams.Rows), func(e *models.Team, idx int) htmx.Node {
-													return dropdowns.DropdownMenuItem(
-														dropdowns.DropdownMenuItemProps{},
-														htmx.A(
-															htmx.Text(e.Name),
-															htmx.Value(e.ID.String()),
-															alpine.XOn("click", "onOptionClick($event.target.getAttribute('value'), $event.target.innerText)"),
-														),
-													)
-												})...,
-											),
-											dropdowns.DropdownMenuItem(
-												dropdowns.DropdownMenuItemProps{},
-												htmx.A(
-													htmx.Text("No teams found"),
-												),
-											),
-										),
+									),
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												tailwind.TextNeutral500: true,
+											},
+										},
+										htmx.Text("The team that owns the account."),
 									),
 								),
 							),
@@ -154,52 +117,46 @@ func (l *NewAccountControllerImpl) Get() error {
 								forms.FormControlProps{
 									ClassNames: htmx.ClassNames{},
 								},
+								htmx.Div(
+									htmx.ClassNames{
+										tailwind.Flex:           true,
+										tailwind.JustifyBetween: true,
+									},
+									forms.Datalist(
+										forms.DatalistProps{
+											ID:          "operators",
+											Name:        "operator",
+											Placeholder: "Select operator ...",
+											URL:         "/accounts/search/operators",
+										},
+									),
+									loading.Spinner(
+										loading.SpinnerProps{
+											ClassNames: htmx.ClassNames{
+												"htmx-indicator": true,
+												tailwind.M2:      true,
+											},
+										},
+									),
+								),
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
 									forms.FormControlLabelText(
 										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{},
+											ClassNames: htmx.ClassNames{
+												tailwind.TextNeutral500: true,
+											},
 										},
-										htmx.Text("Operator"),
-									),
-								),
-								forms.SelectBordered(
-									forms.SelectProps{},
-									htmx.HxGet("/accounts/partials/operator-skgs"),
-									htmx.HxTarget("#operator-skgs"),
-									htmx.HxSwap("outerHTML"),
-									htmx.HxValidate(true),
-									forms.Option(
-										forms.OptionProps{
-											Selected: true,
-											Disabled: true,
-										},
-										htmx.Text("Select an operator"),
-									),
-									htmx.Name("operator_id"),
-									htmx.Group(
-										htmx.ForEach(l.Results.GetRows(), func(operator *models.Operator, idx int) htmx.Node {
-											return forms.Option(
-												forms.OptionProps{
-													Value: operator.ID.String(),
-												},
-												htmx.Text(operator.Name),
-											)
-										})...,
+										htmx.Text("The operator that is used to sign the account."),
 									),
 								),
 							),
 							forms.FormControl(
 								forms.FormControlProps{},
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{},
-										htmx.Text("Signing Key Group"),
-									),
-								),
 								forms.SelectBordered(
 									forms.SelectProps{},
+									htmx.HxGet("/accounts/partials/operator-skgs"),
+									htmx.HxTrigger("change from:input[name=operator]"),
 									forms.Option(
 										forms.OptionProps{
 											Selected: true,
@@ -207,20 +164,26 @@ func (l *NewAccountControllerImpl) Get() error {
 										},
 										htmx.Text("Select an signing key group"),
 									),
+									htmx.HxSwap("outerHTML"),
 									htmx.HxValidate(true),
+									htmx.HxInclude("[name='operator_id']"),
 									htmx.ID("operator-skgs"),
 									htmx.Name("operator_skgs_id"),
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												tailwind.TextNeutral500: true,
+											},
+										},
+										htmx.Text("The signing key group that is used to sign the account."),
+									),
 								),
 							),
 							forms.FormControl(
 								forms.FormControlProps{},
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{},
-										htmx.Text("Name"),
-									),
-								),
 								forms.TextInputBordered(
 									forms.TextInputProps{
 										Name:        "name",
@@ -241,17 +204,6 @@ func (l *NewAccountControllerImpl) Get() error {
 							),
 							forms.FormControl(
 								forms.FormControlProps{},
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												tailwind.TextNeutral500: true,
-											},
-										},
-										htmx.Text("A brief description of the acount to provide context."),
-									),
-								),
 								forms.TextareaBordered(
 									forms.TextareaProps{
 										Name:        "description",
