@@ -51,6 +51,8 @@ spec:
               value: "{{ .Values.global.image.repository }}/webhooksource-adapter:{{ .Values.global.image.tag | default .Chart.AppVersion }}"
             - name: SALESFORCESOURCE_IMAGE
               value: "{{ .Values.global.image.repository }}/salesforcesource-adapter:{{ .Values.global.image.tag | default .Chart.AppVersion }}"
+            - name: CLOUDEVENTSSOURCE_IMAGE
+              value: "{{ .Values.global.image.repository }}/cloudeventssource-adapter:{{ .Values.global.image.tag | default .Chart.AppVersion }}"
             # Target adapters
             - name: CLOUDEVENTSTARGET_IMAGE
               value: "{{ .Values.global.image.repository }}/cloudeventstarget-adapter:{{ .Values.global.image.tag | default .Chart.AppVersion }}"
