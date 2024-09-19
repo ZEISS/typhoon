@@ -8,12 +8,16 @@ import (
 	"github.com/zeiss/typhoon/internal/web/ports"
 
 	htmx "github.com/zeiss/fiber-htmx"
+	"github.com/zeiss/fiber-htmx/components/alpine"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/forms"
+	"github.com/zeiss/fiber-htmx/components/icons"
+	"github.com/zeiss/fiber-htmx/components/loading"
 	"github.com/zeiss/fiber-htmx/components/tables"
 	"github.com/zeiss/fiber-htmx/components/tailwind"
 	"github.com/zeiss/pkg/conv"
+	"github.com/zeiss/pkg/errorx"
 )
 
 // NewAccountControllerImpl ...
@@ -43,18 +47,28 @@ func (l *NewAccountControllerImpl) Prepare() error {
 
 // Get ...
 func (l *NewAccountControllerImpl) Get() error {
-	return htmx.RenderComp(
-		l.Ctx(),
-		components.Page(
-			components.PageProps{
+	return l.Render(
+		components.DefaultLayout(
+			components.DefaultLayoutProps{
 				Title: "New Account",
 				Path:  l.Path(),
+				User:  l.Session().User,
 			},
-			components.Layout(
-				components.LayoutProps{},
-				htmx.FormElement(
+			func() htmx.Node {
+				teams := tables.Results[models.Team]{}
+				errorx.Panic(l.BindQuery(&teams))
+
+				errorx.Panic(l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
+					return tx.ListTeams(ctx, &teams)
+				}))
+
+				return htmx.FormElement(
 					cards.CardBordered(
-						cards.CardProps{},
+						cards.CardProps{
+							ClassNames: htmx.ClassNames{
+								tailwind.M2: true,
+							},
+						},
 						cards.Body(
 							cards.BodyProps{},
 							cards.Title(
@@ -62,37 +76,40 @@ func (l *NewAccountControllerImpl) Get() error {
 								htmx.Text("Properties"),
 							),
 							forms.FormControl(
-								forms.FormControlProps{},
+								forms.FormControlProps{
+									ClassNames: htmx.ClassNames{},
+								},
+								htmx.Div(
+									htmx.ClassNames{
+										tailwind.Flex:           true,
+										tailwind.JustifyBetween: true,
+									},
+									forms.Datalist(
+										forms.DatalistProps{
+											ID:          "teams",
+											Name:        "team",
+											Placeholder: "Select team ...",
+											URL:         "/accounts/search/teams",
+										},
+									),
+									loading.Spinner(
+										loading.SpinnerProps{
+											ClassNames: htmx.ClassNames{
+												"htmx-indicator": true,
+												tailwind.M2:      true,
+											},
+										},
+									),
+								),
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
 									forms.FormControlLabelText(
 										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{},
+											ClassNames: htmx.ClassNames{
+												tailwind.TextNeutral500: true,
+											},
 										},
-										htmx.Text("Team"),
-									),
-								),
-								forms.SelectBordered(
-									forms.SelectProps{},
-									htmx.Required(),
-									htmx.HxValidate(true),
-									forms.Option(
-										forms.OptionProps{
-											Selected: true,
-											Disabled: true,
-										},
-										htmx.Text("Select a team"),
-									),
-									htmx.Name("team_id"),
-									htmx.Group(
-										htmx.ForEach(l.Teams.GetRows(), func(operator *models.Team, idx int) htmx.Node {
-											return forms.Option(
-												forms.OptionProps{
-													Value: operator.ID.String(),
-												},
-												htmx.Text(operator.Name),
-											)
-										})...,
+										htmx.Text("The team that owns the account."),
 									),
 								),
 							),
@@ -100,52 +117,46 @@ func (l *NewAccountControllerImpl) Get() error {
 								forms.FormControlProps{
 									ClassNames: htmx.ClassNames{},
 								},
+								htmx.Div(
+									htmx.ClassNames{
+										tailwind.Flex:           true,
+										tailwind.JustifyBetween: true,
+									},
+									forms.Datalist(
+										forms.DatalistProps{
+											ID:          "operators",
+											Name:        "operator",
+											Placeholder: "Select operator ...",
+											URL:         "/accounts/search/operators",
+										},
+									),
+									loading.Spinner(
+										loading.SpinnerProps{
+											ClassNames: htmx.ClassNames{
+												"htmx-indicator": true,
+												tailwind.M2:      true,
+											},
+										},
+									),
+								),
 								forms.FormControlLabel(
 									forms.FormControlLabelProps{},
 									forms.FormControlLabelText(
 										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{},
+											ClassNames: htmx.ClassNames{
+												tailwind.TextNeutral500: true,
+											},
 										},
-										htmx.Text("Operator"),
-									),
-								),
-								forms.SelectBordered(
-									forms.SelectProps{},
-									htmx.HxGet("/accounts/partials/operator-skgs"),
-									htmx.HxTarget("#operator-skgs"),
-									htmx.HxSwap("outerHTML"),
-									htmx.HxValidate(true),
-									forms.Option(
-										forms.OptionProps{
-											Selected: true,
-											Disabled: true,
-										},
-										htmx.Text("Select an operator"),
-									),
-									htmx.Name("operator_id"),
-									htmx.Group(
-										htmx.ForEach(l.Results.GetRows(), func(operator *models.Operator, idx int) htmx.Node {
-											return forms.Option(
-												forms.OptionProps{
-													Value: operator.ID.String(),
-												},
-												htmx.Text(operator.Name),
-											)
-										})...,
+										htmx.Text("The operator that is used to sign the account."),
 									),
 								),
 							),
 							forms.FormControl(
 								forms.FormControlProps{},
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{},
-										htmx.Text("Signing Key Group"),
-									),
-								),
 								forms.SelectBordered(
 									forms.SelectProps{},
+									htmx.HxGet("/accounts/partials/operator-skgs"),
+									htmx.HxTrigger("change from:input[name=operator]"),
 									forms.Option(
 										forms.OptionProps{
 											Selected: true,
@@ -153,24 +164,30 @@ func (l *NewAccountControllerImpl) Get() error {
 										},
 										htmx.Text("Select an signing key group"),
 									),
+									htmx.HxSwap("outerHTML"),
 									htmx.HxValidate(true),
+									htmx.HxInclude("[name='operator_id']"),
 									htmx.ID("operator-skgs"),
 									htmx.Name("operator_skgs_id"),
+								),
+								forms.FormControlLabel(
+									forms.FormControlLabelProps{},
+									forms.FormControlLabelText(
+										forms.FormControlLabelTextProps{
+											ClassNames: htmx.ClassNames{
+												tailwind.TextNeutral500: true,
+											},
+										},
+										htmx.Text("The signing key group that is used to sign the account."),
+									),
 								),
 							),
 							forms.FormControl(
 								forms.FormControlProps{},
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{},
-										htmx.Text("Name"),
-									),
-								),
 								forms.TextInputBordered(
 									forms.TextInputProps{
 										Name:        "name",
-										Placeholder: "Start giving it a name ...",
+										Placeholder: "Jarvis, Skynet, etc.",
 									},
 								),
 								forms.FormControlLabel(
@@ -187,21 +204,10 @@ func (l *NewAccountControllerImpl) Get() error {
 							),
 							forms.FormControl(
 								forms.FormControlProps{},
-								forms.FormControlLabel(
-									forms.FormControlLabelProps{},
-									forms.FormControlLabelText(
-										forms.FormControlLabelTextProps{
-											ClassNames: htmx.ClassNames{
-												tailwind.TextNeutral500: true,
-											},
-										},
-										htmx.Text("A brief description of the acount to provide context."),
-									),
-								),
 								forms.TextareaBordered(
 									forms.TextareaProps{
 										Name:        "description",
-										Placeholder: "Start typing a description ...",
+										Placeholder: "A super cool tool that does amazing things ...",
 									},
 								),
 								forms.FormControlLabel(
@@ -219,7 +225,11 @@ func (l *NewAccountControllerImpl) Get() error {
 						),
 					),
 					cards.CardBordered(
-						cards.CardProps{},
+						cards.CardProps{
+							ClassNames: htmx.ClassNames{
+								tailwind.M2: true,
+							},
+						},
 						cards.Body(
 							cards.BodyProps{},
 							cards.Title(
@@ -430,19 +440,9 @@ func (l *NewAccountControllerImpl) Get() error {
 									htmx.Name("jetstream_max_bytes_required"),
 								),
 							),
-						),
-					),
-					cards.CardBordered(
-						cards.CardProps{},
-						cards.Body(
-							cards.BodyProps{},
-							cards.Title(
-								cards.TitleProps{},
-								htmx.Text("Tags - Optional"),
-							),
 							cards.Actions(
 								cards.ActionsProps{},
-								buttons.Outline(
+								buttons.Button(
 									buttons.ButtonProps{},
 									htmx.Action("."),
 									htmx.HxPost("/accounts/create"),
@@ -453,8 +453,105 @@ func (l *NewAccountControllerImpl) Get() error {
 							),
 						),
 					),
-				),
-			),
+					cards.CardBordered(
+						cards.CardProps{
+							ClassNames: htmx.ClassNames{
+								"my-2": true,
+								"mx-2": true,
+							},
+						},
+						cards.Body(
+							cards.BodyProps{},
+							cards.Title(
+								cards.TitleProps{},
+								htmx.Text("Tags - Optional"),
+							),
+							htmx.Div(
+								alpine.XData(`{
+						tags: [],
+						addTag(tag) {
+						  this.tags.push({name: '', value: ''});
+						},
+						removeTag(index) {
+						  this.tags.splice(index, 1);
+						}
+					  }`),
+								htmx.Template(
+									alpine.XFor("(tag, index) in tags"),
+									htmx.Attribute(":key", "index"),
+									htmx.Div(
+										htmx.ClassNames{
+											tailwind.Flex:    true,
+											tailwind.SpaceX4: true,
+										},
+										forms.FormControl(
+											forms.FormControlProps{
+												ClassNames: htmx.ClassNames{},
+											},
+											forms.TextInputBordered(
+												forms.TextInputProps{},
+												alpine.XModel("tag.name"),
+												alpine.XBind("name", "`tags.${index}.name`"),
+											),
+											forms.FormControlLabel(
+												forms.FormControlLabelProps{},
+												forms.FormControlLabelText(
+													forms.FormControlLabelTextProps{
+														ClassNames: htmx.ClassNames{
+															"text-neutral-500": true,
+														},
+													},
+													htmx.Text("Key is a unique identifier. At least 3 characters must be non-whitespace."),
+												),
+											),
+										),
+										forms.FormControl(
+											forms.FormControlProps{
+												ClassNames: htmx.ClassNames{},
+											},
+											forms.TextInputBordered(
+												forms.TextInputProps{},
+												alpine.XModel("tag.value"),
+												alpine.XBind("name", "`tags.${index}.value`"),
+											),
+											forms.FormControlLabel(
+												forms.FormControlLabelProps{},
+												forms.FormControlLabelText(
+													forms.FormControlLabelTextProps{
+														ClassNames: htmx.ClassNames{
+															"text-neutral-500": true,
+														},
+													},
+													htmx.Text("Value is a unique value for the key."),
+												),
+											),
+										),
+										buttons.Button(
+											buttons.ButtonProps{
+												Type: "button",
+											},
+											alpine.XOn("click", "removeTag(index)"),
+											icons.TrashOutline(
+												icons.IconProps{},
+											),
+										),
+									),
+								),
+								cards.Actions(
+									cards.ActionsProps{},
+									buttons.Button(
+										buttons.ButtonProps{
+											Type: "button",
+										},
+										alpine.XOn("click", "addTag()"),
+										htmx.Text("Add Tag"),
+									),
+								),
+							),
+						),
+					),
+				)
+			},
 		),
 	)
 }

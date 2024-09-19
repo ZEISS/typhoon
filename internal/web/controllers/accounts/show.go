@@ -4,20 +4,20 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/uuid"
-	"github.com/zeiss/fiber-htmx/components/buttons"
-	"github.com/zeiss/fiber-htmx/components/cards"
-	"github.com/zeiss/fiber-htmx/components/dropdowns"
-	"github.com/zeiss/fiber-htmx/components/icons"
-	"github.com/zeiss/fiber-htmx/components/tailwind"
-	"github.com/zeiss/pkg/cast"
 	"github.com/zeiss/typhoon/internal/models"
+	"github.com/zeiss/typhoon/internal/utils"
 	"github.com/zeiss/typhoon/internal/web/components"
 	"github.com/zeiss/typhoon/internal/web/components/accounts"
 	"github.com/zeiss/typhoon/internal/web/components/nkeys"
 	"github.com/zeiss/typhoon/internal/web/ports"
 
+	"github.com/google/uuid"
 	htmx "github.com/zeiss/fiber-htmx"
+	"github.com/zeiss/fiber-htmx/components/buttons"
+	"github.com/zeiss/fiber-htmx/components/cards"
+	"github.com/zeiss/fiber-htmx/components/icons"
+	"github.com/zeiss/fiber-htmx/components/tailwind"
+	"github.com/zeiss/pkg/cast"
 )
 
 // ShowAccountControllerImpl ...
@@ -35,8 +35,12 @@ func NewShowAccountController(store ports.Datastore) *ShowAccountControllerImpl 
 func (l *ShowAccountControllerImpl) Get() error {
 	return l.Render(
 		components.DefaultLayout(
-			components.DefaultLayoutProps{},
-			htmx.ControllerComponent(l, func(ctrl htmx.Controller) htmx.Node {
+			components.DefaultLayoutProps{
+				Title: "Account",
+				Path:  l.Path(),
+				User:  l.Session().User,
+			},
+			func() htmx.Node {
 				var params struct {
 					ID uuid.UUID `json:"name" form:"name" validate:"required:uuid"`
 				}
@@ -53,11 +57,6 @@ func (l *ShowAccountControllerImpl) Get() error {
 				})
 				if err != nil {
 					panic(err)
-				}
-
-				skgs := []*models.SigningKeyGroup{}
-				for i := range account.SigningKeyGroups {
-					skgs = append(skgs, skgs[i])
 				}
 
 				return htmx.Fragment(
@@ -84,7 +83,7 @@ func (l *ShowAccountControllerImpl) Get() error {
 										htmx.ClassNames{
 											"text-gray-500": true,
 										},
-										htmx.Text("DescripNtion"),
+										htmx.Text("Name"),
 									),
 									htmx.H3(
 										htmx.Text(account.Name),
@@ -106,79 +105,24 @@ func (l *ShowAccountControllerImpl) Get() error {
 										htmx.Text(cast.Value(account.Description)),
 									),
 								),
-								htmx.Div(
-									htmx.ClassNames{
-										"flex":     true,
-										"flex-col": true,
-										"py-2":     true,
-									},
-									htmx.H4(
-										htmx.ClassNames{
-											"text-gray-500": true,
-										},
-										htmx.Text("Created at"),
-									),
-									htmx.H3(
-										htmx.Text(
-											account.CreatedAt.Format("2006-01-02 15:04:05"),
-										),
-									),
-								),
-								htmx.Div(
-									htmx.ClassNames{
-										"flex":     true,
-										"flex-col": true,
-										"py-2":     true,
-									},
-									htmx.H4(
-										htmx.ClassNames{
-											"text-gray-500": true,
-										},
-										htmx.Text("Updated at"),
-									),
-									htmx.H3(
-										htmx.Text(
-											account.UpdatedAt.Format("2006-01-02 15:04:05"),
-										),
-									),
-								),
 							),
 							cards.Actions(
 								cards.ActionsProps{},
-								dropdowns.Dropdown(
-									dropdowns.DropdownProps{
-										ClassNames: htmx.ClassNames{
-											"dropdown-end": true,
-										},
+								htmx.A(
+									htmx.ClassNames{
+										"btn": true,
 									},
-									dropdowns.DropdownButton(
-										dropdowns.DropdownButtonProps{},
-										icons.BoltOutline(
-											icons.IconProps{},
-										),
-										htmx.Text("Actions"),
+									htmx.Href(fmt.Sprintf(utils.DownloadTokenAccountUrl, account.ID)),
+									icons.ArrowDownOnSquareOutline(
+										icons.IconProps{},
 									),
-									dropdowns.DropdownMenuItems(
-										dropdowns.DropdownMenuItemsProps{},
-										dropdowns.DropdownMenuItem(
-											dropdowns.DropdownMenuItemProps{},
-											htmx.A(
-												htmx.Href(fmt.Sprintf("/accounts/%s/token", account.ID)),
-												htmx.Text("Download JWT Token"),
-											),
-										),
-										dropdowns.DropdownMenuItem(
-											dropdowns.DropdownMenuItemProps{},
-											buttons.Error(
-												buttons.ButtonProps{
-													ClassNames: htmx.ClassNames{
-														"btn-sm": true,
-													},
-												},
-												htmx.HxDelete(fmt.Sprintf("/accounts/%s", account.ID)),
-												htmx.Text("Delete Account"),
-											),
-										),
+								),
+								buttons.Button(
+									buttons.ButtonProps{},
+									htmx.HxDelete(fmt.Sprintf(utils.DeleteAccountUrlFormat, account.ID)),
+									htmx.HxConfirm("Are you sure you want to delete this account?"),
+									icons.TrashOutline(
+										icons.IconProps{},
 									),
 								),
 							),
@@ -208,6 +152,42 @@ func (l *ShowAccountControllerImpl) Get() error {
 									// PublicKey: acc.Operator.Key.ID,
 								},
 							),
+							htmx.Div(
+								htmx.ClassNames{
+									"flex":     true,
+									"flex-col": true,
+									"py-2":     true,
+								},
+								htmx.H4(
+									htmx.ClassNames{
+										"text-gray-500": true,
+									},
+									htmx.Text("Created at"),
+								),
+								htmx.H3(
+									htmx.Text(
+										account.CreatedAt.Format("2006-01-02 15:04:05"),
+									),
+								),
+							),
+							htmx.Div(
+								htmx.ClassNames{
+									"flex":     true,
+									"flex-col": true,
+									"py-2":     true,
+								},
+								htmx.H4(
+									htmx.ClassNames{
+										"text-gray-500": true,
+									},
+									htmx.Text("Updated at"),
+								),
+								htmx.H3(
+									htmx.Text(
+										account.UpdatedAt.Format("2006-01-02 15:04:05"),
+									),
+								),
+							),
 						),
 					),
 					cards.CardBordered(
@@ -222,10 +202,9 @@ func (l *ShowAccountControllerImpl) Get() error {
 								cards.TitleProps{},
 								htmx.Text("Signing Key Groups"),
 							),
-
 							accounts.SigningKeyGroupsTable(
 								accounts.SigningKeyGroupsTableProps{
-									SigningKeyGroups: skgs,
+									SigningKeyGroups: cast.PtrSlice(account.SigningKeyGroups...),
 								},
 							),
 							cards.Actions(
@@ -246,6 +225,5 @@ func (l *ShowAccountControllerImpl) Get() error {
 					),
 				)
 			}),
-		),
 	)
 }

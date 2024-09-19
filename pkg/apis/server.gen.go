@@ -15,6 +15,12 @@ import (
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// Get system health status
+	// (GET /_health)
+	GetHealth(c *fiber.Ctx) error
+	// Get system readiness
+	// (GET /_ready)
+	GetReady(c *fiber.Ctx) error
 	// List all accounts
 	// (GET /accounts)
 	ListAccounts(c *fiber.Ctx, params ListAccountsParams) error
@@ -147,6 +153,22 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc fiber.Handler
 
+// GetHealth operation middleware
+func (siw *ServerInterfaceWrapper) GetHealth(c *fiber.Ctx) error {
+
+	c.Context().SetUserValue(OpenIdScopes, []string{})
+
+	return siw.Handler.GetHealth(c)
+}
+
+// GetReady operation middleware
+func (siw *ServerInterfaceWrapper) GetReady(c *fiber.Ctx) error {
+
+	c.Context().SetUserValue(OpenIdScopes, []string{})
+
+	return siw.Handler.GetReady(c)
+}
+
 // ListAccounts operation middleware
 func (siw *ServerInterfaceWrapper) ListAccounts(c *fiber.Ctx) error {
 
@@ -185,9 +207,7 @@ func (siw *ServerInterfaceWrapper) ListAccounts(c *fiber.Ctx) error {
 // CreateAccount operation middleware
 func (siw *ServerInterfaceWrapper) CreateAccount(c *fiber.Ctx) error {
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.CreateAccount(c)
 }
@@ -205,9 +225,7 @@ func (siw *ServerInterfaceWrapper) DeleteAccount(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.DeleteAccount(c, accountId)
 }
@@ -225,9 +243,7 @@ func (siw *ServerInterfaceWrapper) GetAccount(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.GetAccount(c, accountId)
 }
@@ -245,9 +261,7 @@ func (siw *ServerInterfaceWrapper) UpdateAccount(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.UpdateAccount(c, accountId)
 }
@@ -265,9 +279,7 @@ func (siw *ServerInterfaceWrapper) DeleteAccountSigningKeyGroup(c *fiber.Ctx) er
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.DeleteAccountSigningKeyGroup(c, accountId)
 }
@@ -326,9 +338,7 @@ func (siw *ServerInterfaceWrapper) CreateAccountSigningKeyGroup(c *fiber.Ctx) er
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.CreateAccountSigningKeyGroup(c, accountId)
 }
@@ -346,9 +356,7 @@ func (siw *ServerInterfaceWrapper) GetAccountToken(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter accountId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.GetAccountToken(c, accountId)
 }
@@ -391,9 +399,7 @@ func (siw *ServerInterfaceWrapper) ListOperators(c *fiber.Ctx) error {
 // CreateOperator operation middleware
 func (siw *ServerInterfaceWrapper) CreateOperator(c *fiber.Ctx) error {
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.CreateOperator(c)
 }
@@ -411,9 +417,7 @@ func (siw *ServerInterfaceWrapper) DeleteOperator(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.DeleteOperator(c, operatorId)
 }
@@ -431,9 +435,7 @@ func (siw *ServerInterfaceWrapper) GetOperator(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.GetOperator(c, operatorId)
 }
@@ -451,9 +453,7 @@ func (siw *ServerInterfaceWrapper) UpdateOperator(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.UpdateOperator(c, operatorId)
 }
@@ -514,9 +514,7 @@ func (siw *ServerInterfaceWrapper) CreateOperatorSigningKeyGroup(c *fiber.Ctx) e
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.CreateOperatorSigningKeyGroup(c, operatorId)
 }
@@ -534,9 +532,7 @@ func (siw *ServerInterfaceWrapper) GetOperatorSystemAccount(c *fiber.Ctx) error 
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.GetOperatorSystemAccount(c, operatorId)
 }
@@ -554,9 +550,7 @@ func (siw *ServerInterfaceWrapper) UpdateOperatorSystemAccount(c *fiber.Ctx) err
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.UpdateOperatorSystemAccount(c, operatorId)
 }
@@ -574,9 +568,7 @@ func (siw *ServerInterfaceWrapper) GetOperatorToken(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter operatorId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.GetOperatorToken(c, operatorId)
 }
@@ -586,9 +578,7 @@ func (siw *ServerInterfaceWrapper) ListSystems(c *fiber.Ctx) error {
 
 	var err error
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	// Parameter object where we will unmarshal all parameters from the context
 	var params ListSystemsParams
@@ -619,9 +609,7 @@ func (siw *ServerInterfaceWrapper) ListSystems(c *fiber.Ctx) error {
 // CreateSystem operation middleware
 func (siw *ServerInterfaceWrapper) CreateSystem(c *fiber.Ctx) error {
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.CreateSystem(c)
 }
@@ -639,9 +627,7 @@ func (siw *ServerInterfaceWrapper) DeleteSystem(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter systemId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.DeleteSystem(c, systemId)
 }
@@ -659,9 +645,7 @@ func (siw *ServerInterfaceWrapper) GetSystem(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter systemId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.GetSystem(c, systemId)
 }
@@ -679,9 +663,7 @@ func (siw *ServerInterfaceWrapper) UpdateSystem(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter systemId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.UpdateSystem(c, systemId)
 }
@@ -699,9 +681,7 @@ func (siw *ServerInterfaceWrapper) DeleteSystemOperator(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter systemId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.DeleteSystemOperator(c, systemId)
 }
@@ -719,9 +699,7 @@ func (siw *ServerInterfaceWrapper) GetSystemOperator(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter systemId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.GetSystemOperator(c, systemId)
 }
@@ -739,9 +717,7 @@ func (siw *ServerInterfaceWrapper) UpdateSystemOperator(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter systemId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.UpdateSystemOperator(c, systemId)
 }
@@ -784,9 +760,7 @@ func (siw *ServerInterfaceWrapper) ListTeams(c *fiber.Ctx) error {
 // CreateTeam operation middleware
 func (siw *ServerInterfaceWrapper) CreateTeam(c *fiber.Ctx) error {
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.CreateTeam(c)
 }
@@ -951,9 +925,7 @@ func (siw *ServerInterfaceWrapper) ListUsers(c *fiber.Ctx) error {
 // CreateUser operation middleware
 func (siw *ServerInterfaceWrapper) CreateUser(c *fiber.Ctx) error {
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.CreateUser(c)
 }
@@ -971,9 +943,7 @@ func (siw *ServerInterfaceWrapper) DeleteUser(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.DeleteUser(c, userId)
 }
@@ -991,9 +961,7 @@ func (siw *ServerInterfaceWrapper) GetUser(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.GetUser(c, userId)
 }
@@ -1011,9 +979,7 @@ func (siw *ServerInterfaceWrapper) UpdateUser(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.UpdateUser(c, userId)
 }
@@ -1031,9 +997,7 @@ func (siw *ServerInterfaceWrapper) GetUserCredentials(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.GetUserCredentials(c, userId)
 }
@@ -1051,9 +1015,7 @@ func (siw *ServerInterfaceWrapper) GetUserToken(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter userId: %w", err).Error())
 	}
 
-	c.Context().SetUserValue(BearerAuthScopes, []string{})
-
-	c.Context().SetUserValue(ApiKeyScopes, []string{})
+	c.Context().SetUserValue(OpenIdScopes, []string{})
 
 	return siw.Handler.GetUserToken(c, userId)
 }
@@ -1088,6 +1050,10 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 	for _, m := range options.Middlewares {
 		router.Use(m)
 	}
+
+	router.Get(options.BaseURL+"/_health", wrapper.GetHealth)
+
+	router.Get(options.BaseURL+"/_ready", wrapper.GetReady)
 
 	router.Get(options.BaseURL+"/accounts", wrapper.ListAccounts)
 
@@ -1184,6 +1150,56 @@ type NotFoundJSONResponse Error
 type UnauthorizedJSONResponse Error
 
 type UnimplementedJSONResponse Error
+
+type GetHealthRequestObject struct {
+}
+
+type GetHealthResponseObject interface {
+	VisitGetHealthResponse(ctx *fiber.Ctx) error
+}
+
+type GetHealth200JSONResponse HealthResponse
+
+func (response GetHealth200JSONResponse) VisitGetHealthResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type GetHealth500JSONResponse HealthResponse
+
+func (response GetHealth500JSONResponse) VisitGetHealthResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(500)
+
+	return ctx.JSON(&response)
+}
+
+type GetReadyRequestObject struct {
+}
+
+type GetReadyResponseObject interface {
+	VisitGetReadyResponse(ctx *fiber.Ctx) error
+}
+
+type GetReady200JSONResponse HealthResponse
+
+func (response GetReady200JSONResponse) VisitGetReadyResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(200)
+
+	return ctx.JSON(&response)
+}
+
+type GetReady500JSONResponse HealthResponse
+
+func (response GetReady500JSONResponse) VisitGetReadyResponse(ctx *fiber.Ctx) error {
+	ctx.Response().Header.Set("Content-Type", "application/json")
+	ctx.Status(500)
+
+	return ctx.JSON(&response)
+}
 
 type ListAccountsRequestObject struct {
 	Params ListAccountsParams
@@ -2437,6 +2453,12 @@ func (response VersiondefaultJSONResponse) VisitVersionResponse(ctx *fiber.Ctx) 
 
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
+	// Get system health status
+	// (GET /_health)
+	GetHealth(ctx context.Context, request GetHealthRequestObject) (GetHealthResponseObject, error)
+	// Get system readiness
+	// (GET /_ready)
+	GetReady(ctx context.Context, request GetReadyRequestObject) (GetReadyResponseObject, error)
 	// List all accounts
 	// (GET /accounts)
 	ListAccounts(ctx context.Context, request ListAccountsRequestObject) (ListAccountsResponseObject, error)
@@ -2573,6 +2595,56 @@ func NewStrictHandler(ssi StrictServerInterface, middlewares []StrictMiddlewareF
 type strictHandler struct {
 	ssi         StrictServerInterface
 	middlewares []StrictMiddlewareFunc
+}
+
+// GetHealth operation middleware
+func (sh *strictHandler) GetHealth(ctx *fiber.Ctx) error {
+	var request GetHealthRequestObject
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.GetHealth(ctx.UserContext(), request.(GetHealthRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetHealth")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(GetHealthResponseObject); ok {
+		if err := validResponse.VisitGetHealthResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
+}
+
+// GetReady operation middleware
+func (sh *strictHandler) GetReady(ctx *fiber.Ctx) error {
+	var request GetReadyRequestObject
+
+	handler := func(ctx *fiber.Ctx, request interface{}) (interface{}, error) {
+		return sh.ssi.GetReady(ctx.UserContext(), request.(GetReadyRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetReady")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	} else if validResponse, ok := response.(GetReadyResponseObject); ok {
+		if err := validResponse.VisitGetReadyResponse(ctx); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	} else if response != nil {
+		return fmt.Errorf("unexpected response type: %T", response)
+	}
+	return nil
 }
 
 // ListAccounts operation middleware

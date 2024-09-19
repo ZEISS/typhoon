@@ -76,9 +76,8 @@ func (l *IndexLoginController) Get() error {
 								links.Button(
 									links.LinkProps{
 										ClassNames: htmx.ClassNames{
-											"w-full":      true,
-											"btn-primary": true,
-											"btn-outline": true,
+											"w-full": true,
+											"btn":    true,
 										},
 										Href: "/login/github",
 									},
@@ -121,7 +120,7 @@ func (l *IndexLoginController) Get() error {
 											"-mb-4": true,
 										},
 									},
-									buttons.OutlinePrimary(
+									buttons.Button(
 										buttons.ButtonProps{
 											ClassNames: htmx.ClassNames{
 												"w-full": true,

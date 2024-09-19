@@ -35,23 +35,19 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: ./go.mod
-      - uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+          cache-dependency-path: |
+            go.sum
+            tools/go.sum
+      - uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/go/pkg/mod
-          key: ${{ github.job }}-${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ github.job }}-${{ runner.os }}-go-
       - id: image-tag
         run: |
           IMAGE_TAG=${GITHUB_SHA}
           [[ ${GITHUB_REF_TYPE} == "tag" ]] && IMAGE_TAG=${GITHUB_REF_NAME}
-          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_OUTPUT
+          echo "IMAGE_TAG=${IMAGE_TAG#v}" >> $GITHUB_OUTPUT
       - run: sudo apt-get update && sudo apt install -y libxml2-dev libxslt1-dev liblzma-dev zlib1g-dev
       - run: |
           IMAGE_TAG=${{ steps.image-tag.outputs.IMAGE_TAG }} make release
@@ -72,8 +68,3 @@ jobs:
           config: helm/cr.yaml
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: manifests
-          path: /tmp/dist
-          retention-days: 14

@@ -6,7 +6,6 @@ import (
 
 	htmx "github.com/zeiss/fiber-htmx"
 	"github.com/zeiss/fiber-htmx/components/buttons"
-	"github.com/zeiss/fiber-htmx/components/forms"
 	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tables"
@@ -20,6 +19,7 @@ type AccountsTableProps struct {
 	Offset   int
 	Limit    int
 	Total    int
+	URL      string
 }
 
 // AccountsTable ...
@@ -32,27 +32,22 @@ func AccountsTable(props AccountsTableProps, children ...htmx.Node) htmx.Node {
 				Pagination: tables.TablePagination(
 					tables.TablePaginationProps{},
 					tables.Pagination(
-						tables.PaginationProps{
-							Offset: props.Offset,
-							Limit:  props.Limit,
-							Total:  props.Total,
-						},
+						tables.PaginationProps{},
 						tables.Prev(
 							tables.PaginationProps{
 								Total:  props.Total,
 								Offset: props.Offset,
 								Limit:  props.Limit,
-								URL:    "/accounts",
+								URL:    props.URL,
 							},
 						),
-
 						tables.Select(
 							tables.SelectProps{
 								Total:  props.Total,
 								Offset: props.Offset,
 								Limit:  props.Limit,
 								Limits: tables.DefaultLimits,
-								URL:    "/accounts",
+								URL:    props.URL,
 							},
 						),
 						tables.Next(
@@ -60,7 +55,7 @@ func AccountsTable(props AccountsTableProps, children ...htmx.Node) htmx.Node {
 								Total:  props.Total,
 								Offset: props.Offset,
 								Limit:  props.Limit,
-								URL:    "/accounts",
+								URL:    props.URL,
 							},
 						),
 					),
@@ -71,8 +66,6 @@ func AccountsTable(props AccountsTableProps, children ...htmx.Node) htmx.Node {
 							"flex":            true,
 							"items-center":    true,
 							"justify-between": true,
-							"px-5":            true,
-							"pt-5":            true,
 						},
 					},
 					htmx.Div(
@@ -81,23 +74,18 @@ func AccountsTable(props AccountsTableProps, children ...htmx.Node) htmx.Node {
 							"items-center": true,
 							"gap-3":        true,
 						},
-						forms.TextInputBordered(
-							forms.TextInputProps{
-								ClassNames: htmx.ClassNames{
-									"input-sm": true,
-								},
-								Placeholder: "Search ...",
+						tables.Search(
+							tables.SearchProps{
+								Placeholder: "Search accounts ...",
+								Name:        "search",
+								URL:         props.URL,
 							},
 						),
 					),
 					htmx.A(
 						htmx.Href("accounts/new"),
-						buttons.Outline(
-							buttons.ButtonProps{
-								ClassNames: htmx.ClassNames{
-									"btn-sm": true,
-								},
-							},
+						buttons.Button(
+							buttons.ButtonProps{},
 							htmx.Text("Create Account"),
 						),
 					),
@@ -160,23 +148,13 @@ func AccountsTable(props AccountsTableProps, children ...htmx.Node) htmx.Node {
 					Cell: func(p tables.TableProps, row *models.Account) htmx.Node {
 						return htmx.Td(
 							buttons.Button(
-								buttons.ButtonProps{
-									ClassNames: htmx.ClassNames{
-										"btn-sm": true,
-									},
-								},
+								buttons.ButtonProps{},
 								htmx.HxDelete(fmt.Sprintf(utils.DeleteAccountUrlFormat, row.ID)),
 								htmx.HxConfirm("Are you sure you want to delete this account?"),
 								htmx.HxTarget("closest tr"),
 								htmx.HxSwap("outerHTML swap:1s"),
 								icons.TrashOutline(
-									icons.IconProps{
-										ClassNames: htmx.ClassNames{
-											"w-6 h-6": false,
-											"w-4":     true,
-											"h-4":     true,
-										},
-									},
+									icons.IconProps{},
 								),
 							),
 						)

@@ -23,9 +23,6 @@ servers:
     description: Development server
 
 tags:
-  - name: Server
-    description: |-
-      These are administrative operations.
   - name: Operator
     description: |-
       These are the operators that manage Typhoon.
@@ -41,14 +38,48 @@ tags:
   - name: System
     description: |-
       These are the system managed by Typhoon.
-  - name: Team
-    description: |-
-      These are the teams that are using Typhoon.
-  - name: Triggers
-    description: |-
-      These are the triggers that are used to send events to Typhoon.
 
 paths:
+  /_health:
+    get:
+      tags:
+        - Liveness
+      summary: Get system health status
+      operationId: getHealth
+      responses:
+        "200":
+          description: System is healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+        "500":
+          description: System is down
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+
+  /_ready:
+    get:
+      tags:
+        - Readiness
+      summary: Get system readiness
+      operationId: getReady
+      responses:
+        "200":
+          description: System is ready to accept traffic
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+        "500":
+          description: System not ready to accept traffic
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+
   /version:
     get:
       summary: Returns the current version of the API.
@@ -1201,6 +1232,14 @@ components:
       name: X-API-Key
 
   schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        errorMessage:
+          type: string
+
     NKey:
       description: |
         An NKey is the private key of a NATS account.
@@ -1552,6 +1591,11 @@ components:
           items:
             $ref: "#/components/schemas/Team"
 
+    securitySchemes:
+      openId:
+        type: http
+        scheme: bearer # using bearer token
+        bearerFormat: JWT
+
 security:
-  - bearerAuth: []
-  - apiKey: []
+  - openId: []

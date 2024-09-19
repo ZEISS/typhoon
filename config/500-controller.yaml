@@ -53,6 +53,8 @@ spec:
           value: ko://github.com/zeiss/typhoon/cmd/salesforcesource-adapter
         - name: WEBHOOKSOURCE_IMAGE
           value: ko://github.com/zeiss/typhoon/cmd/webhooksource-adapter
+        - name: CLOUDEVENTSSOURCE_IMAGE
+          value: ko://github.com/zeiss/typhoon/cmd/cloudeventssource-adapter
         - name: CLOUDEVENTSTARGET_IMAGE
           value: ko://github.com/zeiss/typhoon/cmd/cloudeventstarget-adapter
         - name: HTTPTARGET_IMAGE

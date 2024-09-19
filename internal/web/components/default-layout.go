@@ -1,16 +1,20 @@
 package components
 
-import htmx "github.com/zeiss/fiber-htmx"
+import (
+	"github.com/zeiss/fiber-goth/adapters"
+	htmx "github.com/zeiss/fiber-htmx"
+)
 
 // DefaultLayoutProps ...
 type DefaultLayoutProps struct {
 	ClassNames htmx.ClassNames
+	User       adapters.GothUser
 	Path       string
 	Title      string
 }
 
 // DefaultLayout ...
-func DefaultLayout(props DefaultLayoutProps, children ...htmx.Node) htmx.Node {
+func DefaultLayout(props DefaultLayoutProps, node htmx.ErrBoundaryFunc) htmx.Node {
 	return Page(
 		PageProps{
 			Title: props.Title,
@@ -18,13 +22,10 @@ func DefaultLayout(props DefaultLayoutProps, children ...htmx.Node) htmx.Node {
 		Layout(
 			LayoutProps{
 				Path: props.Path,
+				User: props.User,
 			},
 			htmx.Fallback(
-				htmx.ErrorBoundary(
-					func() htmx.Node {
-						return htmx.Fragment(children...)
-					},
-				),
+				htmx.ErrorBoundary(node),
 				func(err error) htmx.Node {
 					return htmx.Text(err.Error())
 				},

@@ -22,6 +22,9 @@ jobs:
     - uses: actions/setup-go@v5
       with:
         go-version-file: ./go.mod
+        cache-dependency-path: |
+          go.sum
+          tools/go.sum
     - run: sudo apt-get update && sudo apt install -y libxml2-dev libxslt1-dev liblzma-dev zlib1g-dev
     - run: make test
     - uses: dorny/test-reporter@v1
@@ -45,4 +48,9 @@ jobs:
         with:
           go-version-file: ./go.mod
           check-latest: true
+          cache-dependency-path: |
+            go.sum
+            tools/go.sum
+      - run: |
+          sudo apt-get install libxml2-dev libxslt1-dev
       - run: make lint

@@ -8,6 +8,16 @@ import (
 
 var _ StrictServerInterface = (*Unimplemented)(nil)
 
+// GetHealth ...
+func (u *Unimplemented) GetHealth(ctx context.Context, request GetHealthRequestObject) (GetHealthResponseObject, error) {
+	return nil, fiber.NewError(fiber.StatusNotImplemented, "not implemented")
+}
+
+// GetReady ...
+func (u *Unimplemented) GetReady(ctx context.Context, request GetReadyRequestObject) (GetReadyResponseObject, error) {
+	return nil, fiber.NewError(fiber.StatusNotImplemented, "not implemented")
+}
+
 // CreateOperator ...
 func (u *Unimplemented) CreateOperator(ctx context.Context, request CreateOperatorRequestObject) (CreateOperatorResponseObject, error) {
 	return nil, fiber.NewError(fiber.StatusNotImplemented, "not implemented")
