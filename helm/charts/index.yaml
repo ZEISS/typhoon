@@ -2,6 +2,18 @@ apiVersion: v1
 entries:
   typhoon:
   - apiVersion: v2
+    appVersion: 0.1.56
+    created: "2024-09-19T11:49:48.421629913Z"
+    description: A Helm chart deploying Typhoon on Kubernetes
+    digest: 68a0ce6d5163c29ca24462cf27f37cc4194fd6ef1f613dcbcad3d9c2b8919bf4
+    home: http://github.com/zeiss/typhoon
+    name: typhoon
+    sources:
+    - https://github.com/zeiss/typhoon
+    urls:
+    - https://github.com/ZEISS/typhoon/releases/download/typhoon-0.1.56/typhoon-0.1.56.tgz
+    version: 0.1.56
+  - apiVersion: v2
     appVersion: 0.1.55
     created: "2024-09-19T11:28:01.982921864Z"
     description: A Helm chart deploying Typhoon on Kubernetes
@@ -374,6 +386,22 @@ entries:
     - https://github.com/ZEISS/typhoon/releases/download/typhoon-chart-0.1.23/typhoon-0.1.23.tgz
     version: 0.1.23
   typhoon-accounting:
+  - apiVersion: v2
+    appVersion: 0.1.56
+    created: "2024-09-19T11:49:48.538672916Z"
+    description: A Helm chart for the Typhoon accounting
+    digest: 412a06fb7c269efd1e8f7d605bdd3182509eb17494f3bdbe117f02cfb504c8bc
+    home: http://github.com/zeiss/typhoon
+    keywords:
+    - messaging
+    - jwt
+    - auth
+    name: typhoon-accounting
+    sources:
+    - https://github.com/zeiss/typhoon
+    urls:
+    - https://github.com/ZEISS/typhoon/releases/download/typhoon-accounting-0.1.56/typhoon-accounting-0.1.56.tgz
+    version: 0.1.56
   - apiVersion: v2
     appVersion: 0.1.55
     created: "2024-09-19T11:28:02.179459172Z"
@@ -840,6 +868,22 @@ entries:
     version: 0.1.25
   typhoon-web:
   - apiVersion: v2
+    appVersion: 0.1.56
+    created: "2024-09-19T11:49:48.658733734Z"
+    description: A Helm chart for the Typhoon Web application
+    digest: 948afbf144474c57303793d2cf8da25527a2eda4169d8bef0bb881af2ac61aef
+    home: http://github.com/zeiss/typhoon
+    keywords:
+    - messaging
+    - jwt
+    - auth
+    name: typhoon-web
+    sources:
+    - https://github.com/zeiss/typhoon
+    urls:
+    - https://github.com/ZEISS/typhoon/releases/download/typhoon-web-0.1.56/typhoon-web-0.1.56.tgz
+    version: 0.1.56
+  - apiVersion: v2
     appVersion: 0.1.55
     created: "2024-09-19T11:28:02.340956237Z"
     description: A Helm chart for the Typhoon Web application
@@ -1127,4 +1171,4 @@ entries:
     urls:
     - https://github.com/ZEISS/typhoon/releases/download/typhoon-web-0.1.36/typhoon-web-0.1.36.tgz
     version: 0.1.36
-generated: "2024-09-19T11:28:02.341417745Z"
+generated: "2024-09-19T11:49:48.660075517Z"
