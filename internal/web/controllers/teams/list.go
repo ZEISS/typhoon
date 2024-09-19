@@ -26,7 +26,7 @@ type ListTeamsControllerImpl struct {
 // NewTeamsListOperatorController ...
 func NewTeamsListOperatorController(store ports.Datastore) *ListTeamsControllerImpl {
 	return &ListTeamsControllerImpl{
-		teams: tables.Results[models.Team]{Limit: 10},
+		teams: tables.Results[models.Team]{SearchFields: []string{"name"}},
 		store: store,
 	}
 }
@@ -46,33 +46,35 @@ func (l *ListTeamsControllerImpl) Prepare() error {
 // Prepare ...
 func (l *ListTeamsControllerImpl) Get() error {
 	return l.Render(
-		components.Page(
-			components.PageProps{
-				Title: "Operators",
+		components.DefaultLayout(
+			components.DefaultLayoutProps{
+				Title: "Teams",
+				Path:  l.Path(),
+				User:  l.Session().User,
 			},
-			components.Layout(
-				components.LayoutProps{
-					Path: l.Ctx().Path(),
-				},
-				cards.CardBordered(
-					cards.CardProps{
-						ClassNames: htmx.ClassNames{
-							tailwind.M2: true,
-						},
-					},
-					cards.Body(
-						cards.BodyProps{},
-						teams.TeamsTable(
-							teams.TeamsTableProps{
-								Teams:  l.teams.GetRows(),
-								Offset: l.teams.GetOffset(),
-								Limit:  l.teams.GetLimit(),
-								Total:  l.teams.GetLen(),
+			func() htmx.Node {
+				return htmx.Fragment(
+					cards.CardBordered(
+						cards.CardProps{
+							ClassNames: htmx.ClassNames{
+								tailwind.M2: true,
 							},
+						},
+						cards.Body(
+							cards.BodyProps{},
+							teams.TeamsTable(
+								teams.TeamsTableProps{
+									Teams:  l.teams.GetRows(),
+									Offset: l.teams.GetOffset(),
+									Limit:  l.teams.GetLimit(),
+									Total:  l.teams.GetLen(),
+									URL:    l.OriginalURL(),
+								},
+							),
 						),
 					),
-				),
-			),
+				)
+			},
 		),
 	)
 }

@@ -82,18 +82,14 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 								ClassNames: htmx.ClassNames{
 									"input-sm": true,
 								},
-								Placeholder: "Search ...",
+								Placeholder: "Search users ...",
 							},
 						),
 					),
 					htmx.A(
 						htmx.Href("/users/new"),
 						buttons.Outline(
-							buttons.ButtonProps{
-								ClassNames: htmx.ClassNames{
-									"btn-sm": true,
-								},
-							},
+							buttons.ButtonProps{},
 							htmx.Text("Create User"),
 						),
 					),
@@ -139,11 +135,7 @@ func UsersTable(props UsersTableProps, children ...htmx.Node) htmx.Node {
 							joins.Join(
 								joins.JoinProps{},
 								buttons.Button(
-									buttons.ButtonProps{
-										ClassNames: htmx.ClassNames{
-											"btn-sm": true,
-										},
-									},
+									buttons.ButtonProps{},
 									htmx.HxDelete(""),
 									htmx.HxConfirm("Are you sure you want to remove this user?"),
 									htmx.Text("Remove"),

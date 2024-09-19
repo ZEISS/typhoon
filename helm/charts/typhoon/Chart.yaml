@@ -5,5 +5,5 @@ description: A Helm chart deploying Typhoon on Kubernetes
 type: application
 version: 0.0.0
 sources:
-  - https://github.com/zeiss/typhoon/tree/main/charts/typhoon
-  - https://github.com/zeiss/typhoon
+- https://github.com/zeiss/typhoon
+home: http://github.com/zeiss/typhoon

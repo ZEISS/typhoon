@@ -3,12 +3,10 @@ package components
 import (
 	"github.com/zeiss/fiber-goth/adapters"
 	htmx "github.com/zeiss/fiber-htmx"
-	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/dividers"
 	"github.com/zeiss/fiber-htmx/components/drawers"
 	"github.com/zeiss/fiber-htmx/components/icons"
 	"github.com/zeiss/fiber-htmx/components/navbars"
-	"github.com/zeiss/fiber-htmx/components/swap"
 	"github.com/zeiss/fiber-htmx/components/toasts"
 )
 
@@ -90,7 +88,6 @@ func Layout(p LayoutProps, children ...htmx.Node) htmx.Node {
 										drawers.DrawerOpenProps{
 											ID: "global-drawer",
 											ClassNames: htmx.ClassNames{
-												"btn-sm":      true,
 												"btn-square":  true,
 												"btn-primary": false,
 											},
@@ -102,38 +99,10 @@ func Layout(p LayoutProps, children ...htmx.Node) htmx.Node {
 								),
 								navbars.NavbarEnd(
 									navbars.NavbarEndProps{},
-									swap.Swap(
-										swap.SwapProps{
-											ClassNames: htmx.ClassNames{
-												"swap-rotate": true,
-											},
-										},
-										htmx.Input(
-											htmx.Class("theme-controller"),
-											htmx.Value("dark"),
-											htmx.Attribute("type", "checkbox"),
-										),
-										swap.SwapOn(
-											swap.SwapProps{},
-											icons.MoonOutlineSmall(
-												icons.IconProps{},
-											),
-										),
-										swap.SwapOff(
-											swap.SwapProps{},
-											icons.SunOutlineSmall(
-												icons.IconProps{},
-											),
-										),
-									),
-									buttons.CircleSmall(
-										buttons.ButtonProps{},
-										icons.BellAlertOutlineSmall(
-											icons.IconProps{},
-										),
-									),
 									ProfileMenu(
-										ProfileMenuProps{},
+										ProfileMenuProps{
+											User: p.User,
+										},
 									),
 								),
 							),
@@ -155,11 +124,6 @@ func Layout(p LayoutProps, children ...htmx.Node) htmx.Node {
 								"bg-base-200": false,
 							},
 						},
-						// AccountSwitch(
-						// 	AccountSwitchProps{
-						// 		User: p.User,
-						// 	},
-						// ),
 						dividers.Divider(
 							dividers.DividerProps{},
 						),

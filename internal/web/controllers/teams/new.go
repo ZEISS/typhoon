@@ -101,7 +101,7 @@ func (p *NewTeamControllerImpl) Get() error {
 							),
 							cards.Actions(
 								cards.ActionsProps{},
-								buttons.Outline(
+								buttons.Button(
 									buttons.ButtonProps{},
 									htmx.Attribute("type", "submit"),
 									htmx.Text("Create Team"),

@@ -13,7 +13,7 @@ require (
 	gotest.tools/gotestsum v1.12.0
 	k8s.io/code-generator v0.29.2
 	knative.dev/pkg v0.0.0-20240222182851-7594067e0eac
-	mvdan.cc/gofumpt v0.5.0
+	mvdan.cc/gofumpt v0.7.0
 )
 
 require (

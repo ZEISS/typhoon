@@ -194,6 +194,31 @@ func (t *datastoreTx) ListUsers(ctx context.Context, pagination *tables.Results[
 	return t.tx.Scopes(tables.PaginatedResults(&pagination.Rows, pagination, t.tx)).Preload("Account").Preload("Key").Find(&pagination.Rows).Error
 }
 
+// GetTotalNumberOfAccounts is a method that returns the total number of accounts
+func (t *datastoreTx) GetTotalNumberOfAccounts(ctx context.Context, total *int64) error {
+	return t.tx.Model(&models.Account{}).Count(total).Error
+}
+
+// GetTotalNumberOfOperators is a method that returns the total number of operators
+func (t *datastoreTx) GetTotalNumberOfOperators(ctx context.Context, total *int64) error {
+	return t.tx.Model(&models.Operator{}).Count(total).Error
+}
+
+// GetTotalNumberOfSystems is a method that returns the total number of systems
+func (t *datastoreTx) GetTotalNumberOfSystems(ctx context.Context, total *int64) error {
+	return t.tx.Model(&models.System{}).Count(total).Error
+}
+
+// GetTotalNumberOfTeams is a method that returns the total number of teams
+func (t *datastoreTx) GetTotalNumberOfTeams(ctx context.Context, total *int64) error {
+	return t.tx.Model(&models.Team{}).Count(total).Error
+}
+
+// GetTotalNumberOfUsers is a method that returns the total number of users
+func (t *datastoreTx) GetTotalNumberOfUsers(ctx context.Context, total *int64) error {
+	return t.tx.Model(&models.User{}).Count(total).Error
+}
+
 // CreateUser ...
 func (t *datastoreTx) CreateUser(ctx context.Context, user *models.User) error {
 	return t.tx.Create(user).Error
