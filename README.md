@@ -84,6 +84,17 @@ Install Typhoon to your cluster in a `typhoon` namespace.
 helm install typhoon typhoon/typhoon --create-namespace --namespace typhoon
 ```
 
+## Prerequisites
+
+* Kubernetes `v1.28` or newer
+* Knative Eventing `v1.15` or newer
+* Knative Serving `v1.15` or newer
+* Helm `3.0` or newer
+
+## Installation
+
+Typhoon depends on [Knative Eventing](https://knative.dev/docs/) and [NATS](https://nats.io).
+
 ## Development
 
 You can use [minikube](https://minikube.sigs.k8s.io/docs/) to run a local Kubernetes cluster.
