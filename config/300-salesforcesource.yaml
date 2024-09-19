@@ -38,7 +38,7 @@ spec:
         type: object
         properties:
           spec:
-            description: A SalesforceSource represents a source of events from Salesforce.
+            description: Desired state of the event source.
             type: object
             properties:
               auth:
@@ -72,9 +72,6 @@ spec:
                     required:
                     - name
                     - key
-                  oneOf:
-                  - required: [value]
-                  - required: [valueFromSecret]
               apiVersion:
                 description: Salesforce API version.
                 type: string
