@@ -56,7 +56,7 @@ require (
 	knative.dev/eventing v0.31.1-0.20220523181303-c3e13967001f
 	knative.dev/networking v0.0.0-20240716111826-bab7f2a3e556
 	knative.dev/pkg v0.0.0-20240716082220-4355f0c73608
-	knative.dev/serving v0.42.1
+	knative.dev/serving v0.42.2
 	mvdan.cc/gofumpt v0.7.0
 )
 
