@@ -46,6 +46,11 @@ var (
 		Group:    GroupName,
 		Resource: "salesforcetargets",
 	}
+	// ServiceNowTargetResource respresents an event target for ServiceNow.
+	ServiceNowTargetResource = schema.GroupResource{
+		Group:    GroupName,
+		Resource: "servicenowtargets",
+	}
 	// JiraTargetResource respresents an event target for Jira.
 	JiraTargetResource = schema.GroupResource{
 		Group:    GroupName,

@@ -26,6 +26,8 @@ var AllTypes = []v1alpha1.GroupObject{
 	{Single: &LogzMetricsTarget{}, List: &LogzMetricsTargetList{}},
 	{Single: &LogzTarget{}, List: &LogzTargetList{}},
 	{Single: &SalesforceTarget{}, List: &SalesforceTargetList{}},
+	{Single: &SplunkTarget{}, List: &SplunkTargetList{}},
+	{Single: &ServiceNowTarget{}, List: &ServiceNowTargetList{}},
 }
 
 // addKnownTypes adds all this custom API's types to Scheme.
