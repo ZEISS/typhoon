@@ -31,16 +31,7 @@ func NewCreateSystemController(store ports.Datastore) *CreateSystemControllerImp
 
 // Error ...
 func (l *CreateSystemControllerImpl) Error(err error) error {
-	return toasts.RenderToasts(
-		l.Ctx(),
-		toasts.Toasts(
-			toasts.ToastsProps{},
-			toasts.ToastAlertError(
-				toasts.ToastProps{},
-				htmx.Text(err.Error()),
-			),
-		),
-	)
+	return toasts.Error(err.Error())
 }
 
 // Prepare ...

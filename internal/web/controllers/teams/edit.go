@@ -11,12 +11,12 @@ import (
 	"github.com/zeiss/typhoon/internal/web/ports"
 
 	htmx "github.com/zeiss/fiber-htmx"
+	"github.com/zeiss/fiber-htmx/components/alerts"
 	"github.com/zeiss/fiber-htmx/components/buttons"
 	"github.com/zeiss/fiber-htmx/components/cards"
 	"github.com/zeiss/fiber-htmx/components/forms"
 	"github.com/zeiss/fiber-htmx/components/links"
 	"github.com/zeiss/fiber-htmx/components/tailwind"
-	"github.com/zeiss/fiber-htmx/components/toasts"
 )
 
 // TeamEditControllerImpl ...
@@ -137,13 +137,8 @@ func (p *TeamEditControllerImpl) Post() error {
 				},
 			),
 			func(err error) htmx.Node {
-				htmx.ReSwap(p.Ctx(), "none")
-				return toasts.Toasts(
-					toasts.ToastsProps{},
-					toasts.ToastAlertError(
-						toasts.ToastProps{},
-						htmx.Text(err.Error()),
-					),
+				return alerts.Error(
+					alerts.AlertProps{},
 				)
 			},
 		),

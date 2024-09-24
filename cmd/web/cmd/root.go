@@ -9,6 +9,7 @@ import (
 	authz "github.com/zeiss/fiber-authz"
 	"github.com/zeiss/fiber-goth/providers"
 	"github.com/zeiss/fiber-goth/providers/github"
+	"github.com/zeiss/fiber-htmx/components/toasts"
 	"github.com/zeiss/typhoon/internal/web/adapters/db"
 	"github.com/zeiss/typhoon/internal/web/adapters/handlers"
 	"github.com/zeiss/typhoon/static"
@@ -121,7 +122,11 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 
 		handlers := handlers.NewHandlers(store, auth)
 
-		app := fiber.New()
+		app := fiber.New(
+			fiber.Config{
+				ErrorHandler: toasts.DefaultErrorHandler,
+			},
+		)
 		app.Use(requestid.New())
 		app.Use(logger.New())
 

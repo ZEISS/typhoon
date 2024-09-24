@@ -39,7 +39,6 @@ func (l *IndexOperatorTokenControllerImpl) Get() error {
 	err = l.store.ReadTx(l.Context(), func(ctx context.Context, tx ports.ReadTx) error {
 		return tx.GetOperator(ctx, &operator)
 	})
-
 	if err != nil {
 		return err
 	}

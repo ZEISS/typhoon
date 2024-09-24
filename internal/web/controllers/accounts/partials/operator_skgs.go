@@ -26,16 +26,7 @@ func NewOperatorSkgsOptions(store ports.Datastore) *OperatorSkgsOptionsImpl {
 
 // Error ...
 func (l *OperatorSkgsOptionsImpl) Error(err error) error {
-	return toasts.RenderToasts(
-		l.Ctx(),
-		toasts.Toasts(
-			toasts.ToastsProps{},
-			toasts.ToastAlertError(
-				toasts.ToastProps{},
-				htmx.Text(err.Error()),
-			),
-		),
-	)
+	return toasts.Error(err.Error())
 }
 
 // Prepare ...

@@ -191,7 +191,6 @@ func (l *ShowUserControllerImpl) Get() error {
 						),
 					),
 				)
-
 			},
 		),
 	)

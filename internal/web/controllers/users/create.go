@@ -54,16 +54,7 @@ func (l *CreateUserControllerImpl) Prepare() error {
 
 // Error ...
 func (l *CreateUserControllerImpl) Error(err error) error {
-	return toasts.RenderToasts(
-		l.Ctx(),
-		toasts.Toasts(
-			toasts.ToastsProps{},
-			toasts.ToastAlertError(
-				toasts.ToastProps{},
-				htmx.Text(err.Error()),
-			),
-		),
-	)
+	return toasts.Error(err.Error())
 }
 
 // Post ...

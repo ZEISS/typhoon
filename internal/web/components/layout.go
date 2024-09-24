@@ -51,9 +51,7 @@ func Layout(p LayoutProps, children ...htmx.Node) htmx.Node {
 					drawers.DrawerContentProps{
 						ID: "drawer",
 					},
-					toasts.Toaster(
-						toasts.ToastsProps{},
-					),
+					toasts.Toasts(),
 					htmx.Div(
 						htmx.ClassNames{
 							"h-full":        true,
