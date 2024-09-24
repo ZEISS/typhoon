@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	zapt "go.uber.org/zap/zaptest"
 )
@@ -150,7 +151,7 @@ func TestBayeux(t *testing.T) {
 
 			go func() {
 				clientErr := b.Start(ctx)
-				require.NoError(t, clientErr, "The bayeux client failed")
+				assert.NoError(t, clientErr, "The bayeux client failed")
 			}()
 
 			select {

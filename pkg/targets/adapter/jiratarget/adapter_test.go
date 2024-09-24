@@ -269,7 +269,7 @@ func TestJiraEvents(t *testing.T) {
 
 			go func() {
 				if err := ja.Start(context.Background()); err != nil {
-					assert.FailNow(t, "could not start test adapter")
+					assert.NoError(t, err)
 				}
 			}()
 

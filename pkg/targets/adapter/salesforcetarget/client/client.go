@@ -111,6 +111,7 @@ func (c *SalesforceClient) Authenticate(ctx context.Context) error {
 	}
 
 	var versions []salesforceVersion
+	// nolint:musttag
 	err = json.NewDecoder(res.Body).Decode(&versions)
 	if err != nil {
 		return fmt.Errorf("cannot decode Salesforce versions: %w", err)

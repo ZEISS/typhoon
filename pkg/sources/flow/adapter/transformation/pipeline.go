@@ -77,7 +77,7 @@ func (p *Pipeline) apply(eventID string, data []byte, init bool) ([]byte, error)
 		}
 	}
 	if len(errs) != 0 {
-		return data, fmt.Errorf(strings.Join(errs, ","))
+		return data, fmt.Errorf("%s", strings.Join(errs, ","))
 	}
 	return data, nil
 }

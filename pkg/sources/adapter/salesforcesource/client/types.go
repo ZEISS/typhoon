@@ -17,9 +17,9 @@ type CommonResponse struct {
 // HandshakeResponse for Bayeux protocol.
 type HandshakeResponse struct {
 	CommonResponse           `json:",inline"`
-	Version                  string
-	MinimumVersion           string
-	SupportedConnectionTypes []string
+	Version                  string          `json:"version,omitempty"`
+	MinimumVersion           string          `json:"minimumVersion,omitempty"`
+	SupportedConnectionTypes []string        `json:"supportedConnectionTypes,omitempty"`
 	Advice                   Advice          `json:"advice,omitempty"`
 	Extension                json.RawMessage `json:"ext,omitempty"`
 }

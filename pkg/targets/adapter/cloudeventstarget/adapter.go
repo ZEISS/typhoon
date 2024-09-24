@@ -136,6 +136,7 @@ func (a *ceAdapter) dispatch(ctx context.Context, event cloudevents.Event) (*clo
 	ceSrcTag := metrics.TagEventSource(event.Source())
 
 	start := time.Now()
+	// nolint:contextcheck
 	defer func() {
 		a.sr.ReportProcessingLatency(time.Since(start), ceTypeTag, ceSrcTag)
 	}()
