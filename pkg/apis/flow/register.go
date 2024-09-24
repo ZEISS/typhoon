@@ -14,6 +14,12 @@ var (
 		Resource: "jqtransformations",
 	}
 
+	// WorkerTransformationResource respresents a Worker transformation.
+	WorkerTransformationResource = schema.GroupResource{
+		Group:    GroupName,
+		Resource: "workertransformations",
+	}
+
 	// SynchronizerResource respresents a Synchronizer.
 	SynchronizerResource = schema.GroupResource{
 		Group:    GroupName,

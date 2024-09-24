@@ -16,6 +16,8 @@ type Interface interface {
 	Synchronizers() SynchronizerInformer
 	// Transformations returns a TransformationInformer.
 	Transformations() TransformationInformer
+	// WorkerTransformations returns a WorkerTransformationInformer.
+	WorkerTransformations() WorkerTransformationInformer
 	// XMLToJSONTransformations returns a XMLToJSONTransformationInformer.
 	XMLToJSONTransformations() XMLToJSONTransformationInformer
 	// XSLTTransformations returns a XSLTTransformationInformer.
@@ -51,6 +53,11 @@ func (v *version) Synchronizers() SynchronizerInformer {
 // Transformations returns a TransformationInformer.
 func (v *version) Transformations() TransformationInformer {
 	return &transformationInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+}
+
+// WorkerTransformations returns a WorkerTransformationInformer.
+func (v *version) WorkerTransformations() WorkerTransformationInformer {
+	return &workerTransformationInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
 
 // XMLToJSONTransformations returns a XMLToJSONTransformationInformer.

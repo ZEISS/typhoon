@@ -53,6 +53,8 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Flow().V1alpha1().Synchronizers().Informer()}, nil
 	case flowv1alpha1.SchemeGroupVersion.WithResource("transformations"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Flow().V1alpha1().Transformations().Informer()}, nil
+	case flowv1alpha1.SchemeGroupVersion.WithResource("workertransformations"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Flow().V1alpha1().WorkerTransformations().Informer()}, nil
 	case flowv1alpha1.SchemeGroupVersion.WithResource("xmltojsontransformations"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Flow().V1alpha1().XMLToJSONTransformations().Informer()}, nil
 	case flowv1alpha1.SchemeGroupVersion.WithResource("xslttransformations"):

@@ -28,6 +28,10 @@ func (c *FakeFlowV1alpha1) Transformations(namespace string) v1alpha1.Transforma
 	return &FakeTransformations{c, namespace}
 }
 
+func (c *FakeFlowV1alpha1) WorkerTransformations(namespace string) v1alpha1.WorkerTransformationInterface {
+	return &FakeWorkerTransformations{c, namespace}
+}
+
 func (c *FakeFlowV1alpha1) XMLToJSONTransformations(namespace string) v1alpha1.XMLToJSONTransformationInterface {
 	return &FakeXMLToJSONTransformations{c, namespace}
 }

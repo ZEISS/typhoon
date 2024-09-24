@@ -10,6 +10,8 @@ type SynchronizerExpansion interface{}
 
 type TransformationExpansion interface{}
 
+type WorkerTransformationExpansion interface{}
+
 type XMLToJSONTransformationExpansion interface{}
 
 type XSLTTransformationExpansion interface{}

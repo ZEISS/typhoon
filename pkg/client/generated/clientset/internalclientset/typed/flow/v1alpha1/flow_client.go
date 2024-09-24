@@ -16,6 +16,7 @@ type FlowV1alpha1Interface interface {
 	JQTransformationsGetter
 	SynchronizersGetter
 	TransformationsGetter
+	WorkerTransformationsGetter
 	XMLToJSONTransformationsGetter
 	XSLTTransformationsGetter
 }
@@ -39,6 +40,10 @@ func (c *FlowV1alpha1Client) Synchronizers(namespace string) SynchronizerInterfa
 
 func (c *FlowV1alpha1Client) Transformations(namespace string) TransformationInterface {
 	return newTransformations(c, namespace)
+}
+
+func (c *FlowV1alpha1Client) WorkerTransformations(namespace string) WorkerTransformationInterface {
+	return newWorkerTransformations(c, namespace)
 }
 
 func (c *FlowV1alpha1Client) XMLToJSONTransformations(namespace string) XMLToJSONTransformationInterface {

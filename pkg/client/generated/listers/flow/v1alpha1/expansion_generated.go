@@ -34,6 +34,14 @@ type TransformationListerExpansion interface{}
 // TransformationNamespaceLister.
 type TransformationNamespaceListerExpansion interface{}
 
+// WorkerTransformationListerExpansion allows custom methods to be added to
+// WorkerTransformationLister.
+type WorkerTransformationListerExpansion interface{}
+
+// WorkerTransformationNamespaceListerExpansion allows custom methods to be added to
+// WorkerTransformationNamespaceLister.
+type WorkerTransformationNamespaceListerExpansion interface{}
+
 // XMLToJSONTransformationListerExpansion allows custom methods to be added to
 // XMLToJSONTransformationLister.
 type XMLToJSONTransformationListerExpansion interface{}
