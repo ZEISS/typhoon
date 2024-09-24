@@ -1,6 +1,7 @@
 module github.com/zeiss/typhoon
 
 go 1.22.1
+toolchain go1.23.1
 
 require (
 	github.com/Shopify/sarama v1.30.0
@@ -10,7 +11,7 @@ require (
 	github.com/cloudevents/sdk-go/v2 v2.15.2
 	github.com/fsnotify/fsnotify v1.7.0
 	github.com/getkin/kin-openapi v0.126.0
-	github.com/go-playground/validator/v10 v10.22.0
+	github.com/go-playground/validator/v10 v10.22.1
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/golang/mock v1.7.0-rc.1
@@ -36,8 +37,8 @@ require (
 	github.com/xdg-go/scram v1.0.2
 	github.com/zeiss/fiber-authz v1.0.33
 	github.com/zeiss/fiber-goth v1.2.12
-	github.com/zeiss/fiber-htmx v1.3.24-0.20240821201648-9dfa52da47ac
-	github.com/zeiss/pkg v0.1.8-0.20240906201119-75c76d920f4f
+	github.com/zeiss/fiber-htmx v1.3.25
+	github.com/zeiss/pkg v0.1.8
 	github.com/zeiss/snow-go v0.0.0-20240312201415-88f059622cff
 	go.opencensus.io v0.24.0
 	go.uber.org/zap v1.27.0
@@ -47,7 +48,7 @@ require (
 	google.golang.org/genproto/googleapis/api v0.0.0-20240725223205-93522f1f2a9f
 	google.golang.org/protobuf v1.34.2
 	gorm.io/driver/postgres v1.5.9
-	gorm.io/gorm v1.25.11
+	gorm.io/gorm v1.25.12
 	helm.sh/helm v2.17.0+incompatible
 	k8s.io/api v0.29.2
 	k8s.io/apimachinery v0.30.3
@@ -120,6 +121,7 @@ require (
 	github.com/ettle/strcase v0.2.0 // indirect
 	github.com/evanphx/json-patch v5.6.0+incompatible // indirect
 	github.com/evanphx/json-patch/v5 v5.9.0 // indirect
+	github.com/fasthttp/websocket v1.5.8 // indirect
 	github.com/fatih/color v1.17.0 // indirect
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/fatih/structtag v1.2.0 // indirect
@@ -151,6 +153,7 @@ require (
 	github.com/gobuffalo/flect v1.0.2 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/goccy/go-json v0.10.3 // indirect
+	github.com/gofiber/contrib/websocket v1.3.2 // indirect
 	github.com/gofrs/flock v0.12.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
@@ -277,6 +280,7 @@ require (
 	github.com/santhosh-tekuri/jsonschema/v5 v5.3.1 // indirect
 	github.com/sashamelentyev/interfacebloat v1.1.0 // indirect
 	github.com/sashamelentyev/usestdlibvars v1.27.0 // indirect
+	github.com/savsgio/gotils v0.0.0-20240303185622-093b76447511 // indirect
 	github.com/securego/gosec/v2 v2.21.2 // indirect
 	github.com/shazow/go-diff v0.0.0-20160112020656-b6b7b6733b8c // indirect
 	github.com/shirou/gopsutil/v3 v3.24.5 // indirect
@@ -318,6 +322,7 @@ require (
 	github.com/ykadowak/zerologlint v0.1.5 // indirect
 	github.com/yuin/goldmark v1.7.4 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
+	github.com/zeiss/fiber-reload v0.1.0 // indirect
 	gitlab.com/bosi/decorder v0.4.2 // indirect
 	go-simpler.org/musttag v0.12.2 // indirect
 	go-simpler.org/sloglint v0.7.2 // indirect
