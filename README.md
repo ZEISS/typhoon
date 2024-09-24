@@ -1,8 +1,7 @@
 # typhoon
 
 [![Release](https://github.com/ZEISS/typhoon/actions/workflows/release.yml/badge.svg)](https://github.com/ZEISS/typhoon/actions/workflows/release.yml)
-[![Go Reference](https://pkg.go.dev/badge/github.com/zeiss/typhoon.svg)](https://pkg.go.dev/github.com/zeiss/typhoon)
-[![Go Report Card](https://goreportcard.com/badge/github.com/zeiss/typhoon)](https://goreportcard.com/report/github.com/zeiss/typhoon)
+x6[![Go Report Card](https://goreportcard.com/badge/github.com/zeiss/typhoon)](https://goreportcard.com/report/github.com/zeiss/typhoon)
 [![Taylor Swift](https://img.shields.io/badge/secured%20by-taylor%20swift-brightgreen.svg)](https://twitter.com/SwiftOnSecurity)
 [![Volkswagen](https://auchenberg.github.io/volkswagen/volkswargen_ci.svg?v=1)](https://github.com/auchenberg/volkswagen)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -69,6 +68,26 @@ subgraph externalDatabase[External Database]
 end
 ```
 
+The accounting can also be combined with the [Operator for NATS Accounting](https://github.com/ZEISS/natz-operator) which enables the creation of operators, accounts and users declaratively.
+
+## Souces
+
+* [CloudEvents](https://cloudevents.io/)
+* HTTP Poller
+* [Kafka](https://kafka.apache.org/)
+* [salesforce](https://www.salesforce.com/)
+* WebHook
+
+## Targets
+
+* [CloudEvents](https://cloudevents.io/)
+* DataDog
+* JIRA
+* [NATS](https://nats.io)
+* [salesforce](https://www.salesforce.com/)
+* [ServiceNOW](https://www.servicenow.com/)
+* Splunk
+
 ## Helm
 
 [Helm](https://helm.sh/) can be used to install Typhoon to your Kubernetes cluster.
@@ -90,6 +109,8 @@ helm install typhoon typhoon/typhoon --create-namespace --namespace typhoon
 * Knative Eventing `v1.15` or newer
 * Knative Serving `v1.15` or newer
 * Helm `3.0` or newer
+
+The prerequisites can be installed via the [ZEISS Charts](https://github.com/ZEISS/charts).
 
 ## Installation
 
