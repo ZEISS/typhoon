@@ -44,7 +44,7 @@ require (
 	go.opencensus.io v0.24.0
 	go.uber.org/zap v1.27.0
 	golang.org/x/mod v0.21.0
-	golang.org/x/net v0.28.0
+	golang.org/x/net v0.29.0
 	golang.org/x/oauth2 v0.23.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20240725223205-93522f1f2a9f
 	google.golang.org/protobuf v1.34.2
