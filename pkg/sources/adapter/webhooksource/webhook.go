@@ -9,11 +9,11 @@ import (
 	"strings"
 	"time"
 
-	"go.uber.org/zap"
-
 	cloudevents "github.com/cloudevents/sdk-go/v2"
-
-	pkgadapter "knative.dev/eventing/pkg/adapter/v2"
+	"github.com/zeiss/pkg/utilx"
+	"go.uber.org/zap"
+	"golang.org/x/sync/errgroup"
+	"knative.dev/eventing/pkg/adapter/v2"
 	"knative.dev/pkg/logging"
 )
 
@@ -23,6 +23,8 @@ const (
 	queryPrefix                      = "q"
 	headerPrefix                     = "h"
 )
+
+var _ adapter.Adapter = (*webhookHandler)(nil)
 
 type webhookHandler struct {
 	eventType               string
@@ -34,13 +36,12 @@ type webhookHandler struct {
 
 	ceClient cloudevents.Client
 	logger   *zap.SugaredLogger
-	mt       *pkgadapter.MetricTag
+	mt       *adapter.MetricTag
 }
 
-// Start implements pkgadapter.Adapter
-// Runs the server for receiving HTTP events until ctx gets cancelled.
+// Start runs the HTTP event handler.
 func (h *webhookHandler) Start(ctx context.Context) error {
-	ctx = pkgadapter.ContextWithMetricTag(ctx, h.mt)
+	ctx = adapter.ContextWithMetricTag(ctx, h.mt)
 
 	m := http.NewServeMux()
 	m.HandleFunc("/", h.handleAll(ctx))
@@ -59,6 +60,12 @@ func (h *webhookHandler) Start(ctx context.Context) error {
 func runHandler(ctx context.Context, s *http.Server) error {
 	logging.FromContext(ctx).Info("Starting webhook event handler")
 
+	g, ctx := errgroup.WithContext(ctx)
+
+	g.Go(func() error {
+		return s.ListenAndServe()
+	})
+
 	errCh := make(chan error)
 	go func() {
 		errCh <- s.ListenAndServe()
@@ -68,6 +75,7 @@ func runHandler(ctx context.Context, s *http.Server) error {
 		if errors.Is(err, http.ErrServerClosed) {
 			return fmt.Errorf("during server runtime: %w", err)
 		}
+
 		return nil
 	}
 
@@ -95,7 +103,7 @@ func runHandler(ctx context.Context, s *http.Server) error {
 // nolint:gocyclo
 func (h *webhookHandler) handleAll(ctx context.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if h.corsAllowOrigin != "" {
+		if utilx.NotEmpty(h.corsAllowOrigin) {
 			w.Header().Set("Access-Control-Allow-Origin", h.corsAllowOrigin)
 		}
 
@@ -104,13 +112,14 @@ func (h *webhookHandler) handleAll(ctx context.Context) http.HandlerFunc {
 			return
 		}
 
-		if h.username != "" && h.password != "" {
+		if utilx.And(utilx.NotEmpty(h.username), utilx.Empty(h.password)) {
 			us, ps, ok := r.BasicAuth()
 			if !ok {
 				h.handleError(errors.New("wrong authentication header"), http.StatusBadRequest, w)
 				return
 			}
-			if us != h.username || ps != h.password {
+
+			if utilx.Or(us != h.username, ps != h.password) {
 				h.handleError(errors.New("credentials are not valid"), http.StatusUnauthorized, w)
 				return
 			}
@@ -196,6 +205,7 @@ func (h *webhookHandler) handleAll(ctx context.Context) http.HandlerFunc {
 			w.WriteHeader(http.StatusNoContent)
 			return
 		}
+
 		w.WriteHeader(http.StatusOK)
 	}
 }
@@ -243,5 +253,6 @@ func sanitizeCloudEventAttributeName(name string) string {
 	if name == "data" || name == "path" || name == "method" || name == "host" {
 		return "data0"
 	}
+
 	return name
 }

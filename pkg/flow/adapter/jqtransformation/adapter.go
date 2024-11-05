@@ -8,20 +8,24 @@ import (
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"go.uber.org/zap"
-	pkgadapter "knative.dev/eventing/pkg/adapter/v2"
+	"knative.dev/eventing/pkg/adapter/v2"
 	"knative.dev/pkg/logging"
 
+	"github.com/zeiss/pkg/conv"
+	"github.com/zeiss/pkg/utilx"
 	"github.com/zeiss/typhoon/pkg/apis/flow"
 	"github.com/zeiss/typhoon/pkg/metrics"
 	targetce "github.com/zeiss/typhoon/pkg/targets/adapter/cloudevents"
 )
 
+var _ adapter.Adapter = (*jqadapter)(nil)
+
 // NewAdapter adapter implementation
-func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClient cloudevents.Client) pkgadapter.Adapter {
+func NewAdapter(ctx context.Context, envAcc adapter.EnvConfigAccessor, ceClient cloudevents.Client) adapter.Adapter {
 	logger := logging.FromContext(ctx)
 
-	mt := &pkgadapter.MetricTag{
-		ResourceGroup: flow.JQTransformationResource.String(),
+	mt := &adapter.MetricTag{
+		ResourceGroup: conv.String(flow.JQTransformationResource),
 		Namespace:     envAcc.GetNamespace(),
 		Name:          envAcc.GetName(),
 	}
@@ -30,10 +34,13 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 
 	env := envAcc.(*envAccessor)
 
-	replier, err := targetce.New(env.Component, logger.Named("replier"),
+	replier, err := targetce.New(
+		env.Component,
+		logger.Named("replier"),
 		targetce.ReplierWithStatefulHeaders(env.BridgeIdentifier),
 		targetce.ReplierWithStaticResponseType("com.zeiss.jqtransformation.error"),
-		targetce.ReplierWithPayloadPolicy(targetce.PayloadPolicy(env.CloudEventPayloadPolicy)))
+		targetce.ReplierWithPayloadPolicy(targetce.PayloadPolicy(env.CloudEventPayloadPolicy)),
+	)
 	if err != nil {
 		logger.Panicf("Error creating CloudEvents replier: %v", err)
 	}
@@ -56,8 +63,6 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 	}
 }
 
-var _ pkgadapter.Adapter = (*jqadapter)(nil)
-
 type jqadapter struct {
 	query *gojq.Query
 
@@ -66,7 +71,7 @@ type jqadapter struct {
 	ceClient cloudevents.Client
 	logger   *zap.SugaredLogger
 
-	mt *pkgadapter.MetricTag
+	mt *adapter.MetricTag
 	sr *metrics.EventProcessingStatsReporter
 }
 
@@ -74,8 +79,8 @@ type jqadapter struct {
 // or the context is cancelled.
 func (a *jqadapter) Start(ctx context.Context) error {
 	a.logger.Info("Starting JQTransformation Adapter")
-	ctx = pkgadapter.ContextWithMetricTag(ctx, a.mt)
-	return a.ceClient.StartReceiver(ctx, a.dispatch)
+
+	return a.ceClient.StartReceiver(adapter.ContextWithMetricTag(ctx, a.mt), a.dispatch)
 }
 
 func (a *jqadapter) dispatch(ctx context.Context, event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
@@ -91,9 +96,11 @@ func (a *jqadapter) dispatch(ctx context.Context, event cloudevents.Event) (*clo
 		if !ok {
 			break
 		}
+
 		if err, ok := v.(error); ok {
 			return a.replier.Error(&event, targetce.ErrorCodeRequestParsing, err, nil)
 		}
+
 		qd = v
 	}
 
@@ -107,12 +114,13 @@ func (a *jqadapter) dispatch(ctx context.Context, event cloudevents.Event) (*clo
 		return a.replier.Error(&event, targetce.ErrorCodeAdapterProcess, err, nil)
 	}
 
-	if a.sink != "" {
-		if result := a.ceClient.Send(ctx, event); !cloudevents.IsACK(result) {
-			return a.replier.Error(&event, targetce.ErrorCodeAdapterProcess, result, "sending the cloudevent to the sink")
-		}
-		return nil, cloudevents.ResultACK
+	if utilx.Empty(a.sink) {
+		return &event, cloudevents.ResultACK
 	}
 
-	return &event, cloudevents.ResultACK
+	if result := a.ceClient.Send(ctx, event); !cloudevents.IsACK(result) {
+		return a.replier.Error(&event, targetce.ErrorCodeAdapterProcess, result, "sending the cloudevent to the sink")
+	}
+
+	return nil, cloudevents.ResultACK
 }

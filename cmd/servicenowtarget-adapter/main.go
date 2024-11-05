@@ -1,11 +1,10 @@
 package main
 
 import (
-	pkgadapter "knative.dev/eventing/pkg/adapter/v2"
-
 	"github.com/zeiss/typhoon/pkg/targets/adapter/servicenowtarget"
+	"knative.dev/eventing/pkg/adapter/v2"
 )
 
 func main() {
-	pkgadapter.Main("servicenowtarget", servicenowtarget.EnvAccessorCtor, servicenowtarget.NewTarget)
+	adapter.Main("servicenowtarget", servicenowtarget.EnvAccessorCtor, servicenowtarget.NewTarget)
 }

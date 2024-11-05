@@ -5,16 +5,17 @@ import (
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 
-	pkgadapter "knative.dev/eventing/pkg/adapter/v2"
+	"knative.dev/eventing/pkg/adapter/v2"
 	"knative.dev/pkg/logging"
 
+	"github.com/zeiss/pkg/conv"
 	"github.com/zeiss/typhoon/pkg/apis/sources"
 )
 
 // NewAdapter satisfies pkgadapter.AdapterConstructor.
-func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClient cloudevents.Client) pkgadapter.Adapter {
-	mt := &pkgadapter.MetricTag{
-		ResourceGroup: sources.WebhookSourceResource.String(),
+func NewAdapter(ctx context.Context, envAcc adapter.EnvConfigAccessor, ceClient cloudevents.Client) adapter.Adapter {
+	mt := &adapter.MetricTag{
+		ResourceGroup: conv.String(sources.WebhookSourceResource),
 		Namespace:     envAcc.GetNamespace(),
 		Name:          envAcc.GetName(),
 	}
@@ -34,5 +35,3 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 		mt:       mt,
 	}
 }
-
-var _ pkgadapter.Adapter = (*webhookHandler)(nil)
