@@ -21,13 +21,13 @@ helm repo add nats https://nats-io.github.io/k8s/helm/charts
 helm repo update
 
 # Install the Knative Serving and Eventing components on Minikube
-helm install knative zeiss-staging/knative --create-namespace
-
-# See: https://gist.github.com/beriberikix/a827ec31f62705f13054895fa8cda0ad
-kubectl apply --filename https://raw.githubusercontent.com/knative/serving/knative-v$knative_serving/third_party/kourier-latest/kourier.yaml
+helm install knative zeiss-staging/knative --wait --create-namespace
 
 # Install the Eventing components
 helm install eventing zeiss-staging/eventing --wait
+
+# See: https://gist.github.com/beriberikix/a827ec31f62705f13054895fa8cda0ad
+kubectl apply --filename https://raw.githubusercontent.com/knative/serving/knative-v$knative_serving/third_party/kourier-latest/kourier.yaml
 
 # Install the NATZ operator
 helm install natz-operator natz-operator/natz-operator --wait --namespace knative-eventing
