@@ -14,14 +14,13 @@ type ApiHandlers struct {
 	systems   controllers.SystemsController
 	teams     controllers.TeamsController
 	users     controllers.UsersController
-	version   *controllers.VersionController
 
 	openapi.Unimplemented
 }
 
 // NewApiHandlers ...
-func NewApiHandlers(systems controllers.SystemsController, teams controllers.TeamsController, version *controllers.VersionController, operators controllers.OperatorsController, accounts controllers.AccountsController, users controllers.UsersController) *ApiHandlers {
-	return &ApiHandlers{systems: systems, teams: teams, version: version, operators: operators, accounts: accounts, users: users}
+func NewApiHandlers(systems controllers.SystemsController, teams controllers.TeamsController, operators controllers.OperatorsController, accounts controllers.AccountsController, users controllers.UsersController) *ApiHandlers {
+	return &ApiHandlers{systems: systems, teams: teams, operators: operators, accounts: accounts, users: users}
 }
 
 // CreateOperatorSigningKeyGroup ...

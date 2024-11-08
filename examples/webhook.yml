@@ -19,4 +19,5 @@ spec:
     ref:
       apiVersion: eventing.knative.dev/v1
       kind: Broker
-      name: imc-broker:
+      name:
+      imc-broker:

@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 
-	"github.com/zeiss/typhoon/internal/api/adapters"
 	"github.com/zeiss/typhoon/internal/api/adapters/db"
 	"github.com/zeiss/typhoon/internal/api/adapters/handlers"
 	"github.com/zeiss/typhoon/internal/api/controllers"
@@ -72,7 +71,6 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		}
 
 		db := db.NewDB(conn)
-		build := adapters.NewBuild()
 
 		swagger, err := openapi.GetSwagger()
 		if err != nil {
@@ -96,12 +94,11 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 
 		tc := controllers.NewTeamsController(db)
 		sc := controllers.NewSystemsController(db)
-		vc := controllers.NewVersionController(build)
 		oc := controllers.NewOperatorsController(db)
 		ac := controllers.NewAccountsController(db)
 		uc := controllers.NewUsersController(db)
 
-		handlers := handlers.NewApiHandlers(sc, tc, vc, oc, ac, uc)
+		handlers := handlers.NewApiHandlers(sc, tc, oc, ac, uc)
 
 		handler := openapi.NewStrictHandler(handlers, nil)
 		openapi.RegisterHandlers(app, handler)

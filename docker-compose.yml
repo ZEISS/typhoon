@@ -1,54 +1,64 @@
 services:
 
-  crdb:
-    image: cockroachdb/cockroach:latest-v24.1
-    ports:
-      - "26257:26257"
-      - "8082:8080"
+  postgres:
+    image: postgres:14
+    container_name: postgres
+    command: postgres -c 'max_connections=100'
     networks:
-      - typhoon
-    command: start-single-node --insecure
-    volumes:
-      - crdb:/cockroach/cockroach-data
+      - default
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health?ready=1"]
-      interval: 3s
-      timeout: 3s
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
       retries: 5
-  
+
   migrate:
     depends_on:
-      crdb:
+      postgres:
         condition: service_healthy
     image: openfga/openfga:latest
     container_name: migrate
-    command: migrate
     environment:
       - OPENFGA_DATASTORE_ENGINE=postgres
-      - OPENFGA_DATASTORE_URI=postgres://root@crdb:26257/defaultdb?sslmode=disable
+      - OPENFGA_DATASTORE_URI=postgres://postgres:password@postgres:5432/postgres?sslmode=disable
+    command: migrate
     networks:
-      - typhoon
-  
+      - default
+
   openfga:
     depends_on:
       migrate:
         condition: service_completed_successfully
     image: openfga/openfga:latest
     container_name: openfga
+    command: run
     environment:
       - OPENFGA_DATASTORE_ENGINE=postgres
-      - OPENFGA_DATASTORE_URI=postgres://root@crdb:26257/defaultdb?sslmode=disable
-      - OPENFGA_LOG_FORMAT=json
-    command: run
+      - OPENFGA_DATASTORE_URI=postgres://postgres:password@postgres:5432/postgres?sslmode=disable
+      - OPENFGA_DATASTORE_MAX_OPEN_CONNS=100 #see postgres container
+      - OPENFGA_PLAYGROUND_ENABLED=true
     networks:
-      - typhoon
+      - default
     ports:
-      # Needed for the http server
-      - "8080:8080"
-      # Needed for the grpc server (if used)
-      - "8081:8081"
-      # Needed for the playground (Do not enable in prod!)
-      - "3001:3000"
+      - "8080:8080" #http
+      - "8081:8081" #grpc
+      - "3000:3000" #playground
+      - "2112:2112" #prometheus metrics
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/usr/local/bin/grpc_health_probe",
+          "-addr=openfga:8081"
+        ]
+      interval: 5s
+      timeout: 30s
+      retries: 3
 
   east1:
     image: docker.io/nats:2.10.9
@@ -129,7 +139,7 @@ configs:
 #     file: './example/west.conf'
 #   central.conf:
 #     file: './example/central.conf'
-  
+
 
 volumes:
   crdb:

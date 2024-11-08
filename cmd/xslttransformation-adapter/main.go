@@ -4,9 +4,9 @@ package main
 
 import (
 	"github.com/zeiss/typhoon/pkg/flow/adapter/xslttransformation"
-	pkgadapter "knative.dev/eventing/pkg/adapter/v2"
+	"knative.dev/eventing/pkg/adapter/v2"
 )
 
 func main() {
-	pkgadapter.Main("xslttransformation", xslttransformation.EnvAccessorCtor, xslttransformation.NewTarget)
+	adapter.Main("xslttransformation", xslttransformation.EnvAccessorCtor, xslttransformation.NewTarget)
 }
