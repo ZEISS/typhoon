@@ -211,7 +211,7 @@ func (h *webhookHandler) handleAll(ctx context.Context) http.HandlerFunc {
 }
 
 func (h *webhookHandler) handleError(err error, code int, w http.ResponseWriter) {
-	h.logger.Errorw("An error occurred", zap.Error(err))
+	h.logger.Error("An error occurred", zap.Error(err))
 	http.Error(w, err.Error(), code)
 }
 

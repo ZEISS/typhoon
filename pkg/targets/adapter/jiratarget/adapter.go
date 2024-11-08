@@ -71,7 +71,7 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 
 	jiraClient, err := jira.NewClient(basicAuth.Client(), env.JiraURL)
 	if err != nil {
-		logger.Panicw("Could not create the Jira client", zap.Error(err))
+		logger.Panic("Could not create the Jira client", zap.Error(err))
 	}
 
 	return &jiraAdapter{

@@ -69,7 +69,7 @@ func Start(ctx context.Context) {
 
 	handleServerError := func(err error) {
 		if errors.Is(err, http.ErrServerClosed) {
-			logging.FromContext(ctx).Errorw("Error during runtime of health server", zap.Error(err))
+			logging.FromContext(ctx).Error("Error during runtime of health server", zap.Error(err))
 		}
 	}
 
@@ -80,7 +80,7 @@ func Start(ctx context.Context) {
 
 		// nolint:contextcheck
 		if err := server.Shutdown(ctx); err != nil {
-			logging.FromContext(ctx).Errorw("Error during shutdown of health server", zap.Error(err))
+			logging.FromContext(ctx).Error("Error during shutdown of health server", zap.Error(err))
 		}
 
 		handleServerError(<-errCh)

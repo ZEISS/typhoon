@@ -98,7 +98,7 @@ func (a *ceAdapter) senderClientUpdater(url, path, username string) fs.WatchCall
 		if username != "" {
 			password, err := os.ReadFile(filepath.Clean(path))
 			if err != nil {
-				a.logger.Errorw("Could not read the mounted password at the specific path", zap.Error(err))
+				a.logger.Error("Could not read the mounted password at the specific path", zap.Error(err))
 				return
 			}
 

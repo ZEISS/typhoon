@@ -49,7 +49,7 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 
 	httpRequest, err := http.NewRequestWithContext(ctx, env.Method, env.Endpoint, nil)
 	if err != nil {
-		logger.Panicw("Cannot build request", zap.Error(err))
+		logger.Panic("Cannot build request", zap.Error(err))
 	}
 
 	for k, v := range env.Headers {

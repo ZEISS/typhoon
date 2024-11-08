@@ -83,7 +83,7 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 
 	hecURL, err := url.Parse(env.HECEndpoint)
 	if err != nil {
-		logger.Panicw("Invalid HEC endpoint URL "+env.HECEndpoint, zap.Error(err))
+		logger.Panic("Invalid HEC endpoint URL "+env.HECEndpoint, zap.Error(err))
 	}
 
 	return &adapter{
@@ -142,7 +142,7 @@ func (a *adapter) Start(ctx context.Context) error {
 
 // receive implements the handler's receive logic.
 func (a *adapter) receive(ctx context.Context, event cloudevents.Event) cloudevents.Result {
-	a.logger.Debugw("Processing event", zap.Any("event", event))
+	a.logger.Debug("Processing event", zap.Any("event", event))
 
 	e := a.spClient.NewEventWithTime(
 		event.Time(),
@@ -160,7 +160,7 @@ func (a *adapter) receive(ctx context.Context, event cloudevents.Event) cloudeve
 
 	err := a.spClient.LogEvent(e)
 	if err != nil {
-		a.logger.Errorw("Failed to send event to HEC", zap.Error(err))
+		a.logger.Error("Failed to send event to HEC", zap.Error(err))
 		return cloudevents.NewHTTPResult(a.extractHTTPStatus(err), "failed to send event to HEC: %s", err)
 	}
 
@@ -174,7 +174,7 @@ func (a *adapter) extractHTTPStatus(err error) int {
 	if errors.As(err, &splunkErr) {
 		code, err := splunkErr.Code.HTTPCode()
 		if err != nil {
-			a.logger.Warnw("Couldn't determine HTTP status code", zap.Error(err))
+			a.logger.Warn("Couldn't determine HTTP status code", zap.Error(err))
 			return http.StatusBadRequest
 		}
 		return code
