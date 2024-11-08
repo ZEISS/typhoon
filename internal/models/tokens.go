@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/nats-io/jwt"
+	"github.com/nats-io/jwt/v2"
 	"gorm.io/gorm"
 )
 
