@@ -174,7 +174,7 @@ func (t *adapter) applyTransformations(event cloudevents.Event) (*cloudevents.Ev
 	// so we must use "contains" instead of strict equality
 	if !strings.Contains(event.DataContentType(), cloudevents.ApplicationJSON) {
 		err := fmt.Errorf("CE Content-Type %q is not supported", event.DataContentType())
-		t.logger.Errorw("Bad Content-Type", zap.Error(err))
+		t.logger.Error("Bad Content-Type", zap.Error(err))
 		return nil, err
 	}
 
@@ -185,7 +185,7 @@ func (t *adapter) applyTransformations(event cloudevents.Event) (*cloudevents.Ev
 
 	localContextBytes, err := json.Marshal(localContext)
 	if err != nil {
-		t.logger.Errorw("Cannot encode CE context", zap.Error(err))
+		t.logger.Error("Cannot encode CE context", zap.Error(err))
 		return nil, fmt.Errorf("cannot encode CE context: %w", err)
 	}
 
@@ -216,13 +216,13 @@ func (t *adapter) applyTransformations(event cloudevents.Event) (*cloudevents.Ev
 
 	newContext := ceContext{}
 	if err := json.Unmarshal(eventContext, &newContext); err != nil {
-		t.logger.Errorw("Cannot decode CE new context", zap.Error(err))
+		t.logger.Error("Cannot decode CE new context", zap.Error(err))
 		return nil, fmt.Errorf("cannot decode CE new context: %w", err)
 	}
 	event.Context = newContext
 	for k, v := range newContext.Extensions {
 		if err := event.Context.SetExtension(k, v); err != nil {
-			t.logger.Errorw("Cannot set CE extension", zap.Error(err))
+			t.logger.Error("Cannot set CE extension", zap.Error(err))
 			return nil, fmt.Errorf("cannot set CE extension: %w", err)
 		}
 	}
@@ -232,13 +232,13 @@ func (t *adapter) applyTransformations(event cloudevents.Event) (*cloudevents.Ev
 		errs = append(errs, err)
 	}
 	if err = event.SetData(cloudevents.ApplicationJSON, eventPayload); err != nil {
-		t.logger.Errorw("Cannot set CE data", zap.Error(err))
+		t.logger.Error("Cannot set CE data", zap.Error(err))
 		return nil, fmt.Errorf("cannot set CE data: %w", err)
 	}
 	// Failed transformation operations should not stop event flow
 	// therefore, just log the errors
 	if len(errs) != 0 {
-		t.logger.Errorw("Event transformation errors", zap.Errors("errors", errs))
+		t.logger.Error("Event transformation errors", zap.Errors("errors", errs))
 	}
 
 	return &event, nil

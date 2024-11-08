@@ -37,13 +37,13 @@ func (h *cloudEventsHandler) Start(ctx context.Context) error {
 func (h *cloudEventsHandler) handle(ctx context.Context, e event.Event) protocol.Result {
 	err := e.Validate()
 	if err != nil {
-		h.logger.Errorw("Incoming CloudEvent is not valid", zap.Error(err))
+		h.logger.Error("Incoming CloudEvent is not valid", zap.Error(err))
 		return protocol.ResultNACK
 	}
 
 	result := h.ceClient.Send(ctx, e)
 	if !cloudevents.IsACK(result) {
-		h.logger.Errorw("Could not send CloudEvent", zap.Error(result))
+		h.logger.Error("Could not send CloudEvent", zap.Error(result))
 	}
 
 	return result
@@ -63,7 +63,7 @@ func (h *cloudEventsHandler) handleAuthentication(next http.Handler) http.Handle
 			for _, kv := range h.basicAuths {
 				p, err := h.cfw.GetContent(kv.MountedValueFile)
 				if err != nil {
-					h.logger.Errorw(
+					h.logger.Error(
 						fmt.Sprintf("Could not retrieve password for user %q", kv.Key),
 						zap.Error(err))
 					continue

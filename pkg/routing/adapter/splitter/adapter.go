@@ -95,16 +95,16 @@ func (h *Handler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 
 	event, err := binding.ToEvent(ctx, message)
 	if err != nil {
-		h.logger.Errorw("Failed to extract event from request", zap.Error(err))
+		h.logger.Error("Failed to extract event from request", zap.Error(err))
 		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	h.logger.Debugw("Received message", zap.Any("splitter", splitter))
+	h.logger.Debug("Received message", zap.Any("splitter", splitter))
 
 	s, err := h.splitterLister.Get(splitter)
 	if err != nil {
-		h.logger.Errorw("Unable to get the Splitter", zap.Error(err))
+		h.logger.Error("Unable to get the Splitter", zap.Error(err))
 		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -119,7 +119,7 @@ func (h *Handler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 		// we may want to keep responses and send them back to the source
 		res, err := h.sendEvent(ctx, request.Header, s.Status.SinkURI.String(), e)
 		if err != nil {
-			h.logger.Errorw("Failed to send the event", zap.Error(err))
+			h.logger.Error("Failed to send the event", zap.Error(err))
 		}
 		defer res.Body.Close()
 	}
@@ -138,7 +138,7 @@ func (h *Handler) split(path string, e *event.Event) []*event.Event {
 	for _, v := range val.Array() {
 		newCE := cloudevents.NewEvent()
 		if err := newCE.SetData(cloudevents.ApplicationJSON, []byte(v.Raw)); err != nil {
-			h.logger.Errorw("Failed to set event data", zap.Error(err))
+			h.logger.Error("Failed to set event data", zap.Error(err))
 			continue
 		}
 		newCE.DataBase64 = false

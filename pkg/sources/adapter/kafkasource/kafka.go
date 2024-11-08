@@ -43,7 +43,7 @@ func (c consumerGroupHandler) ConsumeClaim(session sarama.ConsumerGroupSession, 
 				return nil
 			}
 			if err := c.adapter.emitEvent(session.Context(), *msg); err != nil {
-				c.adapter.logger.Errorw("Failed to emit event: %v", zap.Error(err))
+				c.adapter.logger.Error("Failed to emit event: %v", zap.Error(err))
 				// do not mark message
 				continue
 			}

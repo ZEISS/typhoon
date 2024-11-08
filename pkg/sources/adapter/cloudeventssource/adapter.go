@@ -31,12 +31,12 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 
 	cfw, err := fs.NewCachedFileWatcher(logger)
 	if err != nil {
-		logger.Panicw("Could not create a file watcher", zap.Error(err))
+		logger.Panic("Could not create a file watcher", zap.Error(err))
 	}
 
 	for _, as := range env.BasicAuths {
 		if err := cfw.Add(as.MountedValueFile); err != nil {
-			logger.Panicw(
+			logger.Panic(
 				fmt.Sprintf("Authentication secret at %q could not be watched", as.MountedValueFile),
 				zap.Error(err))
 		}
@@ -64,14 +64,14 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 	if env.RequestsPerSecond != 0 {
 		rl, err := ratelimiter.New(env.RequestsPerSecond)
 		if err != nil {
-			logger.Panicw("Could not create rate limiter", zap.Error(err))
+			logger.Panic("Could not create rate limiter", zap.Error(err))
 		}
 		options = append(options, cehttp.WithRateLimiter(rl))
 	}
 
 	ceServer, err := cloudevents.NewClientHTTP(options...)
 	if err != nil {
-		logger.Panicw("Error creating CloudEvents client", zap.Error(err))
+		logger.Panic("Error creating CloudEvents client", zap.Error(err))
 	}
 
 	ceh.ceServer = ceServer
