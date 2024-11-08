@@ -1,11 +1,10 @@
 package main
 
 import (
-	pkgadapter "knative.dev/eventing/pkg/adapter/v2"
-
 	"github.com/zeiss/typhoon/pkg/flow/adapter/xmltojsontransformation"
+	"knative.dev/eventing/pkg/adapter/v2"
 )
 
 func main() {
-	pkgadapter.Main("xmltojsontransformation", xmltojsontransformation.EnvAccessorCtor, xmltojsontransformation.NewAdapter)
+	adapter.Main("xmltojsontransformation", xmltojsontransformation.EnvAccessorCtor, xmltojsontransformation.NewAdapter)
 }

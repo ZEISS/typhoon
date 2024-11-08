@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"log"
-	"net/http"
 
 	"github.com/kelseyhightower/envconfig"
 	authz "github.com/zeiss/fiber-authz"
@@ -12,10 +11,8 @@ import (
 	"github.com/zeiss/fiber-htmx/components/toasts"
 	"github.com/zeiss/typhoon/internal/web/adapters/db"
 	"github.com/zeiss/typhoon/internal/web/adapters/handlers"
-	"github.com/zeiss/typhoon/static"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	logger "github.com/gofiber/fiber/v2/middleware/logger"
 	requestid "github.com/gofiber/fiber/v2/middleware/requestid"
 	openfga "github.com/openfga/go-sdk/client"
@@ -129,10 +126,6 @@ func (s *WebSrv) Start(ctx context.Context, ready server.ReadyFunc, run server.R
 		)
 		app.Use(requestid.New())
 		app.Use(logger.New())
-
-		app.Use("/static", filesystem.New(filesystem.Config{
-			Root: http.FS(static.Assets),
-		}))
 
 		app.Use(goth.NewProtectMiddleware(gothConfig))
 

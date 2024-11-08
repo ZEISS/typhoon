@@ -4,16 +4,16 @@ import (
 	"fmt"
 	"strings"
 
-	pkgadapter "knative.dev/eventing/pkg/adapter/v2"
+	"knative.dev/eventing/pkg/adapter/v2"
 )
 
 // NewEnvConfig satisfies pkgadapter.EnvConfigConstructor.
-func NewEnvConfig() pkgadapter.EnvConfigAccessor {
+func NewEnvConfig() adapter.EnvConfigAccessor {
 	return &envAccessor{}
 }
 
 type envAccessor struct {
-	pkgadapter.EnvConfig
+	adapter.EnvConfig
 
 	EventType                    string                   `envconfig:"WEBHOOK_EVENT_TYPE" required:"true"`
 	EventSource                  string                   `envconfig:"WEBHOOK_EVENT_SOURCE" required:"true"`
@@ -24,11 +24,11 @@ type envAccessor struct {
 }
 
 type ExtensionAttributesFrom struct {
+	headers bool
+	host    bool
 	method  bool
 	path    bool
-	host    bool
 	queries bool
-	headers bool
 }
 
 // Decode an array of KeyMountedValues
@@ -49,5 +49,6 @@ func (ea *ExtensionAttributesFrom) Decode(value string) error {
 			return fmt.Errorf("CloudEvent extension from HTTP element not supported: %s", o)
 		}
 	}
+
 	return nil
 }
