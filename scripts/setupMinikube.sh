@@ -2,37 +2,54 @@
 
 set -x
 
-# Install Knative Serving
-kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-crds.yaml
-kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-core.yaml
+# Get the current directory
+dir=$(pwd)
 
-# Install Networking Layer
-kubectl apply -f https://github.com/knative/net-kourier/releases/download/knative-v1.13.0/kourier.yaml
-kubectl patch configmap/config-network \
-  --namespace knative-serving \
-  --type merge \
-  --patch '{"data":{"ingress-class":"kourier.ingress.networking.knative.dev"}}'
-kubectl --namespace kourier-system get service kourier
-kubectl get pods -n knative-serving
+# Install Minikube
+minikube start --cpus=2 --memory=4096 --addons=ingress
 
-# Configure Magic DNS
-kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-default-domain.yaml
+# Knative serving version
+knative_serving="1.16.0"
 
-# Install Knative Eventing
-kubectl apply -f https://github.com/knative/eventing/releases/download/knative-v1.13.3/eventing-crds.yaml
-kubectl apply -f https://github.com/knative/eventing/releases/download/knative-v1.13.3/eventing-core.yaml
+# Knative eventing version
+knative_eventing="1.16.0"
 
-# Install NATS JetStream
-kubectl apply -f example/knative-eventing-jetstream-crds.yaml
-kubectl apply -f https://github.com/knative-extensions/eventing-natss/releases/latest/download/eventing-jsm.yaml
-# kubectl apply -f example/knative-nats.yaml
-kubectl apply -f https://github.com/nats-io/nack/releases/latest/download/crds.yml
-helm install nats nats/nats -f example/values-nats.yaml 
-helm install nack-jsc nats/nack --set jetstream.nats.url=nats://nats:4222
+# Setup helm charts
+helm repo add natz-operator https://zeiss.github.io/natz-operator/helm/charts
+helm repo add zeiss-staging https://zeiss.github.io/charts/staging
+helm repo add nats https://nats-io.github.io/k8s/helm/charts
+helm repo update
 
-# Configure eventing
-kubectl apply -f example/knative-eventing-config-nats.yaml
-kubectl apply -f example/knative-eventing-default-channel.yaml
+# Install the Knative Serving and Eventing components on Minikube
+helm install knative zeiss-staging/knative --wait --create-namespace
 
-# Install Typhoon
-helm install typhoon typhoon/typhoon --create-namespace --namespace typhoon 
+# Install the Eventing components
+helm install eventing zeiss-staging/eventing --wait
+
+# See: https://gist.github.com/beriberikix/a827ec31f62705f13054895fa8cda0ad
+kubectl apply --filename https://raw.githubusercontent.com/knative/serving/knative-v$knative_serving/third_party/kourier-latest/kourier.yaml
+
+# Install the NATZ operator
+helm install natz-operator natz-operator/natz-operator --wait --namespace knative-eventing
+
+# Create operator resources
+kubectl apply -f $(pwd)/examples/natz-operator.yaml
+
+# Create account resources
+kubectl apply -f $(pwd)/examples/natz-account.yaml
+
+# Create user resources
+kubectl apply -f $(pwd)/examples/natz-user.yaml
+
+# Install NATS.io
+helm install nats nats/nats --wait --values $(pwd)/examples/nats-server.yaml
+
+# Install the NATZ accounts-server
+helm install account-server natz-operator/account-server --wait --namespace knative-eventing --values $(pwd)/examples/natz-account-server.yaml
+
+# Install Argocd
+kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.5.8/manifests/install.yaml
+
+# MiniKube IP
+minikube tunnel -c

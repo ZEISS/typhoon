@@ -15,6 +15,9 @@ COMMANDS		:= $(notdir $(wildcard cmd/*))
 IMAGE_TAG       ?= $(shell git rev-parse HEAD)
 TAG_REGEX       := ^v([0-9]{1,}\.){2}[0-9]{1,}$
 KOFLAGS         ?=
+KO_DOCKER_REPO 	?= ko.local
+
+export KO_DOCKER_REPO
 
 .PHONY: build
 build: $(COMMANDS) ## Build the application.
@@ -51,7 +54,11 @@ clean: ## Remove previous build.
 
 .PHONY: deploy
 deploy: ## Deploy the application.
+	@eval $$(minikube -p minikube docker-env) ;\
 	$(GO_KO) resolve -f $(BASE_DIR)/config > $(BASE_DIR)/typhoon.yaml
+	@kubectl create namespace typhoon --dry-run=client -o yaml | kubectl apply -f -
+	@kubectl apply -f $(BASE_DIR)/typhoon.yaml
+	@rm $(BASE_DIR)/typhoon.yaml
 
 .PHONY: snapshot
 snapshot: ## Create a snapshot release
