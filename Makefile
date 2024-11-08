@@ -6,7 +6,7 @@ OUTPUT_DIR    ?= $(BASE_DIR)/dist
 GO 						?= go
 GO_RUN_TOOLS	?= $(GO) run -modfile ./tools/go.mod
 GO_TEST 			?= $(GO_RUN_TOOLS) gotest.tools/gotestsum --format pkgname
-GO_RELEASER 	?= $(GO_RUN_TOOLS) github.com/goreleaser/goreleaser
+GO_RELEASER 	?= $(GO_RUN_TOOLS) github.com/goreleaser/goreleaser/v2
 GO_KO 				?= $(GO_RUN_TOOLS) github.com/google/ko
 GO_MOD 				?= $(shell ${GO} list -m)
 

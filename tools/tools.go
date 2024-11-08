@@ -8,7 +8,7 @@ import (
 	_ "github.com/golang/mock/mockgen/model"
 	_ "github.com/golangci/golangci-lint/cmd/golangci-lint"
 	_ "github.com/google/ko"
-	_ "github.com/goreleaser/goreleaser"
+	_ "github.com/goreleaser/goreleaser/v2"
 	_ "gotest.tools/gotestsum"
 	_ "k8s.io/code-generator"
 	_ "knative.dev/pkg/codegen/cmd/injection-gen"
