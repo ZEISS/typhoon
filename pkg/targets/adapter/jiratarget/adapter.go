@@ -71,7 +71,7 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 
 	jiraClient, err := jira.NewClient(basicAuth.Client(), env.JiraURL)
 	if err != nil {
-		logger.Panicw("Could not create the Jira client", zap.Error(err))
+		logger.Panic("Could not create the Jira client", zap.Error(err))
 	}
 
 	return &jiraAdapter{
@@ -125,20 +125,20 @@ func (a *jiraAdapter) dispatch(ctx context.Context, event cloudevents.Event) (*c
 func (a *jiraAdapter) jiraIssueCreate(ctx context.Context, event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
 	j := &jira.Issue{}
 	if err := event.DataAs(j); err != nil {
-		a.logger.Errorw("Error processing incoming event data as Jira Issue", zap.Error(err))
+		a.logger.Error("Error processing incoming event data as Jira Issue", zap.Error(err))
 		return nil, cloudevents.ResultACK
 	}
 
 	issue, res, err := a.jiraClient.Issue.CreateWithContext(ctx, j)
 	if err != nil {
 		respErr := jira.NewJiraError(res, err)
-		a.logger.Errorw("Error requesting Jira API", zap.Error(respErr))
+		a.logger.Error("Error requesting Jira API", zap.Error(respErr))
 		return nil, cloudevents.ResultACK
 	}
 
 	out := cloudevents.NewEvent()
 	if err := out.SetData(cloudevents.ApplicationJSON, issue); err != nil {
-		a.logger.Errorw("Error generating response event", zap.Error(err))
+		a.logger.Error("Error generating response event", zap.Error(err))
 		return nil, cloudevents.ResultACK
 	}
 
@@ -152,20 +152,20 @@ func (a *jiraAdapter) jiraIssueCreate(ctx context.Context, event cloudevents.Eve
 func (a *jiraAdapter) jiraIssueGet(ctx context.Context, event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
 	j := &IssueGetRequest{}
 	if err := event.DataAs(j); err != nil {
-		a.logger.Errorw("Error processing incoming event data as IssueGetRequest", zap.Error(err))
+		a.logger.Error("Error processing incoming event data as IssueGetRequest", zap.Error(err))
 		return nil, cloudevents.ResultACK
 	}
 
 	issue, res, err := a.jiraClient.Issue.GetWithContext(ctx, j.ID, &j.Options)
 	if err != nil {
 		respErr := jira.NewJiraError(res, err)
-		a.logger.Errorw("Error requesting Jira API", zap.Error(respErr))
+		a.logger.Error("Error requesting Jira API", zap.Error(respErr))
 		return nil, cloudevents.ResultACK
 	}
 
 	out := cloudevents.NewEvent()
 	if err := out.SetData(cloudevents.ApplicationJSON, issue); err != nil {
-		a.logger.Errorw("Error generating response event", zap.Error(err))
+		a.logger.Error("Error generating response event", zap.Error(err))
 		return nil, cloudevents.ResultACK
 	}
 
@@ -179,13 +179,13 @@ func (a *jiraAdapter) jiraIssueGet(ctx context.Context, event cloudevents.Event)
 func (a *jiraAdapter) jiraCustomRequest(ctx context.Context, event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
 	j := &JiraAPIRequest{}
 	if err := event.DataAs(j); err != nil {
-		a.logger.Errorw("Error processing incoming event data as generic Jira API request", zap.Error(err))
+		a.logger.Error("Error processing incoming event data as generic Jira API request", zap.Error(err))
 		return nil, cloudevents.ResultACK
 	}
 
 	u, err := url.Parse(a.baseURL)
 	if err != nil {
-		a.logger.Errorw("Error parsing base URL", zap.Error(err))
+		a.logger.Error("Error parsing base URL", zap.Error(err))
 		return nil, cloudevents.ResultACK
 	}
 	u.Path = path.Join(u.Path, j.Path)
@@ -200,27 +200,27 @@ func (a *jiraAdapter) jiraCustomRequest(ctx context.Context, event cloudevents.E
 
 	req, err := a.jiraClient.NewRequestWithContext(ctx, string(j.Method), u.String(), j.Payload)
 	if err != nil {
-		a.logger.Errorw("Error creating request", zap.Error(err))
+		a.logger.Error("Error creating request", zap.Error(err))
 		return nil, cloudevents.ResultACK
 	}
 
 	res, err := a.jiraClient.Do(req, nil)
 	if err != nil {
 		respErr := jira.NewJiraError(res, err)
-		a.logger.Errorw("Error requesting Jira API", zap.Error(respErr))
+		a.logger.Error("Error requesting Jira API", zap.Error(respErr))
 		return nil, cloudevents.ResultACK
 	}
 
 	defer res.Body.Close()
 	resBody, err := io.ReadAll(res.Body)
 	if err != nil {
-		a.logger.Errorw("Error reading response from Jira API", zap.Error(err))
+		a.logger.Error("Error reading response from Jira API", zap.Error(err))
 		return nil, cloudevents.ResultACK
 	}
 
 	out := cloudevents.NewEvent()
 	if err := out.SetData(cloudevents.ApplicationJSON, resBody); err != nil {
-		a.logger.Errorw("Error generating response event", zap.Error(err))
+		a.logger.Error("Error generating response event", zap.Error(err))
 		return nil, cloudevents.ResultACK
 	}
 

@@ -52,7 +52,7 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, client 
 
 	basicAuth, err := snowgo.NewBasicAuth(env.user, env.password)
 	if err != nil {
-		logger.Panicw("failed to create authenticator", zap.Error(err))
+		logger.Panic("failed to create authenticator", zap.Error(err))
 	}
 	sc := snowgo.New(env.instance, snowgo.WithRequestEditorFn(basicAuth.Intercept))
 

@@ -61,19 +61,19 @@ func (h *httpPoller) dispatch(ctx context.Context) {
 
 	res, err := h.httpClient.Do(h.httpRequest)
 	if err != nil {
-		h.logger.Errorw("Failed sending request", zap.Error(err))
+		h.logger.Error("Failed sending request", zap.Error(err))
 		return
 	}
 
 	defer res.Body.Close()
 	resb, err := io.ReadAll(res.Body)
 	if err != nil {
-		h.logger.Errorw("Failed reading response body", zap.Error(err))
+		h.logger.Error("Failed reading response body", zap.Error(err))
 		return
 	}
 
 	if res.StatusCode >= 300 {
-		h.logger.Errorw("Received non supported HTTP code from remote endpoint",
+		h.logger.Error("Received non supported HTTP code from remote endpoint",
 			zap.Int("code", res.StatusCode),
 			zap.String("response", string(resb)),
 		)
@@ -85,11 +85,11 @@ func (h *httpPoller) dispatch(ctx context.Context) {
 	event.SetSource(h.eventSource)
 
 	if err := event.SetData(cloudevents.ApplicationJSON, resb); err != nil {
-		h.logger.Errorw("Failed to set event data", zap.Error(err))
+		h.logger.Error("Failed to set event data", zap.Error(err))
 		return
 	}
 
 	if result := h.ceClient.Send(ctx, event); !cloudevents.IsACK(result) {
-		h.logger.Errorw("Could not send Cloud Event", zap.Error(result))
+		h.logger.Error("Could not send Cloud Event", zap.Error(result))
 	}
 }

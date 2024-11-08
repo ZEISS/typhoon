@@ -38,12 +38,12 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, listenC
 	env := envAcc.(*envAccessor)
 
 	if _, err := url.Parse(env.URL); err != nil {
-		logger.Panicw("URL is not parseable", zap.Error(err))
+		logger.Panic("URL is not parseable", zap.Error(err))
 	}
 
 	fw, err := fs.NewWatcher(logger)
 	if err != nil {
-		logger.Panicw("Could not create a file watcher", zap.Error(err))
+		logger.Panic("Could not create a file watcher", zap.Error(err))
 	}
 
 	ceAdapter := &ceAdapter{
@@ -57,7 +57,7 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, listenC
 	if env.BasicAuthUsername != "" {
 
 		if err := fw.Add(env.BasicAuthPasswordPath, ceClientUpdater); err != nil {
-			logger.Panicw(
+			logger.Panic(
 				"Authentication secret could not be watched at the specific path",
 				zap.Error(err))
 		}
@@ -98,7 +98,7 @@ func (a *ceAdapter) senderClientUpdater(url, path, username string) fs.WatchCall
 		if username != "" {
 			password, err := os.ReadFile(filepath.Clean(path))
 			if err != nil {
-				a.logger.Errorw("Could not read the mounted password at the specific path", zap.Error(err))
+				a.logger.Error("Could not read the mounted password at the specific path", zap.Error(err))
 				return
 			}
 
@@ -111,7 +111,7 @@ func (a *ceAdapter) senderClientUpdater(url, path, username string) fs.WatchCall
 
 		senderClient, err := cloudevents.NewClientHTTP(opts...)
 		if err != nil {
-			a.logger.Fatalw("Unable to create CloudEvent client", zap.Error(err))
+			a.logger.Fatal("Unable to create CloudEvent client", zap.Error(err))
 		}
 
 		a.senderClient = senderClient
@@ -146,7 +146,7 @@ func (a *ceAdapter) dispatch(ctx context.Context, event cloudevents.Event) (*clo
 	// client has not been built.
 	if a.senderClient == nil {
 		err := fmt.Errorf("CloudEvents client not intialized. Please, make sure that authentication secret is available")
-		a.logger.Errorw("Failed to send event", zap.Error(err))
+		a.logger.Error("Failed to send event", zap.Error(err))
 		// nolint:contextcheck
 		a.sr.ReportProcessingError(true, ceTypeTag, ceSrcTag)
 		return nil, err
@@ -156,7 +156,7 @@ func (a *ceAdapter) dispatch(ctx context.Context, event cloudevents.Event) (*clo
 	if cloudevents.IsNACK(r) {
 		// nolint:contextcheck
 		a.sr.ReportProcessingError(true, ceTypeTag, ceSrcTag)
-		a.logger.Errorw("Could not send event to destination", zap.Error(r))
+		a.logger.Error("Could not send event to destination", zap.Error(r))
 	} else {
 		// nolint:contextcheck
 		a.sr.ReportProcessingSuccess(ceTypeTag, ceSrcTag)

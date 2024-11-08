@@ -102,7 +102,7 @@ func (h *Handler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 
 	event, err := binding.ToEvent(ctx, message)
 	if err != nil {
-		h.logger.Errorw("Failed to extract event from request", zap.Error(err))
+		h.logger.Error("Failed to extract event from request", zap.Error(err))
 		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -111,7 +111,7 @@ func (h *Handler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 
 	f, err := h.filterLister.Get(filter)
 	if err != nil {
-		h.logger.Errorw("Unable to get the Filter", zap.Error(err))
+		h.logger.Error("Unable to get the Filter", zap.Error(err))
 		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -148,7 +148,7 @@ func (h *Handler) send(ctx context.Context, writer http.ResponseWriter, headers 
 	// send the event to trigger's subscriber
 	response, err := h.sendEvent(ctx, headers, target, event)
 	if err != nil {
-		h.logger.Errorw("Failed to send event", zap.Error(err))
+		h.logger.Error("Failed to send event", zap.Error(err))
 		writer.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -158,7 +158,7 @@ func (h *Handler) send(ctx context.Context, writer http.ResponseWriter, headers 
 	// If there is an event in the response write it to the response
 	_, err = h.writeResponse(ctx, writer, response, target)
 	if err != nil {
-		h.logger.Errorw("Failed to write response", zap.Error(err))
+		h.logger.Error("Failed to write response", zap.Error(err))
 	}
 }
 

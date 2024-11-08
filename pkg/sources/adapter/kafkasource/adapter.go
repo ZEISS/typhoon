@@ -91,7 +91,7 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 
 		if env.ClientCert != "" || env.ClientKey != "" {
 			if err := addTLSCerts(tlsCfg, env.ClientCert, env.ClientKey); err != nil {
-				logger.Panicw("Could not parse the TLS Certificates", zap.Error(err))
+				logger.Panic("Could not parse the TLS Certificates", zap.Error(err))
 			}
 		}
 
@@ -120,14 +120,14 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 
 	err = config.Validate()
 	if err != nil {
-		logger.Panicw("Config not valid", zap.Error(err))
+		logger.Panic("Config not valid", zap.Error(err))
 	}
 
 	kc, err := sarama.NewConsumerGroup(
 		env.BootstrapServers,
 		env.GroupID, config)
 	if err != nil {
-		logger.Panicw("Error creating Kafka Consumer Group", zap.Error(err))
+		logger.Panic("Error creating Kafka Consumer Group", zap.Error(err))
 	}
 
 	return &kafkasourceAdapter{
