@@ -110,18 +110,18 @@ func (a *adapter) serveRequest(ctx context.Context, correlationID string, event 
 
 	select {
 	case err := <-sendErr:
-		a.logger.Errorw("Unable to forward the request", zap.Error(err))
+		a.logger.Error("Unable to forward the request", zap.Error(err))
 		return nil, cloudevents.NewHTTPResult(http.StatusBadRequest, "unable to forward the request: %v", err)
 	case result := <-respChan:
 		if result == nil {
-			a.logger.Errorw("No response", zap.Error(fmt.Errorf("response channel with ID %q is closed", correlationID)))
+			a.logger.Error("No response", zap.Error(fmt.Errorf("response channel with ID %q is closed", correlationID)))
 			return nil, cloudevents.NewHTTPResult(http.StatusInternalServerError, "failed to communicate the response")
 		}
 		a.logger.Debugf("Received response for %q", correlationID)
 		res := a.withBridgeIdentifier(result)
 		return &res, cloudevents.ResultACK
 	case <-time.After(a.responseTimeout):
-		a.logger.Errorw("Request time out", zap.Error(fmt.Errorf("request %q did not receive backend response in time", correlationID)))
+		a.logger.Error("Request time out", zap.Error(fmt.Errorf("request %q did not receive backend response in time", correlationID)))
 		return nil, cloudevents.NewHTTPResult(http.StatusGatewayTimeout, "backend did not respond in time")
 	}
 }
@@ -132,7 +132,7 @@ func (a *adapter) serveResponse(_ context.Context, correlationID string, event c
 
 	responseChan, exists := a.sessions.get(correlationID)
 	if !exists {
-		a.logger.Errorw("Session not found", zap.Error(fmt.Errorf("client session with ID %q does not exist", correlationID)))
+		a.logger.Error("Session not found", zap.Error(fmt.Errorf("client session with ID %q does not exist", correlationID)))
 		return nil, cloudevents.NewHTTPResult(http.StatusBadGateway, "client session does not exist")
 	}
 
@@ -142,7 +142,7 @@ func (a *adapter) serveResponse(_ context.Context, correlationID string, event c
 		a.logger.Debugf("Response %q completed", correlationID)
 		return nil, cloudevents.ResultACK
 	default:
-		a.logger.Errorw("Unable to forward the response", zap.Error(fmt.Errorf("client connection with ID %q is closed", correlationID)))
+		a.logger.Error("Unable to forward the response", zap.Error(fmt.Errorf("client connection with ID %q is closed", correlationID)))
 		return nil, cloudevents.NewHTTPResult(http.StatusBadGateway, "client connection is closed")
 	}
 }

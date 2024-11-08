@@ -51,12 +51,12 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, client 
 
 	nc, err := nats.Connect(env.url)
 	if err != nil {
-		logger.Panicw("failed to connect to NATS", zap.Error(err))
+		logger.Panic("failed to connect to NATS", zap.Error(err))
 	}
 
 	js, err := jetstream.New(nc)
 	if err != nil {
-		logger.Panicw("failed to connect to JetStream", zap.Error(err))
+		logger.Panic("failed to connect to JetStream", zap.Error(err))
 	}
 
 	return &natsAdapter{

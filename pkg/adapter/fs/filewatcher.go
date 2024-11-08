@@ -89,7 +89,7 @@ func (cw *fileWatcher) Start(ctx context.Context) {
 						// watcher error channel finished
 						return
 					}
-					cw.logger.Errorw("Error watching files", zap.Error(err))
+					cw.logger.Error("Error watching files", zap.Error(err))
 
 				case <-ctx.Done():
 					cw.logger.Debug("Exiting file watcher process")

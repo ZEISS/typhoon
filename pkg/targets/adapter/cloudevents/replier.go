@@ -137,7 +137,7 @@ func (r *Replier) Ok(in *cloudevents.Event, payload interface{}, opts ...EventRe
 
 	for _, opt := range opts {
 		if err = opt(in, &out); err != nil {
-			r.logger.Errorw("Error applying response options at reply", zap.Error(err))
+			r.logger.Error("Error applying response options at reply", zap.Error(err))
 		}
 	}
 
@@ -175,7 +175,7 @@ type EventError struct {
 // dead letter queue channel.
 // nolint:gocyclo
 func (r *Replier) Error(in *cloudevents.Event, code string, reportedErr error, details interface{}, opts ...EventResponseOption) (*cloudevents.Event, cloudevents.Result) {
-	r.logger.Errorw("Processing error",
+	r.logger.Error("Processing error",
 		zap.Error(reportedErr),
 		zap.Any("in-event", *in),
 		zap.Any("details", details),
@@ -195,29 +195,29 @@ func (r *Replier) Error(in *cloudevents.Event, code string, reportedErr error, d
 
 	rt, err := errorTypeFn(in)
 	if err != nil {
-		r.logger.Errorw("Error choosing error response type", zap.Error(err))
+		r.logger.Error("Error choosing error response type", zap.Error(err))
 		return nil, cloudevents.ResultACK
 	}
 	err = out.Context.SetType(rt)
 	if err != nil {
-		r.logger.Errorw("Could not set event type at error response", zap.Error(err))
+		r.logger.Error("Could not set event type at error response", zap.Error(err))
 		return nil, cloudevents.ResultACK
 	}
 
 	rs, err := r.responseSource(in)
 	if err != nil {
-		r.logger.Errorw("Error choosing error response source", zap.Error(err))
+		r.logger.Error("Error choosing error response source", zap.Error(err))
 		return nil, cloudevents.ResultACK
 	}
 	err = out.Context.SetSource(rs)
 	if err != nil {
-		r.logger.Errorw("Could not set event source at error response", zap.Error(err))
+		r.logger.Error("Could not set event source at error response", zap.Error(err))
 		return nil, cloudevents.ResultACK
 	}
 
 	err = out.Context.SetExtension(ExtensionCategory, ExtensionCategoryValueError)
 	if err != nil {
-		r.logger.Errorw("Could not set event category extension at error response", zap.Error(err))
+		r.logger.Error("Could not set event category extension at error response", zap.Error(err))
 		return nil, cloudevents.ResultACK
 	}
 
@@ -225,7 +225,7 @@ func (r *Replier) Error(in *cloudevents.Event, code string, reportedErr error, d
 
 	for _, opt := range opts {
 		if err = opt(in, &out); err != nil {
-			r.logger.Errorw("Error applying response options at error reply", zap.Error(err))
+			r.logger.Error("Error applying response options at error reply", zap.Error(err))
 		}
 	}
 
@@ -258,7 +258,7 @@ func (r *Replier) Error(in *cloudevents.Event, code string, reportedErr error, d
 	}
 
 	if err = out.SetData(rct, evErr); err != nil {
-		r.logger.Errorw("Could not set error payload at response CloudEvent", zap.Error(err))
+		r.logger.Error("Could not set error payload at response CloudEvent", zap.Error(err))
 	}
 
 	return &out, cloudevents.ResultACK
