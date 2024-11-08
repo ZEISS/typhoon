@@ -47,5 +47,9 @@ helm install nats nats/nats --wait --values $(pwd)/examples/nats-server.yaml
 # Install the NATZ accounts-server
 helm install account-server natz-operator/account-server --wait --namespace knative-eventing --values $(pwd)/examples/natz-account-server.yaml
 
+# Install Argocd
+kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.5.8/manifests/install.yaml
+
 # MiniKube IP
 minikube tunnel -c
