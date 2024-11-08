@@ -11,7 +11,7 @@ require (
 	github.com/google/ko v0.17.1
 	github.com/goreleaser/goreleaser v1.26.2
 	gotest.tools/gotestsum v1.12.0
-	k8s.io/code-generator v0.29.2
+	k8s.io/code-generator v0.31.2
 	knative.dev/pkg v0.0.0-20240222182851-7594067e0eac
 	mvdan.cc/gofumpt v0.7.0
 )
