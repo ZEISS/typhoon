@@ -3,7 +3,8 @@
 # see https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api_changes.md#generate-code
 
 # Name of the Go package for this repository
-PKG 		:= github.com/zeiss/typhoon
+PKG 			:= github.com/zeiss/typhoon
+APIS_PKG 	:= "${PKG}/pkg/apis"
 
 # List of API groups to generate code for
 # e.g. "sources/v1alpha1 sources/v1alpha2"
@@ -11,7 +12,7 @@ API_GROUPS 	:= sources/v1alpha1 targets/v1alpha1 flow/v1alpha1 extensions/v1alph
 # generates e.g. "PKG/apis/sources/v1alpha1 PKG/apis/sources/v1alpha2"
 api-import-paths := $(foreach group,$(API_GROUPS),$(PKG)/pkg/apis/$(group))
 
-generators 	:= deepcopy client lister informer injection
+generators 	:= deepcopy client lister informer injectio
 
 .PHONY: codegen $(generators)
 codegen: $(generators)
@@ -25,12 +26,7 @@ space := $(null) $(null)
 deepcopy: private api-import-paths += $(PKG)/pkg/apis/common/v1alpha1
 deepcopy:
 	@echo "+ Generating deepcopy funcs for $(API_GROUPS)"
-	$(GO_RUN_TOOLS) k8s.io/code-generator/cmd/deepcopy-gen \
-		--go-header-file hack/copyright.go.txt \
-		--input-dirs $(subst $(space),$(comma),$(api-import-paths)) \
-		--trim-path-prefix $(PKG)/ \
-		--output-base . \
-		--output-file-base zz_generated.deepcopy
+	./hack/update-gen-deepcopy.sh
 
 client:
 	@echo "+ Generating clientsets for $(API_GROUPS)"
