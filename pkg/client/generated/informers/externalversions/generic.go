@@ -67,6 +67,12 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Routing().V1alpha1().Splitters().Informer()}, nil
 
 		// Group=sources.typhoon.zeiss.com, Version=v1alpha1
+	case sourcesv1alpha1.SchemeGroupVersion.WithResource("azureservicebusqueuesources"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Sources().V1alpha1().AzureServiceBusQueueSources().Informer()}, nil
+	case sourcesv1alpha1.SchemeGroupVersion.WithResource("azureservicebussources"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Sources().V1alpha1().AzureServiceBusSources().Informer()}, nil
+	case sourcesv1alpha1.SchemeGroupVersion.WithResource("azureservicebustopicsources"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Sources().V1alpha1().AzureServiceBusTopicSources().Informer()}, nil
 	case sourcesv1alpha1.SchemeGroupVersion.WithResource("cloudeventssources"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Sources().V1alpha1().CloudEventsSources().Informer()}, nil
 	case sourcesv1alpha1.SchemeGroupVersion.WithResource("httppollersources"):

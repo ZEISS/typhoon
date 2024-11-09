@@ -2,6 +2,30 @@
 
 package v1alpha1
 
+// AzureServiceBusQueueSourceListerExpansion allows custom methods to be added to
+// AzureServiceBusQueueSourceLister.
+type AzureServiceBusQueueSourceListerExpansion interface{}
+
+// AzureServiceBusQueueSourceNamespaceListerExpansion allows custom methods to be added to
+// AzureServiceBusQueueSourceNamespaceLister.
+type AzureServiceBusQueueSourceNamespaceListerExpansion interface{}
+
+// AzureServiceBusSourceListerExpansion allows custom methods to be added to
+// AzureServiceBusSourceLister.
+type AzureServiceBusSourceListerExpansion interface{}
+
+// AzureServiceBusSourceNamespaceListerExpansion allows custom methods to be added to
+// AzureServiceBusSourceNamespaceLister.
+type AzureServiceBusSourceNamespaceListerExpansion interface{}
+
+// AzureServiceBusTopicSourceListerExpansion allows custom methods to be added to
+// AzureServiceBusTopicSourceLister.
+type AzureServiceBusTopicSourceListerExpansion interface{}
+
+// AzureServiceBusTopicSourceNamespaceListerExpansion allows custom methods to be added to
+// AzureServiceBusTopicSourceNamespaceLister.
+type AzureServiceBusTopicSourceNamespaceListerExpansion interface{}
+
 // CloudEventsSourceListerExpansion allows custom methods to be added to
 // CloudEventsSourceLister.
 type CloudEventsSourceListerExpansion interface{}

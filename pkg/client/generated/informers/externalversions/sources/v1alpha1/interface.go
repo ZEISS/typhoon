@@ -8,6 +8,12 @@ import (
 
 // Interface provides access to all the informers in this group version.
 type Interface interface {
+	// AzureServiceBusQueueSources returns a AzureServiceBusQueueSourceInformer.
+	AzureServiceBusQueueSources() AzureServiceBusQueueSourceInformer
+	// AzureServiceBusSources returns a AzureServiceBusSourceInformer.
+	AzureServiceBusSources() AzureServiceBusSourceInformer
+	// AzureServiceBusTopicSources returns a AzureServiceBusTopicSourceInformer.
+	AzureServiceBusTopicSources() AzureServiceBusTopicSourceInformer
 	// CloudEventsSources returns a CloudEventsSourceInformer.
 	CloudEventsSources() CloudEventsSourceInformer
 	// HTTPPollerSources returns a HTTPPollerSourceInformer.
@@ -31,6 +37,21 @@ type version struct {
 // New returns a new Interface.
 func New(f internalinterfaces.SharedInformerFactory, namespace string, tweakListOptions internalinterfaces.TweakListOptionsFunc) Interface {
 	return &version{factory: f, namespace: namespace, tweakListOptions: tweakListOptions}
+}
+
+// AzureServiceBusQueueSources returns a AzureServiceBusQueueSourceInformer.
+func (v *version) AzureServiceBusQueueSources() AzureServiceBusQueueSourceInformer {
+	return &azureServiceBusQueueSourceInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+}
+
+// AzureServiceBusSources returns a AzureServiceBusSourceInformer.
+func (v *version) AzureServiceBusSources() AzureServiceBusSourceInformer {
+	return &azureServiceBusSourceInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+}
+
+// AzureServiceBusTopicSources returns a AzureServiceBusTopicSourceInformer.
+func (v *version) AzureServiceBusTopicSources() AzureServiceBusTopicSourceInformer {
+	return &azureServiceBusTopicSourceInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
 
 // CloudEventsSources returns a CloudEventsSourceInformer.
