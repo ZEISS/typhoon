@@ -13,6 +13,8 @@ import (
 
 	"github.com/devigned/tab"
 	"go.uber.org/zap"
+
+	// nolint:staticcheck
 	"nhooyr.io/websocket"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
@@ -107,13 +109,13 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 
 	entityID, err := parseServiceBusResourceID(env.EntityResourceID)
 	if err != nil {
-		logger.Panicw("Unable to parse entity ID "+strconv.Quote(env.EntityResourceID), zap.Error(err))
+		logger.Panic("Unable to parse entity ID "+strconv.Quote(env.EntityResourceID), zap.Error(err))
 	}
 
 	client, err := clientFromEnvironment(entityID, newAzureServiceBusClientOptions(
 		webSocketsClientOption(env.WebSocketsEnable)))
 	if err != nil {
-		logger.Panicw("Unable to obtain interface for Service Bus Namespace", zap.Error(err))
+		logger.Panic("Unable to obtain interface for Service Bus Namespace", zap.Error(err))
 	}
 
 	var rcvr *azservicebus.Receiver
@@ -126,7 +128,7 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 		mt.ResourceGroup = sources.AzureServiceBusTopicSourceResource.String()
 	}
 	if err != nil {
-		logger.Panicw("Unable to obtain message receiver for Service Bus entity "+strconv.Quote(strconv.Quote(entityPath(entityID))), zap.Error(err))
+		logger.Panic("Unable to obtain message receiver for Service Bus entity "+strconv.Quote(strconv.Quote(entityPath(entityID))), zap.Error(err))
 	}
 
 	ceSource := env.EntityResourceID
@@ -389,10 +391,11 @@ func (a *adapter) handleMessage(ctx context.Context, msg *Message) error {
 	}
 
 	var sendErrs errList
+	var ve event.ValidationError
 
 	for _, ev := range events {
-		if err := ev.Validate(); err != nil {
-			ev = sanitizeEvent(err.(event.ValidationError), ev)
+		if err := ev.Validate(); err != nil && errors.As(err, &ve) {
+			ev = sanitizeEvent(ve, ev)
 		}
 
 		if err := sendCloudEvent(ctx, a.ceClient, ev); err != nil {
@@ -442,10 +445,7 @@ func (e errList) Error() string {
 //	"dataschema": "#"
 func sanitizeEvent(validErrs event.ValidationError, origEvent *cloudevents.Event) *cloudevents.Event {
 	for attr := range validErrs {
-		// we don't bother cloning, events are garbage collected after
-		// being sent to the sink
-		switch attr {
-		case "dataschema":
+		if attr == "dataschema" {
 			origEvent.SetDataSchema("")
 		}
 	}
@@ -468,13 +468,16 @@ func webSocketsClientOption(webSocketsEnable bool) clientOption {
 
 		if webSocketsEnable {
 			opts.NewWebSocketConn = func(ctx context.Context, args azservicebus.NewWebSocketConnArgs) (net.Conn, error) {
+				// nolint:staticcheck
 				opts := &websocket.DialOptions{Subprotocols: []string{"amqp"}}
+				// nolint:staticcheck
 				wssConn, _, err := websocket.Dial(ctx, args.Host, opts)
 
 				if err != nil {
 					return nil, fmt.Errorf("creating client: %w", err)
 				}
 
+				// nolint:contextcheck,staticcheck
 				return websocket.NetConn(context.Background(), wssConn, websocket.MessageBinary), nil
 			}
 		}

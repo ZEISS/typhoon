@@ -84,6 +84,7 @@ const (
 )
 
 // UnmarshalJSON implements json.Unmarshaler
+// nolint:gocyclo
 func (rID *AzureResourceID) UnmarshalJSON(data []byte) error {
 	var dataStr string
 	if err := json.Unmarshal(data, &dataStr); err != nil {
@@ -148,7 +149,7 @@ func (rID *AzureResourceID) UnmarshalJSON(data []byte) error {
 	var subresourceType string
 	var subresourceName string
 	if len(sections) >= azureSubResourceResourceIDSplitElements {
-		if strings.ToLower(resourceType) == "namespaces" {
+		if strings.EqualFold(resourceType, "namespaces") {
 			namespace = sections[namespaceIdx]
 			resourceType = sections[resourceTypeNsIdx]
 			resourceName = sections[resourceNameNsIdx]
@@ -185,6 +186,7 @@ func (rID *AzureResourceID) UnmarshalJSON(data []byte) error {
 }
 
 // MarshalJSON implements json.Marshaler
+// nolint:gocyclo
 func (rID AzureResourceID) MarshalJSON() ([]byte, error) {
 	if rID.SubscriptionID == "" {
 		return nil, errAzureResourceIDEmptyAttrs

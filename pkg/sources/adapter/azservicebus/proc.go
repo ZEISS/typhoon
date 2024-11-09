@@ -93,6 +93,7 @@ type MessageWithRawJSONData struct {
 // toMessage converts a azservicebus.ReceivedMessage into a Message
 // removing a new parameter (RawAMQPMessage) introduced in azservicebus v1.1.0
 // that breaks our serialization.
+// nolint:unparam
 func toMessage(rcvMsg *azservicebus.ReceivedMessage) (*Message, error) {
 	return &Message{
 		ReceivedMessage: &azservicebus.ReceivedMessage{
