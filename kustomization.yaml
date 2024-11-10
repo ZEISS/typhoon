@@ -4,6 +4,9 @@ resources:
 - config/201-serviceaccounts.yaml
 - config/202-clusterrolebinding-webhook.yaml
 - config/202-clusterrolebindings.yaml
+- config/300-azservicebusqueuesource.yaml
+- config/300-azservicebussource.yaml
+- config/300-azservicebustopicsource.yaml
 - config/300-cloudeventssource.yaml
 - config/300-httppollersource.yaml
 - config/300-kafkasource.yaml
