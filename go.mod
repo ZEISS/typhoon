@@ -40,8 +40,8 @@ require (
 	github.com/wamuir/go-xslt v0.1.5
 	github.com/xdg-go/scram v1.1.2
 	github.com/zeiss/fiber-authz v1.0.33
-	github.com/zeiss/fiber-goth v1.2.12
-	github.com/zeiss/fiber-htmx v1.3.25
+	github.com/zeiss/fiber-goth v1.2.13
+	github.com/zeiss/fiber-htmx v1.3.32
 	github.com/zeiss/pkg v0.1.17
 	github.com/zeiss/snow-go v0.0.0-20240312201415-88f059622cff
 	go.opencensus.io v0.24.0
@@ -80,7 +80,7 @@ require (
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.2.2 // indirect
 	github.com/BurntSushi/toml v1.4.1-0.20240526193622-a339e1f7089c // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
-	github.com/andybalholm/brotli v1.1.0 // indirect
+	github.com/andybalholm/brotli v1.1.1 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/beeker1121/goque v2.1.0+incompatible // indirect
@@ -127,6 +127,7 @@ require (
 	github.com/google/gnostic-models v0.6.8 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/go-containerregistry v0.13.0 // indirect
+	github.com/google/go-github/v56 v56.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
@@ -152,7 +153,7 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/compress v1.17.9 // indirect
+	github.com/klauspost/compress v1.17.11 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/lestrrat-go/backoff/v2 v2.0.8 // indirect
@@ -197,12 +198,12 @@ require (
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/trivago/tgo v1.0.7 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.55.0 // indirect
+	github.com/valyala/fasthttp v1.57.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
-	github.com/yuin/goldmark v1.7.4 // indirect
+	github.com/yuin/goldmark v1.7.8 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	github.com/zeiss/fiber-reload v0.1.1 // indirect
 	go.opentelemetry.io/otel v1.29.0 // indirect
