@@ -15,6 +15,9 @@ import (
 	"github.com/zeiss/typhoon/pkg/flow/reconciler/xslttransformation"
 	"github.com/zeiss/typhoon/pkg/routing/reconciler/filter"
 	"github.com/zeiss/typhoon/pkg/routing/reconciler/splitter"
+	"github.com/zeiss/typhoon/pkg/sources/reconciler/azservicebusqueuesource"
+	"github.com/zeiss/typhoon/pkg/sources/reconciler/azservicebussource"
+	"github.com/zeiss/typhoon/pkg/sources/reconciler/azservicebustopicsource"
 	"github.com/zeiss/typhoon/pkg/sources/reconciler/cloudeventssource"
 	"github.com/zeiss/typhoon/pkg/sources/reconciler/httppollersource"
 	"github.com/zeiss/typhoon/pkg/sources/reconciler/kafkasource"
@@ -43,6 +46,9 @@ func main() {
 		logztarget.NewController,
 		splunktarget.NewController,
 		webhooksource.NewController,
+		azservicebusqueuesource.NewController,
+		azservicebussource.NewController,
+		azservicebustopicsource.NewController,
 		// flow
 		jqtransformation.NewController,
 		synchronizer.NewController,
