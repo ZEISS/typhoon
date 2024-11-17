@@ -49,7 +49,6 @@ func MakeAppEnv(o *v1alpha1.AzureServiceBusSource) []corev1.EnvVar {
 	}
 
 	var appEnvs []corev1.EnvVar
-	//TODO should this be here?
 	if sasAuth := o.Spec.Auth.SASToken; sasAuth != nil {
 		appEnvs = common.MaybeAppendValueFromEnvVar(appEnvs, common.EnvServiceBusKeyName, sasAuth.KeyName)
 		appEnvs = common.MaybeAppendValueFromEnvVar(appEnvs, common.EnvServiceBusKeyValue, sasAuth.KeyValue)

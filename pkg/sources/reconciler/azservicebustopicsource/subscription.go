@@ -33,6 +33,8 @@ const crudTimeout = time.Second * 15
 // Required permissions:
 //   - Microsoft.ServiceBus/namespaces/topics/subscriptions/read
 //   - Microsoft.ServiceBus/namespaces/topics/subscriptions/write
+//
+// nolint:gocyclo
 func EnsureSubscription(ctx context.Context, cli servicebustopics.SubscriptionsClient) error {
 	if skip.Skip(ctx) {
 		return nil
@@ -174,6 +176,7 @@ func recursErrMsg(errMsg string, err error) string {
 		errMsg += ": "
 	}
 
+	// nolint:errorlint
 	switch tErr := err.(type) {
 	case autorest.DetailedError:
 		return recursErrMsg(errMsg+tErr.Message, tErr.Original)
