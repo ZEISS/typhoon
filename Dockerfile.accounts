@@ -1,7 +1,0 @@
-FROM scratch
-
-WORKDIR /
-
-COPY typhoon-accounts /main
-
-ENTRYPOINT ["/main"]
