@@ -11,7 +11,7 @@ require (
 	github.com/google/ko v0.17.1
 	github.com/goreleaser/goreleaser/v2 v2.4.4
 	gotest.tools/gotestsum v1.12.0
-	k8s.io/code-generator v0.29.2
+	k8s.io/code-generator v0.31.3
 	knative.dev/pkg v0.0.0-20240222182851-7594067e0eac
 	mvdan.cc/gofumpt v0.7.0
 )
@@ -460,7 +460,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	honnef.co/go/tools v0.5.1 // indirect
-	k8s.io/apimachinery v0.31.2 // indirect
+	k8s.io/apimachinery v0.31.3 // indirect
 	k8s.io/gengo v0.0.0-20240129211411-f967bbeff4b4 // indirect
 	k8s.io/gengo/v2 v2.0.0-20240228010128-51d4e06bde70 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
