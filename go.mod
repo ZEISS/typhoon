@@ -46,7 +46,7 @@ require (
 	github.com/zeiss/fiber-goth v1.2.15
 	github.com/zeiss/fiber-htmx v1.3.33
 	github.com/zeiss/pkg v0.1.18-0.20241104221956-c2a72271b74b
-	github.com/zeiss/snow-go v0.0.0-20240312201415-88f059622cff
+	github.com/zeiss/snow-go v0.1.0-beta.0
 	go.opencensus.io v0.24.0
 	go.uber.org/zap v1.27.0
 	golang.org/x/mod v0.21.0
