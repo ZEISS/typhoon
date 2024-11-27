@@ -28,16 +28,13 @@ const (
 	tResponseEventSource = "testRespSource"
 )
 
-var (
-	expectedExtensionsBase = map[string]interface{}{
-		"host":   tHost,
-		"method": http.MethodGet,
-		"path":   "/",
-	}
-)
+var expectedExtensionsBase = map[string]interface{}{
+	"host":   tHost,
+	"method": http.MethodGet,
+	"path":   "/",
+}
 
 func TestWebhookEvent(t *testing.T) {
-
 	logger := zapt.NewLogger(t).Sugar()
 
 	tc := map[string]struct {
@@ -194,15 +191,15 @@ func TestWebhookEvent(t *testing.T) {
 				},
 			}
 
-			req, _ := http.NewRequest(http.MethodGet, "/"+c.query, c.body)
+			ctx := context.Background()
+
+			req, _ := http.NewRequestWithContext(ctx, http.MethodGet, "/"+c.query, c.body)
 			for k, v := range c.headers {
 				req.Header.Add(k, v)
 			}
 			req.Host = tHost
 
-			ctx := context.Background()
-
-			th := http.HandlerFunc(handler.handleAll(ctx))
+			th := handler.handleAll(ctx)
 
 			rr := httptest.NewRecorder()
 

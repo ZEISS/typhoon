@@ -22,7 +22,7 @@ func EnvAccessorCtor() pkgadapter.EnvConfigAccessor {
 type envAccessor struct {
 	pkgadapter.EnvConfig
 
-	instance string `envconfig:"SERVICENOW_INSTANCE"`
+	instance string `envconfig:"SERVICENOW_INSTANCE" required:"true"`
 	user     string `envconfig:"SERVICENOW_BASICAUTH_USER"`
 	password string `envconfig:"SERVICENOW_BASICAUTH_PASSWORD"`
 }
@@ -43,7 +43,7 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, client 
 	logger := logging.FromContext(ctx)
 
 	mt := &pkgadapter.MetricTag{
-		ResourceGroup: targets.KafkaTargetResource.String(),
+		ResourceGroup: targets.ServiceNowTargetResource.String(),
 		Namespace:     envAcc.GetNamespace(),
 		Name:          envAcc.GetName(),
 	}
@@ -54,6 +54,7 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, client 
 	if err != nil {
 		logger.Panic("failed to create authenticator", zap.Error(err))
 	}
+
 	sc := snowgo.New(env.instance, snowgo.WithRequestEditorFn(basicAuth.Intercept))
 
 	return &snowAdapter{

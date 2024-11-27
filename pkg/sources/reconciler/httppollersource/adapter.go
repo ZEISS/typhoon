@@ -11,6 +11,7 @@ import (
 	"knative.dev/eventing/pkg/reconciler/source"
 	"knative.dev/pkg/apis"
 
+	"github.com/zeiss/pkg/conv"
 	commonv1alpha1 "github.com/zeiss/typhoon/pkg/apis/common/v1alpha1"
 	"github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
 	common "github.com/zeiss/typhoon/pkg/reconciler"
@@ -77,7 +78,7 @@ func MakeAppEnv(src *v1alpha1.HTTPPollerSource) []corev1.EnvVar {
 		Value: strconv.FormatBool(skipVerify),
 	}, {
 		Name:  envHTTPPollerInterval,
-		Value: src.Spec.Interval.String(),
+		Value: conv.String(src.Spec.Interval),
 	}}
 
 	if src.Spec.Headers != nil {

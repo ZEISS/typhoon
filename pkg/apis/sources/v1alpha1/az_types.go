@@ -187,7 +187,7 @@ func (rID *AzureResourceID) UnmarshalJSON(data []byte) error {
 
 // MarshalJSON implements json.Marshaler
 // nolint:gocyclo
-func (rID AzureResourceID) MarshalJSON() ([]byte, error) {
+func (rID *AzureResourceID) MarshalJSON() ([]byte, error) {
 	if rID.SubscriptionID == "" {
 		return nil, errAzureResourceIDEmptyAttrs
 	}

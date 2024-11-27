@@ -89,8 +89,8 @@ type OCIMetrics struct {
 type OCIMetricsDecodedList []OCIMetrics
 
 // Decode deserializes a list of OCI metrics.
-func (o *OCIMetricsDecodedList) Decode(value string) error {
-	err := json.Unmarshal([]byte(value), o)
+func (o OCIMetricsDecodedList) Decode(value string) error {
+	err := json.Unmarshal([]byte(value), &o)
 	if err != nil {
 		return fmt.Errorf("unable to deserialize metrics: %w", err)
 	}

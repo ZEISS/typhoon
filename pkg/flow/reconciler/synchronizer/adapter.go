@@ -9,6 +9,7 @@ import (
 	"knative.dev/pkg/apis"
 	servingv1 "knative.dev/serving/pkg/apis/serving/v1"
 
+	"github.com/zeiss/pkg/conv"
 	commonv1alpha1 "github.com/zeiss/typhoon/pkg/apis/common/v1alpha1"
 	"github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
 	common "github.com/zeiss/typhoon/pkg/reconciler"
@@ -52,7 +53,7 @@ func MakeAppEnv(o *v1alpha1.Synchronizer) []corev1.EnvVar {
 		},
 		{
 			Name:  "RESPONSE_WAIT_TIMEOUT",
-			Value: o.Spec.Response.Timeout.String(),
+			Value: conv.String(o.Spec.Response.Timeout),
 		},
 	}
 

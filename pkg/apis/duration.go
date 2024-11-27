@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+
+	"github.com/zeiss/pkg/conv"
 )
 
 // Duration extends time.Duration with additional methods for (de-)serialization to/from
@@ -11,15 +13,9 @@ import (
 type Duration time.Duration
 
 var (
-	_ fmt.Stringer     = (*Duration)(nil)
 	_ json.Marshaler   = (*Duration)(nil)
 	_ json.Unmarshaler = (*Duration)(nil)
 )
-
-// String implements the fmt.Stringer interface.
-func (d Duration) String() string {
-	return time.Duration(d).String()
-}
 
 // UnmarshalJSON implements json.Unmarshaler.
 func (d *Duration) UnmarshalJSON(data []byte) error {
@@ -39,6 +35,6 @@ func (d *Duration) UnmarshalJSON(data []byte) error {
 }
 
 // MarshalJSON implements json.Marshaler.
-func (d Duration) MarshalJSON() ([]byte, error) {
-	return []byte(`"` + time.Duration(d).String() + `"`), nil
+func (d *Duration) MarshalJSON() ([]byte, error) {
+	return conv.Bytes(fmt.Sprintf(`"%d"`, d)), nil
 }
