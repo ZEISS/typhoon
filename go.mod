@@ -21,7 +21,7 @@ require (
 	github.com/devigned/tab v0.1.1
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/getkin/kin-openapi v0.128.0
-	github.com/go-playground/validator/v10 v10.22.1
+	github.com/go-playground/validator/v10 v10.23.0
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/golang-jwt/jwt/v4 v4.5.1
 	github.com/google/cel-go v0.22.0
