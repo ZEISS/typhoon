@@ -14,8 +14,12 @@ import (
 	"go.uber.org/zap"
 
 	pkgadapter "knative.dev/eventing/pkg/adapter/v2"
+	"knative.dev/eventing/pkg/auth"
+	"knative.dev/eventing/pkg/eventingtls"
 	"knative.dev/eventing/pkg/kncloudevents"
 	"knative.dev/eventing/pkg/utils"
+	"knative.dev/pkg/apis"
+	duckv1 "knative.dev/pkg/apis/duck/v1"
 	"knative.dev/pkg/injection"
 	"knative.dev/pkg/logging"
 
@@ -29,9 +33,9 @@ const serverPort int = 8080
 // Handler parses Cloud Events, determines if they pass a filter, and sends them to a subscriber.
 type Handler struct {
 	// receiver receives incoming HTTP requests
-	receiver *kncloudevents.HTTPMessageReceiver
+	receiver *kncloudevents.HTTPEventReceiver
 	// sender sends requests to downstream services
-	sender *kncloudevents.HTTPMessageSender
+	sender *kncloudevents.Dispatcher
 
 	splitterLister routinglisters.SplitterNamespaceLister
 	logger         *zap.SugaredLogger
@@ -46,17 +50,15 @@ func NewEnvConfig() env.ConfigAccessor {
 func NewAdapter(string) pkgadapter.AdapterConstructor {
 	return func(ctx context.Context, _ pkgadapter.EnvConfigAccessor, _ cloudevents.Client) pkgadapter.Adapter {
 		logger := logging.FromContext(ctx)
+		oidcTokenProvider := auth.NewOIDCTokenProvider(ctx)
 
-		sender, err := kncloudevents.NewHTTPMessageSenderWithTarget("")
-		if err != nil {
-			logger.Panicf("failed to create message sender: %v", err)
-		}
+		sender := kncloudevents.NewDispatcher(eventingtls.ClientConfig{}, oidcTokenProvider)
 
 		informer := informerv1alpha1.Get(ctx)
 		ns := injection.GetNamespaceScope(ctx)
 
 		return &Handler{
-			receiver:       kncloudevents.NewHTTPMessageReceiver(serverPort),
+			receiver:       kncloudevents.NewHTTPEventReceiver(serverPort),
 			sender:         sender,
 			splitterLister: informer.Lister().Splitters(ns),
 			logger:         logger,
@@ -116,12 +118,12 @@ func (h *Handler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 		for key, value := range s.Spec.CEContext.Extensions {
 			e.SetExtension(key, value)
 		}
+
 		// we may want to keep responses and send them back to the source
-		res, err := h.sendEvent(ctx, request.Header, s.Status.SinkURI.String(), e)
+		_, err := h.sendEvent(ctx, request.Header, s.Status.SinkURI.String(), e)
 		if err != nil {
 			h.logger.Error("Failed to send the event", zap.Error(err))
 		}
-		defer res.Body.Close()
 	}
 
 	writer.WriteHeader(http.StatusOK)
@@ -147,11 +149,9 @@ func (h *Handler) split(path string, e *event.Event) []*event.Event {
 	return result
 }
 
-func (h *Handler) sendEvent(ctx context.Context, headers http.Header, target string, event *cloudevents.Event) (*http.Response, error) {
-	// Send the event to the subscriber
-	req, err := h.sender.NewCloudEventRequestWithTarget(ctx, target)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create the request: %w", err)
+func (h *Handler) sendEvent(ctx context.Context, headers http.Header, target string, event *cloudevents.Event) (*kncloudevents.DispatchInfo, error) {
+	destination := duckv1.Addressable{
+		URL: apis.HTTP(target),
 	}
 
 	message := binding.ToMessage(event)
@@ -159,15 +159,9 @@ func (h *Handler) sendEvent(ctx context.Context, headers http.Header, target str
 	//nolint
 	defer message.Finish(nil)
 
-	additionalHeaders := utils.PassThroughHeaders(headers)
-	err = kncloudevents.WriteHTTPRequestWithAdditionalHeaders(ctx, message, req, additionalHeaders)
+	resp, err := h.sender.SendMessage(ctx, message, destination, kncloudevents.WithHeader(utils.PassThroughHeaders(headers)))
 	if err != nil {
-		return nil, fmt.Errorf("failed to write request: %w", err)
-	}
-
-	resp, err := h.sender.Send(req)
-	if err != nil {
-		err = fmt.Errorf("failed to dispatch message: %w", err)
+		return nil, fmt.Errorf("failed to send message: %w", err)
 	}
 
 	return resp, err

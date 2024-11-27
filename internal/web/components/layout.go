@@ -12,8 +12,6 @@ import (
 
 // LayoutProps is the properties for the Layout component.
 type LayoutProps struct {
-	// Team is the teams to user adapters.
-	Team adapters.GothTeam
 	User adapters.GothUser
 	Path string
 }

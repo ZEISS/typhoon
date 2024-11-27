@@ -21,7 +21,6 @@ func NewController(
 	ctx context.Context,
 	cmw configmap.Watcher,
 ) *controller.Impl {
-
 	typ := (*v1alpha1.AzureServiceBusQueueSource)(nil)
 	app := common.ComponentName(typ)
 

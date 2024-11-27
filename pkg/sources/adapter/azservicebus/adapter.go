@@ -315,7 +315,6 @@ func (a *adapter) Start(ctx context.Context) error {
 	for err := range errChan {
 		// errs = append(errs, err)
 		errs = append(errs, err.Error())
-
 	}
 
 	// If there are errors, return them as a single error.
@@ -465,14 +464,12 @@ func newAzureServiceBusClientOptions(opts ...clientOption) *azservicebus.ClientO
 
 func webSocketsClientOption(webSocketsEnable bool) clientOption {
 	return func(opts *azservicebus.ClientOptions) {
-
 		if webSocketsEnable {
 			opts.NewWebSocketConn = func(ctx context.Context, args azservicebus.NewWebSocketConnArgs) (net.Conn, error) {
 				// nolint:staticcheck
 				opts := &websocket.DialOptions{Subprotocols: []string{"amqp"}}
 				// nolint:staticcheck
 				wssConn, _, err := websocket.Dial(ctx, args.Host, opts)
-
 				if err != nil {
 					return nil, fmt.Errorf("creating client: %w", err)
 				}

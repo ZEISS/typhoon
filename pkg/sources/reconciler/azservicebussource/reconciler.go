@@ -97,7 +97,6 @@ func (r *Reconciler) FinalizeKind(ctx context.Context, o *v1alpha1.AzureServiceB
 	// deletion of the Subscription succeeds to ensure that we don't leave
 	// any dangling resources behind us.
 	return EnsureNoSubscription(ctx, subsCli)
-
 }
 
 // isNoCredentials returns whether the given error indicates that some required

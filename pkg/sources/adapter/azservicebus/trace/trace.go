@@ -33,9 +33,11 @@ type zapLogger struct {
 }
 
 // Verify implementation of interfaces.
-var _ tab.Tracer = (*NoOpTracerWithLogger)(nil)
-var _ tab.Spanner = (*noOpLogSpanner)(nil)
-var _ tab.Logger = (*zapLogger)(nil)
+var (
+	_ tab.Tracer  = (*NoOpTracerWithLogger)(nil)
+	_ tab.Spanner = (*noOpLogSpanner)(nil)
+	_ tab.Logger  = (*zapLogger)(nil)
+)
 
 // StartSpan implements tab.Tracer.
 func (t *NoOpTracerWithLogger) StartSpan(ctx context.Context, operationName string, opts ...interface{}) (context.Context, tab.Spanner) {
