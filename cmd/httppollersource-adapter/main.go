@@ -6,6 +6,8 @@ import (
 	"github.com/zeiss/typhoon/pkg/sources/adapter/httppollersource"
 )
 
+const component = "httppollersource-adapter"
+
 func main() {
-	adapter.Main("httppoller", httppollersource.NewEnvConfig, httppollersource.NewAdapter)
+	adapter.Main(component, httppollersource.NewEnvConfig, httppollersource.NewAdapter)
 }

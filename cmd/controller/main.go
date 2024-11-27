@@ -29,6 +29,8 @@ import (
 	"github.com/zeiss/typhoon/pkg/targets/reconciler/splunktarget"
 )
 
+const component = "typhoon-controller"
+
 func main() {
 	ctx := signals.NewContext()
 
@@ -36,7 +38,8 @@ func main() {
 		ctx = injection.WithNamespaceScope(ctx, namespace)
 	}
 
-	sharedmain.MainWithContext(ctx, "typhoon-controller",
+	sharedmain.MainWithContext(ctx,
+		component,
 		cloudeventssource.NewController,
 		cloudeventstarget.NewController,
 		httppollersource.NewController,

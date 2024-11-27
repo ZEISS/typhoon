@@ -112,7 +112,7 @@ func (h *webhookHandler) handleAll(ctx context.Context) http.HandlerFunc {
 			return
 		}
 
-		if utilx.And(utilx.NotEmpty(h.username), utilx.Empty(h.password)) {
+		if utilx.And(utilx.NotEmpty(h.username), utilx.NotEmpty(h.password)) {
 			us, ps, ok := r.BasicAuth()
 			if !ok {
 				h.handleError(errors.New("wrong authentication header"), http.StatusBadRequest, w)
@@ -159,6 +159,7 @@ func (h *webhookHandler) handleAll(ctx context.Context) http.HandlerFunc {
 					}
 				}
 			}
+
 			if h.extensionAttributesFrom.headers {
 				for k, v := range r.Header {
 					// Prevent Authorization header from being added
@@ -172,6 +173,7 @@ func (h *webhookHandler) handleAll(ctx context.Context) http.HandlerFunc {
 						}
 						continue
 					}
+
 					if k == "Ce-Subject" {
 						if len(v) != 0 {
 							event.SetSubject(v[0])

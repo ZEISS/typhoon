@@ -14,6 +14,8 @@ import (
 
 // NewAdapter satisfies pkgadapter.AdapterConstructor.
 func NewAdapter(ctx context.Context, envAcc adapter.EnvConfigAccessor, ceClient cloudevents.Client) adapter.Adapter {
+	logger := logging.FromContext(ctx)
+
 	mt := &adapter.MetricTag{
 		ResourceGroup: conv.String(sources.WebhookSourceResource),
 		Namespace:     envAcc.GetNamespace(),
@@ -31,7 +33,7 @@ func NewAdapter(ctx context.Context, envAcc adapter.EnvConfigAccessor, ceClient 
 		corsAllowOrigin:         env.CORSAllowOrigin,
 
 		ceClient: ceClient,
-		logger:   logging.FromContext(ctx),
+		logger:   logger,
 		mt:       mt,
 	}
 }
