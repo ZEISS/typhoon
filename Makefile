@@ -10,6 +10,8 @@ GO_RELEASER 	?= $(GO_RUN_TOOLS) github.com/goreleaser/goreleaser/v2
 GO_KO 				?= $(GO_RUN_TOOLS) github.com/google/ko
 GO_MOD 				?= $(shell ${GO} list -m)
 
+HELM_UPDATE 	?= $(GO_RUN_TOOLS) github.com/zeiss/pkg/cmd/helm/update
+
 COMMANDS		:= $(notdir $(wildcard cmd/*))
 
 IMAGE_TAG       ?= $(shell git rev-parse HEAD)
@@ -46,12 +48,6 @@ test: fmt vet ## Run tests.
 lint: ## Run lint.
 	$(GO_RUN_TOOLS) github.com/golangci/golangci-lint/cmd/golangci-lint run --timeout 5m -c .golangci.yml
 
-.PHONY: clean
-clean: ## Remove previous build.
-	rm -rf .test .dist
-	find . -type f -name '*.gen.go' -exec rm {} +
-	git checkout go.mod
-
 .PHONY: deploy
 deploy: ## Deploy the application.
 	@eval $$(minikube -p minikube docker-env) ;\
@@ -63,6 +59,12 @@ deploy: ## Deploy the application.
 .PHONY: snapshot
 snapshot: ## Create a snapshot release
 	$(GO_RELEASER) release --clean --snapshot
+
+.PHONY: helm/update
+helm/update: ## Update helm dependencies.
+	$(HELM_UPDATE) --file helm/charts/typhoon/Chart.yaml --version ${RELEASE_VERSION}
+  $(HELM_UPDATE) --file helm/charts/typhoon-accounting/Chart.yaml --version ${RELEASE_VERSION}
+  $(HELM_UPDATE) --file helm/charts/typhoon-web/Chart.yaml --version ${RELEASE_VERSION}
 
 .PHONY: release
 release: ## Release the application.
@@ -85,6 +87,12 @@ web/up: ## Start the web server.
 .PHONY: help
 help: ## Display this help screen.
 	@grep -E '^[a-z.A-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+.PHONY: clean
+clean: ## Remove previous build.
+	rm -rf .test .dist
+	find . -type f -name '*.gen.go' -exec rm {} +
+	git checkout go.mod
 
 # codegen
 include hack/inc.codegen.mk
