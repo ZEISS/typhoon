@@ -25,22 +25,24 @@ var datadogtargetsKind = v1alpha1.SchemeGroupVersion.WithKind("DatadogTarget")
 
 // Get takes name of the datadogTarget, and returns the corresponding datadogTarget object, and an error if there is any.
 func (c *FakeDatadogTargets) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.DatadogTarget, err error) {
+	emptyResult := &v1alpha1.DatadogTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(datadogtargetsResource, c.ns, name), &v1alpha1.DatadogTarget{})
+		Invokes(testing.NewGetActionWithOptions(datadogtargetsResource, c.ns, name, options), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.DatadogTarget), err
 }
 
 // List takes label and field selectors, and returns the list of DatadogTargets that match those selectors.
 func (c *FakeDatadogTargets) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.DatadogTargetList, err error) {
+	emptyResult := &v1alpha1.DatadogTargetList{}
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(datadogtargetsResource, datadogtargetsKind, c.ns, opts), &v1alpha1.DatadogTargetList{})
+		Invokes(testing.NewListActionWithOptions(datadogtargetsResource, datadogtargetsKind, c.ns, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 
 	label, _, _ := testing.ExtractFromListOptions(opts)
@@ -59,40 +61,43 @@ func (c *FakeDatadogTargets) List(ctx context.Context, opts v1.ListOptions) (res
 // Watch returns a watch.Interface that watches the requested datadogTargets.
 func (c *FakeDatadogTargets) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchAction(datadogtargetsResource, c.ns, opts))
+		InvokesWatch(testing.NewWatchActionWithOptions(datadogtargetsResource, c.ns, opts))
 
 }
 
 // Create takes the representation of a datadogTarget and creates it.  Returns the server's representation of the datadogTarget, and an error, if there is any.
 func (c *FakeDatadogTargets) Create(ctx context.Context, datadogTarget *v1alpha1.DatadogTarget, opts v1.CreateOptions) (result *v1alpha1.DatadogTarget, err error) {
+	emptyResult := &v1alpha1.DatadogTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(datadogtargetsResource, c.ns, datadogTarget), &v1alpha1.DatadogTarget{})
+		Invokes(testing.NewCreateActionWithOptions(datadogtargetsResource, c.ns, datadogTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.DatadogTarget), err
 }
 
 // Update takes the representation of a datadogTarget and updates it. Returns the server's representation of the datadogTarget, and an error, if there is any.
 func (c *FakeDatadogTargets) Update(ctx context.Context, datadogTarget *v1alpha1.DatadogTarget, opts v1.UpdateOptions) (result *v1alpha1.DatadogTarget, err error) {
+	emptyResult := &v1alpha1.DatadogTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(datadogtargetsResource, c.ns, datadogTarget), &v1alpha1.DatadogTarget{})
+		Invokes(testing.NewUpdateActionWithOptions(datadogtargetsResource, c.ns, datadogTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.DatadogTarget), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeDatadogTargets) UpdateStatus(ctx context.Context, datadogTarget *v1alpha1.DatadogTarget, opts v1.UpdateOptions) (*v1alpha1.DatadogTarget, error) {
+func (c *FakeDatadogTargets) UpdateStatus(ctx context.Context, datadogTarget *v1alpha1.DatadogTarget, opts v1.UpdateOptions) (result *v1alpha1.DatadogTarget, err error) {
+	emptyResult := &v1alpha1.DatadogTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(datadogtargetsResource, "status", c.ns, datadogTarget), &v1alpha1.DatadogTarget{})
+		Invokes(testing.NewUpdateSubresourceActionWithOptions(datadogtargetsResource, "status", c.ns, datadogTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.DatadogTarget), err
 }
@@ -107,7 +112,7 @@ func (c *FakeDatadogTargets) Delete(ctx context.Context, name string, opts v1.De
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeDatadogTargets) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(datadogtargetsResource, c.ns, listOpts)
+	action := testing.NewDeleteCollectionActionWithOptions(datadogtargetsResource, c.ns, opts, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.DatadogTargetList{})
 	return err
@@ -115,11 +120,12 @@ func (c *FakeDatadogTargets) DeleteCollection(ctx context.Context, opts v1.Delet
 
 // Patch applies the patch and returns the patched datadogTarget.
 func (c *FakeDatadogTargets) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.DatadogTarget, err error) {
+	emptyResult := &v1alpha1.DatadogTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(datadogtargetsResource, c.ns, name, pt, data, subresources...), &v1alpha1.DatadogTarget{})
+		Invokes(testing.NewPatchSubresourceActionWithOptions(datadogtargetsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.DatadogTarget), err
 }

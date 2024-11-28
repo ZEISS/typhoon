@@ -25,22 +25,24 @@ var logzmetricstargetsKind = v1alpha1.SchemeGroupVersion.WithKind("LogzMetricsTa
 
 // Get takes name of the logzMetricsTarget, and returns the corresponding logzMetricsTarget object, and an error if there is any.
 func (c *FakeLogzMetricsTargets) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.LogzMetricsTarget, err error) {
+	emptyResult := &v1alpha1.LogzMetricsTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(logzmetricstargetsResource, c.ns, name), &v1alpha1.LogzMetricsTarget{})
+		Invokes(testing.NewGetActionWithOptions(logzmetricstargetsResource, c.ns, name, options), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.LogzMetricsTarget), err
 }
 
 // List takes label and field selectors, and returns the list of LogzMetricsTargets that match those selectors.
 func (c *FakeLogzMetricsTargets) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.LogzMetricsTargetList, err error) {
+	emptyResult := &v1alpha1.LogzMetricsTargetList{}
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(logzmetricstargetsResource, logzmetricstargetsKind, c.ns, opts), &v1alpha1.LogzMetricsTargetList{})
+		Invokes(testing.NewListActionWithOptions(logzmetricstargetsResource, logzmetricstargetsKind, c.ns, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 
 	label, _, _ := testing.ExtractFromListOptions(opts)
@@ -59,40 +61,43 @@ func (c *FakeLogzMetricsTargets) List(ctx context.Context, opts v1.ListOptions) 
 // Watch returns a watch.Interface that watches the requested logzMetricsTargets.
 func (c *FakeLogzMetricsTargets) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchAction(logzmetricstargetsResource, c.ns, opts))
+		InvokesWatch(testing.NewWatchActionWithOptions(logzmetricstargetsResource, c.ns, opts))
 
 }
 
 // Create takes the representation of a logzMetricsTarget and creates it.  Returns the server's representation of the logzMetricsTarget, and an error, if there is any.
 func (c *FakeLogzMetricsTargets) Create(ctx context.Context, logzMetricsTarget *v1alpha1.LogzMetricsTarget, opts v1.CreateOptions) (result *v1alpha1.LogzMetricsTarget, err error) {
+	emptyResult := &v1alpha1.LogzMetricsTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(logzmetricstargetsResource, c.ns, logzMetricsTarget), &v1alpha1.LogzMetricsTarget{})
+		Invokes(testing.NewCreateActionWithOptions(logzmetricstargetsResource, c.ns, logzMetricsTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.LogzMetricsTarget), err
 }
 
 // Update takes the representation of a logzMetricsTarget and updates it. Returns the server's representation of the logzMetricsTarget, and an error, if there is any.
 func (c *FakeLogzMetricsTargets) Update(ctx context.Context, logzMetricsTarget *v1alpha1.LogzMetricsTarget, opts v1.UpdateOptions) (result *v1alpha1.LogzMetricsTarget, err error) {
+	emptyResult := &v1alpha1.LogzMetricsTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(logzmetricstargetsResource, c.ns, logzMetricsTarget), &v1alpha1.LogzMetricsTarget{})
+		Invokes(testing.NewUpdateActionWithOptions(logzmetricstargetsResource, c.ns, logzMetricsTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.LogzMetricsTarget), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeLogzMetricsTargets) UpdateStatus(ctx context.Context, logzMetricsTarget *v1alpha1.LogzMetricsTarget, opts v1.UpdateOptions) (*v1alpha1.LogzMetricsTarget, error) {
+func (c *FakeLogzMetricsTargets) UpdateStatus(ctx context.Context, logzMetricsTarget *v1alpha1.LogzMetricsTarget, opts v1.UpdateOptions) (result *v1alpha1.LogzMetricsTarget, err error) {
+	emptyResult := &v1alpha1.LogzMetricsTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(logzmetricstargetsResource, "status", c.ns, logzMetricsTarget), &v1alpha1.LogzMetricsTarget{})
+		Invokes(testing.NewUpdateSubresourceActionWithOptions(logzmetricstargetsResource, "status", c.ns, logzMetricsTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.LogzMetricsTarget), err
 }
@@ -107,7 +112,7 @@ func (c *FakeLogzMetricsTargets) Delete(ctx context.Context, name string, opts v
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeLogzMetricsTargets) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(logzmetricstargetsResource, c.ns, listOpts)
+	action := testing.NewDeleteCollectionActionWithOptions(logzmetricstargetsResource, c.ns, opts, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.LogzMetricsTargetList{})
 	return err
@@ -115,11 +120,12 @@ func (c *FakeLogzMetricsTargets) DeleteCollection(ctx context.Context, opts v1.D
 
 // Patch applies the patch and returns the patched logzMetricsTarget.
 func (c *FakeLogzMetricsTargets) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.LogzMetricsTarget, err error) {
+	emptyResult := &v1alpha1.LogzMetricsTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(logzmetricstargetsResource, c.ns, name, pt, data, subresources...), &v1alpha1.LogzMetricsTarget{})
+		Invokes(testing.NewPatchSubresourceActionWithOptions(logzmetricstargetsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.LogzMetricsTarget), err
 }

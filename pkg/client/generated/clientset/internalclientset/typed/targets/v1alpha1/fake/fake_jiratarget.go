@@ -25,22 +25,24 @@ var jiratargetsKind = v1alpha1.SchemeGroupVersion.WithKind("JiraTarget")
 
 // Get takes name of the jiraTarget, and returns the corresponding jiraTarget object, and an error if there is any.
 func (c *FakeJiraTargets) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.JiraTarget, err error) {
+	emptyResult := &v1alpha1.JiraTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(jiratargetsResource, c.ns, name), &v1alpha1.JiraTarget{})
+		Invokes(testing.NewGetActionWithOptions(jiratargetsResource, c.ns, name, options), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.JiraTarget), err
 }
 
 // List takes label and field selectors, and returns the list of JiraTargets that match those selectors.
 func (c *FakeJiraTargets) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.JiraTargetList, err error) {
+	emptyResult := &v1alpha1.JiraTargetList{}
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(jiratargetsResource, jiratargetsKind, c.ns, opts), &v1alpha1.JiraTargetList{})
+		Invokes(testing.NewListActionWithOptions(jiratargetsResource, jiratargetsKind, c.ns, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 
 	label, _, _ := testing.ExtractFromListOptions(opts)
@@ -59,40 +61,43 @@ func (c *FakeJiraTargets) List(ctx context.Context, opts v1.ListOptions) (result
 // Watch returns a watch.Interface that watches the requested jiraTargets.
 func (c *FakeJiraTargets) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchAction(jiratargetsResource, c.ns, opts))
+		InvokesWatch(testing.NewWatchActionWithOptions(jiratargetsResource, c.ns, opts))
 
 }
 
 // Create takes the representation of a jiraTarget and creates it.  Returns the server's representation of the jiraTarget, and an error, if there is any.
 func (c *FakeJiraTargets) Create(ctx context.Context, jiraTarget *v1alpha1.JiraTarget, opts v1.CreateOptions) (result *v1alpha1.JiraTarget, err error) {
+	emptyResult := &v1alpha1.JiraTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(jiratargetsResource, c.ns, jiraTarget), &v1alpha1.JiraTarget{})
+		Invokes(testing.NewCreateActionWithOptions(jiratargetsResource, c.ns, jiraTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.JiraTarget), err
 }
 
 // Update takes the representation of a jiraTarget and updates it. Returns the server's representation of the jiraTarget, and an error, if there is any.
 func (c *FakeJiraTargets) Update(ctx context.Context, jiraTarget *v1alpha1.JiraTarget, opts v1.UpdateOptions) (result *v1alpha1.JiraTarget, err error) {
+	emptyResult := &v1alpha1.JiraTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(jiratargetsResource, c.ns, jiraTarget), &v1alpha1.JiraTarget{})
+		Invokes(testing.NewUpdateActionWithOptions(jiratargetsResource, c.ns, jiraTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.JiraTarget), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeJiraTargets) UpdateStatus(ctx context.Context, jiraTarget *v1alpha1.JiraTarget, opts v1.UpdateOptions) (*v1alpha1.JiraTarget, error) {
+func (c *FakeJiraTargets) UpdateStatus(ctx context.Context, jiraTarget *v1alpha1.JiraTarget, opts v1.UpdateOptions) (result *v1alpha1.JiraTarget, err error) {
+	emptyResult := &v1alpha1.JiraTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(jiratargetsResource, "status", c.ns, jiraTarget), &v1alpha1.JiraTarget{})
+		Invokes(testing.NewUpdateSubresourceActionWithOptions(jiratargetsResource, "status", c.ns, jiraTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.JiraTarget), err
 }
@@ -107,7 +112,7 @@ func (c *FakeJiraTargets) Delete(ctx context.Context, name string, opts v1.Delet
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeJiraTargets) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(jiratargetsResource, c.ns, listOpts)
+	action := testing.NewDeleteCollectionActionWithOptions(jiratargetsResource, c.ns, opts, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.JiraTargetList{})
 	return err
@@ -115,11 +120,12 @@ func (c *FakeJiraTargets) DeleteCollection(ctx context.Context, opts v1.DeleteOp
 
 // Patch applies the patch and returns the patched jiraTarget.
 func (c *FakeJiraTargets) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.JiraTarget, err error) {
+	emptyResult := &v1alpha1.JiraTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(jiratargetsResource, c.ns, name, pt, data, subresources...), &v1alpha1.JiraTarget{})
+		Invokes(testing.NewPatchSubresourceActionWithOptions(jiratargetsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.JiraTarget), err
 }

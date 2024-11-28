@@ -25,22 +25,24 @@ var azureservicebustopicsourcesKind = v1alpha1.SchemeGroupVersion.WithKind("Azur
 
 // Get takes name of the azureServiceBusTopicSource, and returns the corresponding azureServiceBusTopicSource object, and an error if there is any.
 func (c *FakeAzureServiceBusTopicSources) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.AzureServiceBusTopicSource, err error) {
+	emptyResult := &v1alpha1.AzureServiceBusTopicSource{}
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(azureservicebustopicsourcesResource, c.ns, name), &v1alpha1.AzureServiceBusTopicSource{})
+		Invokes(testing.NewGetActionWithOptions(azureservicebustopicsourcesResource, c.ns, name, options), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.AzureServiceBusTopicSource), err
 }
 
 // List takes label and field selectors, and returns the list of AzureServiceBusTopicSources that match those selectors.
 func (c *FakeAzureServiceBusTopicSources) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.AzureServiceBusTopicSourceList, err error) {
+	emptyResult := &v1alpha1.AzureServiceBusTopicSourceList{}
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(azureservicebustopicsourcesResource, azureservicebustopicsourcesKind, c.ns, opts), &v1alpha1.AzureServiceBusTopicSourceList{})
+		Invokes(testing.NewListActionWithOptions(azureservicebustopicsourcesResource, azureservicebustopicsourcesKind, c.ns, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 
 	label, _, _ := testing.ExtractFromListOptions(opts)
@@ -59,40 +61,43 @@ func (c *FakeAzureServiceBusTopicSources) List(ctx context.Context, opts v1.List
 // Watch returns a watch.Interface that watches the requested azureServiceBusTopicSources.
 func (c *FakeAzureServiceBusTopicSources) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchAction(azureservicebustopicsourcesResource, c.ns, opts))
+		InvokesWatch(testing.NewWatchActionWithOptions(azureservicebustopicsourcesResource, c.ns, opts))
 
 }
 
 // Create takes the representation of a azureServiceBusTopicSource and creates it.  Returns the server's representation of the azureServiceBusTopicSource, and an error, if there is any.
 func (c *FakeAzureServiceBusTopicSources) Create(ctx context.Context, azureServiceBusTopicSource *v1alpha1.AzureServiceBusTopicSource, opts v1.CreateOptions) (result *v1alpha1.AzureServiceBusTopicSource, err error) {
+	emptyResult := &v1alpha1.AzureServiceBusTopicSource{}
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(azureservicebustopicsourcesResource, c.ns, azureServiceBusTopicSource), &v1alpha1.AzureServiceBusTopicSource{})
+		Invokes(testing.NewCreateActionWithOptions(azureservicebustopicsourcesResource, c.ns, azureServiceBusTopicSource, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.AzureServiceBusTopicSource), err
 }
 
 // Update takes the representation of a azureServiceBusTopicSource and updates it. Returns the server's representation of the azureServiceBusTopicSource, and an error, if there is any.
 func (c *FakeAzureServiceBusTopicSources) Update(ctx context.Context, azureServiceBusTopicSource *v1alpha1.AzureServiceBusTopicSource, opts v1.UpdateOptions) (result *v1alpha1.AzureServiceBusTopicSource, err error) {
+	emptyResult := &v1alpha1.AzureServiceBusTopicSource{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(azureservicebustopicsourcesResource, c.ns, azureServiceBusTopicSource), &v1alpha1.AzureServiceBusTopicSource{})
+		Invokes(testing.NewUpdateActionWithOptions(azureservicebustopicsourcesResource, c.ns, azureServiceBusTopicSource, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.AzureServiceBusTopicSource), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeAzureServiceBusTopicSources) UpdateStatus(ctx context.Context, azureServiceBusTopicSource *v1alpha1.AzureServiceBusTopicSource, opts v1.UpdateOptions) (*v1alpha1.AzureServiceBusTopicSource, error) {
+func (c *FakeAzureServiceBusTopicSources) UpdateStatus(ctx context.Context, azureServiceBusTopicSource *v1alpha1.AzureServiceBusTopicSource, opts v1.UpdateOptions) (result *v1alpha1.AzureServiceBusTopicSource, err error) {
+	emptyResult := &v1alpha1.AzureServiceBusTopicSource{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(azureservicebustopicsourcesResource, "status", c.ns, azureServiceBusTopicSource), &v1alpha1.AzureServiceBusTopicSource{})
+		Invokes(testing.NewUpdateSubresourceActionWithOptions(azureservicebustopicsourcesResource, "status", c.ns, azureServiceBusTopicSource, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.AzureServiceBusTopicSource), err
 }
@@ -107,7 +112,7 @@ func (c *FakeAzureServiceBusTopicSources) Delete(ctx context.Context, name strin
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeAzureServiceBusTopicSources) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(azureservicebustopicsourcesResource, c.ns, listOpts)
+	action := testing.NewDeleteCollectionActionWithOptions(azureservicebustopicsourcesResource, c.ns, opts, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.AzureServiceBusTopicSourceList{})
 	return err
@@ -115,11 +120,12 @@ func (c *FakeAzureServiceBusTopicSources) DeleteCollection(ctx context.Context, 
 
 // Patch applies the patch and returns the patched azureServiceBusTopicSource.
 func (c *FakeAzureServiceBusTopicSources) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.AzureServiceBusTopicSource, err error) {
+	emptyResult := &v1alpha1.AzureServiceBusTopicSource{}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(azureservicebustopicsourcesResource, c.ns, name, pt, data, subresources...), &v1alpha1.AzureServiceBusTopicSource{})
+		Invokes(testing.NewPatchSubresourceActionWithOptions(azureservicebustopicsourcesResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.AzureServiceBusTopicSource), err
 }

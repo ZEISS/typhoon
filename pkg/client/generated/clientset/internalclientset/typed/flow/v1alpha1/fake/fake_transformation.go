@@ -25,22 +25,24 @@ var transformationsKind = v1alpha1.SchemeGroupVersion.WithKind("Transformation")
 
 // Get takes name of the transformation, and returns the corresponding transformation object, and an error if there is any.
 func (c *FakeTransformations) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.Transformation, err error) {
+	emptyResult := &v1alpha1.Transformation{}
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(transformationsResource, c.ns, name), &v1alpha1.Transformation{})
+		Invokes(testing.NewGetActionWithOptions(transformationsResource, c.ns, name, options), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Transformation), err
 }
 
 // List takes label and field selectors, and returns the list of Transformations that match those selectors.
 func (c *FakeTransformations) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.TransformationList, err error) {
+	emptyResult := &v1alpha1.TransformationList{}
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(transformationsResource, transformationsKind, c.ns, opts), &v1alpha1.TransformationList{})
+		Invokes(testing.NewListActionWithOptions(transformationsResource, transformationsKind, c.ns, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 
 	label, _, _ := testing.ExtractFromListOptions(opts)
@@ -59,40 +61,43 @@ func (c *FakeTransformations) List(ctx context.Context, opts v1.ListOptions) (re
 // Watch returns a watch.Interface that watches the requested transformations.
 func (c *FakeTransformations) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchAction(transformationsResource, c.ns, opts))
+		InvokesWatch(testing.NewWatchActionWithOptions(transformationsResource, c.ns, opts))
 
 }
 
 // Create takes the representation of a transformation and creates it.  Returns the server's representation of the transformation, and an error, if there is any.
 func (c *FakeTransformations) Create(ctx context.Context, transformation *v1alpha1.Transformation, opts v1.CreateOptions) (result *v1alpha1.Transformation, err error) {
+	emptyResult := &v1alpha1.Transformation{}
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(transformationsResource, c.ns, transformation), &v1alpha1.Transformation{})
+		Invokes(testing.NewCreateActionWithOptions(transformationsResource, c.ns, transformation, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Transformation), err
 }
 
 // Update takes the representation of a transformation and updates it. Returns the server's representation of the transformation, and an error, if there is any.
 func (c *FakeTransformations) Update(ctx context.Context, transformation *v1alpha1.Transformation, opts v1.UpdateOptions) (result *v1alpha1.Transformation, err error) {
+	emptyResult := &v1alpha1.Transformation{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(transformationsResource, c.ns, transformation), &v1alpha1.Transformation{})
+		Invokes(testing.NewUpdateActionWithOptions(transformationsResource, c.ns, transformation, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Transformation), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeTransformations) UpdateStatus(ctx context.Context, transformation *v1alpha1.Transformation, opts v1.UpdateOptions) (*v1alpha1.Transformation, error) {
+func (c *FakeTransformations) UpdateStatus(ctx context.Context, transformation *v1alpha1.Transformation, opts v1.UpdateOptions) (result *v1alpha1.Transformation, err error) {
+	emptyResult := &v1alpha1.Transformation{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(transformationsResource, "status", c.ns, transformation), &v1alpha1.Transformation{})
+		Invokes(testing.NewUpdateSubresourceActionWithOptions(transformationsResource, "status", c.ns, transformation, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Transformation), err
 }
@@ -107,7 +112,7 @@ func (c *FakeTransformations) Delete(ctx context.Context, name string, opts v1.D
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeTransformations) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(transformationsResource, c.ns, listOpts)
+	action := testing.NewDeleteCollectionActionWithOptions(transformationsResource, c.ns, opts, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.TransformationList{})
 	return err
@@ -115,11 +120,12 @@ func (c *FakeTransformations) DeleteCollection(ctx context.Context, opts v1.Dele
 
 // Patch applies the patch and returns the patched transformation.
 func (c *FakeTransformations) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Transformation, err error) {
+	emptyResult := &v1alpha1.Transformation{}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(transformationsResource, c.ns, name, pt, data, subresources...), &v1alpha1.Transformation{})
+		Invokes(testing.NewPatchSubresourceActionWithOptions(transformationsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Transformation), err
 }

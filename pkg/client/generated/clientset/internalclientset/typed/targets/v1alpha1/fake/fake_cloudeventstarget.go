@@ -25,22 +25,24 @@ var cloudeventstargetsKind = v1alpha1.SchemeGroupVersion.WithKind("CloudEventsTa
 
 // Get takes name of the cloudEventsTarget, and returns the corresponding cloudEventsTarget object, and an error if there is any.
 func (c *FakeCloudEventsTargets) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.CloudEventsTarget, err error) {
+	emptyResult := &v1alpha1.CloudEventsTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(cloudeventstargetsResource, c.ns, name), &v1alpha1.CloudEventsTarget{})
+		Invokes(testing.NewGetActionWithOptions(cloudeventstargetsResource, c.ns, name, options), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.CloudEventsTarget), err
 }
 
 // List takes label and field selectors, and returns the list of CloudEventsTargets that match those selectors.
 func (c *FakeCloudEventsTargets) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.CloudEventsTargetList, err error) {
+	emptyResult := &v1alpha1.CloudEventsTargetList{}
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(cloudeventstargetsResource, cloudeventstargetsKind, c.ns, opts), &v1alpha1.CloudEventsTargetList{})
+		Invokes(testing.NewListActionWithOptions(cloudeventstargetsResource, cloudeventstargetsKind, c.ns, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 
 	label, _, _ := testing.ExtractFromListOptions(opts)
@@ -59,40 +61,43 @@ func (c *FakeCloudEventsTargets) List(ctx context.Context, opts v1.ListOptions) 
 // Watch returns a watch.Interface that watches the requested cloudEventsTargets.
 func (c *FakeCloudEventsTargets) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchAction(cloudeventstargetsResource, c.ns, opts))
+		InvokesWatch(testing.NewWatchActionWithOptions(cloudeventstargetsResource, c.ns, opts))
 
 }
 
 // Create takes the representation of a cloudEventsTarget and creates it.  Returns the server's representation of the cloudEventsTarget, and an error, if there is any.
 func (c *FakeCloudEventsTargets) Create(ctx context.Context, cloudEventsTarget *v1alpha1.CloudEventsTarget, opts v1.CreateOptions) (result *v1alpha1.CloudEventsTarget, err error) {
+	emptyResult := &v1alpha1.CloudEventsTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(cloudeventstargetsResource, c.ns, cloudEventsTarget), &v1alpha1.CloudEventsTarget{})
+		Invokes(testing.NewCreateActionWithOptions(cloudeventstargetsResource, c.ns, cloudEventsTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.CloudEventsTarget), err
 }
 
 // Update takes the representation of a cloudEventsTarget and updates it. Returns the server's representation of the cloudEventsTarget, and an error, if there is any.
 func (c *FakeCloudEventsTargets) Update(ctx context.Context, cloudEventsTarget *v1alpha1.CloudEventsTarget, opts v1.UpdateOptions) (result *v1alpha1.CloudEventsTarget, err error) {
+	emptyResult := &v1alpha1.CloudEventsTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(cloudeventstargetsResource, c.ns, cloudEventsTarget), &v1alpha1.CloudEventsTarget{})
+		Invokes(testing.NewUpdateActionWithOptions(cloudeventstargetsResource, c.ns, cloudEventsTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.CloudEventsTarget), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeCloudEventsTargets) UpdateStatus(ctx context.Context, cloudEventsTarget *v1alpha1.CloudEventsTarget, opts v1.UpdateOptions) (*v1alpha1.CloudEventsTarget, error) {
+func (c *FakeCloudEventsTargets) UpdateStatus(ctx context.Context, cloudEventsTarget *v1alpha1.CloudEventsTarget, opts v1.UpdateOptions) (result *v1alpha1.CloudEventsTarget, err error) {
+	emptyResult := &v1alpha1.CloudEventsTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(cloudeventstargetsResource, "status", c.ns, cloudEventsTarget), &v1alpha1.CloudEventsTarget{})
+		Invokes(testing.NewUpdateSubresourceActionWithOptions(cloudeventstargetsResource, "status", c.ns, cloudEventsTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.CloudEventsTarget), err
 }
@@ -107,7 +112,7 @@ func (c *FakeCloudEventsTargets) Delete(ctx context.Context, name string, opts v
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeCloudEventsTargets) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(cloudeventstargetsResource, c.ns, listOpts)
+	action := testing.NewDeleteCollectionActionWithOptions(cloudeventstargetsResource, c.ns, opts, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.CloudEventsTargetList{})
 	return err
@@ -115,11 +120,12 @@ func (c *FakeCloudEventsTargets) DeleteCollection(ctx context.Context, opts v1.D
 
 // Patch applies the patch and returns the patched cloudEventsTarget.
 func (c *FakeCloudEventsTargets) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.CloudEventsTarget, err error) {
+	emptyResult := &v1alpha1.CloudEventsTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(cloudeventstargetsResource, c.ns, name, pt, data, subresources...), &v1alpha1.CloudEventsTarget{})
+		Invokes(testing.NewPatchSubresourceActionWithOptions(cloudeventstargetsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.CloudEventsTarget), err
 }

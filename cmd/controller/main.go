@@ -13,7 +13,6 @@ import (
 	"github.com/zeiss/typhoon/pkg/flow/reconciler/transformation"
 	"github.com/zeiss/typhoon/pkg/flow/reconciler/xmltojsontransformation"
 	"github.com/zeiss/typhoon/pkg/flow/reconciler/xslttransformation"
-	"github.com/zeiss/typhoon/pkg/routing/reconciler/filter"
 	"github.com/zeiss/typhoon/pkg/routing/reconciler/splitter"
 	"github.com/zeiss/typhoon/pkg/sources/reconciler/azservicebusqueuesource"
 	"github.com/zeiss/typhoon/pkg/sources/reconciler/azservicebussource"
@@ -61,7 +60,6 @@ func main() {
 		// extensions
 		function.NewController,
 		// routing
-		filter.NewController,
 		splitter.NewController,
 	)
 }

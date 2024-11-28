@@ -25,22 +25,24 @@ var salesforcesourcesKind = v1alpha1.SchemeGroupVersion.WithKind("SalesforceSour
 
 // Get takes name of the salesforceSource, and returns the corresponding salesforceSource object, and an error if there is any.
 func (c *FakeSalesforceSources) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.SalesforceSource, err error) {
+	emptyResult := &v1alpha1.SalesforceSource{}
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(salesforcesourcesResource, c.ns, name), &v1alpha1.SalesforceSource{})
+		Invokes(testing.NewGetActionWithOptions(salesforcesourcesResource, c.ns, name, options), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.SalesforceSource), err
 }
 
 // List takes label and field selectors, and returns the list of SalesforceSources that match those selectors.
 func (c *FakeSalesforceSources) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.SalesforceSourceList, err error) {
+	emptyResult := &v1alpha1.SalesforceSourceList{}
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(salesforcesourcesResource, salesforcesourcesKind, c.ns, opts), &v1alpha1.SalesforceSourceList{})
+		Invokes(testing.NewListActionWithOptions(salesforcesourcesResource, salesforcesourcesKind, c.ns, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 
 	label, _, _ := testing.ExtractFromListOptions(opts)
@@ -59,40 +61,43 @@ func (c *FakeSalesforceSources) List(ctx context.Context, opts v1.ListOptions) (
 // Watch returns a watch.Interface that watches the requested salesforceSources.
 func (c *FakeSalesforceSources) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchAction(salesforcesourcesResource, c.ns, opts))
+		InvokesWatch(testing.NewWatchActionWithOptions(salesforcesourcesResource, c.ns, opts))
 
 }
 
 // Create takes the representation of a salesforceSource and creates it.  Returns the server's representation of the salesforceSource, and an error, if there is any.
 func (c *FakeSalesforceSources) Create(ctx context.Context, salesforceSource *v1alpha1.SalesforceSource, opts v1.CreateOptions) (result *v1alpha1.SalesforceSource, err error) {
+	emptyResult := &v1alpha1.SalesforceSource{}
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(salesforcesourcesResource, c.ns, salesforceSource), &v1alpha1.SalesforceSource{})
+		Invokes(testing.NewCreateActionWithOptions(salesforcesourcesResource, c.ns, salesforceSource, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.SalesforceSource), err
 }
 
 // Update takes the representation of a salesforceSource and updates it. Returns the server's representation of the salesforceSource, and an error, if there is any.
 func (c *FakeSalesforceSources) Update(ctx context.Context, salesforceSource *v1alpha1.SalesforceSource, opts v1.UpdateOptions) (result *v1alpha1.SalesforceSource, err error) {
+	emptyResult := &v1alpha1.SalesforceSource{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(salesforcesourcesResource, c.ns, salesforceSource), &v1alpha1.SalesforceSource{})
+		Invokes(testing.NewUpdateActionWithOptions(salesforcesourcesResource, c.ns, salesforceSource, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.SalesforceSource), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeSalesforceSources) UpdateStatus(ctx context.Context, salesforceSource *v1alpha1.SalesforceSource, opts v1.UpdateOptions) (*v1alpha1.SalesforceSource, error) {
+func (c *FakeSalesforceSources) UpdateStatus(ctx context.Context, salesforceSource *v1alpha1.SalesforceSource, opts v1.UpdateOptions) (result *v1alpha1.SalesforceSource, err error) {
+	emptyResult := &v1alpha1.SalesforceSource{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(salesforcesourcesResource, "status", c.ns, salesforceSource), &v1alpha1.SalesforceSource{})
+		Invokes(testing.NewUpdateSubresourceActionWithOptions(salesforcesourcesResource, "status", c.ns, salesforceSource, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.SalesforceSource), err
 }
@@ -107,7 +112,7 @@ func (c *FakeSalesforceSources) Delete(ctx context.Context, name string, opts v1
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeSalesforceSources) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(salesforcesourcesResource, c.ns, listOpts)
+	action := testing.NewDeleteCollectionActionWithOptions(salesforcesourcesResource, c.ns, opts, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.SalesforceSourceList{})
 	return err
@@ -115,11 +120,12 @@ func (c *FakeSalesforceSources) DeleteCollection(ctx context.Context, opts v1.De
 
 // Patch applies the patch and returns the patched salesforceSource.
 func (c *FakeSalesforceSources) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.SalesforceSource, err error) {
+	emptyResult := &v1alpha1.SalesforceSource{}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(salesforcesourcesResource, c.ns, name, pt, data, subresources...), &v1alpha1.SalesforceSource{})
+		Invokes(testing.NewPatchSubresourceActionWithOptions(salesforcesourcesResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.SalesforceSource), err
 }

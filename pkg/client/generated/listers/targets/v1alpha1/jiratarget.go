@@ -4,8 +4,8 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -22,25 +22,17 @@ type JiraTargetLister interface {
 
 // jiraTargetLister implements the JiraTargetLister interface.
 type jiraTargetLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1alpha1.JiraTarget]
 }
 
 // NewJiraTargetLister returns a new JiraTargetLister.
 func NewJiraTargetLister(indexer cache.Indexer) JiraTargetLister {
-	return &jiraTargetLister{indexer: indexer}
-}
-
-// List lists all JiraTargets in the indexer.
-func (s *jiraTargetLister) List(selector labels.Selector) (ret []*v1alpha1.JiraTarget, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.JiraTarget))
-	})
-	return ret, err
+	return &jiraTargetLister{listers.New[*v1alpha1.JiraTarget](indexer, v1alpha1.Resource("jiratarget"))}
 }
 
 // JiraTargets returns an object that can list and get JiraTargets.
 func (s *jiraTargetLister) JiraTargets(namespace string) JiraTargetNamespaceLister {
-	return jiraTargetNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return jiraTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.JiraTarget](s.ResourceIndexer, namespace)}
 }
 
 // JiraTargetNamespaceLister helps list and get JiraTargets.
@@ -58,26 +50,5 @@ type JiraTargetNamespaceLister interface {
 // jiraTargetNamespaceLister implements the JiraTargetNamespaceLister
 // interface.
 type jiraTargetNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all JiraTargets in the indexer for a given namespace.
-func (s jiraTargetNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.JiraTarget, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.JiraTarget))
-	})
-	return ret, err
-}
-
-// Get retrieves the JiraTarget from the indexer for a given namespace and name.
-func (s jiraTargetNamespaceLister) Get(name string) (*v1alpha1.JiraTarget, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1alpha1.Resource("jiratarget"), name)
-	}
-	return obj.(*v1alpha1.JiraTarget), nil
+	listers.ResourceIndexer[*v1alpha1.JiraTarget]
 }

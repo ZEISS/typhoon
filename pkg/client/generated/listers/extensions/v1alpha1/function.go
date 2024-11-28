@@ -4,8 +4,8 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/extensions/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -22,25 +22,17 @@ type FunctionLister interface {
 
 // functionLister implements the FunctionLister interface.
 type functionLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1alpha1.Function]
 }
 
 // NewFunctionLister returns a new FunctionLister.
 func NewFunctionLister(indexer cache.Indexer) FunctionLister {
-	return &functionLister{indexer: indexer}
-}
-
-// List lists all Functions in the indexer.
-func (s *functionLister) List(selector labels.Selector) (ret []*v1alpha1.Function, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.Function))
-	})
-	return ret, err
+	return &functionLister{listers.New[*v1alpha1.Function](indexer, v1alpha1.Resource("function"))}
 }
 
 // Functions returns an object that can list and get Functions.
 func (s *functionLister) Functions(namespace string) FunctionNamespaceLister {
-	return functionNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return functionNamespaceLister{listers.NewNamespaced[*v1alpha1.Function](s.ResourceIndexer, namespace)}
 }
 
 // FunctionNamespaceLister helps list and get Functions.
@@ -58,26 +50,5 @@ type FunctionNamespaceLister interface {
 // functionNamespaceLister implements the FunctionNamespaceLister
 // interface.
 type functionNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all Functions in the indexer for a given namespace.
-func (s functionNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.Function, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.Function))
-	})
-	return ret, err
-}
-
-// Get retrieves the Function from the indexer for a given namespace and name.
-func (s functionNamespaceLister) Get(name string) (*v1alpha1.Function, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1alpha1.Resource("function"), name)
-	}
-	return obj.(*v1alpha1.Function), nil
+	listers.ResourceIndexer[*v1alpha1.Function]
 }

@@ -4,8 +4,8 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/routing/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -22,25 +22,17 @@ type SplitterLister interface {
 
 // splitterLister implements the SplitterLister interface.
 type splitterLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1alpha1.Splitter]
 }
 
 // NewSplitterLister returns a new SplitterLister.
 func NewSplitterLister(indexer cache.Indexer) SplitterLister {
-	return &splitterLister{indexer: indexer}
-}
-
-// List lists all Splitters in the indexer.
-func (s *splitterLister) List(selector labels.Selector) (ret []*v1alpha1.Splitter, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.Splitter))
-	})
-	return ret, err
+	return &splitterLister{listers.New[*v1alpha1.Splitter](indexer, v1alpha1.Resource("splitter"))}
 }
 
 // Splitters returns an object that can list and get Splitters.
 func (s *splitterLister) Splitters(namespace string) SplitterNamespaceLister {
-	return splitterNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return splitterNamespaceLister{listers.NewNamespaced[*v1alpha1.Splitter](s.ResourceIndexer, namespace)}
 }
 
 // SplitterNamespaceLister helps list and get Splitters.
@@ -58,26 +50,5 @@ type SplitterNamespaceLister interface {
 // splitterNamespaceLister implements the SplitterNamespaceLister
 // interface.
 type splitterNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all Splitters in the indexer for a given namespace.
-func (s splitterNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.Splitter, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.Splitter))
-	})
-	return ret, err
-}
-
-// Get retrieves the Splitter from the indexer for a given namespace and name.
-func (s splitterNamespaceLister) Get(name string) (*v1alpha1.Splitter, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1alpha1.Resource("splitter"), name)
-	}
-	return obj.(*v1alpha1.Splitter), nil
+	listers.ResourceIndexer[*v1alpha1.Splitter]
 }

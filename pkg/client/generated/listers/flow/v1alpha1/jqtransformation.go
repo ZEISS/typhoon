@@ -4,8 +4,8 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -22,25 +22,17 @@ type JQTransformationLister interface {
 
 // jQTransformationLister implements the JQTransformationLister interface.
 type jQTransformationLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1alpha1.JQTransformation]
 }
 
 // NewJQTransformationLister returns a new JQTransformationLister.
 func NewJQTransformationLister(indexer cache.Indexer) JQTransformationLister {
-	return &jQTransformationLister{indexer: indexer}
-}
-
-// List lists all JQTransformations in the indexer.
-func (s *jQTransformationLister) List(selector labels.Selector) (ret []*v1alpha1.JQTransformation, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.JQTransformation))
-	})
-	return ret, err
+	return &jQTransformationLister{listers.New[*v1alpha1.JQTransformation](indexer, v1alpha1.Resource("jqtransformation"))}
 }
 
 // JQTransformations returns an object that can list and get JQTransformations.
 func (s *jQTransformationLister) JQTransformations(namespace string) JQTransformationNamespaceLister {
-	return jQTransformationNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return jQTransformationNamespaceLister{listers.NewNamespaced[*v1alpha1.JQTransformation](s.ResourceIndexer, namespace)}
 }
 
 // JQTransformationNamespaceLister helps list and get JQTransformations.
@@ -58,26 +50,5 @@ type JQTransformationNamespaceLister interface {
 // jQTransformationNamespaceLister implements the JQTransformationNamespaceLister
 // interface.
 type jQTransformationNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all JQTransformations in the indexer for a given namespace.
-func (s jQTransformationNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.JQTransformation, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.JQTransformation))
-	})
-	return ret, err
-}
-
-// Get retrieves the JQTransformation from the indexer for a given namespace and name.
-func (s jQTransformationNamespaceLister) Get(name string) (*v1alpha1.JQTransformation, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1alpha1.Resource("jqtransformation"), name)
-	}
-	return obj.(*v1alpha1.JQTransformation), nil
+	listers.ResourceIndexer[*v1alpha1.JQTransformation]
 }

@@ -55,21 +55,6 @@ roleRef:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: filter-adapter
-  labels:
-    app.kubernetes.io/part-of: typhoon
-subjects:
-- kind: ServiceAccount
-  name: typhoon-controller
-  namespace: typhoon
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: filter-adapter
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
   name: splitter-adapter
   labels:
     app.kubernetes.io/part-of: typhoon

@@ -4,8 +4,8 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -22,25 +22,17 @@ type KafkaSourceLister interface {
 
 // kafkaSourceLister implements the KafkaSourceLister interface.
 type kafkaSourceLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1alpha1.KafkaSource]
 }
 
 // NewKafkaSourceLister returns a new KafkaSourceLister.
 func NewKafkaSourceLister(indexer cache.Indexer) KafkaSourceLister {
-	return &kafkaSourceLister{indexer: indexer}
-}
-
-// List lists all KafkaSources in the indexer.
-func (s *kafkaSourceLister) List(selector labels.Selector) (ret []*v1alpha1.KafkaSource, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.KafkaSource))
-	})
-	return ret, err
+	return &kafkaSourceLister{listers.New[*v1alpha1.KafkaSource](indexer, v1alpha1.Resource("kafkasource"))}
 }
 
 // KafkaSources returns an object that can list and get KafkaSources.
 func (s *kafkaSourceLister) KafkaSources(namespace string) KafkaSourceNamespaceLister {
-	return kafkaSourceNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return kafkaSourceNamespaceLister{listers.NewNamespaced[*v1alpha1.KafkaSource](s.ResourceIndexer, namespace)}
 }
 
 // KafkaSourceNamespaceLister helps list and get KafkaSources.
@@ -58,26 +50,5 @@ type KafkaSourceNamespaceLister interface {
 // kafkaSourceNamespaceLister implements the KafkaSourceNamespaceLister
 // interface.
 type kafkaSourceNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all KafkaSources in the indexer for a given namespace.
-func (s kafkaSourceNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.KafkaSource, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.KafkaSource))
-	})
-	return ret, err
-}
-
-// Get retrieves the KafkaSource from the indexer for a given namespace and name.
-func (s kafkaSourceNamespaceLister) Get(name string) (*v1alpha1.KafkaSource, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1alpha1.Resource("kafkasource"), name)
-	}
-	return obj.(*v1alpha1.KafkaSource), nil
+	listers.ResourceIndexer[*v1alpha1.KafkaSource]
 }

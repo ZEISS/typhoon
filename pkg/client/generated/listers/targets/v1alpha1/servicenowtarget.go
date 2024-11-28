@@ -4,8 +4,8 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -22,25 +22,17 @@ type ServiceNowTargetLister interface {
 
 // serviceNowTargetLister implements the ServiceNowTargetLister interface.
 type serviceNowTargetLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1alpha1.ServiceNowTarget]
 }
 
 // NewServiceNowTargetLister returns a new ServiceNowTargetLister.
 func NewServiceNowTargetLister(indexer cache.Indexer) ServiceNowTargetLister {
-	return &serviceNowTargetLister{indexer: indexer}
-}
-
-// List lists all ServiceNowTargets in the indexer.
-func (s *serviceNowTargetLister) List(selector labels.Selector) (ret []*v1alpha1.ServiceNowTarget, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.ServiceNowTarget))
-	})
-	return ret, err
+	return &serviceNowTargetLister{listers.New[*v1alpha1.ServiceNowTarget](indexer, v1alpha1.Resource("servicenowtarget"))}
 }
 
 // ServiceNowTargets returns an object that can list and get ServiceNowTargets.
 func (s *serviceNowTargetLister) ServiceNowTargets(namespace string) ServiceNowTargetNamespaceLister {
-	return serviceNowTargetNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return serviceNowTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.ServiceNowTarget](s.ResourceIndexer, namespace)}
 }
 
 // ServiceNowTargetNamespaceLister helps list and get ServiceNowTargets.
@@ -58,26 +50,5 @@ type ServiceNowTargetNamespaceLister interface {
 // serviceNowTargetNamespaceLister implements the ServiceNowTargetNamespaceLister
 // interface.
 type serviceNowTargetNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all ServiceNowTargets in the indexer for a given namespace.
-func (s serviceNowTargetNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.ServiceNowTarget, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.ServiceNowTarget))
-	})
-	return ret, err
-}
-
-// Get retrieves the ServiceNowTarget from the indexer for a given namespace and name.
-func (s serviceNowTargetNamespaceLister) Get(name string) (*v1alpha1.ServiceNowTarget, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1alpha1.Resource("servicenowtarget"), name)
-	}
-	return obj.(*v1alpha1.ServiceNowTarget), nil
+	listers.ResourceIndexer[*v1alpha1.ServiceNowTarget]
 }

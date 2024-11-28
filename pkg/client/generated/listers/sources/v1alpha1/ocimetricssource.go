@@ -4,8 +4,8 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -22,25 +22,17 @@ type OCIMetricsSourceLister interface {
 
 // oCIMetricsSourceLister implements the OCIMetricsSourceLister interface.
 type oCIMetricsSourceLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1alpha1.OCIMetricsSource]
 }
 
 // NewOCIMetricsSourceLister returns a new OCIMetricsSourceLister.
 func NewOCIMetricsSourceLister(indexer cache.Indexer) OCIMetricsSourceLister {
-	return &oCIMetricsSourceLister{indexer: indexer}
-}
-
-// List lists all OCIMetricsSources in the indexer.
-func (s *oCIMetricsSourceLister) List(selector labels.Selector) (ret []*v1alpha1.OCIMetricsSource, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.OCIMetricsSource))
-	})
-	return ret, err
+	return &oCIMetricsSourceLister{listers.New[*v1alpha1.OCIMetricsSource](indexer, v1alpha1.Resource("ocimetricssource"))}
 }
 
 // OCIMetricsSources returns an object that can list and get OCIMetricsSources.
 func (s *oCIMetricsSourceLister) OCIMetricsSources(namespace string) OCIMetricsSourceNamespaceLister {
-	return oCIMetricsSourceNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return oCIMetricsSourceNamespaceLister{listers.NewNamespaced[*v1alpha1.OCIMetricsSource](s.ResourceIndexer, namespace)}
 }
 
 // OCIMetricsSourceNamespaceLister helps list and get OCIMetricsSources.
@@ -58,26 +50,5 @@ type OCIMetricsSourceNamespaceLister interface {
 // oCIMetricsSourceNamespaceLister implements the OCIMetricsSourceNamespaceLister
 // interface.
 type oCIMetricsSourceNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all OCIMetricsSources in the indexer for a given namespace.
-func (s oCIMetricsSourceNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.OCIMetricsSource, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.OCIMetricsSource))
-	})
-	return ret, err
-}
-
-// Get retrieves the OCIMetricsSource from the indexer for a given namespace and name.
-func (s oCIMetricsSourceNamespaceLister) Get(name string) (*v1alpha1.OCIMetricsSource, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1alpha1.Resource("ocimetricssource"), name)
-	}
-	return obj.(*v1alpha1.OCIMetricsSource), nil
+	listers.ResourceIndexer[*v1alpha1.OCIMetricsSource]
 }

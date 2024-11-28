@@ -225,9 +225,6 @@ rules:
   # Only multi-tenant components receive permissions via RoleBindings to
   # interact with the Kubernetes API.
   resourceNames:
-  - awssnssource-adapter
-  - zendesksource-adapter
-  - filter-adapter
   - splitter-adapter
   verbs:
   - update
@@ -410,48 +407,6 @@ rules:
   - get
 
 # Acquire leases for leader election
-- apiGroups:
-  - coordination.k8s.io
-  resources:
-  - leases
-  verbs:
-  - get
-  - create
-  - update
-
----
-
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: filter-adapter
-  labels:
-    app.kubernetes.io/part-of: typhoon
-rules:
-- apiGroups:
-  - ''
-  resources:
-  - events
-  verbs:
-  - create
-  - patch
-  - update
-- apiGroups:
-  - ''
-  resources:
-  - configmaps
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - routing.typhoon.zeiss.com
-  resources:
-  - filters
-  verbs:
-  - get
-  - list
-  - watch
 - apiGroups:
   - coordination.k8s.io
   resources:

@@ -4,8 +4,8 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -22,25 +22,17 @@ type LogzTargetLister interface {
 
 // logzTargetLister implements the LogzTargetLister interface.
 type logzTargetLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1alpha1.LogzTarget]
 }
 
 // NewLogzTargetLister returns a new LogzTargetLister.
 func NewLogzTargetLister(indexer cache.Indexer) LogzTargetLister {
-	return &logzTargetLister{indexer: indexer}
-}
-
-// List lists all LogzTargets in the indexer.
-func (s *logzTargetLister) List(selector labels.Selector) (ret []*v1alpha1.LogzTarget, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.LogzTarget))
-	})
-	return ret, err
+	return &logzTargetLister{listers.New[*v1alpha1.LogzTarget](indexer, v1alpha1.Resource("logztarget"))}
 }
 
 // LogzTargets returns an object that can list and get LogzTargets.
 func (s *logzTargetLister) LogzTargets(namespace string) LogzTargetNamespaceLister {
-	return logzTargetNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return logzTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.LogzTarget](s.ResourceIndexer, namespace)}
 }
 
 // LogzTargetNamespaceLister helps list and get LogzTargets.
@@ -58,26 +50,5 @@ type LogzTargetNamespaceLister interface {
 // logzTargetNamespaceLister implements the LogzTargetNamespaceLister
 // interface.
 type logzTargetNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all LogzTargets in the indexer for a given namespace.
-func (s logzTargetNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.LogzTarget, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.LogzTarget))
-	})
-	return ret, err
-}
-
-// Get retrieves the LogzTarget from the indexer for a given namespace and name.
-func (s logzTargetNamespaceLister) Get(name string) (*v1alpha1.LogzTarget, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1alpha1.Resource("logztarget"), name)
-	}
-	return obj.(*v1alpha1.LogzTarget), nil
+	listers.ResourceIndexer[*v1alpha1.LogzTarget]
 }

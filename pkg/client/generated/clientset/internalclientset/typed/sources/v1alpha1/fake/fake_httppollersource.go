@@ -25,22 +25,24 @@ var httppollersourcesKind = v1alpha1.SchemeGroupVersion.WithKind("HTTPPollerSour
 
 // Get takes name of the hTTPPollerSource, and returns the corresponding hTTPPollerSource object, and an error if there is any.
 func (c *FakeHTTPPollerSources) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.HTTPPollerSource, err error) {
+	emptyResult := &v1alpha1.HTTPPollerSource{}
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(httppollersourcesResource, c.ns, name), &v1alpha1.HTTPPollerSource{})
+		Invokes(testing.NewGetActionWithOptions(httppollersourcesResource, c.ns, name, options), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.HTTPPollerSource), err
 }
 
 // List takes label and field selectors, and returns the list of HTTPPollerSources that match those selectors.
 func (c *FakeHTTPPollerSources) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.HTTPPollerSourceList, err error) {
+	emptyResult := &v1alpha1.HTTPPollerSourceList{}
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(httppollersourcesResource, httppollersourcesKind, c.ns, opts), &v1alpha1.HTTPPollerSourceList{})
+		Invokes(testing.NewListActionWithOptions(httppollersourcesResource, httppollersourcesKind, c.ns, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 
 	label, _, _ := testing.ExtractFromListOptions(opts)
@@ -59,40 +61,43 @@ func (c *FakeHTTPPollerSources) List(ctx context.Context, opts v1.ListOptions) (
 // Watch returns a watch.Interface that watches the requested hTTPPollerSources.
 func (c *FakeHTTPPollerSources) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchAction(httppollersourcesResource, c.ns, opts))
+		InvokesWatch(testing.NewWatchActionWithOptions(httppollersourcesResource, c.ns, opts))
 
 }
 
 // Create takes the representation of a hTTPPollerSource and creates it.  Returns the server's representation of the hTTPPollerSource, and an error, if there is any.
 func (c *FakeHTTPPollerSources) Create(ctx context.Context, hTTPPollerSource *v1alpha1.HTTPPollerSource, opts v1.CreateOptions) (result *v1alpha1.HTTPPollerSource, err error) {
+	emptyResult := &v1alpha1.HTTPPollerSource{}
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(httppollersourcesResource, c.ns, hTTPPollerSource), &v1alpha1.HTTPPollerSource{})
+		Invokes(testing.NewCreateActionWithOptions(httppollersourcesResource, c.ns, hTTPPollerSource, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.HTTPPollerSource), err
 }
 
 // Update takes the representation of a hTTPPollerSource and updates it. Returns the server's representation of the hTTPPollerSource, and an error, if there is any.
 func (c *FakeHTTPPollerSources) Update(ctx context.Context, hTTPPollerSource *v1alpha1.HTTPPollerSource, opts v1.UpdateOptions) (result *v1alpha1.HTTPPollerSource, err error) {
+	emptyResult := &v1alpha1.HTTPPollerSource{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(httppollersourcesResource, c.ns, hTTPPollerSource), &v1alpha1.HTTPPollerSource{})
+		Invokes(testing.NewUpdateActionWithOptions(httppollersourcesResource, c.ns, hTTPPollerSource, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.HTTPPollerSource), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeHTTPPollerSources) UpdateStatus(ctx context.Context, hTTPPollerSource *v1alpha1.HTTPPollerSource, opts v1.UpdateOptions) (*v1alpha1.HTTPPollerSource, error) {
+func (c *FakeHTTPPollerSources) UpdateStatus(ctx context.Context, hTTPPollerSource *v1alpha1.HTTPPollerSource, opts v1.UpdateOptions) (result *v1alpha1.HTTPPollerSource, err error) {
+	emptyResult := &v1alpha1.HTTPPollerSource{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(httppollersourcesResource, "status", c.ns, hTTPPollerSource), &v1alpha1.HTTPPollerSource{})
+		Invokes(testing.NewUpdateSubresourceActionWithOptions(httppollersourcesResource, "status", c.ns, hTTPPollerSource, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.HTTPPollerSource), err
 }
@@ -107,7 +112,7 @@ func (c *FakeHTTPPollerSources) Delete(ctx context.Context, name string, opts v1
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeHTTPPollerSources) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(httppollersourcesResource, c.ns, listOpts)
+	action := testing.NewDeleteCollectionActionWithOptions(httppollersourcesResource, c.ns, opts, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.HTTPPollerSourceList{})
 	return err
@@ -115,11 +120,12 @@ func (c *FakeHTTPPollerSources) DeleteCollection(ctx context.Context, opts v1.De
 
 // Patch applies the patch and returns the patched hTTPPollerSource.
 func (c *FakeHTTPPollerSources) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.HTTPPollerSource, err error) {
+	emptyResult := &v1alpha1.HTTPPollerSource{}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(httppollersourcesResource, c.ns, name, pt, data, subresources...), &v1alpha1.HTTPPollerSource{})
+		Invokes(testing.NewPatchSubresourceActionWithOptions(httppollersourcesResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.HTTPPollerSource), err
 }

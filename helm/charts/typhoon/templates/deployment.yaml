@@ -74,8 +74,6 @@ spec:
             - name: XMLTOJSONTRANSFORMATION_IMAGE
               value: "{{ .Values.global.image.repository }}/xmltojsontransformation-adapter:{{ .Values.global.image.tag | default .Chart.AppVersion }}"
             # Routing adapters
-            - name: FILTER_IMAGE
-              value: "{{ .Values.global.image.repository }}/filter-adapter:{{ .Values.global.image.tag | default .Chart.AppVersion }}"
             - name: SPLITTER_IMAGE
               value: "{{ .Values.global.image.repository }}/splitter-adapter:{{ .Values.global.image.tag | default .Chart.AppVersion }}"
             # Custom build adapters

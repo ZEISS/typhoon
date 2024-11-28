@@ -55,21 +55,6 @@ roleRef:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: filter-adapter
-  labels:
-    {{- include "typhoon.controller.labels" . | nindent 4 }}
-subjects:
-  - kind: ServiceAccount
-    name: {{ include "typhoon.serviceAccountName" . }}
-    namespace: {{ .Release.Namespace }}
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: filter-adapter
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
   name: splitter-adapter
   labels:
     {{- include "typhoon.controller.labels" . | nindent 4 }}

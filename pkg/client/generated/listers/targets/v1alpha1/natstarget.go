@@ -4,8 +4,8 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -22,25 +22,17 @@ type NatsTargetLister interface {
 
 // natsTargetLister implements the NatsTargetLister interface.
 type natsTargetLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1alpha1.NatsTarget]
 }
 
 // NewNatsTargetLister returns a new NatsTargetLister.
 func NewNatsTargetLister(indexer cache.Indexer) NatsTargetLister {
-	return &natsTargetLister{indexer: indexer}
-}
-
-// List lists all NatsTargets in the indexer.
-func (s *natsTargetLister) List(selector labels.Selector) (ret []*v1alpha1.NatsTarget, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.NatsTarget))
-	})
-	return ret, err
+	return &natsTargetLister{listers.New[*v1alpha1.NatsTarget](indexer, v1alpha1.Resource("natstarget"))}
 }
 
 // NatsTargets returns an object that can list and get NatsTargets.
 func (s *natsTargetLister) NatsTargets(namespace string) NatsTargetNamespaceLister {
-	return natsTargetNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return natsTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.NatsTarget](s.ResourceIndexer, namespace)}
 }
 
 // NatsTargetNamespaceLister helps list and get NatsTargets.
@@ -58,26 +50,5 @@ type NatsTargetNamespaceLister interface {
 // natsTargetNamespaceLister implements the NatsTargetNamespaceLister
 // interface.
 type natsTargetNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all NatsTargets in the indexer for a given namespace.
-func (s natsTargetNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.NatsTarget, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.NatsTarget))
-	})
-	return ret, err
-}
-
-// Get retrieves the NatsTarget from the indexer for a given namespace and name.
-func (s natsTargetNamespaceLister) Get(name string) (*v1alpha1.NatsTarget, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1alpha1.Resource("natstarget"), name)
-	}
-	return obj.(*v1alpha1.NatsTarget), nil
+	listers.ResourceIndexer[*v1alpha1.NatsTarget]
 }

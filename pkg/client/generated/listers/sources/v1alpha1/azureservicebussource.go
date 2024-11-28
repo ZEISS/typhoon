@@ -4,8 +4,8 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -22,25 +22,17 @@ type AzureServiceBusSourceLister interface {
 
 // azureServiceBusSourceLister implements the AzureServiceBusSourceLister interface.
 type azureServiceBusSourceLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1alpha1.AzureServiceBusSource]
 }
 
 // NewAzureServiceBusSourceLister returns a new AzureServiceBusSourceLister.
 func NewAzureServiceBusSourceLister(indexer cache.Indexer) AzureServiceBusSourceLister {
-	return &azureServiceBusSourceLister{indexer: indexer}
-}
-
-// List lists all AzureServiceBusSources in the indexer.
-func (s *azureServiceBusSourceLister) List(selector labels.Selector) (ret []*v1alpha1.AzureServiceBusSource, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.AzureServiceBusSource))
-	})
-	return ret, err
+	return &azureServiceBusSourceLister{listers.New[*v1alpha1.AzureServiceBusSource](indexer, v1alpha1.Resource("azureservicebussource"))}
 }
 
 // AzureServiceBusSources returns an object that can list and get AzureServiceBusSources.
 func (s *azureServiceBusSourceLister) AzureServiceBusSources(namespace string) AzureServiceBusSourceNamespaceLister {
-	return azureServiceBusSourceNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return azureServiceBusSourceNamespaceLister{listers.NewNamespaced[*v1alpha1.AzureServiceBusSource](s.ResourceIndexer, namespace)}
 }
 
 // AzureServiceBusSourceNamespaceLister helps list and get AzureServiceBusSources.
@@ -58,26 +50,5 @@ type AzureServiceBusSourceNamespaceLister interface {
 // azureServiceBusSourceNamespaceLister implements the AzureServiceBusSourceNamespaceLister
 // interface.
 type azureServiceBusSourceNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all AzureServiceBusSources in the indexer for a given namespace.
-func (s azureServiceBusSourceNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.AzureServiceBusSource, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.AzureServiceBusSource))
-	})
-	return ret, err
-}
-
-// Get retrieves the AzureServiceBusSource from the indexer for a given namespace and name.
-func (s azureServiceBusSourceNamespaceLister) Get(name string) (*v1alpha1.AzureServiceBusSource, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1alpha1.Resource("azureservicebussource"), name)
-	}
-	return obj.(*v1alpha1.AzureServiceBusSource), nil
+	listers.ResourceIndexer[*v1alpha1.AzureServiceBusSource]
 }

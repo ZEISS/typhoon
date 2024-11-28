@@ -4,8 +4,8 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -22,25 +22,17 @@ type CloudEventsTargetLister interface {
 
 // cloudEventsTargetLister implements the CloudEventsTargetLister interface.
 type cloudEventsTargetLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1alpha1.CloudEventsTarget]
 }
 
 // NewCloudEventsTargetLister returns a new CloudEventsTargetLister.
 func NewCloudEventsTargetLister(indexer cache.Indexer) CloudEventsTargetLister {
-	return &cloudEventsTargetLister{indexer: indexer}
-}
-
-// List lists all CloudEventsTargets in the indexer.
-func (s *cloudEventsTargetLister) List(selector labels.Selector) (ret []*v1alpha1.CloudEventsTarget, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.CloudEventsTarget))
-	})
-	return ret, err
+	return &cloudEventsTargetLister{listers.New[*v1alpha1.CloudEventsTarget](indexer, v1alpha1.Resource("cloudeventstarget"))}
 }
 
 // CloudEventsTargets returns an object that can list and get CloudEventsTargets.
 func (s *cloudEventsTargetLister) CloudEventsTargets(namespace string) CloudEventsTargetNamespaceLister {
-	return cloudEventsTargetNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return cloudEventsTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.CloudEventsTarget](s.ResourceIndexer, namespace)}
 }
 
 // CloudEventsTargetNamespaceLister helps list and get CloudEventsTargets.
@@ -58,26 +50,5 @@ type CloudEventsTargetNamespaceLister interface {
 // cloudEventsTargetNamespaceLister implements the CloudEventsTargetNamespaceLister
 // interface.
 type cloudEventsTargetNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all CloudEventsTargets in the indexer for a given namespace.
-func (s cloudEventsTargetNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.CloudEventsTarget, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.CloudEventsTarget))
-	})
-	return ret, err
-}
-
-// Get retrieves the CloudEventsTarget from the indexer for a given namespace and name.
-func (s cloudEventsTargetNamespaceLister) Get(name string) (*v1alpha1.CloudEventsTarget, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1alpha1.Resource("cloudeventstarget"), name)
-	}
-	return obj.(*v1alpha1.CloudEventsTarget), nil
+	listers.ResourceIndexer[*v1alpha1.CloudEventsTarget]
 }

@@ -25,22 +25,24 @@ var bridgesKind = v1alpha1.SchemeGroupVersion.WithKind("Bridge")
 
 // Get takes name of the bridge, and returns the corresponding bridge object, and an error if there is any.
 func (c *FakeBridges) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.Bridge, err error) {
+	emptyResult := &v1alpha1.Bridge{}
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(bridgesResource, c.ns, name), &v1alpha1.Bridge{})
+		Invokes(testing.NewGetActionWithOptions(bridgesResource, c.ns, name, options), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Bridge), err
 }
 
 // List takes label and field selectors, and returns the list of Bridges that match those selectors.
 func (c *FakeBridges) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.BridgeList, err error) {
+	emptyResult := &v1alpha1.BridgeList{}
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(bridgesResource, bridgesKind, c.ns, opts), &v1alpha1.BridgeList{})
+		Invokes(testing.NewListActionWithOptions(bridgesResource, bridgesKind, c.ns, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 
 	label, _, _ := testing.ExtractFromListOptions(opts)
@@ -59,40 +61,43 @@ func (c *FakeBridges) List(ctx context.Context, opts v1.ListOptions) (result *v1
 // Watch returns a watch.Interface that watches the requested bridges.
 func (c *FakeBridges) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchAction(bridgesResource, c.ns, opts))
+		InvokesWatch(testing.NewWatchActionWithOptions(bridgesResource, c.ns, opts))
 
 }
 
 // Create takes the representation of a bridge and creates it.  Returns the server's representation of the bridge, and an error, if there is any.
 func (c *FakeBridges) Create(ctx context.Context, bridge *v1alpha1.Bridge, opts v1.CreateOptions) (result *v1alpha1.Bridge, err error) {
+	emptyResult := &v1alpha1.Bridge{}
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(bridgesResource, c.ns, bridge), &v1alpha1.Bridge{})
+		Invokes(testing.NewCreateActionWithOptions(bridgesResource, c.ns, bridge, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Bridge), err
 }
 
 // Update takes the representation of a bridge and updates it. Returns the server's representation of the bridge, and an error, if there is any.
 func (c *FakeBridges) Update(ctx context.Context, bridge *v1alpha1.Bridge, opts v1.UpdateOptions) (result *v1alpha1.Bridge, err error) {
+	emptyResult := &v1alpha1.Bridge{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(bridgesResource, c.ns, bridge), &v1alpha1.Bridge{})
+		Invokes(testing.NewUpdateActionWithOptions(bridgesResource, c.ns, bridge, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Bridge), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeBridges) UpdateStatus(ctx context.Context, bridge *v1alpha1.Bridge, opts v1.UpdateOptions) (*v1alpha1.Bridge, error) {
+func (c *FakeBridges) UpdateStatus(ctx context.Context, bridge *v1alpha1.Bridge, opts v1.UpdateOptions) (result *v1alpha1.Bridge, err error) {
+	emptyResult := &v1alpha1.Bridge{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(bridgesResource, "status", c.ns, bridge), &v1alpha1.Bridge{})
+		Invokes(testing.NewUpdateSubresourceActionWithOptions(bridgesResource, "status", c.ns, bridge, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Bridge), err
 }
@@ -107,7 +112,7 @@ func (c *FakeBridges) Delete(ctx context.Context, name string, opts v1.DeleteOpt
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeBridges) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(bridgesResource, c.ns, listOpts)
+	action := testing.NewDeleteCollectionActionWithOptions(bridgesResource, c.ns, opts, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.BridgeList{})
 	return err
@@ -115,11 +120,12 @@ func (c *FakeBridges) DeleteCollection(ctx context.Context, opts v1.DeleteOption
 
 // Patch applies the patch and returns the patched bridge.
 func (c *FakeBridges) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Bridge, err error) {
+	emptyResult := &v1alpha1.Bridge{}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(bridgesResource, c.ns, name, pt, data, subresources...), &v1alpha1.Bridge{})
+		Invokes(testing.NewPatchSubresourceActionWithOptions(bridgesResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Bridge), err
 }

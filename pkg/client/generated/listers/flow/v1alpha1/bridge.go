@@ -4,8 +4,8 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -22,25 +22,17 @@ type BridgeLister interface {
 
 // bridgeLister implements the BridgeLister interface.
 type bridgeLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1alpha1.Bridge]
 }
 
 // NewBridgeLister returns a new BridgeLister.
 func NewBridgeLister(indexer cache.Indexer) BridgeLister {
-	return &bridgeLister{indexer: indexer}
-}
-
-// List lists all Bridges in the indexer.
-func (s *bridgeLister) List(selector labels.Selector) (ret []*v1alpha1.Bridge, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.Bridge))
-	})
-	return ret, err
+	return &bridgeLister{listers.New[*v1alpha1.Bridge](indexer, v1alpha1.Resource("bridge"))}
 }
 
 // Bridges returns an object that can list and get Bridges.
 func (s *bridgeLister) Bridges(namespace string) BridgeNamespaceLister {
-	return bridgeNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return bridgeNamespaceLister{listers.NewNamespaced[*v1alpha1.Bridge](s.ResourceIndexer, namespace)}
 }
 
 // BridgeNamespaceLister helps list and get Bridges.
@@ -58,26 +50,5 @@ type BridgeNamespaceLister interface {
 // bridgeNamespaceLister implements the BridgeNamespaceLister
 // interface.
 type bridgeNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all Bridges in the indexer for a given namespace.
-func (s bridgeNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.Bridge, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.Bridge))
-	})
-	return ret, err
-}
-
-// Get retrieves the Bridge from the indexer for a given namespace and name.
-func (s bridgeNamespaceLister) Get(name string) (*v1alpha1.Bridge, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1alpha1.Resource("bridge"), name)
-	}
-	return obj.(*v1alpha1.Bridge), nil
+	listers.ResourceIndexer[*v1alpha1.Bridge]
 }

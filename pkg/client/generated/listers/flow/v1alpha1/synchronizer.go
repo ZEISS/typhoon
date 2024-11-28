@@ -4,8 +4,8 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -22,25 +22,17 @@ type SynchronizerLister interface {
 
 // synchronizerLister implements the SynchronizerLister interface.
 type synchronizerLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1alpha1.Synchronizer]
 }
 
 // NewSynchronizerLister returns a new SynchronizerLister.
 func NewSynchronizerLister(indexer cache.Indexer) SynchronizerLister {
-	return &synchronizerLister{indexer: indexer}
-}
-
-// List lists all Synchronizers in the indexer.
-func (s *synchronizerLister) List(selector labels.Selector) (ret []*v1alpha1.Synchronizer, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.Synchronizer))
-	})
-	return ret, err
+	return &synchronizerLister{listers.New[*v1alpha1.Synchronizer](indexer, v1alpha1.Resource("synchronizer"))}
 }
 
 // Synchronizers returns an object that can list and get Synchronizers.
 func (s *synchronizerLister) Synchronizers(namespace string) SynchronizerNamespaceLister {
-	return synchronizerNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return synchronizerNamespaceLister{listers.NewNamespaced[*v1alpha1.Synchronizer](s.ResourceIndexer, namespace)}
 }
 
 // SynchronizerNamespaceLister helps list and get Synchronizers.
@@ -58,26 +50,5 @@ type SynchronizerNamespaceLister interface {
 // synchronizerNamespaceLister implements the SynchronizerNamespaceLister
 // interface.
 type synchronizerNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all Synchronizers in the indexer for a given namespace.
-func (s synchronizerNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.Synchronizer, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.Synchronizer))
-	})
-	return ret, err
-}
-
-// Get retrieves the Synchronizer from the indexer for a given namespace and name.
-func (s synchronizerNamespaceLister) Get(name string) (*v1alpha1.Synchronizer, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1alpha1.Resource("synchronizer"), name)
-	}
-	return obj.(*v1alpha1.Synchronizer), nil
+	listers.ResourceIndexer[*v1alpha1.Synchronizer]
 }

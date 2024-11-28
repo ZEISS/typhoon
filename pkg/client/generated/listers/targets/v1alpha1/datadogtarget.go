@@ -4,8 +4,8 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -22,25 +22,17 @@ type DatadogTargetLister interface {
 
 // datadogTargetLister implements the DatadogTargetLister interface.
 type datadogTargetLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1alpha1.DatadogTarget]
 }
 
 // NewDatadogTargetLister returns a new DatadogTargetLister.
 func NewDatadogTargetLister(indexer cache.Indexer) DatadogTargetLister {
-	return &datadogTargetLister{indexer: indexer}
-}
-
-// List lists all DatadogTargets in the indexer.
-func (s *datadogTargetLister) List(selector labels.Selector) (ret []*v1alpha1.DatadogTarget, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.DatadogTarget))
-	})
-	return ret, err
+	return &datadogTargetLister{listers.New[*v1alpha1.DatadogTarget](indexer, v1alpha1.Resource("datadogtarget"))}
 }
 
 // DatadogTargets returns an object that can list and get DatadogTargets.
 func (s *datadogTargetLister) DatadogTargets(namespace string) DatadogTargetNamespaceLister {
-	return datadogTargetNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return datadogTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.DatadogTarget](s.ResourceIndexer, namespace)}
 }
 
 // DatadogTargetNamespaceLister helps list and get DatadogTargets.
@@ -58,26 +50,5 @@ type DatadogTargetNamespaceLister interface {
 // datadogTargetNamespaceLister implements the DatadogTargetNamespaceLister
 // interface.
 type datadogTargetNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all DatadogTargets in the indexer for a given namespace.
-func (s datadogTargetNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.DatadogTarget, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.DatadogTarget))
-	})
-	return ret, err
-}
-
-// Get retrieves the DatadogTarget from the indexer for a given namespace and name.
-func (s datadogTargetNamespaceLister) Get(name string) (*v1alpha1.DatadogTarget, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1alpha1.Resource("datadogtarget"), name)
-	}
-	return obj.(*v1alpha1.DatadogTarget), nil
+	listers.ResourceIndexer[*v1alpha1.DatadogTarget]
 }

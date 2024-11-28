@@ -25,22 +25,24 @@ var natstargetsKind = v1alpha1.SchemeGroupVersion.WithKind("NatsTarget")
 
 // Get takes name of the natsTarget, and returns the corresponding natsTarget object, and an error if there is any.
 func (c *FakeNatsTargets) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.NatsTarget, err error) {
+	emptyResult := &v1alpha1.NatsTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(natstargetsResource, c.ns, name), &v1alpha1.NatsTarget{})
+		Invokes(testing.NewGetActionWithOptions(natstargetsResource, c.ns, name, options), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.NatsTarget), err
 }
 
 // List takes label and field selectors, and returns the list of NatsTargets that match those selectors.
 func (c *FakeNatsTargets) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.NatsTargetList, err error) {
+	emptyResult := &v1alpha1.NatsTargetList{}
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(natstargetsResource, natstargetsKind, c.ns, opts), &v1alpha1.NatsTargetList{})
+		Invokes(testing.NewListActionWithOptions(natstargetsResource, natstargetsKind, c.ns, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 
 	label, _, _ := testing.ExtractFromListOptions(opts)
@@ -59,40 +61,43 @@ func (c *FakeNatsTargets) List(ctx context.Context, opts v1.ListOptions) (result
 // Watch returns a watch.Interface that watches the requested natsTargets.
 func (c *FakeNatsTargets) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchAction(natstargetsResource, c.ns, opts))
+		InvokesWatch(testing.NewWatchActionWithOptions(natstargetsResource, c.ns, opts))
 
 }
 
 // Create takes the representation of a natsTarget and creates it.  Returns the server's representation of the natsTarget, and an error, if there is any.
 func (c *FakeNatsTargets) Create(ctx context.Context, natsTarget *v1alpha1.NatsTarget, opts v1.CreateOptions) (result *v1alpha1.NatsTarget, err error) {
+	emptyResult := &v1alpha1.NatsTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(natstargetsResource, c.ns, natsTarget), &v1alpha1.NatsTarget{})
+		Invokes(testing.NewCreateActionWithOptions(natstargetsResource, c.ns, natsTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.NatsTarget), err
 }
 
 // Update takes the representation of a natsTarget and updates it. Returns the server's representation of the natsTarget, and an error, if there is any.
 func (c *FakeNatsTargets) Update(ctx context.Context, natsTarget *v1alpha1.NatsTarget, opts v1.UpdateOptions) (result *v1alpha1.NatsTarget, err error) {
+	emptyResult := &v1alpha1.NatsTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(natstargetsResource, c.ns, natsTarget), &v1alpha1.NatsTarget{})
+		Invokes(testing.NewUpdateActionWithOptions(natstargetsResource, c.ns, natsTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.NatsTarget), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeNatsTargets) UpdateStatus(ctx context.Context, natsTarget *v1alpha1.NatsTarget, opts v1.UpdateOptions) (*v1alpha1.NatsTarget, error) {
+func (c *FakeNatsTargets) UpdateStatus(ctx context.Context, natsTarget *v1alpha1.NatsTarget, opts v1.UpdateOptions) (result *v1alpha1.NatsTarget, err error) {
+	emptyResult := &v1alpha1.NatsTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(natstargetsResource, "status", c.ns, natsTarget), &v1alpha1.NatsTarget{})
+		Invokes(testing.NewUpdateSubresourceActionWithOptions(natstargetsResource, "status", c.ns, natsTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.NatsTarget), err
 }
@@ -107,7 +112,7 @@ func (c *FakeNatsTargets) Delete(ctx context.Context, name string, opts v1.Delet
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeNatsTargets) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(natstargetsResource, c.ns, listOpts)
+	action := testing.NewDeleteCollectionActionWithOptions(natstargetsResource, c.ns, opts, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.NatsTargetList{})
 	return err
@@ -115,11 +120,12 @@ func (c *FakeNatsTargets) DeleteCollection(ctx context.Context, opts v1.DeleteOp
 
 // Patch applies the patch and returns the patched natsTarget.
 func (c *FakeNatsTargets) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.NatsTarget, err error) {
+	emptyResult := &v1alpha1.NatsTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(natstargetsResource, c.ns, name, pt, data, subresources...), &v1alpha1.NatsTarget{})
+		Invokes(testing.NewPatchSubresourceActionWithOptions(natstargetsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.NatsTarget), err
 }

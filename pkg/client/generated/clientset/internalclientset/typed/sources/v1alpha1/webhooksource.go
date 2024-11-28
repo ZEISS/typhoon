@@ -4,14 +4,13 @@ package v1alpha1
 
 import (
 	"context"
-	"time"
 
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
 	watch "k8s.io/apimachinery/pkg/watch"
-	rest "k8s.io/client-go/rest"
+	gentype "k8s.io/client-go/gentype"
 )
 
 // WebhookSourcesGetter has a method to return a WebhookSourceInterface.
@@ -24,6 +23,7 @@ type WebhookSourcesGetter interface {
 type WebhookSourceInterface interface {
 	Create(ctx context.Context, webhookSource *v1alpha1.WebhookSource, opts v1.CreateOptions) (*v1alpha1.WebhookSource, error)
 	Update(ctx context.Context, webhookSource *v1alpha1.WebhookSource, opts v1.UpdateOptions) (*v1alpha1.WebhookSource, error)
+	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
 	UpdateStatus(ctx context.Context, webhookSource *v1alpha1.WebhookSource, opts v1.UpdateOptions) (*v1alpha1.WebhookSource, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
@@ -36,144 +36,18 @@ type WebhookSourceInterface interface {
 
 // webhookSources implements WebhookSourceInterface
 type webhookSources struct {
-	client rest.Interface
-	ns     string
+	*gentype.ClientWithList[*v1alpha1.WebhookSource, *v1alpha1.WebhookSourceList]
 }
 
 // newWebhookSources returns a WebhookSources
 func newWebhookSources(c *SourcesV1alpha1Client, namespace string) *webhookSources {
 	return &webhookSources{
-		client: c.RESTClient(),
-		ns:     namespace,
+		gentype.NewClientWithList[*v1alpha1.WebhookSource, *v1alpha1.WebhookSourceList](
+			"webhooksources",
+			c.RESTClient(),
+			scheme.ParameterCodec,
+			namespace,
+			func() *v1alpha1.WebhookSource { return &v1alpha1.WebhookSource{} },
+			func() *v1alpha1.WebhookSourceList { return &v1alpha1.WebhookSourceList{} }),
 	}
-}
-
-// Get takes name of the webhookSource, and returns the corresponding webhookSource object, and an error if there is any.
-func (c *webhookSources) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.WebhookSource, err error) {
-	result = &v1alpha1.WebhookSource{}
-	err = c.client.Get().
-		Namespace(c.ns).
-		Resource("webhooksources").
-		Name(name).
-		VersionedParams(&options, scheme.ParameterCodec).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// List takes label and field selectors, and returns the list of WebhookSources that match those selectors.
-func (c *webhookSources) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.WebhookSourceList, err error) {
-	var timeout time.Duration
-	if opts.TimeoutSeconds != nil {
-		timeout = time.Duration(*opts.TimeoutSeconds) * time.Second
-	}
-	result = &v1alpha1.WebhookSourceList{}
-	err = c.client.Get().
-		Namespace(c.ns).
-		Resource("webhooksources").
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Timeout(timeout).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// Watch returns a watch.Interface that watches the requested webhookSources.
-func (c *webhookSources) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
-	var timeout time.Duration
-	if opts.TimeoutSeconds != nil {
-		timeout = time.Duration(*opts.TimeoutSeconds) * time.Second
-	}
-	opts.Watch = true
-	return c.client.Get().
-		Namespace(c.ns).
-		Resource("webhooksources").
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Timeout(timeout).
-		Watch(ctx)
-}
-
-// Create takes the representation of a webhookSource and creates it.  Returns the server's representation of the webhookSource, and an error, if there is any.
-func (c *webhookSources) Create(ctx context.Context, webhookSource *v1alpha1.WebhookSource, opts v1.CreateOptions) (result *v1alpha1.WebhookSource, err error) {
-	result = &v1alpha1.WebhookSource{}
-	err = c.client.Post().
-		Namespace(c.ns).
-		Resource("webhooksources").
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Body(webhookSource).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// Update takes the representation of a webhookSource and updates it. Returns the server's representation of the webhookSource, and an error, if there is any.
-func (c *webhookSources) Update(ctx context.Context, webhookSource *v1alpha1.WebhookSource, opts v1.UpdateOptions) (result *v1alpha1.WebhookSource, err error) {
-	result = &v1alpha1.WebhookSource{}
-	err = c.client.Put().
-		Namespace(c.ns).
-		Resource("webhooksources").
-		Name(webhookSource.Name).
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Body(webhookSource).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// UpdateStatus was generated because the type contains a Status member.
-// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *webhookSources) UpdateStatus(ctx context.Context, webhookSource *v1alpha1.WebhookSource, opts v1.UpdateOptions) (result *v1alpha1.WebhookSource, err error) {
-	result = &v1alpha1.WebhookSource{}
-	err = c.client.Put().
-		Namespace(c.ns).
-		Resource("webhooksources").
-		Name(webhookSource.Name).
-		SubResource("status").
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Body(webhookSource).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// Delete takes name of the webhookSource and deletes it. Returns an error if one occurs.
-func (c *webhookSources) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
-	return c.client.Delete().
-		Namespace(c.ns).
-		Resource("webhooksources").
-		Name(name).
-		Body(&opts).
-		Do(ctx).
-		Error()
-}
-
-// DeleteCollection deletes a collection of objects.
-func (c *webhookSources) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	var timeout time.Duration
-	if listOpts.TimeoutSeconds != nil {
-		timeout = time.Duration(*listOpts.TimeoutSeconds) * time.Second
-	}
-	return c.client.Delete().
-		Namespace(c.ns).
-		Resource("webhooksources").
-		VersionedParams(&listOpts, scheme.ParameterCodec).
-		Timeout(timeout).
-		Body(&opts).
-		Do(ctx).
-		Error()
-}
-
-// Patch applies the patch and returns the patched webhookSource.
-func (c *webhookSources) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.WebhookSource, err error) {
-	result = &v1alpha1.WebhookSource{}
-	err = c.client.Patch(pt).
-		Namespace(c.ns).
-		Resource("webhooksources").
-		Name(name).
-		SubResource(subresources...).
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Body(data).
-		Do(ctx).
-		Into(result)
-	return
 }

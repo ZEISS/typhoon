@@ -4,8 +4,8 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -22,25 +22,17 @@ type SplunkTargetLister interface {
 
 // splunkTargetLister implements the SplunkTargetLister interface.
 type splunkTargetLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1alpha1.SplunkTarget]
 }
 
 // NewSplunkTargetLister returns a new SplunkTargetLister.
 func NewSplunkTargetLister(indexer cache.Indexer) SplunkTargetLister {
-	return &splunkTargetLister{indexer: indexer}
-}
-
-// List lists all SplunkTargets in the indexer.
-func (s *splunkTargetLister) List(selector labels.Selector) (ret []*v1alpha1.SplunkTarget, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.SplunkTarget))
-	})
-	return ret, err
+	return &splunkTargetLister{listers.New[*v1alpha1.SplunkTarget](indexer, v1alpha1.Resource("splunktarget"))}
 }
 
 // SplunkTargets returns an object that can list and get SplunkTargets.
 func (s *splunkTargetLister) SplunkTargets(namespace string) SplunkTargetNamespaceLister {
-	return splunkTargetNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return splunkTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.SplunkTarget](s.ResourceIndexer, namespace)}
 }
 
 // SplunkTargetNamespaceLister helps list and get SplunkTargets.
@@ -58,26 +50,5 @@ type SplunkTargetNamespaceLister interface {
 // splunkTargetNamespaceLister implements the SplunkTargetNamespaceLister
 // interface.
 type splunkTargetNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all SplunkTargets in the indexer for a given namespace.
-func (s splunkTargetNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.SplunkTarget, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.SplunkTarget))
-	})
-	return ret, err
-}
-
-// Get retrieves the SplunkTarget from the indexer for a given namespace and name.
-func (s splunkTargetNamespaceLister) Get(name string) (*v1alpha1.SplunkTarget, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1alpha1.Resource("splunktarget"), name)
-	}
-	return obj.(*v1alpha1.SplunkTarget), nil
+	listers.ResourceIndexer[*v1alpha1.SplunkTarget]
 }

@@ -25,22 +25,24 @@ var splittersKind = v1alpha1.SchemeGroupVersion.WithKind("Splitter")
 
 // Get takes name of the splitter, and returns the corresponding splitter object, and an error if there is any.
 func (c *FakeSplitters) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.Splitter, err error) {
+	emptyResult := &v1alpha1.Splitter{}
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(splittersResource, c.ns, name), &v1alpha1.Splitter{})
+		Invokes(testing.NewGetActionWithOptions(splittersResource, c.ns, name, options), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Splitter), err
 }
 
 // List takes label and field selectors, and returns the list of Splitters that match those selectors.
 func (c *FakeSplitters) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.SplitterList, err error) {
+	emptyResult := &v1alpha1.SplitterList{}
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(splittersResource, splittersKind, c.ns, opts), &v1alpha1.SplitterList{})
+		Invokes(testing.NewListActionWithOptions(splittersResource, splittersKind, c.ns, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 
 	label, _, _ := testing.ExtractFromListOptions(opts)
@@ -59,40 +61,43 @@ func (c *FakeSplitters) List(ctx context.Context, opts v1.ListOptions) (result *
 // Watch returns a watch.Interface that watches the requested splitters.
 func (c *FakeSplitters) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchAction(splittersResource, c.ns, opts))
+		InvokesWatch(testing.NewWatchActionWithOptions(splittersResource, c.ns, opts))
 
 }
 
 // Create takes the representation of a splitter and creates it.  Returns the server's representation of the splitter, and an error, if there is any.
 func (c *FakeSplitters) Create(ctx context.Context, splitter *v1alpha1.Splitter, opts v1.CreateOptions) (result *v1alpha1.Splitter, err error) {
+	emptyResult := &v1alpha1.Splitter{}
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(splittersResource, c.ns, splitter), &v1alpha1.Splitter{})
+		Invokes(testing.NewCreateActionWithOptions(splittersResource, c.ns, splitter, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Splitter), err
 }
 
 // Update takes the representation of a splitter and updates it. Returns the server's representation of the splitter, and an error, if there is any.
 func (c *FakeSplitters) Update(ctx context.Context, splitter *v1alpha1.Splitter, opts v1.UpdateOptions) (result *v1alpha1.Splitter, err error) {
+	emptyResult := &v1alpha1.Splitter{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(splittersResource, c.ns, splitter), &v1alpha1.Splitter{})
+		Invokes(testing.NewUpdateActionWithOptions(splittersResource, c.ns, splitter, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Splitter), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeSplitters) UpdateStatus(ctx context.Context, splitter *v1alpha1.Splitter, opts v1.UpdateOptions) (*v1alpha1.Splitter, error) {
+func (c *FakeSplitters) UpdateStatus(ctx context.Context, splitter *v1alpha1.Splitter, opts v1.UpdateOptions) (result *v1alpha1.Splitter, err error) {
+	emptyResult := &v1alpha1.Splitter{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(splittersResource, "status", c.ns, splitter), &v1alpha1.Splitter{})
+		Invokes(testing.NewUpdateSubresourceActionWithOptions(splittersResource, "status", c.ns, splitter, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Splitter), err
 }
@@ -107,7 +112,7 @@ func (c *FakeSplitters) Delete(ctx context.Context, name string, opts v1.DeleteO
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeSplitters) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(splittersResource, c.ns, listOpts)
+	action := testing.NewDeleteCollectionActionWithOptions(splittersResource, c.ns, opts, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.SplitterList{})
 	return err
@@ -115,11 +120,12 @@ func (c *FakeSplitters) DeleteCollection(ctx context.Context, opts v1.DeleteOpti
 
 // Patch applies the patch and returns the patched splitter.
 func (c *FakeSplitters) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Splitter, err error) {
+	emptyResult := &v1alpha1.Splitter{}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(splittersResource, c.ns, name, pt, data, subresources...), &v1alpha1.Splitter{})
+		Invokes(testing.NewPatchSubresourceActionWithOptions(splittersResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Splitter), err
 }

@@ -77,8 +77,6 @@ spec:
         - name: XMLTOJSONTRANSFORMATION_IMAGE
           value: ko://github.com/zeiss/typhoon/cmd/xmltojsontransformation-adapter
         # Routing adapters
-        - name: FILTER_IMAGE
-          value: ko://github.com/zeiss/typhoon/cmd/filter-adapter
         - name: SPLITTER_IMAGE
           value: ko://github.com/zeiss/typhoon/cmd/splitter-adapter
         # Custom build adapters

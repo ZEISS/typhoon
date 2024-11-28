@@ -4,8 +4,8 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -22,25 +22,17 @@ type KafkaTargetLister interface {
 
 // kafkaTargetLister implements the KafkaTargetLister interface.
 type kafkaTargetLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1alpha1.KafkaTarget]
 }
 
 // NewKafkaTargetLister returns a new KafkaTargetLister.
 func NewKafkaTargetLister(indexer cache.Indexer) KafkaTargetLister {
-	return &kafkaTargetLister{indexer: indexer}
-}
-
-// List lists all KafkaTargets in the indexer.
-func (s *kafkaTargetLister) List(selector labels.Selector) (ret []*v1alpha1.KafkaTarget, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.KafkaTarget))
-	})
-	return ret, err
+	return &kafkaTargetLister{listers.New[*v1alpha1.KafkaTarget](indexer, v1alpha1.Resource("kafkatarget"))}
 }
 
 // KafkaTargets returns an object that can list and get KafkaTargets.
 func (s *kafkaTargetLister) KafkaTargets(namespace string) KafkaTargetNamespaceLister {
-	return kafkaTargetNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return kafkaTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.KafkaTarget](s.ResourceIndexer, namespace)}
 }
 
 // KafkaTargetNamespaceLister helps list and get KafkaTargets.
@@ -58,26 +50,5 @@ type KafkaTargetNamespaceLister interface {
 // kafkaTargetNamespaceLister implements the KafkaTargetNamespaceLister
 // interface.
 type kafkaTargetNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all KafkaTargets in the indexer for a given namespace.
-func (s kafkaTargetNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.KafkaTarget, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.KafkaTarget))
-	})
-	return ret, err
-}
-
-// Get retrieves the KafkaTarget from the indexer for a given namespace and name.
-func (s kafkaTargetNamespaceLister) Get(name string) (*v1alpha1.KafkaTarget, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1alpha1.Resource("kafkatarget"), name)
-	}
-	return obj.(*v1alpha1.KafkaTarget), nil
+	listers.ResourceIndexer[*v1alpha1.KafkaTarget]
 }

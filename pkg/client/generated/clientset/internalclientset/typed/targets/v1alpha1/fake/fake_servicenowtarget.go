@@ -25,22 +25,24 @@ var servicenowtargetsKind = v1alpha1.SchemeGroupVersion.WithKind("ServiceNowTarg
 
 // Get takes name of the serviceNowTarget, and returns the corresponding serviceNowTarget object, and an error if there is any.
 func (c *FakeServiceNowTargets) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.ServiceNowTarget, err error) {
+	emptyResult := &v1alpha1.ServiceNowTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(servicenowtargetsResource, c.ns, name), &v1alpha1.ServiceNowTarget{})
+		Invokes(testing.NewGetActionWithOptions(servicenowtargetsResource, c.ns, name, options), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.ServiceNowTarget), err
 }
 
 // List takes label and field selectors, and returns the list of ServiceNowTargets that match those selectors.
 func (c *FakeServiceNowTargets) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.ServiceNowTargetList, err error) {
+	emptyResult := &v1alpha1.ServiceNowTargetList{}
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(servicenowtargetsResource, servicenowtargetsKind, c.ns, opts), &v1alpha1.ServiceNowTargetList{})
+		Invokes(testing.NewListActionWithOptions(servicenowtargetsResource, servicenowtargetsKind, c.ns, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 
 	label, _, _ := testing.ExtractFromListOptions(opts)
@@ -59,40 +61,43 @@ func (c *FakeServiceNowTargets) List(ctx context.Context, opts v1.ListOptions) (
 // Watch returns a watch.Interface that watches the requested serviceNowTargets.
 func (c *FakeServiceNowTargets) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchAction(servicenowtargetsResource, c.ns, opts))
+		InvokesWatch(testing.NewWatchActionWithOptions(servicenowtargetsResource, c.ns, opts))
 
 }
 
 // Create takes the representation of a serviceNowTarget and creates it.  Returns the server's representation of the serviceNowTarget, and an error, if there is any.
 func (c *FakeServiceNowTargets) Create(ctx context.Context, serviceNowTarget *v1alpha1.ServiceNowTarget, opts v1.CreateOptions) (result *v1alpha1.ServiceNowTarget, err error) {
+	emptyResult := &v1alpha1.ServiceNowTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(servicenowtargetsResource, c.ns, serviceNowTarget), &v1alpha1.ServiceNowTarget{})
+		Invokes(testing.NewCreateActionWithOptions(servicenowtargetsResource, c.ns, serviceNowTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.ServiceNowTarget), err
 }
 
 // Update takes the representation of a serviceNowTarget and updates it. Returns the server's representation of the serviceNowTarget, and an error, if there is any.
 func (c *FakeServiceNowTargets) Update(ctx context.Context, serviceNowTarget *v1alpha1.ServiceNowTarget, opts v1.UpdateOptions) (result *v1alpha1.ServiceNowTarget, err error) {
+	emptyResult := &v1alpha1.ServiceNowTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(servicenowtargetsResource, c.ns, serviceNowTarget), &v1alpha1.ServiceNowTarget{})
+		Invokes(testing.NewUpdateActionWithOptions(servicenowtargetsResource, c.ns, serviceNowTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.ServiceNowTarget), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeServiceNowTargets) UpdateStatus(ctx context.Context, serviceNowTarget *v1alpha1.ServiceNowTarget, opts v1.UpdateOptions) (*v1alpha1.ServiceNowTarget, error) {
+func (c *FakeServiceNowTargets) UpdateStatus(ctx context.Context, serviceNowTarget *v1alpha1.ServiceNowTarget, opts v1.UpdateOptions) (result *v1alpha1.ServiceNowTarget, err error) {
+	emptyResult := &v1alpha1.ServiceNowTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(servicenowtargetsResource, "status", c.ns, serviceNowTarget), &v1alpha1.ServiceNowTarget{})
+		Invokes(testing.NewUpdateSubresourceActionWithOptions(servicenowtargetsResource, "status", c.ns, serviceNowTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.ServiceNowTarget), err
 }
@@ -107,7 +112,7 @@ func (c *FakeServiceNowTargets) Delete(ctx context.Context, name string, opts v1
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeServiceNowTargets) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(servicenowtargetsResource, c.ns, listOpts)
+	action := testing.NewDeleteCollectionActionWithOptions(servicenowtargetsResource, c.ns, opts, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.ServiceNowTargetList{})
 	return err
@@ -115,11 +120,12 @@ func (c *FakeServiceNowTargets) DeleteCollection(ctx context.Context, opts v1.De
 
 // Patch applies the patch and returns the patched serviceNowTarget.
 func (c *FakeServiceNowTargets) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.ServiceNowTarget, err error) {
+	emptyResult := &v1alpha1.ServiceNowTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(servicenowtargetsResource, c.ns, name, pt, data, subresources...), &v1alpha1.ServiceNowTarget{})
+		Invokes(testing.NewPatchSubresourceActionWithOptions(servicenowtargetsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.ServiceNowTarget), err
 }

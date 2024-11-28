@@ -4,14 +4,13 @@ package v1alpha1
 
 import (
 	"context"
-	"time"
 
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/extensions/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
 	watch "k8s.io/apimachinery/pkg/watch"
-	rest "k8s.io/client-go/rest"
+	gentype "k8s.io/client-go/gentype"
 )
 
 // FunctionsGetter has a method to return a FunctionInterface.
@@ -24,6 +23,7 @@ type FunctionsGetter interface {
 type FunctionInterface interface {
 	Create(ctx context.Context, function *v1alpha1.Function, opts v1.CreateOptions) (*v1alpha1.Function, error)
 	Update(ctx context.Context, function *v1alpha1.Function, opts v1.UpdateOptions) (*v1alpha1.Function, error)
+	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
 	UpdateStatus(ctx context.Context, function *v1alpha1.Function, opts v1.UpdateOptions) (*v1alpha1.Function, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
@@ -36,144 +36,18 @@ type FunctionInterface interface {
 
 // functions implements FunctionInterface
 type functions struct {
-	client rest.Interface
-	ns     string
+	*gentype.ClientWithList[*v1alpha1.Function, *v1alpha1.FunctionList]
 }
 
 // newFunctions returns a Functions
 func newFunctions(c *ExtensionsV1alpha1Client, namespace string) *functions {
 	return &functions{
-		client: c.RESTClient(),
-		ns:     namespace,
+		gentype.NewClientWithList[*v1alpha1.Function, *v1alpha1.FunctionList](
+			"functions",
+			c.RESTClient(),
+			scheme.ParameterCodec,
+			namespace,
+			func() *v1alpha1.Function { return &v1alpha1.Function{} },
+			func() *v1alpha1.FunctionList { return &v1alpha1.FunctionList{} }),
 	}
-}
-
-// Get takes name of the function, and returns the corresponding function object, and an error if there is any.
-func (c *functions) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.Function, err error) {
-	result = &v1alpha1.Function{}
-	err = c.client.Get().
-		Namespace(c.ns).
-		Resource("functions").
-		Name(name).
-		VersionedParams(&options, scheme.ParameterCodec).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// List takes label and field selectors, and returns the list of Functions that match those selectors.
-func (c *functions) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.FunctionList, err error) {
-	var timeout time.Duration
-	if opts.TimeoutSeconds != nil {
-		timeout = time.Duration(*opts.TimeoutSeconds) * time.Second
-	}
-	result = &v1alpha1.FunctionList{}
-	err = c.client.Get().
-		Namespace(c.ns).
-		Resource("functions").
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Timeout(timeout).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// Watch returns a watch.Interface that watches the requested functions.
-func (c *functions) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
-	var timeout time.Duration
-	if opts.TimeoutSeconds != nil {
-		timeout = time.Duration(*opts.TimeoutSeconds) * time.Second
-	}
-	opts.Watch = true
-	return c.client.Get().
-		Namespace(c.ns).
-		Resource("functions").
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Timeout(timeout).
-		Watch(ctx)
-}
-
-// Create takes the representation of a function and creates it.  Returns the server's representation of the function, and an error, if there is any.
-func (c *functions) Create(ctx context.Context, function *v1alpha1.Function, opts v1.CreateOptions) (result *v1alpha1.Function, err error) {
-	result = &v1alpha1.Function{}
-	err = c.client.Post().
-		Namespace(c.ns).
-		Resource("functions").
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Body(function).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// Update takes the representation of a function and updates it. Returns the server's representation of the function, and an error, if there is any.
-func (c *functions) Update(ctx context.Context, function *v1alpha1.Function, opts v1.UpdateOptions) (result *v1alpha1.Function, err error) {
-	result = &v1alpha1.Function{}
-	err = c.client.Put().
-		Namespace(c.ns).
-		Resource("functions").
-		Name(function.Name).
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Body(function).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// UpdateStatus was generated because the type contains a Status member.
-// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *functions) UpdateStatus(ctx context.Context, function *v1alpha1.Function, opts v1.UpdateOptions) (result *v1alpha1.Function, err error) {
-	result = &v1alpha1.Function{}
-	err = c.client.Put().
-		Namespace(c.ns).
-		Resource("functions").
-		Name(function.Name).
-		SubResource("status").
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Body(function).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// Delete takes name of the function and deletes it. Returns an error if one occurs.
-func (c *functions) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
-	return c.client.Delete().
-		Namespace(c.ns).
-		Resource("functions").
-		Name(name).
-		Body(&opts).
-		Do(ctx).
-		Error()
-}
-
-// DeleteCollection deletes a collection of objects.
-func (c *functions) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	var timeout time.Duration
-	if listOpts.TimeoutSeconds != nil {
-		timeout = time.Duration(*listOpts.TimeoutSeconds) * time.Second
-	}
-	return c.client.Delete().
-		Namespace(c.ns).
-		Resource("functions").
-		VersionedParams(&listOpts, scheme.ParameterCodec).
-		Timeout(timeout).
-		Body(&opts).
-		Do(ctx).
-		Error()
-}
-
-// Patch applies the patch and returns the patched function.
-func (c *functions) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Function, err error) {
-	result = &v1alpha1.Function{}
-	err = c.client.Patch(pt).
-		Namespace(c.ns).
-		Resource("functions").
-		Name(name).
-		SubResource(subresources...).
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Body(data).
-		Do(ctx).
-		Into(result)
-	return
 }

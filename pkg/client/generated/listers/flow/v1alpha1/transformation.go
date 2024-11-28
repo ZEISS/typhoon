@@ -4,8 +4,8 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -22,25 +22,17 @@ type TransformationLister interface {
 
 // transformationLister implements the TransformationLister interface.
 type transformationLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1alpha1.Transformation]
 }
 
 // NewTransformationLister returns a new TransformationLister.
 func NewTransformationLister(indexer cache.Indexer) TransformationLister {
-	return &transformationLister{indexer: indexer}
-}
-
-// List lists all Transformations in the indexer.
-func (s *transformationLister) List(selector labels.Selector) (ret []*v1alpha1.Transformation, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.Transformation))
-	})
-	return ret, err
+	return &transformationLister{listers.New[*v1alpha1.Transformation](indexer, v1alpha1.Resource("transformation"))}
 }
 
 // Transformations returns an object that can list and get Transformations.
 func (s *transformationLister) Transformations(namespace string) TransformationNamespaceLister {
-	return transformationNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return transformationNamespaceLister{listers.NewNamespaced[*v1alpha1.Transformation](s.ResourceIndexer, namespace)}
 }
 
 // TransformationNamespaceLister helps list and get Transformations.
@@ -58,26 +50,5 @@ type TransformationNamespaceLister interface {
 // transformationNamespaceLister implements the TransformationNamespaceLister
 // interface.
 type transformationNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all Transformations in the indexer for a given namespace.
-func (s transformationNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.Transformation, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.Transformation))
-	})
-	return ret, err
-}
-
-// Get retrieves the Transformation from the indexer for a given namespace and name.
-func (s transformationNamespaceLister) Get(name string) (*v1alpha1.Transformation, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1alpha1.Resource("transformation"), name)
-	}
-	return obj.(*v1alpha1.Transformation), nil
+	listers.ResourceIndexer[*v1alpha1.Transformation]
 }

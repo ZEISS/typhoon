@@ -25,22 +25,24 @@ var synchronizersKind = v1alpha1.SchemeGroupVersion.WithKind("Synchronizer")
 
 // Get takes name of the synchronizer, and returns the corresponding synchronizer object, and an error if there is any.
 func (c *FakeSynchronizers) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.Synchronizer, err error) {
+	emptyResult := &v1alpha1.Synchronizer{}
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(synchronizersResource, c.ns, name), &v1alpha1.Synchronizer{})
+		Invokes(testing.NewGetActionWithOptions(synchronizersResource, c.ns, name, options), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Synchronizer), err
 }
 
 // List takes label and field selectors, and returns the list of Synchronizers that match those selectors.
 func (c *FakeSynchronizers) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.SynchronizerList, err error) {
+	emptyResult := &v1alpha1.SynchronizerList{}
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(synchronizersResource, synchronizersKind, c.ns, opts), &v1alpha1.SynchronizerList{})
+		Invokes(testing.NewListActionWithOptions(synchronizersResource, synchronizersKind, c.ns, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 
 	label, _, _ := testing.ExtractFromListOptions(opts)
@@ -59,40 +61,43 @@ func (c *FakeSynchronizers) List(ctx context.Context, opts v1.ListOptions) (resu
 // Watch returns a watch.Interface that watches the requested synchronizers.
 func (c *FakeSynchronizers) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchAction(synchronizersResource, c.ns, opts))
+		InvokesWatch(testing.NewWatchActionWithOptions(synchronizersResource, c.ns, opts))
 
 }
 
 // Create takes the representation of a synchronizer and creates it.  Returns the server's representation of the synchronizer, and an error, if there is any.
 func (c *FakeSynchronizers) Create(ctx context.Context, synchronizer *v1alpha1.Synchronizer, opts v1.CreateOptions) (result *v1alpha1.Synchronizer, err error) {
+	emptyResult := &v1alpha1.Synchronizer{}
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(synchronizersResource, c.ns, synchronizer), &v1alpha1.Synchronizer{})
+		Invokes(testing.NewCreateActionWithOptions(synchronizersResource, c.ns, synchronizer, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Synchronizer), err
 }
 
 // Update takes the representation of a synchronizer and updates it. Returns the server's representation of the synchronizer, and an error, if there is any.
 func (c *FakeSynchronizers) Update(ctx context.Context, synchronizer *v1alpha1.Synchronizer, opts v1.UpdateOptions) (result *v1alpha1.Synchronizer, err error) {
+	emptyResult := &v1alpha1.Synchronizer{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(synchronizersResource, c.ns, synchronizer), &v1alpha1.Synchronizer{})
+		Invokes(testing.NewUpdateActionWithOptions(synchronizersResource, c.ns, synchronizer, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Synchronizer), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeSynchronizers) UpdateStatus(ctx context.Context, synchronizer *v1alpha1.Synchronizer, opts v1.UpdateOptions) (*v1alpha1.Synchronizer, error) {
+func (c *FakeSynchronizers) UpdateStatus(ctx context.Context, synchronizer *v1alpha1.Synchronizer, opts v1.UpdateOptions) (result *v1alpha1.Synchronizer, err error) {
+	emptyResult := &v1alpha1.Synchronizer{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(synchronizersResource, "status", c.ns, synchronizer), &v1alpha1.Synchronizer{})
+		Invokes(testing.NewUpdateSubresourceActionWithOptions(synchronizersResource, "status", c.ns, synchronizer, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Synchronizer), err
 }
@@ -107,7 +112,7 @@ func (c *FakeSynchronizers) Delete(ctx context.Context, name string, opts v1.Del
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeSynchronizers) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(synchronizersResource, c.ns, listOpts)
+	action := testing.NewDeleteCollectionActionWithOptions(synchronizersResource, c.ns, opts, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.SynchronizerList{})
 	return err
@@ -115,11 +120,12 @@ func (c *FakeSynchronizers) DeleteCollection(ctx context.Context, opts v1.Delete
 
 // Patch applies the patch and returns the patched synchronizer.
 func (c *FakeSynchronizers) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Synchronizer, err error) {
+	emptyResult := &v1alpha1.Synchronizer{}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(synchronizersResource, c.ns, name, pt, data, subresources...), &v1alpha1.Synchronizer{})
+		Invokes(testing.NewPatchSubresourceActionWithOptions(synchronizersResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.Synchronizer), err
 }

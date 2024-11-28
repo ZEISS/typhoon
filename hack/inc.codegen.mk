@@ -27,43 +27,40 @@ deepcopy:
 	@echo "+ Generating deepcopy funcs for $(API_GROUPS)"
 	$(GO_RUN_TOOLS) k8s.io/code-generator/cmd/deepcopy-gen \
 		--go-header-file hack/copyright.go.txt \
-		--input-dirs $(subst $(space),$(comma),$(api-import-paths)) \
-		--trim-path-prefix $(PKG)/ \
-		--output-base . \
-		--output-file-base zz_generated.deepcopy
+		--output-file zz_generated.deepcopy.go \
+		$(find_dirs_containing_comment_tags "+k8s:deepcopy-gen=")
 
 client:
 	@echo "+ Generating clientsets for $(API_GROUPS)"
 	@rm -rf pkg/client/generated/clientset
-	$(GO_RUN_TOOLS) k8s.io/code-generator/cmd/client-gen \
-		--go-header-file hack/copyright.go.txt \
-		--input $(subst $(space),$(comma),$(API_GROUPS)) \
-		--input-base $(PKG)/pkg/apis \
-		--trim-path-prefix $(PKG)/ \
-		--output-base . \
-		--output-package $(PKG)/pkg/client/generated/clientset
+		echo "+ Generating clientsets for $$apigrp" ; \
+		$(GO_RUN_TOOLS) k8s.io/code-generator/cmd/client-gen \
+			--fake-clientset=true \
+			--input $(subst $(space),$(comma),$(API_GROUPS)) \
+			--input-base $(PKG)/pkg/apis \
+			--go-header-file hack/copyright.go.txt \
+			--output-pkg $(PKG)/pkg/client/generated/clientset \
+			--output-dir pkg/client/generated/clientset; \
 
 lister:
 	@echo "+ Generating listers for $(API_GROUPS)"
 	@rm -rf pkg/client/generated/listers
 	$(GO_RUN_TOOLS) k8s.io/code-generator/cmd/lister-gen \
 		--go-header-file hack/copyright.go.txt \
-		--input-dirs $(subst $(space),$(comma),$(api-import-paths)) \
-		--trim-path-prefix $(PKG)/ \
-		--output-base . \
-		--output-package $(PKG)/pkg/client/generated/listers
+		--output-pkg $(PKG)/pkg/client/generated/listers \
+		--output-dir pkg/client/generated/listers \
+		${api-import-paths}
 
 informer:
 	@echo "+ Generating informers for $(API_GROUPS)"
 	@rm -rf pkg/client/generated/informers
 	$(GO_RUN_TOOLS) k8s.io/code-generator/cmd/informer-gen \
 		--go-header-file hack/copyright.go.txt \
-		--input-dirs $(subst $(space),$(comma),$(api-import-paths)) \
-		--output-package $(PKG)/pkg/client/generated/informers \
-		--trim-path-prefix $(PKG)/ \
-		--output-base . \
+		--output-pkg $(PKG)/pkg/client/generated/informers \
+		--output-dir pkg/client/generated/informers \
 		--versioned-clientset-package $(PKG)/pkg/client/generated/clientset/internalclientset \
-		--listers-package $(PKG)/pkg/client/generated/listers
+		--listers-package $(PKG)/pkg/client/generated/listers \
+		${api-import-paths}
 
 injection:
 	@echo "+ Generating injection for $(API_GROUPS)"

@@ -25,22 +25,24 @@ var salesforcetargetsKind = v1alpha1.SchemeGroupVersion.WithKind("SalesforceTarg
 
 // Get takes name of the salesforceTarget, and returns the corresponding salesforceTarget object, and an error if there is any.
 func (c *FakeSalesforceTargets) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.SalesforceTarget, err error) {
+	emptyResult := &v1alpha1.SalesforceTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(salesforcetargetsResource, c.ns, name), &v1alpha1.SalesforceTarget{})
+		Invokes(testing.NewGetActionWithOptions(salesforcetargetsResource, c.ns, name, options), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.SalesforceTarget), err
 }
 
 // List takes label and field selectors, and returns the list of SalesforceTargets that match those selectors.
 func (c *FakeSalesforceTargets) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.SalesforceTargetList, err error) {
+	emptyResult := &v1alpha1.SalesforceTargetList{}
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(salesforcetargetsResource, salesforcetargetsKind, c.ns, opts), &v1alpha1.SalesforceTargetList{})
+		Invokes(testing.NewListActionWithOptions(salesforcetargetsResource, salesforcetargetsKind, c.ns, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 
 	label, _, _ := testing.ExtractFromListOptions(opts)
@@ -59,40 +61,43 @@ func (c *FakeSalesforceTargets) List(ctx context.Context, opts v1.ListOptions) (
 // Watch returns a watch.Interface that watches the requested salesforceTargets.
 func (c *FakeSalesforceTargets) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchAction(salesforcetargetsResource, c.ns, opts))
+		InvokesWatch(testing.NewWatchActionWithOptions(salesforcetargetsResource, c.ns, opts))
 
 }
 
 // Create takes the representation of a salesforceTarget and creates it.  Returns the server's representation of the salesforceTarget, and an error, if there is any.
 func (c *FakeSalesforceTargets) Create(ctx context.Context, salesforceTarget *v1alpha1.SalesforceTarget, opts v1.CreateOptions) (result *v1alpha1.SalesforceTarget, err error) {
+	emptyResult := &v1alpha1.SalesforceTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(salesforcetargetsResource, c.ns, salesforceTarget), &v1alpha1.SalesforceTarget{})
+		Invokes(testing.NewCreateActionWithOptions(salesforcetargetsResource, c.ns, salesforceTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.SalesforceTarget), err
 }
 
 // Update takes the representation of a salesforceTarget and updates it. Returns the server's representation of the salesforceTarget, and an error, if there is any.
 func (c *FakeSalesforceTargets) Update(ctx context.Context, salesforceTarget *v1alpha1.SalesforceTarget, opts v1.UpdateOptions) (result *v1alpha1.SalesforceTarget, err error) {
+	emptyResult := &v1alpha1.SalesforceTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(salesforcetargetsResource, c.ns, salesforceTarget), &v1alpha1.SalesforceTarget{})
+		Invokes(testing.NewUpdateActionWithOptions(salesforcetargetsResource, c.ns, salesforceTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.SalesforceTarget), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeSalesforceTargets) UpdateStatus(ctx context.Context, salesforceTarget *v1alpha1.SalesforceTarget, opts v1.UpdateOptions) (*v1alpha1.SalesforceTarget, error) {
+func (c *FakeSalesforceTargets) UpdateStatus(ctx context.Context, salesforceTarget *v1alpha1.SalesforceTarget, opts v1.UpdateOptions) (result *v1alpha1.SalesforceTarget, err error) {
+	emptyResult := &v1alpha1.SalesforceTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(salesforcetargetsResource, "status", c.ns, salesforceTarget), &v1alpha1.SalesforceTarget{})
+		Invokes(testing.NewUpdateSubresourceActionWithOptions(salesforcetargetsResource, "status", c.ns, salesforceTarget, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.SalesforceTarget), err
 }
@@ -107,7 +112,7 @@ func (c *FakeSalesforceTargets) Delete(ctx context.Context, name string, opts v1
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeSalesforceTargets) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(salesforcetargetsResource, c.ns, listOpts)
+	action := testing.NewDeleteCollectionActionWithOptions(salesforcetargetsResource, c.ns, opts, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1alpha1.SalesforceTargetList{})
 	return err
@@ -115,11 +120,12 @@ func (c *FakeSalesforceTargets) DeleteCollection(ctx context.Context, opts v1.De
 
 // Patch applies the patch and returns the patched salesforceTarget.
 func (c *FakeSalesforceTargets) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.SalesforceTarget, err error) {
+	emptyResult := &v1alpha1.SalesforceTarget{}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(salesforcetargetsResource, c.ns, name, pt, data, subresources...), &v1alpha1.SalesforceTarget{})
+		Invokes(testing.NewPatchSubresourceActionWithOptions(salesforcetargetsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1alpha1.SalesforceTarget), err
 }
