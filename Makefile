@@ -63,8 +63,8 @@ snapshot: ## Create a snapshot release
 .PHONY: helm/update
 helm/update: ## Update helm dependencies.
 	$(HELM_UPDATE) --file helm/charts/typhoon/Chart.yaml --version ${RELEASE_VERSION}
-  $(HELM_UPDATE) --file helm/charts/typhoon-accounting/Chart.yaml --version ${RELEASE_VERSION}
-  $(HELM_UPDATE) --file helm/charts/typhoon-web/Chart.yaml --version ${RELEASE_VERSION}
+	$(HELM_UPDATE) --file helm/charts/typhoon-accounting/Chart.yaml --version ${RELEASE_VERSION}
+	$(HELM_UPDATE) --file helm/charts/typhoon-web/Chart.yaml --version ${RELEASE_VERSION}
 
 .PHONY: release
 release: ## Release the application.
