@@ -26,7 +26,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.5.1
 	github.com/google/cel-go v0.22.1
 	github.com/google/uuid v1.6.0
-	github.com/itchyny/gojq v0.12.16
+	github.com/itchyny/gojq v0.12.17
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/logzio/logzio-go v1.0.8
 	github.com/nats-io/jwt/v2 v2.7.2
