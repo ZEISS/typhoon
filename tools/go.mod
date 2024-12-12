@@ -12,7 +12,7 @@ require (
 	github.com/goreleaser/goreleaser/v2 v2.4.8
 	github.com/zeiss/pkg v0.1.19
 	gotest.tools/gotestsum v1.12.0
-	k8s.io/code-generator v0.31.4
+	k8s.io/code-generator v0.32.0
 	knative.dev/pkg v0.0.0-20241128013618-f3ab5605e542
 	mvdan.cc/gofumpt v0.7.0
 )
@@ -477,17 +477,17 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	helm.sh/helm v2.17.0+incompatible // indirect
 	honnef.co/go/tools v0.5.1 // indirect
-	k8s.io/apimachinery v0.31.4 // indirect
+	k8s.io/apimachinery v0.32.0 // indirect
 	k8s.io/gengo v0.0.0-20240404160639-a0386bf69313 // indirect
-	k8s.io/gengo/v2 v2.0.0-20240228010128-51d4e06bde70 // indirect
+	k8s.io/gengo/v2 v2.0.0-20240911193312-2b36238f13e9 // indirect
 	k8s.io/helm v2.17.0+incompatible // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
-	k8s.io/kube-openapi v0.0.0-20240808142205-8e686545bdb8 // indirect
-	k8s.io/utils v0.0.0-20240711033017-18e509b52bc8 // indirect
+	k8s.io/kube-openapi v0.0.0-20241105132330-32ad38e42d3f // indirect
+	k8s.io/utils v0.0.0-20241104100929-3ea5e8cea738 // indirect
 	lukechampine.com/blake3 v1.2.1 // indirect
 	mvdan.cc/unparam v0.0.0-20240528143540-8a5130ca722f // indirect
 	sigs.k8s.io/kind v0.24.0 // indirect
-	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
+	sigs.k8s.io/structured-merge-diff/v4 v4.4.2 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect
 	software.sslmate.com/src/go-pkcs12 v0.4.0 // indirect
 )
