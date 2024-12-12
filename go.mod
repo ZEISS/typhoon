@@ -59,7 +59,7 @@ require (
 	helm.sh/helm v2.17.0+incompatible
 	k8s.io/api v0.32.0
 	k8s.io/apimachinery v0.32.0
-	k8s.io/client-go v0.31.4
+	k8s.io/client-go v0.32.0
 	k8s.io/utils v0.0.0-20241104100929-3ea5e8cea738
 	knative.dev/eventing v0.43.3
 	knative.dev/networking v0.0.0-20241022012959-60e29ff520dc
@@ -146,7 +146,6 @@ require (
 	github.com/hashicorp/go-retryablehttp v0.7.7 // indirect
 	github.com/hashicorp/go-uuid v1.0.3 // indirect
 	github.com/hashicorp/golang-lru v1.0.2 // indirect
-	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/invopop/yaml v0.3.1 // indirect
 	github.com/itchyny/timefmt-go v0.1.6 // indirect
