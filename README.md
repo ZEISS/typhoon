@@ -8,6 +8,8 @@
 
 An event bridge for applications and services build on an event mesh with a team-oriented self-service control plane.
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/ZEISS/typhoon?quickstart=1)
+
 ## Design
 
 Every software system has design goals. Properties that it should provide io its users to create value. Typhoon has the following design goals:
