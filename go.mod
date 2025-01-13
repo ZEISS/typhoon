@@ -21,7 +21,7 @@ require (
 	github.com/devigned/tab v0.1.1
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/getkin/kin-openapi v0.128.0
-	github.com/go-playground/validator/v10 v10.23.0
+	github.com/go-playground/validator/v10 v10.24.0
 	github.com/gofiber/fiber/v2 v2.52.6
 	github.com/golang-jwt/jwt/v4 v4.5.1
 	github.com/google/cel-go v0.22.1
@@ -113,7 +113,7 @@ require (
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/frankban/quicktest v1.14.6 // indirect
 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect
-	github.com/gabriel-vasile/mimetype v1.4.4 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-jose/go-jose/v3 v3.0.3 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
