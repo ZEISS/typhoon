@@ -12,7 +12,7 @@ require (
 	github.com/goreleaser/goreleaser/v2 v2.5.0
 	github.com/zeiss/pkg v0.1.19
 	gotest.tools/gotestsum v1.12.0
-	k8s.io/code-generator v0.32.0
+	k8s.io/code-generator v0.32.1
 	knative.dev/pkg v0.0.0-20241128013618-f3ab5605e542
 	mvdan.cc/gofumpt v0.7.0
 )
@@ -477,7 +477,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	helm.sh/helm v2.17.0+incompatible // indirect
 	honnef.co/go/tools v0.5.1 // indirect
-	k8s.io/apimachinery v0.32.0 // indirect
+	k8s.io/apimachinery v0.32.1 // indirect
 	k8s.io/gengo v0.0.0-20240404160639-a0386bf69313 // indirect
 	k8s.io/gengo/v2 v2.0.0-20240911193312-2b36238f13e9 // indirect
 	k8s.io/helm v2.17.0+incompatible // indirect
