@@ -65,7 +65,7 @@ require (
 	knative.dev/eventing v0.44.0
 	knative.dev/networking v0.0.0-20241022012959-60e29ff520dc
 	knative.dev/pkg v0.0.0-20250117084104-c43477f0052b
-	knative.dev/serving v0.43.0
+	knative.dev/serving v0.43.1
 	nhooyr.io/websocket v1.8.17
 )
 
