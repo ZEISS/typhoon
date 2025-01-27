@@ -72,12 +72,12 @@ end
 
 The accounting can also be combined with the [Operator for NATS Accounting](https://github.com/ZEISS/natz-operator) which enables the creation of operators, accounts and users declaratively.
 
-## Souces
+## Sources
 
 * [CloudEvents](https://cloudevents.io/)
 * HTTP Poller
 * [Kafka](https://kafka.apache.org/)
-* [salesforce](https://www.salesforce.com/)
+* [Salesforce](https://www.salesforce.com/)
 * WebHook
 
 ## Targets
@@ -86,7 +86,7 @@ The accounting can also be combined with the [Operator for NATS Accounting](http
 * DataDog
 * JIRA
 * [NATS](https://nats.io)
-* [salesforce](https://www.salesforce.com/)
+* [Salesforce](https://www.salesforce.com/)
 * [ServiceNOW](https://www.servicenow.com/)
 * Splunk
 

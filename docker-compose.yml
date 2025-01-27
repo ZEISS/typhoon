@@ -80,65 +80,11 @@ services:
       - '-c'
       - '/example/east.conf'
 
-  # west1:
-  #   image: docker.io/nats:2.10.9
-  #   ports:
-  #     - "4224:4222"
-  #     - "8224:8222"
-  #   volumes:
-  #     - west1:/data
-  #   configs:
-  #     - source: east.conf
-  #       target: /config/east.conf
-  #     - source: west.conf
-  #       target: /config/west.conf
-  #     - source: central.conf
-  #       target: /config/central.conf
-  #     - source: sys.conf
-  #       target: /config/sys.conf
-  #   command:
-  #     - '-c'
-  #     - '/config/west.conf'
-
-  # central1:
-  #   image: docker.io/nats:2.10.9
-  #   ports:
-  #     - "4223:4222"
-  #     - "8223:8222"
-  #   volumes:
-  #     - central1:/data
-  #   configs:
-  #     - source: east.conf
-  #       target: /config/east.conf
-  #     - source: west.conf
-  #       target: /config/west.conf
-  #     - source: central.conf
-  #       target: /config/central.conf
-  #     - source: sys.conf
-  #       target: /config/sys.conf
-  #   command:
-  #     - '-c'
-  #     - '/config/central.conf'
-
-  # db:
-  #   image: postgres
-  #   restart: always
-  #   environment:
-  #     POSTGRES_USER: example
-  #     POSTGRES_PASSWORD: example
-  #     POSTGRES_DB: example
-  #   ports:
-  #     - "5432:5432"
-
 configs:
   sys.conf:
     file: './example/sys.conf'
   east.conf:
     file: './example/east.conf'
-#   west.conf:
-#     file: './example/west.conf'
-#   central.conf:
-#     file: './example/central.conf'
 
 
 volumes:
