@@ -1533,10 +1533,10 @@ honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod h1:rf3lG4BRIbNafJWh
 honnef.co/go/tools v0.0.1-2019.2.3/go.mod h1:a3bituU0lyd329TUQxRnasdCoJDkEUEAqEt0JzvZhAg=
 honnef.co/go/tools v0.6.0 h1:TAODvD3knlq75WCp2nyGJtT4LeRV/o7NN9nYPeVJXf8=
 honnef.co/go/tools v0.6.0/go.mod h1:3puzxxljPCe8RGJX7BIy1plGbxEOZni5mR2aXe3/uk4=
-k8s.io/apimachinery v0.32.1 h1:683ENpaCBjma4CYqsmZyhEzrGz6cjn1MY/X2jB2hkZs=
-k8s.io/apimachinery v0.32.1/go.mod h1:GpHVgxoKlTxClKcteaeuF1Ul/lDVb74KpZcxcmLDElE=
-k8s.io/code-generator v0.32.1 h1:4lw1kFNDuFYXquTkB7Sl5EwPMUP2yyW9hh6BnFfRZFY=
-k8s.io/code-generator v0.32.1/go.mod h1:zaILfm00CVyP/6/pJMJ3zxRepXkxyDfUV5SNG4CjZI4=
+k8s.io/apimachinery v0.32.2 h1:yoQBR9ZGkA6Rgmhbp/yuT9/g+4lxtsGYwW6dR6BDPLQ=
+k8s.io/apimachinery v0.32.2/go.mod h1:GpHVgxoKlTxClKcteaeuF1Ul/lDVb74KpZcxcmLDElE=
+k8s.io/code-generator v0.32.2 h1:CIvyPrLWP7cMgrqval2qYT839YAwCDeSvGfXgWSNpHQ=
+k8s.io/code-generator v0.32.2/go.mod h1:plh7bWk7JztAUkHM4zpbdy0KOMdrhsePcZL2HLWFH7Y=
 k8s.io/gengo v0.0.0-20240404160639-a0386bf69313 h1:wBIDZID8ju9pwOiLlV22YYKjFGtiNSWgHf5CnKLRUuM=
 k8s.io/gengo v0.0.0-20240404160639-a0386bf69313/go.mod h1:FiNAH4ZV3gBg2Kwh89tzAEV2be7d5xI0vBa/VySYy3E=
 k8s.io/gengo/v2 v2.0.0-20240911193312-2b36238f13e9 h1:si3PfKm8dDYxgfbeA6orqrtLkvvIeH8UqffFJDl0bz4=
