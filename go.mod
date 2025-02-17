@@ -36,7 +36,7 @@ require (
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/openfga/go-sdk v0.6.5
 	github.com/sethvargo/go-limiter v1.0.0
-	github.com/spf13/cobra v1.8.1
+	github.com/spf13/cobra v1.9.1
 	github.com/spf13/pflag v1.0.6
 	github.com/stretchr/testify v1.10.0
 	github.com/tidwall/gjson v1.18.0
