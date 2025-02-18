@@ -9,7 +9,7 @@ require (
 	github.com/golangci/golangci-lint v1.64.5
 	github.com/google/ko v0.17.1
 	github.com/goreleaser/goreleaser/v2 v2.7.0
-	github.com/zeiss/pkg v0.1.22
+	github.com/zeiss/pkg v0.1.23
 	gotest.tools/gotestsum v1.12.0
 	k8s.io/code-generator v0.32.2
 	knative.dev/pkg v0.0.0-20241128013618-f3ab5605e542
@@ -178,7 +178,7 @@ require (
 	github.com/envoyproxy/protoc-gen-validate v1.1.0 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
 	github.com/ettle/strcase v0.2.0 // indirect
-	github.com/evanphx/json-patch/v5 v5.9.0 // indirect
+	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/fatih/structtag v1.2.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
