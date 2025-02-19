@@ -89,8 +89,10 @@ func (l *NewAccountControllerImpl) Get() error {
 											ID:          "teams",
 											Name:        "team",
 											Placeholder: "Select team ...",
+											Indicator:   "#htmx-teams-indicator",
 											URL:         "/accounts/search/teams",
 										},
+										htmx.OnePasswordIgnore(),
 									),
 									loading.Spinner(
 										loading.SpinnerProps{
@@ -99,6 +101,7 @@ func (l *NewAccountControllerImpl) Get() error {
 												tailwind.M2:      true,
 											},
 										},
+										htmx.ID("htmx-teams-indicator"),
 									),
 								),
 								forms.FormControlLabel(
@@ -125,10 +128,12 @@ func (l *NewAccountControllerImpl) Get() error {
 									forms.Datalist(
 										forms.DatalistProps{
 											ID:          "operators",
+											Indicator:   "#htmx-operators-indicator",
 											Name:        "operator",
 											Placeholder: "Select operator ...",
 											URL:         "/accounts/search/operators",
 										},
+										htmx.OnePasswordIgnore(),
 									),
 									loading.Spinner(
 										loading.SpinnerProps{
@@ -137,6 +142,7 @@ func (l *NewAccountControllerImpl) Get() error {
 												tailwind.M2:      true,
 											},
 										},
+										htmx.ID("htmx-operators-indicator"),
 									),
 								),
 								forms.FormControlLabel(

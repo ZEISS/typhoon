@@ -1,0 +1,7 @@
+version: 1
+name: typhoone
+description: A cloud-native event bridge for different sources and targets
+hooks:
+  pre-commit:
+    - make test
+    - make lint
