@@ -24,7 +24,8 @@
     "ghcr.io/dhoeric/features/k9s:1": {},
     "ghcr.io/jckimble/devcontainer-features/ngrok:3": {},
     "ghcr.io/zeiss/devcontainer-features/air:1": {},
-    "ghcr.io/zeiss/devcontainer-features/ghc:1": {}
+    "ghcr.io/zeiss/devcontainer-features/ghc:1": {},
+    "ghcr.io/devcontainers/features/github-cli": {}
   },
   "forwardPorts": [
     3000,
