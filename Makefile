@@ -1,14 +1,14 @@
 .DEFAULT_GOAL := build
 
-BASE_DIR			?= $(CURDIR)
-OUTPUT_DIR    ?= $(BASE_DIR)/dist
+BASE_DIR		?= $(CURDIR)
+OUTPUT_DIR    	?= $(BASE_DIR)/dist
 
-GO 						?= go
+GO 				?= go
 GO_RUN_TOOLS	?= $(GO) run -modfile ./tools/go.mod
-GO_TEST 			?= $(GO_RUN_TOOLS) gotest.tools/gotestsum --format pkgname
+GO_TEST 		?= $(GO_RUN_TOOLS) gotest.tools/gotestsum --format pkgname
 GO_RELEASER 	?= $(GO_RUN_TOOLS) github.com/goreleaser/goreleaser/v2
-GO_KO 				?= $(GO_RUN_TOOLS) github.com/google/ko
-GO_MOD 				?= $(shell ${GO} list -m)
+GO_KO 			?= $(GO_RUN_TOOLS) github.com/google/ko
+GO_MOD 			?= $(shell ${GO} list -m)
 
 HELM_UPDATE 	?= $(GO_RUN_TOOLS) github.com/zeiss/pkg/cmd/helm/update
 
@@ -22,10 +22,12 @@ KO_DOCKER_REPO 	?= ko.local
 export KO_DOCKER_REPO
 
 .PHONY: build
-build: $(COMMANDS) ## Build the application.
+build: ## Build the binary file.
+	$(GO_RELEASER) build --snapshot --clean
 
-$(filter-out $(CUSTOM_BUILD_BINARIES), $(COMMANDS)): ## Build artifact
-	$(GO) build -ldflags "$(LDFLAGS_STATIC)" -o $(BIN_OUTPUT_DIR)/$@ ./cmd/$@
+.PHONY: snapshot
+snapshot: ## Create a snapshot release
+	$(GO_RELEASER) release --clean --snapshot
 
 .PHONY: generate
 generate: ## Generate code.
@@ -46,7 +48,7 @@ test: fmt vet ## Run tests.
 
 .PHONY: lint
 lint: ## Run lint.
-	$(GO_RUN_TOOLS) github.com/golangci/golangci-lint/cmd/golangci-lint run --timeout 5m -c .golangci.yml
+	$(GO_RUN_TOOLS) github.com/golangci/golangci-lint/cmd/golangci-lint run --timeout 10m -c .golangci.yml
 
 .PHONY: deploy
 deploy: ## Deploy the application.
@@ -55,10 +57,6 @@ deploy: ## Deploy the application.
 	@kubectl create namespace typhoon --dry-run=client -o yaml | kubectl apply -f -
 	@kubectl apply -f $(BASE_DIR)/typhoon.yaml
 	@rm $(BASE_DIR)/typhoon.yaml
-
-.PHONY: snapshot
-snapshot: ## Create a snapshot release
-	$(GO_RELEASER) release --clean --snapshot
 
 .PHONY: helm/update
 helm/update: ## Update helm dependencies.

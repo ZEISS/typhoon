@@ -1,5 +1,3 @@
-version: 2
-
 project_name: typhoon
 
 env:
@@ -13,6 +11,7 @@ before:
 
 builds:
   - id: accounts
+    skip: true
     binary: typhoon-accounts
     main: ./cmd/accounts/main.go
     goos:
@@ -26,8 +25,8 @@ builds:
       - arm64
     ldflags:
         - -s -w
-
   - id: web
+    skip: true
     binary: typhoon-web
     main: ./cmd/web/main.go
     goos:
@@ -51,90 +50,6 @@ archives:
     builds:
       - web
     name_template: "web_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
-
-dockers:
-  - image_templates: [
-      "ghcr.io/zeiss/{{ .ProjectName }}/accounts:{{ .Version }}-amd64"
-    ]
-    dockerfile: Dockerfile.accounts
-    use: buildx
-    goos: linux
-    goarch: amd64
-    build_flag_templates:
-      - --platform=linux/amd64
-      - --BINARY=accounts-linux-amd64
-      - --label=org.opencontainers.image.title={{ .ProjectName }}-accounts
-      - --label=org.opencontainers.image.description={{ .ProjectName }}
-      - --label=org.opencontainers.image.url=https://github.com/zeiss/{{ .ProjectName }}/typhoon/accounts
-      - --label=org.opencontainers.image.source=https://github.com/zeiss/{{ .ProjectName }}
-      - --label=org.opencontainers.image.version={{ .Version }}
-      - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
-      - --label=org.opencontainers.image.revision={{ .FullCommit }}
-      - --label=org.opencontainers.image.licenses=Apache-2.0
-  - image_templates: [
-      "ghcr.io/zeiss/{{ .ProjectName }}/accounts:{{ .Version }}-arm64"
-    ]
-    dockerfile: Dockerfile.accounts
-    use: buildx
-    goos: linux
-    goarch: arm64
-    build_flag_templates:
-      - --platform=linux/arm64
-      - --BINARY=accounts-linux-arm64
-      - --label=org.opencontainers.image.title={{ .ProjectName }}-accounts
-      - --label=org.opencontainers.image.description={{ .ProjectName }}
-      - --label=org.opencontainers.image.url=https://github.com/zeiss/{{ .ProjectName }}/typhoon/accounts
-      - --label=org.opencontainers.image.source=https://github.com/zeiss/{{ .ProjectName }}
-      - --label=org.opencontainers.image.version={{ .Version }}
-      - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
-      - --label=org.opencontainers.image.revision={{ .FullCommit }}
-      - --label=org.opencontainers.image.licenses=Apache-2.0
-  - image_templates: [
-      "ghcr.io/zeiss/{{ .ProjectName }}/web:{{ .Version }}-amd64"
-    ]
-    dockerfile: Dockerfile.web
-    use: buildx
-    goos: linux
-    goarch: amd64
-    build_flag_templates:
-      - --platform=linux/amd64
-      - --BINARY=web-linux-amd64
-      - --label=org.opencontainers.image.title={{ .ProjectName }}-web
-      - --label=org.opencontainers.image.description={{ .ProjectName }}
-      - --label=org.opencontainers.image.url=https://github.com/zeiss/{{ .ProjectName }}/typhoon/web
-      - --label=org.opencontainers.image.source=https://github.com/zeiss/{{ .ProjectName }}
-      - --label=org.opencontainers.image.version={{ .Version }}
-      - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
-      - --label=org.opencontainers.image.revision={{ .FullCommit }}
-      - --label=org.opencontainers.image.licenses=Apache-2.0
-  - image_templates: [
-      "ghcr.io/zeiss/{{ .ProjectName }}/web:{{ .Version }}-arm64"
-    ]
-    dockerfile: Dockerfile.web
-    use: buildx
-    goos: linux
-    goarch: arm64
-    build_flag_templates:
-      - --platform=linux/arm64
-      - --BINARY=web-linux-arm64
-      - --label=org.opencontainers.image.title={{ .ProjectName }}-web
-      - --label=org.opencontainers.image.description={{ .ProjectName }}
-      - --label=org.opencontainers.image.url=https://github.com/zeiss/{{ .ProjectName }}/typhoon/web
-      - --label=org.opencontainers.image.source=https://github.com/zeiss/{{ .ProjectName }}
-      - --label=org.opencontainers.image.version={{ .Version }}
-      - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
-      - --label=org.opencontainers.image.revision={{ .FullCommit }}
-      - --label=org.opencontainers.image.licenses=Apache-2.0
-
-docker_manifests:
-  - name_template: "ghcr.io/zeiss/{{ .ProjectName }}/web:{{ .Version }}"
-    image_templates:
-      - 'ghcr.io/zeiss/{{ .ProjectName }}/web:{{ .Version }}-amd64'
-      - 'ghcr.io/zeiss/{{ .ProjectName }}/web:{{ .Version }}-arm64'
-  - name_template: "ghcr.io/zeiss/{{ .ProjectName }}/accounts:{{ .Version }}"
-    image_templates:
-      - 'ghcr.io/zeiss/{{ .ProjectName }}/accounts:{{ .Version }}-amd64'
-      - 'ghcr.io/zeiss/{{ .ProjectName }}/accounts:{{ .Version }}-arm64'
 
 gomod:
   proxy: true

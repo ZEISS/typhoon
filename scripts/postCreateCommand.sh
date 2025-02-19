@@ -4,4 +4,9 @@
 sudo apt-get update
 sudo apt-get install libxml2-dev libxslt1-dev
 
-go install github.com/air-verse/air@latest
+go install github.com/nats-io/natscli/nats@latest
+go install github.com/nats-io/nats-top@latest
+
+# Install the git-hooks via the `ghc` command
+# See: https://example/temp
+ghc install
