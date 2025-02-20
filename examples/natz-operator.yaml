@@ -1,6 +1,0 @@
-apiVersion: natz.zeiss.com/v1alpha1
-kind: NatsOperator
-metadata:
-  name: natsoperator-sample
-  namespace: knative-eventing
-spec:
