@@ -31,17 +31,6 @@ spec:
   data: '<locations><location><name>Dallas</name><id>11111</id></location><location><name>Frisco</name><id>22222</id></location><location><name>Rockwall</name><id>33333</id></location></locations>'
   sink:
     ref:
-      apiVersion: flow.typhoon.zeiss.com/v1alpha1
-      kind: XMLToJSONTransformation
-      name: ps-transformation-xml
----
-apiVersion: flow.typhoon.zeiss.com/v1alpha1
-kind: XMLToJSONTransformation
-metadata:
-  name: ps-transformation-xml
-spec:
-  sink:
-    ref:
       apiVersion: messaging.knative.dev/v1alpha1
       kind: NatsJetStreamChannel
       name: my-default-channel

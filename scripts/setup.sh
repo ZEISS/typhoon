@@ -9,10 +9,10 @@ dir=$(pwd)
 kind create cluster --config $dir/cluster.yaml
 
 # Knative serving version
-knative_serving="1.16.0"
+knative_serving="1.17.0"
 
 # Knative eventing version
-knative_eventing="1.16.0"
+knative_eventing="1.17.2"
 
 # Setup helm charts
 helm repo add natz-operator https://zeiss.github.io/natz-operator/helm/charts
@@ -52,7 +52,3 @@ helm install sample-nats nats/nats --wait --values $(pwd)/examples/natz-server.y
 # Install the account server
 helm install account-server natz-operator/account-server --wait
 kubectl apply -f $(pwd)/examples/natz-typhoon.yaml
-
-# # Install Argocd
-kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.5.8/manifests/install.yaml

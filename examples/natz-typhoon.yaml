@@ -29,29 +29,17 @@ spec:
   signingKeys:
     - name: typhoon-account-signing-key
       namespace: knative-eventing
-  exports:
-    - name: account-monitoring-services
-      subject: $SYS.REQ.ACCOUNT.*.*
-      type: 2
-      response_type: Stream
-      account_token_position: 4
-      description: "Request account specific monitoring services for: SUBSZ, CONNZ, LEAFZ, JSZ and INFO"
-      info_url: "https://docs.nats.io/nats-server/configuration/sys_accounts"
-    - name: account-monitoring-streams
-      subject: $SYS.ACCOUNT.*.>"
-      type: 1
-      account_token_position: 3
-      description: "Account specific monitoring stream"
-      info_url: "https://docs.nats.io/nats-server/configuration/sys_accounts"
+  imports: []
+  exports: []
   limits:
-    exports: -1
+    disk_storage: -1
+    streams: -1
+    conn: -1
     imports: -1
+    exports: -1
     subs: -1
     payload: -1
     data: -1
-    conn: -1
-    wildcards: true
-    disallow_bearer: true
 ---
 apiVersion: natz.zeiss.com/v1alpha1
 kind: NatsKey

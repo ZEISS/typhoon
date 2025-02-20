@@ -5,7 +5,12 @@ metadata:
   namespace: knative-eventing
 data:
   eventing-nats: |
-    url: nats://typhoon-nats.nats-io.svc.cluster.local
+    url: nats://sample-nats.default.svc.cluster.local:4222
+    auth:
+      credentialFile:
+        secret:
+          key: user.creds
+          name: typhoon-credentials 
     connOpts:
       retryOnFailedConnect: true
       maxReconnects: 5
