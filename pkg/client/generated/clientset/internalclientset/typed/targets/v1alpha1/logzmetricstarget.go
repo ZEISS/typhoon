@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type LogzMetricsTargetsGetter interface {
 
 // LogzMetricsTargetInterface has methods to work with LogzMetricsTarget resources.
 type LogzMetricsTargetInterface interface {
-	Create(ctx context.Context, logzMetricsTarget *v1alpha1.LogzMetricsTarget, opts v1.CreateOptions) (*v1alpha1.LogzMetricsTarget, error)
-	Update(ctx context.Context, logzMetricsTarget *v1alpha1.LogzMetricsTarget, opts v1.UpdateOptions) (*v1alpha1.LogzMetricsTarget, error)
+	Create(ctx context.Context, logzMetricsTarget *targetsv1alpha1.LogzMetricsTarget, opts v1.CreateOptions) (*targetsv1alpha1.LogzMetricsTarget, error)
+	Update(ctx context.Context, logzMetricsTarget *targetsv1alpha1.LogzMetricsTarget, opts v1.UpdateOptions) (*targetsv1alpha1.LogzMetricsTarget, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, logzMetricsTarget *v1alpha1.LogzMetricsTarget, opts v1.UpdateOptions) (*v1alpha1.LogzMetricsTarget, error)
+	UpdateStatus(ctx context.Context, logzMetricsTarget *targetsv1alpha1.LogzMetricsTarget, opts v1.UpdateOptions) (*targetsv1alpha1.LogzMetricsTarget, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.LogzMetricsTarget, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.LogzMetricsTargetList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*targetsv1alpha1.LogzMetricsTarget, error)
+	List(ctx context.Context, opts v1.ListOptions) (*targetsv1alpha1.LogzMetricsTargetList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.LogzMetricsTarget, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *targetsv1alpha1.LogzMetricsTarget, err error)
 	LogzMetricsTargetExpansion
 }
 
 // logzMetricsTargets implements LogzMetricsTargetInterface
 type logzMetricsTargets struct {
-	*gentype.ClientWithList[*v1alpha1.LogzMetricsTarget, *v1alpha1.LogzMetricsTargetList]
+	*gentype.ClientWithList[*targetsv1alpha1.LogzMetricsTarget, *targetsv1alpha1.LogzMetricsTargetList]
 }
 
 // newLogzMetricsTargets returns a LogzMetricsTargets
 func newLogzMetricsTargets(c *TargetsV1alpha1Client, namespace string) *logzMetricsTargets {
 	return &logzMetricsTargets{
-		gentype.NewClientWithList[*v1alpha1.LogzMetricsTarget, *v1alpha1.LogzMetricsTargetList](
+		gentype.NewClientWithList[*targetsv1alpha1.LogzMetricsTarget, *targetsv1alpha1.LogzMetricsTargetList](
 			"logzmetricstargets",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.LogzMetricsTarget { return &v1alpha1.LogzMetricsTarget{} },
-			func() *v1alpha1.LogzMetricsTargetList { return &v1alpha1.LogzMetricsTargetList{} }),
+			func() *targetsv1alpha1.LogzMetricsTarget { return &targetsv1alpha1.LogzMetricsTarget{} },
+			func() *targetsv1alpha1.LogzMetricsTargetList { return &targetsv1alpha1.LogzMetricsTargetList{} },
+		),
 	}
 }

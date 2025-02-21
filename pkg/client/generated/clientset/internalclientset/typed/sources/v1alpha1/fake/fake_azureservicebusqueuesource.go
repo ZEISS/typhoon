@@ -3,129 +3,34 @@
 package fake
 
 import (
-	"context"
-
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	labels "k8s.io/apimachinery/pkg/labels"
-	types "k8s.io/apimachinery/pkg/types"
-	watch "k8s.io/apimachinery/pkg/watch"
-	testing "k8s.io/client-go/testing"
+	sourcesv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/sources/v1alpha1"
+	gentype "k8s.io/client-go/gentype"
 )
 
-// FakeAzureServiceBusQueueSources implements AzureServiceBusQueueSourceInterface
-type FakeAzureServiceBusQueueSources struct {
+// fakeAzureServiceBusQueueSources implements AzureServiceBusQueueSourceInterface
+type fakeAzureServiceBusQueueSources struct {
+	*gentype.FakeClientWithList[*v1alpha1.AzureServiceBusQueueSource, *v1alpha1.AzureServiceBusQueueSourceList]
 	Fake *FakeSourcesV1alpha1
-	ns   string
 }
 
-var azureservicebusqueuesourcesResource = v1alpha1.SchemeGroupVersion.WithResource("azureservicebusqueuesources")
-
-var azureservicebusqueuesourcesKind = v1alpha1.SchemeGroupVersion.WithKind("AzureServiceBusQueueSource")
-
-// Get takes name of the azureServiceBusQueueSource, and returns the corresponding azureServiceBusQueueSource object, and an error if there is any.
-func (c *FakeAzureServiceBusQueueSources) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.AzureServiceBusQueueSource, err error) {
-	emptyResult := &v1alpha1.AzureServiceBusQueueSource{}
-	obj, err := c.Fake.
-		Invokes(testing.NewGetActionWithOptions(azureservicebusqueuesourcesResource, c.ns, name, options), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
+func newFakeAzureServiceBusQueueSources(fake *FakeSourcesV1alpha1, namespace string) sourcesv1alpha1.AzureServiceBusQueueSourceInterface {
+	return &fakeAzureServiceBusQueueSources{
+		gentype.NewFakeClientWithList[*v1alpha1.AzureServiceBusQueueSource, *v1alpha1.AzureServiceBusQueueSourceList](
+			fake.Fake,
+			namespace,
+			v1alpha1.SchemeGroupVersion.WithResource("azureservicebusqueuesources"),
+			v1alpha1.SchemeGroupVersion.WithKind("AzureServiceBusQueueSource"),
+			func() *v1alpha1.AzureServiceBusQueueSource { return &v1alpha1.AzureServiceBusQueueSource{} },
+			func() *v1alpha1.AzureServiceBusQueueSourceList { return &v1alpha1.AzureServiceBusQueueSourceList{} },
+			func(dst, src *v1alpha1.AzureServiceBusQueueSourceList) { dst.ListMeta = src.ListMeta },
+			func(list *v1alpha1.AzureServiceBusQueueSourceList) []*v1alpha1.AzureServiceBusQueueSource {
+				return gentype.ToPointerSlice(list.Items)
+			},
+			func(list *v1alpha1.AzureServiceBusQueueSourceList, items []*v1alpha1.AzureServiceBusQueueSource) {
+				list.Items = gentype.FromPointerSlice(items)
+			},
+		),
+		fake,
 	}
-	return obj.(*v1alpha1.AzureServiceBusQueueSource), err
-}
-
-// List takes label and field selectors, and returns the list of AzureServiceBusQueueSources that match those selectors.
-func (c *FakeAzureServiceBusQueueSources) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.AzureServiceBusQueueSourceList, err error) {
-	emptyResult := &v1alpha1.AzureServiceBusQueueSourceList{}
-	obj, err := c.Fake.
-		Invokes(testing.NewListActionWithOptions(azureservicebusqueuesourcesResource, azureservicebusqueuesourcesKind, c.ns, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-
-	label, _, _ := testing.ExtractFromListOptions(opts)
-	if label == nil {
-		label = labels.Everything()
-	}
-	list := &v1alpha1.AzureServiceBusQueueSourceList{ListMeta: obj.(*v1alpha1.AzureServiceBusQueueSourceList).ListMeta}
-	for _, item := range obj.(*v1alpha1.AzureServiceBusQueueSourceList).Items {
-		if label.Matches(labels.Set(item.Labels)) {
-			list.Items = append(list.Items, item)
-		}
-	}
-	return list, err
-}
-
-// Watch returns a watch.Interface that watches the requested azureServiceBusQueueSources.
-func (c *FakeAzureServiceBusQueueSources) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
-	return c.Fake.
-		InvokesWatch(testing.NewWatchActionWithOptions(azureservicebusqueuesourcesResource, c.ns, opts))
-
-}
-
-// Create takes the representation of a azureServiceBusQueueSource and creates it.  Returns the server's representation of the azureServiceBusQueueSource, and an error, if there is any.
-func (c *FakeAzureServiceBusQueueSources) Create(ctx context.Context, azureServiceBusQueueSource *v1alpha1.AzureServiceBusQueueSource, opts v1.CreateOptions) (result *v1alpha1.AzureServiceBusQueueSource, err error) {
-	emptyResult := &v1alpha1.AzureServiceBusQueueSource{}
-	obj, err := c.Fake.
-		Invokes(testing.NewCreateActionWithOptions(azureservicebusqueuesourcesResource, c.ns, azureServiceBusQueueSource, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.AzureServiceBusQueueSource), err
-}
-
-// Update takes the representation of a azureServiceBusQueueSource and updates it. Returns the server's representation of the azureServiceBusQueueSource, and an error, if there is any.
-func (c *FakeAzureServiceBusQueueSources) Update(ctx context.Context, azureServiceBusQueueSource *v1alpha1.AzureServiceBusQueueSource, opts v1.UpdateOptions) (result *v1alpha1.AzureServiceBusQueueSource, err error) {
-	emptyResult := &v1alpha1.AzureServiceBusQueueSource{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateActionWithOptions(azureservicebusqueuesourcesResource, c.ns, azureServiceBusQueueSource, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.AzureServiceBusQueueSource), err
-}
-
-// UpdateStatus was generated because the type contains a Status member.
-// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeAzureServiceBusQueueSources) UpdateStatus(ctx context.Context, azureServiceBusQueueSource *v1alpha1.AzureServiceBusQueueSource, opts v1.UpdateOptions) (result *v1alpha1.AzureServiceBusQueueSource, err error) {
-	emptyResult := &v1alpha1.AzureServiceBusQueueSource{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceActionWithOptions(azureservicebusqueuesourcesResource, "status", c.ns, azureServiceBusQueueSource, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.AzureServiceBusQueueSource), err
-}
-
-// Delete takes name of the azureServiceBusQueueSource and deletes it. Returns an error if one occurs.
-func (c *FakeAzureServiceBusQueueSources) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
-	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(azureservicebusqueuesourcesResource, c.ns, name, opts), &v1alpha1.AzureServiceBusQueueSource{})
-
-	return err
-}
-
-// DeleteCollection deletes a collection of objects.
-func (c *FakeAzureServiceBusQueueSources) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionActionWithOptions(azureservicebusqueuesourcesResource, c.ns, opts, listOpts)
-
-	_, err := c.Fake.Invokes(action, &v1alpha1.AzureServiceBusQueueSourceList{})
-	return err
-}
-
-// Patch applies the patch and returns the patched azureServiceBusQueueSource.
-func (c *FakeAzureServiceBusQueueSources) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.AzureServiceBusQueueSource, err error) {
-	emptyResult := &v1alpha1.AzureServiceBusQueueSource{}
-	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceActionWithOptions(azureservicebusqueuesourcesResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.AzureServiceBusQueueSource), err
 }

@@ -13,7 +13,7 @@ type FakeExtensionsV1alpha1 struct {
 }
 
 func (c *FakeExtensionsV1alpha1) Functions(namespace string) v1alpha1.FunctionInterface {
-	return &FakeFunctions{c, namespace}
+	return newFakeFunctions(c, namespace)
 }
 
 // RESTClient returns a RESTClient that is used to communicate

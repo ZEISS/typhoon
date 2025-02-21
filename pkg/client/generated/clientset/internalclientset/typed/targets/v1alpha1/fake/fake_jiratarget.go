@@ -3,129 +3,32 @@
 package fake
 
 import (
-	"context"
-
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	labels "k8s.io/apimachinery/pkg/labels"
-	types "k8s.io/apimachinery/pkg/types"
-	watch "k8s.io/apimachinery/pkg/watch"
-	testing "k8s.io/client-go/testing"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/targets/v1alpha1"
+	gentype "k8s.io/client-go/gentype"
 )
 
-// FakeJiraTargets implements JiraTargetInterface
-type FakeJiraTargets struct {
+// fakeJiraTargets implements JiraTargetInterface
+type fakeJiraTargets struct {
+	*gentype.FakeClientWithList[*v1alpha1.JiraTarget, *v1alpha1.JiraTargetList]
 	Fake *FakeTargetsV1alpha1
-	ns   string
 }
 
-var jiratargetsResource = v1alpha1.SchemeGroupVersion.WithResource("jiratargets")
-
-var jiratargetsKind = v1alpha1.SchemeGroupVersion.WithKind("JiraTarget")
-
-// Get takes name of the jiraTarget, and returns the corresponding jiraTarget object, and an error if there is any.
-func (c *FakeJiraTargets) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.JiraTarget, err error) {
-	emptyResult := &v1alpha1.JiraTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewGetActionWithOptions(jiratargetsResource, c.ns, name, options), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
+func newFakeJiraTargets(fake *FakeTargetsV1alpha1, namespace string) targetsv1alpha1.JiraTargetInterface {
+	return &fakeJiraTargets{
+		gentype.NewFakeClientWithList[*v1alpha1.JiraTarget, *v1alpha1.JiraTargetList](
+			fake.Fake,
+			namespace,
+			v1alpha1.SchemeGroupVersion.WithResource("jiratargets"),
+			v1alpha1.SchemeGroupVersion.WithKind("JiraTarget"),
+			func() *v1alpha1.JiraTarget { return &v1alpha1.JiraTarget{} },
+			func() *v1alpha1.JiraTargetList { return &v1alpha1.JiraTargetList{} },
+			func(dst, src *v1alpha1.JiraTargetList) { dst.ListMeta = src.ListMeta },
+			func(list *v1alpha1.JiraTargetList) []*v1alpha1.JiraTarget { return gentype.ToPointerSlice(list.Items) },
+			func(list *v1alpha1.JiraTargetList, items []*v1alpha1.JiraTarget) {
+				list.Items = gentype.FromPointerSlice(items)
+			},
+		),
+		fake,
 	}
-	return obj.(*v1alpha1.JiraTarget), err
-}
-
-// List takes label and field selectors, and returns the list of JiraTargets that match those selectors.
-func (c *FakeJiraTargets) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.JiraTargetList, err error) {
-	emptyResult := &v1alpha1.JiraTargetList{}
-	obj, err := c.Fake.
-		Invokes(testing.NewListActionWithOptions(jiratargetsResource, jiratargetsKind, c.ns, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-
-	label, _, _ := testing.ExtractFromListOptions(opts)
-	if label == nil {
-		label = labels.Everything()
-	}
-	list := &v1alpha1.JiraTargetList{ListMeta: obj.(*v1alpha1.JiraTargetList).ListMeta}
-	for _, item := range obj.(*v1alpha1.JiraTargetList).Items {
-		if label.Matches(labels.Set(item.Labels)) {
-			list.Items = append(list.Items, item)
-		}
-	}
-	return list, err
-}
-
-// Watch returns a watch.Interface that watches the requested jiraTargets.
-func (c *FakeJiraTargets) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
-	return c.Fake.
-		InvokesWatch(testing.NewWatchActionWithOptions(jiratargetsResource, c.ns, opts))
-
-}
-
-// Create takes the representation of a jiraTarget and creates it.  Returns the server's representation of the jiraTarget, and an error, if there is any.
-func (c *FakeJiraTargets) Create(ctx context.Context, jiraTarget *v1alpha1.JiraTarget, opts v1.CreateOptions) (result *v1alpha1.JiraTarget, err error) {
-	emptyResult := &v1alpha1.JiraTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewCreateActionWithOptions(jiratargetsResource, c.ns, jiraTarget, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.JiraTarget), err
-}
-
-// Update takes the representation of a jiraTarget and updates it. Returns the server's representation of the jiraTarget, and an error, if there is any.
-func (c *FakeJiraTargets) Update(ctx context.Context, jiraTarget *v1alpha1.JiraTarget, opts v1.UpdateOptions) (result *v1alpha1.JiraTarget, err error) {
-	emptyResult := &v1alpha1.JiraTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateActionWithOptions(jiratargetsResource, c.ns, jiraTarget, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.JiraTarget), err
-}
-
-// UpdateStatus was generated because the type contains a Status member.
-// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeJiraTargets) UpdateStatus(ctx context.Context, jiraTarget *v1alpha1.JiraTarget, opts v1.UpdateOptions) (result *v1alpha1.JiraTarget, err error) {
-	emptyResult := &v1alpha1.JiraTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceActionWithOptions(jiratargetsResource, "status", c.ns, jiraTarget, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.JiraTarget), err
-}
-
-// Delete takes name of the jiraTarget and deletes it. Returns an error if one occurs.
-func (c *FakeJiraTargets) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
-	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(jiratargetsResource, c.ns, name, opts), &v1alpha1.JiraTarget{})
-
-	return err
-}
-
-// DeleteCollection deletes a collection of objects.
-func (c *FakeJiraTargets) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionActionWithOptions(jiratargetsResource, c.ns, opts, listOpts)
-
-	_, err := c.Fake.Invokes(action, &v1alpha1.JiraTargetList{})
-	return err
-}
-
-// Patch applies the patch and returns the patched jiraTarget.
-func (c *FakeJiraTargets) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.JiraTarget, err error) {
-	emptyResult := &v1alpha1.JiraTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceActionWithOptions(jiratargetsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.JiraTarget), err
 }

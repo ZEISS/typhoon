@@ -174,7 +174,7 @@ func TestWebhookEvent(t *testing.T) {
 				return e, r
 			}
 			ceClient, chEvent := cloudeventst.NewMockRequesterClient(t, 1, replierFn, cloudevents.WithTimeNow(), cloudevents.WithUUIDs())
-			handler := &webhookHandler{
+			handler := &mtWebhookAdapter{
 				eventType:   tEventType,
 				eventSource: tEventSource,
 				username:    c.username,

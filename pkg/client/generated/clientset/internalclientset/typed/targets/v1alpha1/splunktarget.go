@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type SplunkTargetsGetter interface {
 
 // SplunkTargetInterface has methods to work with SplunkTarget resources.
 type SplunkTargetInterface interface {
-	Create(ctx context.Context, splunkTarget *v1alpha1.SplunkTarget, opts v1.CreateOptions) (*v1alpha1.SplunkTarget, error)
-	Update(ctx context.Context, splunkTarget *v1alpha1.SplunkTarget, opts v1.UpdateOptions) (*v1alpha1.SplunkTarget, error)
+	Create(ctx context.Context, splunkTarget *targetsv1alpha1.SplunkTarget, opts v1.CreateOptions) (*targetsv1alpha1.SplunkTarget, error)
+	Update(ctx context.Context, splunkTarget *targetsv1alpha1.SplunkTarget, opts v1.UpdateOptions) (*targetsv1alpha1.SplunkTarget, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, splunkTarget *v1alpha1.SplunkTarget, opts v1.UpdateOptions) (*v1alpha1.SplunkTarget, error)
+	UpdateStatus(ctx context.Context, splunkTarget *targetsv1alpha1.SplunkTarget, opts v1.UpdateOptions) (*targetsv1alpha1.SplunkTarget, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.SplunkTarget, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.SplunkTargetList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*targetsv1alpha1.SplunkTarget, error)
+	List(ctx context.Context, opts v1.ListOptions) (*targetsv1alpha1.SplunkTargetList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.SplunkTarget, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *targetsv1alpha1.SplunkTarget, err error)
 	SplunkTargetExpansion
 }
 
 // splunkTargets implements SplunkTargetInterface
 type splunkTargets struct {
-	*gentype.ClientWithList[*v1alpha1.SplunkTarget, *v1alpha1.SplunkTargetList]
+	*gentype.ClientWithList[*targetsv1alpha1.SplunkTarget, *targetsv1alpha1.SplunkTargetList]
 }
 
 // newSplunkTargets returns a SplunkTargets
 func newSplunkTargets(c *TargetsV1alpha1Client, namespace string) *splunkTargets {
 	return &splunkTargets{
-		gentype.NewClientWithList[*v1alpha1.SplunkTarget, *v1alpha1.SplunkTargetList](
+		gentype.NewClientWithList[*targetsv1alpha1.SplunkTarget, *targetsv1alpha1.SplunkTargetList](
 			"splunktargets",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.SplunkTarget { return &v1alpha1.SplunkTarget{} },
-			func() *v1alpha1.SplunkTargetList { return &v1alpha1.SplunkTargetList{} }),
+			func() *targetsv1alpha1.SplunkTarget { return &targetsv1alpha1.SplunkTarget{} },
+			func() *targetsv1alpha1.SplunkTargetList { return &targetsv1alpha1.SplunkTargetList{} },
+		),
 	}
 }

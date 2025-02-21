@@ -3,10 +3,10 @@
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	flowv1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // JQTransformationLister helps list JQTransformations.
@@ -14,7 +14,7 @@ import (
 type JQTransformationLister interface {
 	// List lists all JQTransformations in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.JQTransformation, err error)
+	List(selector labels.Selector) (ret []*flowv1alpha1.JQTransformation, err error)
 	// JQTransformations returns an object that can list and get JQTransformations.
 	JQTransformations(namespace string) JQTransformationNamespaceLister
 	JQTransformationListerExpansion
@@ -22,17 +22,17 @@ type JQTransformationLister interface {
 
 // jQTransformationLister implements the JQTransformationLister interface.
 type jQTransformationLister struct {
-	listers.ResourceIndexer[*v1alpha1.JQTransformation]
+	listers.ResourceIndexer[*flowv1alpha1.JQTransformation]
 }
 
 // NewJQTransformationLister returns a new JQTransformationLister.
 func NewJQTransformationLister(indexer cache.Indexer) JQTransformationLister {
-	return &jQTransformationLister{listers.New[*v1alpha1.JQTransformation](indexer, v1alpha1.Resource("jqtransformation"))}
+	return &jQTransformationLister{listers.New[*flowv1alpha1.JQTransformation](indexer, flowv1alpha1.Resource("jqtransformation"))}
 }
 
 // JQTransformations returns an object that can list and get JQTransformations.
 func (s *jQTransformationLister) JQTransformations(namespace string) JQTransformationNamespaceLister {
-	return jQTransformationNamespaceLister{listers.NewNamespaced[*v1alpha1.JQTransformation](s.ResourceIndexer, namespace)}
+	return jQTransformationNamespaceLister{listers.NewNamespaced[*flowv1alpha1.JQTransformation](s.ResourceIndexer, namespace)}
 }
 
 // JQTransformationNamespaceLister helps list and get JQTransformations.
@@ -40,15 +40,15 @@ func (s *jQTransformationLister) JQTransformations(namespace string) JQTransform
 type JQTransformationNamespaceLister interface {
 	// List lists all JQTransformations in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.JQTransformation, err error)
+	List(selector labels.Selector) (ret []*flowv1alpha1.JQTransformation, err error)
 	// Get retrieves the JQTransformation from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.JQTransformation, error)
+	Get(name string) (*flowv1alpha1.JQTransformation, error)
 	JQTransformationNamespaceListerExpansion
 }
 
 // jQTransformationNamespaceLister implements the JQTransformationNamespaceLister
 // interface.
 type jQTransformationNamespaceLister struct {
-	listers.ResourceIndexer[*v1alpha1.JQTransformation]
+	listers.ResourceIndexer[*flowv1alpha1.JQTransformation]
 }

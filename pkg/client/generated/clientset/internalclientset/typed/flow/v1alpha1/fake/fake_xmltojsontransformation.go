@@ -3,129 +3,34 @@
 package fake
 
 import (
-	"context"
-
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	labels "k8s.io/apimachinery/pkg/labels"
-	types "k8s.io/apimachinery/pkg/types"
-	watch "k8s.io/apimachinery/pkg/watch"
-	testing "k8s.io/client-go/testing"
+	flowv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/flow/v1alpha1"
+	gentype "k8s.io/client-go/gentype"
 )
 
-// FakeXMLToJSONTransformations implements XMLToJSONTransformationInterface
-type FakeXMLToJSONTransformations struct {
+// fakeXMLToJSONTransformations implements XMLToJSONTransformationInterface
+type fakeXMLToJSONTransformations struct {
+	*gentype.FakeClientWithList[*v1alpha1.XMLToJSONTransformation, *v1alpha1.XMLToJSONTransformationList]
 	Fake *FakeFlowV1alpha1
-	ns   string
 }
 
-var xmltojsontransformationsResource = v1alpha1.SchemeGroupVersion.WithResource("xmltojsontransformations")
-
-var xmltojsontransformationsKind = v1alpha1.SchemeGroupVersion.WithKind("XMLToJSONTransformation")
-
-// Get takes name of the xMLToJSONTransformation, and returns the corresponding xMLToJSONTransformation object, and an error if there is any.
-func (c *FakeXMLToJSONTransformations) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.XMLToJSONTransformation, err error) {
-	emptyResult := &v1alpha1.XMLToJSONTransformation{}
-	obj, err := c.Fake.
-		Invokes(testing.NewGetActionWithOptions(xmltojsontransformationsResource, c.ns, name, options), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
+func newFakeXMLToJSONTransformations(fake *FakeFlowV1alpha1, namespace string) flowv1alpha1.XMLToJSONTransformationInterface {
+	return &fakeXMLToJSONTransformations{
+		gentype.NewFakeClientWithList[*v1alpha1.XMLToJSONTransformation, *v1alpha1.XMLToJSONTransformationList](
+			fake.Fake,
+			namespace,
+			v1alpha1.SchemeGroupVersion.WithResource("xmltojsontransformations"),
+			v1alpha1.SchemeGroupVersion.WithKind("XMLToJSONTransformation"),
+			func() *v1alpha1.XMLToJSONTransformation { return &v1alpha1.XMLToJSONTransformation{} },
+			func() *v1alpha1.XMLToJSONTransformationList { return &v1alpha1.XMLToJSONTransformationList{} },
+			func(dst, src *v1alpha1.XMLToJSONTransformationList) { dst.ListMeta = src.ListMeta },
+			func(list *v1alpha1.XMLToJSONTransformationList) []*v1alpha1.XMLToJSONTransformation {
+				return gentype.ToPointerSlice(list.Items)
+			},
+			func(list *v1alpha1.XMLToJSONTransformationList, items []*v1alpha1.XMLToJSONTransformation) {
+				list.Items = gentype.FromPointerSlice(items)
+			},
+		),
+		fake,
 	}
-	return obj.(*v1alpha1.XMLToJSONTransformation), err
-}
-
-// List takes label and field selectors, and returns the list of XMLToJSONTransformations that match those selectors.
-func (c *FakeXMLToJSONTransformations) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.XMLToJSONTransformationList, err error) {
-	emptyResult := &v1alpha1.XMLToJSONTransformationList{}
-	obj, err := c.Fake.
-		Invokes(testing.NewListActionWithOptions(xmltojsontransformationsResource, xmltojsontransformationsKind, c.ns, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-
-	label, _, _ := testing.ExtractFromListOptions(opts)
-	if label == nil {
-		label = labels.Everything()
-	}
-	list := &v1alpha1.XMLToJSONTransformationList{ListMeta: obj.(*v1alpha1.XMLToJSONTransformationList).ListMeta}
-	for _, item := range obj.(*v1alpha1.XMLToJSONTransformationList).Items {
-		if label.Matches(labels.Set(item.Labels)) {
-			list.Items = append(list.Items, item)
-		}
-	}
-	return list, err
-}
-
-// Watch returns a watch.Interface that watches the requested xMLToJSONTransformations.
-func (c *FakeXMLToJSONTransformations) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
-	return c.Fake.
-		InvokesWatch(testing.NewWatchActionWithOptions(xmltojsontransformationsResource, c.ns, opts))
-
-}
-
-// Create takes the representation of a xMLToJSONTransformation and creates it.  Returns the server's representation of the xMLToJSONTransformation, and an error, if there is any.
-func (c *FakeXMLToJSONTransformations) Create(ctx context.Context, xMLToJSONTransformation *v1alpha1.XMLToJSONTransformation, opts v1.CreateOptions) (result *v1alpha1.XMLToJSONTransformation, err error) {
-	emptyResult := &v1alpha1.XMLToJSONTransformation{}
-	obj, err := c.Fake.
-		Invokes(testing.NewCreateActionWithOptions(xmltojsontransformationsResource, c.ns, xMLToJSONTransformation, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.XMLToJSONTransformation), err
-}
-
-// Update takes the representation of a xMLToJSONTransformation and updates it. Returns the server's representation of the xMLToJSONTransformation, and an error, if there is any.
-func (c *FakeXMLToJSONTransformations) Update(ctx context.Context, xMLToJSONTransformation *v1alpha1.XMLToJSONTransformation, opts v1.UpdateOptions) (result *v1alpha1.XMLToJSONTransformation, err error) {
-	emptyResult := &v1alpha1.XMLToJSONTransformation{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateActionWithOptions(xmltojsontransformationsResource, c.ns, xMLToJSONTransformation, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.XMLToJSONTransformation), err
-}
-
-// UpdateStatus was generated because the type contains a Status member.
-// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeXMLToJSONTransformations) UpdateStatus(ctx context.Context, xMLToJSONTransformation *v1alpha1.XMLToJSONTransformation, opts v1.UpdateOptions) (result *v1alpha1.XMLToJSONTransformation, err error) {
-	emptyResult := &v1alpha1.XMLToJSONTransformation{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceActionWithOptions(xmltojsontransformationsResource, "status", c.ns, xMLToJSONTransformation, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.XMLToJSONTransformation), err
-}
-
-// Delete takes name of the xMLToJSONTransformation and deletes it. Returns an error if one occurs.
-func (c *FakeXMLToJSONTransformations) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
-	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(xmltojsontransformationsResource, c.ns, name, opts), &v1alpha1.XMLToJSONTransformation{})
-
-	return err
-}
-
-// DeleteCollection deletes a collection of objects.
-func (c *FakeXMLToJSONTransformations) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionActionWithOptions(xmltojsontransformationsResource, c.ns, opts, listOpts)
-
-	_, err := c.Fake.Invokes(action, &v1alpha1.XMLToJSONTransformationList{})
-	return err
-}
-
-// Patch applies the patch and returns the patched xMLToJSONTransformation.
-func (c *FakeXMLToJSONTransformations) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.XMLToJSONTransformation, err error) {
-	emptyResult := &v1alpha1.XMLToJSONTransformation{}
-	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceActionWithOptions(xmltojsontransformationsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.XMLToJSONTransformation), err
 }

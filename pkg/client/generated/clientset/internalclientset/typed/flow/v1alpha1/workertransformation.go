@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
+	flowv1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type WorkerTransformationsGetter interface {
 
 // WorkerTransformationInterface has methods to work with WorkerTransformation resources.
 type WorkerTransformationInterface interface {
-	Create(ctx context.Context, workerTransformation *v1alpha1.WorkerTransformation, opts v1.CreateOptions) (*v1alpha1.WorkerTransformation, error)
-	Update(ctx context.Context, workerTransformation *v1alpha1.WorkerTransformation, opts v1.UpdateOptions) (*v1alpha1.WorkerTransformation, error)
+	Create(ctx context.Context, workerTransformation *flowv1alpha1.WorkerTransformation, opts v1.CreateOptions) (*flowv1alpha1.WorkerTransformation, error)
+	Update(ctx context.Context, workerTransformation *flowv1alpha1.WorkerTransformation, opts v1.UpdateOptions) (*flowv1alpha1.WorkerTransformation, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, workerTransformation *v1alpha1.WorkerTransformation, opts v1.UpdateOptions) (*v1alpha1.WorkerTransformation, error)
+	UpdateStatus(ctx context.Context, workerTransformation *flowv1alpha1.WorkerTransformation, opts v1.UpdateOptions) (*flowv1alpha1.WorkerTransformation, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.WorkerTransformation, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.WorkerTransformationList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*flowv1alpha1.WorkerTransformation, error)
+	List(ctx context.Context, opts v1.ListOptions) (*flowv1alpha1.WorkerTransformationList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.WorkerTransformation, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *flowv1alpha1.WorkerTransformation, err error)
 	WorkerTransformationExpansion
 }
 
 // workerTransformations implements WorkerTransformationInterface
 type workerTransformations struct {
-	*gentype.ClientWithList[*v1alpha1.WorkerTransformation, *v1alpha1.WorkerTransformationList]
+	*gentype.ClientWithList[*flowv1alpha1.WorkerTransformation, *flowv1alpha1.WorkerTransformationList]
 }
 
 // newWorkerTransformations returns a WorkerTransformations
 func newWorkerTransformations(c *FlowV1alpha1Client, namespace string) *workerTransformations {
 	return &workerTransformations{
-		gentype.NewClientWithList[*v1alpha1.WorkerTransformation, *v1alpha1.WorkerTransformationList](
+		gentype.NewClientWithList[*flowv1alpha1.WorkerTransformation, *flowv1alpha1.WorkerTransformationList](
 			"workertransformations",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.WorkerTransformation { return &v1alpha1.WorkerTransformation{} },
-			func() *v1alpha1.WorkerTransformationList { return &v1alpha1.WorkerTransformationList{} }),
+			func() *flowv1alpha1.WorkerTransformation { return &flowv1alpha1.WorkerTransformation{} },
+			func() *flowv1alpha1.WorkerTransformationList { return &flowv1alpha1.WorkerTransformationList{} },
+		),
 	}
 }

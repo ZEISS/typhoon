@@ -3,129 +3,32 @@
 package fake
 
 import (
-	"context"
-
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	labels "k8s.io/apimachinery/pkg/labels"
-	types "k8s.io/apimachinery/pkg/types"
-	watch "k8s.io/apimachinery/pkg/watch"
-	testing "k8s.io/client-go/testing"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/targets/v1alpha1"
+	gentype "k8s.io/client-go/gentype"
 )
 
-// FakeHTTPTargets implements HTTPTargetInterface
-type FakeHTTPTargets struct {
+// fakeHTTPTargets implements HTTPTargetInterface
+type fakeHTTPTargets struct {
+	*gentype.FakeClientWithList[*v1alpha1.HTTPTarget, *v1alpha1.HTTPTargetList]
 	Fake *FakeTargetsV1alpha1
-	ns   string
 }
 
-var httptargetsResource = v1alpha1.SchemeGroupVersion.WithResource("httptargets")
-
-var httptargetsKind = v1alpha1.SchemeGroupVersion.WithKind("HTTPTarget")
-
-// Get takes name of the hTTPTarget, and returns the corresponding hTTPTarget object, and an error if there is any.
-func (c *FakeHTTPTargets) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.HTTPTarget, err error) {
-	emptyResult := &v1alpha1.HTTPTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewGetActionWithOptions(httptargetsResource, c.ns, name, options), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
+func newFakeHTTPTargets(fake *FakeTargetsV1alpha1, namespace string) targetsv1alpha1.HTTPTargetInterface {
+	return &fakeHTTPTargets{
+		gentype.NewFakeClientWithList[*v1alpha1.HTTPTarget, *v1alpha1.HTTPTargetList](
+			fake.Fake,
+			namespace,
+			v1alpha1.SchemeGroupVersion.WithResource("httptargets"),
+			v1alpha1.SchemeGroupVersion.WithKind("HTTPTarget"),
+			func() *v1alpha1.HTTPTarget { return &v1alpha1.HTTPTarget{} },
+			func() *v1alpha1.HTTPTargetList { return &v1alpha1.HTTPTargetList{} },
+			func(dst, src *v1alpha1.HTTPTargetList) { dst.ListMeta = src.ListMeta },
+			func(list *v1alpha1.HTTPTargetList) []*v1alpha1.HTTPTarget { return gentype.ToPointerSlice(list.Items) },
+			func(list *v1alpha1.HTTPTargetList, items []*v1alpha1.HTTPTarget) {
+				list.Items = gentype.FromPointerSlice(items)
+			},
+		),
+		fake,
 	}
-	return obj.(*v1alpha1.HTTPTarget), err
-}
-
-// List takes label and field selectors, and returns the list of HTTPTargets that match those selectors.
-func (c *FakeHTTPTargets) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.HTTPTargetList, err error) {
-	emptyResult := &v1alpha1.HTTPTargetList{}
-	obj, err := c.Fake.
-		Invokes(testing.NewListActionWithOptions(httptargetsResource, httptargetsKind, c.ns, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-
-	label, _, _ := testing.ExtractFromListOptions(opts)
-	if label == nil {
-		label = labels.Everything()
-	}
-	list := &v1alpha1.HTTPTargetList{ListMeta: obj.(*v1alpha1.HTTPTargetList).ListMeta}
-	for _, item := range obj.(*v1alpha1.HTTPTargetList).Items {
-		if label.Matches(labels.Set(item.Labels)) {
-			list.Items = append(list.Items, item)
-		}
-	}
-	return list, err
-}
-
-// Watch returns a watch.Interface that watches the requested hTTPTargets.
-func (c *FakeHTTPTargets) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
-	return c.Fake.
-		InvokesWatch(testing.NewWatchActionWithOptions(httptargetsResource, c.ns, opts))
-
-}
-
-// Create takes the representation of a hTTPTarget and creates it.  Returns the server's representation of the hTTPTarget, and an error, if there is any.
-func (c *FakeHTTPTargets) Create(ctx context.Context, hTTPTarget *v1alpha1.HTTPTarget, opts v1.CreateOptions) (result *v1alpha1.HTTPTarget, err error) {
-	emptyResult := &v1alpha1.HTTPTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewCreateActionWithOptions(httptargetsResource, c.ns, hTTPTarget, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.HTTPTarget), err
-}
-
-// Update takes the representation of a hTTPTarget and updates it. Returns the server's representation of the hTTPTarget, and an error, if there is any.
-func (c *FakeHTTPTargets) Update(ctx context.Context, hTTPTarget *v1alpha1.HTTPTarget, opts v1.UpdateOptions) (result *v1alpha1.HTTPTarget, err error) {
-	emptyResult := &v1alpha1.HTTPTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateActionWithOptions(httptargetsResource, c.ns, hTTPTarget, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.HTTPTarget), err
-}
-
-// UpdateStatus was generated because the type contains a Status member.
-// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeHTTPTargets) UpdateStatus(ctx context.Context, hTTPTarget *v1alpha1.HTTPTarget, opts v1.UpdateOptions) (result *v1alpha1.HTTPTarget, err error) {
-	emptyResult := &v1alpha1.HTTPTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceActionWithOptions(httptargetsResource, "status", c.ns, hTTPTarget, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.HTTPTarget), err
-}
-
-// Delete takes name of the hTTPTarget and deletes it. Returns an error if one occurs.
-func (c *FakeHTTPTargets) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
-	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(httptargetsResource, c.ns, name, opts), &v1alpha1.HTTPTarget{})
-
-	return err
-}
-
-// DeleteCollection deletes a collection of objects.
-func (c *FakeHTTPTargets) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionActionWithOptions(httptargetsResource, c.ns, opts, listOpts)
-
-	_, err := c.Fake.Invokes(action, &v1alpha1.HTTPTargetList{})
-	return err
-}
-
-// Patch applies the patch and returns the patched hTTPTarget.
-func (c *FakeHTTPTargets) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.HTTPTarget, err error) {
-	emptyResult := &v1alpha1.HTTPTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceActionWithOptions(httptargetsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.HTTPTarget), err
 }

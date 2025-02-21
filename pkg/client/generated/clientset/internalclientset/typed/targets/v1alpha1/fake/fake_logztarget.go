@@ -3,129 +3,32 @@
 package fake
 
 import (
-	"context"
-
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	labels "k8s.io/apimachinery/pkg/labels"
-	types "k8s.io/apimachinery/pkg/types"
-	watch "k8s.io/apimachinery/pkg/watch"
-	testing "k8s.io/client-go/testing"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/targets/v1alpha1"
+	gentype "k8s.io/client-go/gentype"
 )
 
-// FakeLogzTargets implements LogzTargetInterface
-type FakeLogzTargets struct {
+// fakeLogzTargets implements LogzTargetInterface
+type fakeLogzTargets struct {
+	*gentype.FakeClientWithList[*v1alpha1.LogzTarget, *v1alpha1.LogzTargetList]
 	Fake *FakeTargetsV1alpha1
-	ns   string
 }
 
-var logztargetsResource = v1alpha1.SchemeGroupVersion.WithResource("logztargets")
-
-var logztargetsKind = v1alpha1.SchemeGroupVersion.WithKind("LogzTarget")
-
-// Get takes name of the logzTarget, and returns the corresponding logzTarget object, and an error if there is any.
-func (c *FakeLogzTargets) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.LogzTarget, err error) {
-	emptyResult := &v1alpha1.LogzTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewGetActionWithOptions(logztargetsResource, c.ns, name, options), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
+func newFakeLogzTargets(fake *FakeTargetsV1alpha1, namespace string) targetsv1alpha1.LogzTargetInterface {
+	return &fakeLogzTargets{
+		gentype.NewFakeClientWithList[*v1alpha1.LogzTarget, *v1alpha1.LogzTargetList](
+			fake.Fake,
+			namespace,
+			v1alpha1.SchemeGroupVersion.WithResource("logztargets"),
+			v1alpha1.SchemeGroupVersion.WithKind("LogzTarget"),
+			func() *v1alpha1.LogzTarget { return &v1alpha1.LogzTarget{} },
+			func() *v1alpha1.LogzTargetList { return &v1alpha1.LogzTargetList{} },
+			func(dst, src *v1alpha1.LogzTargetList) { dst.ListMeta = src.ListMeta },
+			func(list *v1alpha1.LogzTargetList) []*v1alpha1.LogzTarget { return gentype.ToPointerSlice(list.Items) },
+			func(list *v1alpha1.LogzTargetList, items []*v1alpha1.LogzTarget) {
+				list.Items = gentype.FromPointerSlice(items)
+			},
+		),
+		fake,
 	}
-	return obj.(*v1alpha1.LogzTarget), err
-}
-
-// List takes label and field selectors, and returns the list of LogzTargets that match those selectors.
-func (c *FakeLogzTargets) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.LogzTargetList, err error) {
-	emptyResult := &v1alpha1.LogzTargetList{}
-	obj, err := c.Fake.
-		Invokes(testing.NewListActionWithOptions(logztargetsResource, logztargetsKind, c.ns, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-
-	label, _, _ := testing.ExtractFromListOptions(opts)
-	if label == nil {
-		label = labels.Everything()
-	}
-	list := &v1alpha1.LogzTargetList{ListMeta: obj.(*v1alpha1.LogzTargetList).ListMeta}
-	for _, item := range obj.(*v1alpha1.LogzTargetList).Items {
-		if label.Matches(labels.Set(item.Labels)) {
-			list.Items = append(list.Items, item)
-		}
-	}
-	return list, err
-}
-
-// Watch returns a watch.Interface that watches the requested logzTargets.
-func (c *FakeLogzTargets) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
-	return c.Fake.
-		InvokesWatch(testing.NewWatchActionWithOptions(logztargetsResource, c.ns, opts))
-
-}
-
-// Create takes the representation of a logzTarget and creates it.  Returns the server's representation of the logzTarget, and an error, if there is any.
-func (c *FakeLogzTargets) Create(ctx context.Context, logzTarget *v1alpha1.LogzTarget, opts v1.CreateOptions) (result *v1alpha1.LogzTarget, err error) {
-	emptyResult := &v1alpha1.LogzTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewCreateActionWithOptions(logztargetsResource, c.ns, logzTarget, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.LogzTarget), err
-}
-
-// Update takes the representation of a logzTarget and updates it. Returns the server's representation of the logzTarget, and an error, if there is any.
-func (c *FakeLogzTargets) Update(ctx context.Context, logzTarget *v1alpha1.LogzTarget, opts v1.UpdateOptions) (result *v1alpha1.LogzTarget, err error) {
-	emptyResult := &v1alpha1.LogzTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateActionWithOptions(logztargetsResource, c.ns, logzTarget, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.LogzTarget), err
-}
-
-// UpdateStatus was generated because the type contains a Status member.
-// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeLogzTargets) UpdateStatus(ctx context.Context, logzTarget *v1alpha1.LogzTarget, opts v1.UpdateOptions) (result *v1alpha1.LogzTarget, err error) {
-	emptyResult := &v1alpha1.LogzTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceActionWithOptions(logztargetsResource, "status", c.ns, logzTarget, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.LogzTarget), err
-}
-
-// Delete takes name of the logzTarget and deletes it. Returns an error if one occurs.
-func (c *FakeLogzTargets) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
-	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(logztargetsResource, c.ns, name, opts), &v1alpha1.LogzTarget{})
-
-	return err
-}
-
-// DeleteCollection deletes a collection of objects.
-func (c *FakeLogzTargets) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionActionWithOptions(logztargetsResource, c.ns, opts, listOpts)
-
-	_, err := c.Fake.Invokes(action, &v1alpha1.LogzTargetList{})
-	return err
-}
-
-// Patch applies the patch and returns the patched logzTarget.
-func (c *FakeLogzTargets) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.LogzTarget, err error) {
-	emptyResult := &v1alpha1.LogzTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceActionWithOptions(logztargetsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.LogzTarget), err
 }

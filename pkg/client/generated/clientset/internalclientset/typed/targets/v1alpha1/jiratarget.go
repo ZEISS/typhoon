@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type JiraTargetsGetter interface {
 
 // JiraTargetInterface has methods to work with JiraTarget resources.
 type JiraTargetInterface interface {
-	Create(ctx context.Context, jiraTarget *v1alpha1.JiraTarget, opts v1.CreateOptions) (*v1alpha1.JiraTarget, error)
-	Update(ctx context.Context, jiraTarget *v1alpha1.JiraTarget, opts v1.UpdateOptions) (*v1alpha1.JiraTarget, error)
+	Create(ctx context.Context, jiraTarget *targetsv1alpha1.JiraTarget, opts v1.CreateOptions) (*targetsv1alpha1.JiraTarget, error)
+	Update(ctx context.Context, jiraTarget *targetsv1alpha1.JiraTarget, opts v1.UpdateOptions) (*targetsv1alpha1.JiraTarget, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, jiraTarget *v1alpha1.JiraTarget, opts v1.UpdateOptions) (*v1alpha1.JiraTarget, error)
+	UpdateStatus(ctx context.Context, jiraTarget *targetsv1alpha1.JiraTarget, opts v1.UpdateOptions) (*targetsv1alpha1.JiraTarget, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.JiraTarget, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.JiraTargetList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*targetsv1alpha1.JiraTarget, error)
+	List(ctx context.Context, opts v1.ListOptions) (*targetsv1alpha1.JiraTargetList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.JiraTarget, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *targetsv1alpha1.JiraTarget, err error)
 	JiraTargetExpansion
 }
 
 // jiraTargets implements JiraTargetInterface
 type jiraTargets struct {
-	*gentype.ClientWithList[*v1alpha1.JiraTarget, *v1alpha1.JiraTargetList]
+	*gentype.ClientWithList[*targetsv1alpha1.JiraTarget, *targetsv1alpha1.JiraTargetList]
 }
 
 // newJiraTargets returns a JiraTargets
 func newJiraTargets(c *TargetsV1alpha1Client, namespace string) *jiraTargets {
 	return &jiraTargets{
-		gentype.NewClientWithList[*v1alpha1.JiraTarget, *v1alpha1.JiraTargetList](
+		gentype.NewClientWithList[*targetsv1alpha1.JiraTarget, *targetsv1alpha1.JiraTargetList](
 			"jiratargets",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.JiraTarget { return &v1alpha1.JiraTarget{} },
-			func() *v1alpha1.JiraTargetList { return &v1alpha1.JiraTargetList{} }),
+			func() *targetsv1alpha1.JiraTarget { return &targetsv1alpha1.JiraTarget{} },
+			func() *targetsv1alpha1.JiraTargetList { return &targetsv1alpha1.JiraTargetList{} },
+		),
 	}
 }

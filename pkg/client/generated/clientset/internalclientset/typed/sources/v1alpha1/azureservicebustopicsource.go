@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
+	sourcesv1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,38 @@ type AzureServiceBusTopicSourcesGetter interface {
 
 // AzureServiceBusTopicSourceInterface has methods to work with AzureServiceBusTopicSource resources.
 type AzureServiceBusTopicSourceInterface interface {
-	Create(ctx context.Context, azureServiceBusTopicSource *v1alpha1.AzureServiceBusTopicSource, opts v1.CreateOptions) (*v1alpha1.AzureServiceBusTopicSource, error)
-	Update(ctx context.Context, azureServiceBusTopicSource *v1alpha1.AzureServiceBusTopicSource, opts v1.UpdateOptions) (*v1alpha1.AzureServiceBusTopicSource, error)
+	Create(ctx context.Context, azureServiceBusTopicSource *sourcesv1alpha1.AzureServiceBusTopicSource, opts v1.CreateOptions) (*sourcesv1alpha1.AzureServiceBusTopicSource, error)
+	Update(ctx context.Context, azureServiceBusTopicSource *sourcesv1alpha1.AzureServiceBusTopicSource, opts v1.UpdateOptions) (*sourcesv1alpha1.AzureServiceBusTopicSource, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, azureServiceBusTopicSource *v1alpha1.AzureServiceBusTopicSource, opts v1.UpdateOptions) (*v1alpha1.AzureServiceBusTopicSource, error)
+	UpdateStatus(ctx context.Context, azureServiceBusTopicSource *sourcesv1alpha1.AzureServiceBusTopicSource, opts v1.UpdateOptions) (*sourcesv1alpha1.AzureServiceBusTopicSource, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.AzureServiceBusTopicSource, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.AzureServiceBusTopicSourceList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*sourcesv1alpha1.AzureServiceBusTopicSource, error)
+	List(ctx context.Context, opts v1.ListOptions) (*sourcesv1alpha1.AzureServiceBusTopicSourceList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.AzureServiceBusTopicSource, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *sourcesv1alpha1.AzureServiceBusTopicSource, err error)
 	AzureServiceBusTopicSourceExpansion
 }
 
 // azureServiceBusTopicSources implements AzureServiceBusTopicSourceInterface
 type azureServiceBusTopicSources struct {
-	*gentype.ClientWithList[*v1alpha1.AzureServiceBusTopicSource, *v1alpha1.AzureServiceBusTopicSourceList]
+	*gentype.ClientWithList[*sourcesv1alpha1.AzureServiceBusTopicSource, *sourcesv1alpha1.AzureServiceBusTopicSourceList]
 }
 
 // newAzureServiceBusTopicSources returns a AzureServiceBusTopicSources
 func newAzureServiceBusTopicSources(c *SourcesV1alpha1Client, namespace string) *azureServiceBusTopicSources {
 	return &azureServiceBusTopicSources{
-		gentype.NewClientWithList[*v1alpha1.AzureServiceBusTopicSource, *v1alpha1.AzureServiceBusTopicSourceList](
+		gentype.NewClientWithList[*sourcesv1alpha1.AzureServiceBusTopicSource, *sourcesv1alpha1.AzureServiceBusTopicSourceList](
 			"azureservicebustopicsources",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.AzureServiceBusTopicSource { return &v1alpha1.AzureServiceBusTopicSource{} },
-			func() *v1alpha1.AzureServiceBusTopicSourceList { return &v1alpha1.AzureServiceBusTopicSourceList{} }),
+			func() *sourcesv1alpha1.AzureServiceBusTopicSource {
+				return &sourcesv1alpha1.AzureServiceBusTopicSource{}
+			},
+			func() *sourcesv1alpha1.AzureServiceBusTopicSourceList {
+				return &sourcesv1alpha1.AzureServiceBusTopicSourceList{}
+			},
+		),
 	}
 }

@@ -3,10 +3,10 @@
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // ServiceNowTargetLister helps list ServiceNowTargets.
@@ -14,7 +14,7 @@ import (
 type ServiceNowTargetLister interface {
 	// List lists all ServiceNowTargets in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.ServiceNowTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.ServiceNowTarget, err error)
 	// ServiceNowTargets returns an object that can list and get ServiceNowTargets.
 	ServiceNowTargets(namespace string) ServiceNowTargetNamespaceLister
 	ServiceNowTargetListerExpansion
@@ -22,17 +22,17 @@ type ServiceNowTargetLister interface {
 
 // serviceNowTargetLister implements the ServiceNowTargetLister interface.
 type serviceNowTargetLister struct {
-	listers.ResourceIndexer[*v1alpha1.ServiceNowTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.ServiceNowTarget]
 }
 
 // NewServiceNowTargetLister returns a new ServiceNowTargetLister.
 func NewServiceNowTargetLister(indexer cache.Indexer) ServiceNowTargetLister {
-	return &serviceNowTargetLister{listers.New[*v1alpha1.ServiceNowTarget](indexer, v1alpha1.Resource("servicenowtarget"))}
+	return &serviceNowTargetLister{listers.New[*targetsv1alpha1.ServiceNowTarget](indexer, targetsv1alpha1.Resource("servicenowtarget"))}
 }
 
 // ServiceNowTargets returns an object that can list and get ServiceNowTargets.
 func (s *serviceNowTargetLister) ServiceNowTargets(namespace string) ServiceNowTargetNamespaceLister {
-	return serviceNowTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.ServiceNowTarget](s.ResourceIndexer, namespace)}
+	return serviceNowTargetNamespaceLister{listers.NewNamespaced[*targetsv1alpha1.ServiceNowTarget](s.ResourceIndexer, namespace)}
 }
 
 // ServiceNowTargetNamespaceLister helps list and get ServiceNowTargets.
@@ -40,15 +40,15 @@ func (s *serviceNowTargetLister) ServiceNowTargets(namespace string) ServiceNowT
 type ServiceNowTargetNamespaceLister interface {
 	// List lists all ServiceNowTargets in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.ServiceNowTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.ServiceNowTarget, err error)
 	// Get retrieves the ServiceNowTarget from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.ServiceNowTarget, error)
+	Get(name string) (*targetsv1alpha1.ServiceNowTarget, error)
 	ServiceNowTargetNamespaceListerExpansion
 }
 
 // serviceNowTargetNamespaceLister implements the ServiceNowTargetNamespaceLister
 // interface.
 type serviceNowTargetNamespaceLister struct {
-	listers.ResourceIndexer[*v1alpha1.ServiceNowTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.ServiceNowTarget]
 }

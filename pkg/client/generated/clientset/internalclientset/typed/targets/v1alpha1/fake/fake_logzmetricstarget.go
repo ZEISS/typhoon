@@ -3,129 +3,34 @@
 package fake
 
 import (
-	"context"
-
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	labels "k8s.io/apimachinery/pkg/labels"
-	types "k8s.io/apimachinery/pkg/types"
-	watch "k8s.io/apimachinery/pkg/watch"
-	testing "k8s.io/client-go/testing"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/targets/v1alpha1"
+	gentype "k8s.io/client-go/gentype"
 )
 
-// FakeLogzMetricsTargets implements LogzMetricsTargetInterface
-type FakeLogzMetricsTargets struct {
+// fakeLogzMetricsTargets implements LogzMetricsTargetInterface
+type fakeLogzMetricsTargets struct {
+	*gentype.FakeClientWithList[*v1alpha1.LogzMetricsTarget, *v1alpha1.LogzMetricsTargetList]
 	Fake *FakeTargetsV1alpha1
-	ns   string
 }
 
-var logzmetricstargetsResource = v1alpha1.SchemeGroupVersion.WithResource("logzmetricstargets")
-
-var logzmetricstargetsKind = v1alpha1.SchemeGroupVersion.WithKind("LogzMetricsTarget")
-
-// Get takes name of the logzMetricsTarget, and returns the corresponding logzMetricsTarget object, and an error if there is any.
-func (c *FakeLogzMetricsTargets) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.LogzMetricsTarget, err error) {
-	emptyResult := &v1alpha1.LogzMetricsTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewGetActionWithOptions(logzmetricstargetsResource, c.ns, name, options), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
+func newFakeLogzMetricsTargets(fake *FakeTargetsV1alpha1, namespace string) targetsv1alpha1.LogzMetricsTargetInterface {
+	return &fakeLogzMetricsTargets{
+		gentype.NewFakeClientWithList[*v1alpha1.LogzMetricsTarget, *v1alpha1.LogzMetricsTargetList](
+			fake.Fake,
+			namespace,
+			v1alpha1.SchemeGroupVersion.WithResource("logzmetricstargets"),
+			v1alpha1.SchemeGroupVersion.WithKind("LogzMetricsTarget"),
+			func() *v1alpha1.LogzMetricsTarget { return &v1alpha1.LogzMetricsTarget{} },
+			func() *v1alpha1.LogzMetricsTargetList { return &v1alpha1.LogzMetricsTargetList{} },
+			func(dst, src *v1alpha1.LogzMetricsTargetList) { dst.ListMeta = src.ListMeta },
+			func(list *v1alpha1.LogzMetricsTargetList) []*v1alpha1.LogzMetricsTarget {
+				return gentype.ToPointerSlice(list.Items)
+			},
+			func(list *v1alpha1.LogzMetricsTargetList, items []*v1alpha1.LogzMetricsTarget) {
+				list.Items = gentype.FromPointerSlice(items)
+			},
+		),
+		fake,
 	}
-	return obj.(*v1alpha1.LogzMetricsTarget), err
-}
-
-// List takes label and field selectors, and returns the list of LogzMetricsTargets that match those selectors.
-func (c *FakeLogzMetricsTargets) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.LogzMetricsTargetList, err error) {
-	emptyResult := &v1alpha1.LogzMetricsTargetList{}
-	obj, err := c.Fake.
-		Invokes(testing.NewListActionWithOptions(logzmetricstargetsResource, logzmetricstargetsKind, c.ns, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-
-	label, _, _ := testing.ExtractFromListOptions(opts)
-	if label == nil {
-		label = labels.Everything()
-	}
-	list := &v1alpha1.LogzMetricsTargetList{ListMeta: obj.(*v1alpha1.LogzMetricsTargetList).ListMeta}
-	for _, item := range obj.(*v1alpha1.LogzMetricsTargetList).Items {
-		if label.Matches(labels.Set(item.Labels)) {
-			list.Items = append(list.Items, item)
-		}
-	}
-	return list, err
-}
-
-// Watch returns a watch.Interface that watches the requested logzMetricsTargets.
-func (c *FakeLogzMetricsTargets) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
-	return c.Fake.
-		InvokesWatch(testing.NewWatchActionWithOptions(logzmetricstargetsResource, c.ns, opts))
-
-}
-
-// Create takes the representation of a logzMetricsTarget and creates it.  Returns the server's representation of the logzMetricsTarget, and an error, if there is any.
-func (c *FakeLogzMetricsTargets) Create(ctx context.Context, logzMetricsTarget *v1alpha1.LogzMetricsTarget, opts v1.CreateOptions) (result *v1alpha1.LogzMetricsTarget, err error) {
-	emptyResult := &v1alpha1.LogzMetricsTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewCreateActionWithOptions(logzmetricstargetsResource, c.ns, logzMetricsTarget, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.LogzMetricsTarget), err
-}
-
-// Update takes the representation of a logzMetricsTarget and updates it. Returns the server's representation of the logzMetricsTarget, and an error, if there is any.
-func (c *FakeLogzMetricsTargets) Update(ctx context.Context, logzMetricsTarget *v1alpha1.LogzMetricsTarget, opts v1.UpdateOptions) (result *v1alpha1.LogzMetricsTarget, err error) {
-	emptyResult := &v1alpha1.LogzMetricsTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateActionWithOptions(logzmetricstargetsResource, c.ns, logzMetricsTarget, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.LogzMetricsTarget), err
-}
-
-// UpdateStatus was generated because the type contains a Status member.
-// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeLogzMetricsTargets) UpdateStatus(ctx context.Context, logzMetricsTarget *v1alpha1.LogzMetricsTarget, opts v1.UpdateOptions) (result *v1alpha1.LogzMetricsTarget, err error) {
-	emptyResult := &v1alpha1.LogzMetricsTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceActionWithOptions(logzmetricstargetsResource, "status", c.ns, logzMetricsTarget, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.LogzMetricsTarget), err
-}
-
-// Delete takes name of the logzMetricsTarget and deletes it. Returns an error if one occurs.
-func (c *FakeLogzMetricsTargets) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
-	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(logzmetricstargetsResource, c.ns, name, opts), &v1alpha1.LogzMetricsTarget{})
-
-	return err
-}
-
-// DeleteCollection deletes a collection of objects.
-func (c *FakeLogzMetricsTargets) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionActionWithOptions(logzmetricstargetsResource, c.ns, opts, listOpts)
-
-	_, err := c.Fake.Invokes(action, &v1alpha1.LogzMetricsTargetList{})
-	return err
-}
-
-// Patch applies the patch and returns the patched logzMetricsTarget.
-func (c *FakeLogzMetricsTargets) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.LogzMetricsTarget, err error) {
-	emptyResult := &v1alpha1.LogzMetricsTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceActionWithOptions(logzmetricstargetsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.LogzMetricsTarget), err
 }

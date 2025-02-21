@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/routing/v1alpha1"
+	routingv1alpha1 "github.com/zeiss/typhoon/pkg/apis/routing/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type SplittersGetter interface {
 
 // SplitterInterface has methods to work with Splitter resources.
 type SplitterInterface interface {
-	Create(ctx context.Context, splitter *v1alpha1.Splitter, opts v1.CreateOptions) (*v1alpha1.Splitter, error)
-	Update(ctx context.Context, splitter *v1alpha1.Splitter, opts v1.UpdateOptions) (*v1alpha1.Splitter, error)
+	Create(ctx context.Context, splitter *routingv1alpha1.Splitter, opts v1.CreateOptions) (*routingv1alpha1.Splitter, error)
+	Update(ctx context.Context, splitter *routingv1alpha1.Splitter, opts v1.UpdateOptions) (*routingv1alpha1.Splitter, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, splitter *v1alpha1.Splitter, opts v1.UpdateOptions) (*v1alpha1.Splitter, error)
+	UpdateStatus(ctx context.Context, splitter *routingv1alpha1.Splitter, opts v1.UpdateOptions) (*routingv1alpha1.Splitter, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.Splitter, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.SplitterList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*routingv1alpha1.Splitter, error)
+	List(ctx context.Context, opts v1.ListOptions) (*routingv1alpha1.SplitterList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Splitter, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *routingv1alpha1.Splitter, err error)
 	SplitterExpansion
 }
 
 // splitters implements SplitterInterface
 type splitters struct {
-	*gentype.ClientWithList[*v1alpha1.Splitter, *v1alpha1.SplitterList]
+	*gentype.ClientWithList[*routingv1alpha1.Splitter, *routingv1alpha1.SplitterList]
 }
 
 // newSplitters returns a Splitters
 func newSplitters(c *RoutingV1alpha1Client, namespace string) *splitters {
 	return &splitters{
-		gentype.NewClientWithList[*v1alpha1.Splitter, *v1alpha1.SplitterList](
+		gentype.NewClientWithList[*routingv1alpha1.Splitter, *routingv1alpha1.SplitterList](
 			"splitters",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.Splitter { return &v1alpha1.Splitter{} },
-			func() *v1alpha1.SplitterList { return &v1alpha1.SplitterList{} }),
+			func() *routingv1alpha1.Splitter { return &routingv1alpha1.Splitter{} },
+			func() *routingv1alpha1.SplitterList { return &routingv1alpha1.SplitterList{} },
+		),
 	}
 }

@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
+	flowv1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type BridgesGetter interface {
 
 // BridgeInterface has methods to work with Bridge resources.
 type BridgeInterface interface {
-	Create(ctx context.Context, bridge *v1alpha1.Bridge, opts v1.CreateOptions) (*v1alpha1.Bridge, error)
-	Update(ctx context.Context, bridge *v1alpha1.Bridge, opts v1.UpdateOptions) (*v1alpha1.Bridge, error)
+	Create(ctx context.Context, bridge *flowv1alpha1.Bridge, opts v1.CreateOptions) (*flowv1alpha1.Bridge, error)
+	Update(ctx context.Context, bridge *flowv1alpha1.Bridge, opts v1.UpdateOptions) (*flowv1alpha1.Bridge, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, bridge *v1alpha1.Bridge, opts v1.UpdateOptions) (*v1alpha1.Bridge, error)
+	UpdateStatus(ctx context.Context, bridge *flowv1alpha1.Bridge, opts v1.UpdateOptions) (*flowv1alpha1.Bridge, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.Bridge, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.BridgeList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*flowv1alpha1.Bridge, error)
+	List(ctx context.Context, opts v1.ListOptions) (*flowv1alpha1.BridgeList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Bridge, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *flowv1alpha1.Bridge, err error)
 	BridgeExpansion
 }
 
 // bridges implements BridgeInterface
 type bridges struct {
-	*gentype.ClientWithList[*v1alpha1.Bridge, *v1alpha1.BridgeList]
+	*gentype.ClientWithList[*flowv1alpha1.Bridge, *flowv1alpha1.BridgeList]
 }
 
 // newBridges returns a Bridges
 func newBridges(c *FlowV1alpha1Client, namespace string) *bridges {
 	return &bridges{
-		gentype.NewClientWithList[*v1alpha1.Bridge, *v1alpha1.BridgeList](
+		gentype.NewClientWithList[*flowv1alpha1.Bridge, *flowv1alpha1.BridgeList](
 			"bridges",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.Bridge { return &v1alpha1.Bridge{} },
-			func() *v1alpha1.BridgeList { return &v1alpha1.BridgeList{} }),
+			func() *flowv1alpha1.Bridge { return &flowv1alpha1.Bridge{} },
+			func() *flowv1alpha1.BridgeList { return &flowv1alpha1.BridgeList{} },
+		),
 	}
 }

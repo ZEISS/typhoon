@@ -11,7 +11,7 @@ import (
 	internalclientset "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset"
 	routingv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/listers/routing/v1alpha1"
 	zap "go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
+	zapcore "go.uber.org/zap/zapcore"
 	v1 "k8s.io/api/core/v1"
 	equality "k8s.io/apimachinery/pkg/api/equality"
 	errors "k8s.io/apimachinery/pkg/api/errors"

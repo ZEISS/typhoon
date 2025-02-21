@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
+	sourcesv1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type KafkaSourcesGetter interface {
 
 // KafkaSourceInterface has methods to work with KafkaSource resources.
 type KafkaSourceInterface interface {
-	Create(ctx context.Context, kafkaSource *v1alpha1.KafkaSource, opts v1.CreateOptions) (*v1alpha1.KafkaSource, error)
-	Update(ctx context.Context, kafkaSource *v1alpha1.KafkaSource, opts v1.UpdateOptions) (*v1alpha1.KafkaSource, error)
+	Create(ctx context.Context, kafkaSource *sourcesv1alpha1.KafkaSource, opts v1.CreateOptions) (*sourcesv1alpha1.KafkaSource, error)
+	Update(ctx context.Context, kafkaSource *sourcesv1alpha1.KafkaSource, opts v1.UpdateOptions) (*sourcesv1alpha1.KafkaSource, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, kafkaSource *v1alpha1.KafkaSource, opts v1.UpdateOptions) (*v1alpha1.KafkaSource, error)
+	UpdateStatus(ctx context.Context, kafkaSource *sourcesv1alpha1.KafkaSource, opts v1.UpdateOptions) (*sourcesv1alpha1.KafkaSource, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.KafkaSource, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.KafkaSourceList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*sourcesv1alpha1.KafkaSource, error)
+	List(ctx context.Context, opts v1.ListOptions) (*sourcesv1alpha1.KafkaSourceList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.KafkaSource, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *sourcesv1alpha1.KafkaSource, err error)
 	KafkaSourceExpansion
 }
 
 // kafkaSources implements KafkaSourceInterface
 type kafkaSources struct {
-	*gentype.ClientWithList[*v1alpha1.KafkaSource, *v1alpha1.KafkaSourceList]
+	*gentype.ClientWithList[*sourcesv1alpha1.KafkaSource, *sourcesv1alpha1.KafkaSourceList]
 }
 
 // newKafkaSources returns a KafkaSources
 func newKafkaSources(c *SourcesV1alpha1Client, namespace string) *kafkaSources {
 	return &kafkaSources{
-		gentype.NewClientWithList[*v1alpha1.KafkaSource, *v1alpha1.KafkaSourceList](
+		gentype.NewClientWithList[*sourcesv1alpha1.KafkaSource, *sourcesv1alpha1.KafkaSourceList](
 			"kafkasources",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.KafkaSource { return &v1alpha1.KafkaSource{} },
-			func() *v1alpha1.KafkaSourceList { return &v1alpha1.KafkaSourceList{} }),
+			func() *sourcesv1alpha1.KafkaSource { return &sourcesv1alpha1.KafkaSource{} },
+			func() *sourcesv1alpha1.KafkaSourceList { return &sourcesv1alpha1.KafkaSourceList{} },
+		),
 	}
 }

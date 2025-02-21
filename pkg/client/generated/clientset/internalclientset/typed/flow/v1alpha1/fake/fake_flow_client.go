@@ -13,31 +13,31 @@ type FakeFlowV1alpha1 struct {
 }
 
 func (c *FakeFlowV1alpha1) Bridges(namespace string) v1alpha1.BridgeInterface {
-	return &FakeBridges{c, namespace}
+	return newFakeBridges(c, namespace)
 }
 
 func (c *FakeFlowV1alpha1) JQTransformations(namespace string) v1alpha1.JQTransformationInterface {
-	return &FakeJQTransformations{c, namespace}
+	return newFakeJQTransformations(c, namespace)
 }
 
 func (c *FakeFlowV1alpha1) Synchronizers(namespace string) v1alpha1.SynchronizerInterface {
-	return &FakeSynchronizers{c, namespace}
+	return newFakeSynchronizers(c, namespace)
 }
 
 func (c *FakeFlowV1alpha1) Transformations(namespace string) v1alpha1.TransformationInterface {
-	return &FakeTransformations{c, namespace}
+	return newFakeTransformations(c, namespace)
 }
 
 func (c *FakeFlowV1alpha1) WorkerTransformations(namespace string) v1alpha1.WorkerTransformationInterface {
-	return &FakeWorkerTransformations{c, namespace}
+	return newFakeWorkerTransformations(c, namespace)
 }
 
 func (c *FakeFlowV1alpha1) XMLToJSONTransformations(namespace string) v1alpha1.XMLToJSONTransformationInterface {
-	return &FakeXMLToJSONTransformations{c, namespace}
+	return newFakeXMLToJSONTransformations(c, namespace)
 }
 
 func (c *FakeFlowV1alpha1) XSLTTransformations(namespace string) v1alpha1.XSLTTransformationInterface {
-	return &FakeXSLTTransformations{c, namespace}
+	return newFakeXSLTTransformations(c, namespace)
 }
 
 // RESTClient returns a RESTClient that is used to communicate

@@ -3,129 +3,34 @@
 package fake
 
 import (
-	"context"
-
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	labels "k8s.io/apimachinery/pkg/labels"
-	types "k8s.io/apimachinery/pkg/types"
-	watch "k8s.io/apimachinery/pkg/watch"
-	testing "k8s.io/client-go/testing"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/targets/v1alpha1"
+	gentype "k8s.io/client-go/gentype"
 )
 
-// FakeKafkaTargets implements KafkaTargetInterface
-type FakeKafkaTargets struct {
+// fakeKafkaTargets implements KafkaTargetInterface
+type fakeKafkaTargets struct {
+	*gentype.FakeClientWithList[*v1alpha1.KafkaTarget, *v1alpha1.KafkaTargetList]
 	Fake *FakeTargetsV1alpha1
-	ns   string
 }
 
-var kafkatargetsResource = v1alpha1.SchemeGroupVersion.WithResource("kafkatargets")
-
-var kafkatargetsKind = v1alpha1.SchemeGroupVersion.WithKind("KafkaTarget")
-
-// Get takes name of the kafkaTarget, and returns the corresponding kafkaTarget object, and an error if there is any.
-func (c *FakeKafkaTargets) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.KafkaTarget, err error) {
-	emptyResult := &v1alpha1.KafkaTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewGetActionWithOptions(kafkatargetsResource, c.ns, name, options), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
+func newFakeKafkaTargets(fake *FakeTargetsV1alpha1, namespace string) targetsv1alpha1.KafkaTargetInterface {
+	return &fakeKafkaTargets{
+		gentype.NewFakeClientWithList[*v1alpha1.KafkaTarget, *v1alpha1.KafkaTargetList](
+			fake.Fake,
+			namespace,
+			v1alpha1.SchemeGroupVersion.WithResource("kafkatargets"),
+			v1alpha1.SchemeGroupVersion.WithKind("KafkaTarget"),
+			func() *v1alpha1.KafkaTarget { return &v1alpha1.KafkaTarget{} },
+			func() *v1alpha1.KafkaTargetList { return &v1alpha1.KafkaTargetList{} },
+			func(dst, src *v1alpha1.KafkaTargetList) { dst.ListMeta = src.ListMeta },
+			func(list *v1alpha1.KafkaTargetList) []*v1alpha1.KafkaTarget {
+				return gentype.ToPointerSlice(list.Items)
+			},
+			func(list *v1alpha1.KafkaTargetList, items []*v1alpha1.KafkaTarget) {
+				list.Items = gentype.FromPointerSlice(items)
+			},
+		),
+		fake,
 	}
-	return obj.(*v1alpha1.KafkaTarget), err
-}
-
-// List takes label and field selectors, and returns the list of KafkaTargets that match those selectors.
-func (c *FakeKafkaTargets) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.KafkaTargetList, err error) {
-	emptyResult := &v1alpha1.KafkaTargetList{}
-	obj, err := c.Fake.
-		Invokes(testing.NewListActionWithOptions(kafkatargetsResource, kafkatargetsKind, c.ns, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-
-	label, _, _ := testing.ExtractFromListOptions(opts)
-	if label == nil {
-		label = labels.Everything()
-	}
-	list := &v1alpha1.KafkaTargetList{ListMeta: obj.(*v1alpha1.KafkaTargetList).ListMeta}
-	for _, item := range obj.(*v1alpha1.KafkaTargetList).Items {
-		if label.Matches(labels.Set(item.Labels)) {
-			list.Items = append(list.Items, item)
-		}
-	}
-	return list, err
-}
-
-// Watch returns a watch.Interface that watches the requested kafkaTargets.
-func (c *FakeKafkaTargets) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
-	return c.Fake.
-		InvokesWatch(testing.NewWatchActionWithOptions(kafkatargetsResource, c.ns, opts))
-
-}
-
-// Create takes the representation of a kafkaTarget and creates it.  Returns the server's representation of the kafkaTarget, and an error, if there is any.
-func (c *FakeKafkaTargets) Create(ctx context.Context, kafkaTarget *v1alpha1.KafkaTarget, opts v1.CreateOptions) (result *v1alpha1.KafkaTarget, err error) {
-	emptyResult := &v1alpha1.KafkaTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewCreateActionWithOptions(kafkatargetsResource, c.ns, kafkaTarget, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.KafkaTarget), err
-}
-
-// Update takes the representation of a kafkaTarget and updates it. Returns the server's representation of the kafkaTarget, and an error, if there is any.
-func (c *FakeKafkaTargets) Update(ctx context.Context, kafkaTarget *v1alpha1.KafkaTarget, opts v1.UpdateOptions) (result *v1alpha1.KafkaTarget, err error) {
-	emptyResult := &v1alpha1.KafkaTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateActionWithOptions(kafkatargetsResource, c.ns, kafkaTarget, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.KafkaTarget), err
-}
-
-// UpdateStatus was generated because the type contains a Status member.
-// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeKafkaTargets) UpdateStatus(ctx context.Context, kafkaTarget *v1alpha1.KafkaTarget, opts v1.UpdateOptions) (result *v1alpha1.KafkaTarget, err error) {
-	emptyResult := &v1alpha1.KafkaTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceActionWithOptions(kafkatargetsResource, "status", c.ns, kafkaTarget, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.KafkaTarget), err
-}
-
-// Delete takes name of the kafkaTarget and deletes it. Returns an error if one occurs.
-func (c *FakeKafkaTargets) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
-	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(kafkatargetsResource, c.ns, name, opts), &v1alpha1.KafkaTarget{})
-
-	return err
-}
-
-// DeleteCollection deletes a collection of objects.
-func (c *FakeKafkaTargets) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionActionWithOptions(kafkatargetsResource, c.ns, opts, listOpts)
-
-	_, err := c.Fake.Invokes(action, &v1alpha1.KafkaTargetList{})
-	return err
-}
-
-// Patch applies the patch and returns the patched kafkaTarget.
-func (c *FakeKafkaTargets) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.KafkaTarget, err error) {
-	emptyResult := &v1alpha1.KafkaTarget{}
-	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceActionWithOptions(kafkatargetsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.KafkaTarget), err
 }

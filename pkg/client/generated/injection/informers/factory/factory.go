@@ -5,8 +5,8 @@ package factory
 import (
 	context "context"
 
-	externalversions "github.com/zeiss/typhoon/pkg/client/generated/informers/externalversions"
 	client "github.com/zeiss/typhoon/pkg/client/generated/injection/client"
+	externalversions "github.com/zeiss/typhoon/pkg/client/generated/listers/externalversions"
 	controller "knative.dev/pkg/controller"
 	injection "knative.dev/pkg/injection"
 	logging "knative.dev/pkg/logging"
@@ -34,7 +34,7 @@ func Get(ctx context.Context) externalversions.SharedInformerFactory {
 	untyped := ctx.Value(Key{})
 	if untyped == nil {
 		logging.FromContext(ctx).Panic(
-			"Unable to fetch github.com/zeiss/typhoon/pkg/client/generated/informers/externalversions.SharedInformerFactory from context.")
+			"Unable to fetch github.com/zeiss/typhoon/pkg/client/generated/listers/externalversions.SharedInformerFactory from context.")
 	}
 	return untyped.(externalversions.SharedInformerFactory)
 }

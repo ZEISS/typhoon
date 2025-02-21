@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
+	flowv1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type XSLTTransformationsGetter interface {
 
 // XSLTTransformationInterface has methods to work with XSLTTransformation resources.
 type XSLTTransformationInterface interface {
-	Create(ctx context.Context, xSLTTransformation *v1alpha1.XSLTTransformation, opts v1.CreateOptions) (*v1alpha1.XSLTTransformation, error)
-	Update(ctx context.Context, xSLTTransformation *v1alpha1.XSLTTransformation, opts v1.UpdateOptions) (*v1alpha1.XSLTTransformation, error)
+	Create(ctx context.Context, xSLTTransformation *flowv1alpha1.XSLTTransformation, opts v1.CreateOptions) (*flowv1alpha1.XSLTTransformation, error)
+	Update(ctx context.Context, xSLTTransformation *flowv1alpha1.XSLTTransformation, opts v1.UpdateOptions) (*flowv1alpha1.XSLTTransformation, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, xSLTTransformation *v1alpha1.XSLTTransformation, opts v1.UpdateOptions) (*v1alpha1.XSLTTransformation, error)
+	UpdateStatus(ctx context.Context, xSLTTransformation *flowv1alpha1.XSLTTransformation, opts v1.UpdateOptions) (*flowv1alpha1.XSLTTransformation, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.XSLTTransformation, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.XSLTTransformationList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*flowv1alpha1.XSLTTransformation, error)
+	List(ctx context.Context, opts v1.ListOptions) (*flowv1alpha1.XSLTTransformationList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.XSLTTransformation, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *flowv1alpha1.XSLTTransformation, err error)
 	XSLTTransformationExpansion
 }
 
 // xSLTTransformations implements XSLTTransformationInterface
 type xSLTTransformations struct {
-	*gentype.ClientWithList[*v1alpha1.XSLTTransformation, *v1alpha1.XSLTTransformationList]
+	*gentype.ClientWithList[*flowv1alpha1.XSLTTransformation, *flowv1alpha1.XSLTTransformationList]
 }
 
 // newXSLTTransformations returns a XSLTTransformations
 func newXSLTTransformations(c *FlowV1alpha1Client, namespace string) *xSLTTransformations {
 	return &xSLTTransformations{
-		gentype.NewClientWithList[*v1alpha1.XSLTTransformation, *v1alpha1.XSLTTransformationList](
+		gentype.NewClientWithList[*flowv1alpha1.XSLTTransformation, *flowv1alpha1.XSLTTransformationList](
 			"xslttransformations",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.XSLTTransformation { return &v1alpha1.XSLTTransformation{} },
-			func() *v1alpha1.XSLTTransformationList { return &v1alpha1.XSLTTransformationList{} }),
+			func() *flowv1alpha1.XSLTTransformation { return &flowv1alpha1.XSLTTransformation{} },
+			func() *flowv1alpha1.XSLTTransformationList { return &flowv1alpha1.XSLTTransformationList{} },
+		),
 	}
 }

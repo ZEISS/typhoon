@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
+	sourcesv1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type AzureServiceBusSourcesGetter interface {
 
 // AzureServiceBusSourceInterface has methods to work with AzureServiceBusSource resources.
 type AzureServiceBusSourceInterface interface {
-	Create(ctx context.Context, azureServiceBusSource *v1alpha1.AzureServiceBusSource, opts v1.CreateOptions) (*v1alpha1.AzureServiceBusSource, error)
-	Update(ctx context.Context, azureServiceBusSource *v1alpha1.AzureServiceBusSource, opts v1.UpdateOptions) (*v1alpha1.AzureServiceBusSource, error)
+	Create(ctx context.Context, azureServiceBusSource *sourcesv1alpha1.AzureServiceBusSource, opts v1.CreateOptions) (*sourcesv1alpha1.AzureServiceBusSource, error)
+	Update(ctx context.Context, azureServiceBusSource *sourcesv1alpha1.AzureServiceBusSource, opts v1.UpdateOptions) (*sourcesv1alpha1.AzureServiceBusSource, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, azureServiceBusSource *v1alpha1.AzureServiceBusSource, opts v1.UpdateOptions) (*v1alpha1.AzureServiceBusSource, error)
+	UpdateStatus(ctx context.Context, azureServiceBusSource *sourcesv1alpha1.AzureServiceBusSource, opts v1.UpdateOptions) (*sourcesv1alpha1.AzureServiceBusSource, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.AzureServiceBusSource, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.AzureServiceBusSourceList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*sourcesv1alpha1.AzureServiceBusSource, error)
+	List(ctx context.Context, opts v1.ListOptions) (*sourcesv1alpha1.AzureServiceBusSourceList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.AzureServiceBusSource, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *sourcesv1alpha1.AzureServiceBusSource, err error)
 	AzureServiceBusSourceExpansion
 }
 
 // azureServiceBusSources implements AzureServiceBusSourceInterface
 type azureServiceBusSources struct {
-	*gentype.ClientWithList[*v1alpha1.AzureServiceBusSource, *v1alpha1.AzureServiceBusSourceList]
+	*gentype.ClientWithList[*sourcesv1alpha1.AzureServiceBusSource, *sourcesv1alpha1.AzureServiceBusSourceList]
 }
 
 // newAzureServiceBusSources returns a AzureServiceBusSources
 func newAzureServiceBusSources(c *SourcesV1alpha1Client, namespace string) *azureServiceBusSources {
 	return &azureServiceBusSources{
-		gentype.NewClientWithList[*v1alpha1.AzureServiceBusSource, *v1alpha1.AzureServiceBusSourceList](
+		gentype.NewClientWithList[*sourcesv1alpha1.AzureServiceBusSource, *sourcesv1alpha1.AzureServiceBusSourceList](
 			"azureservicebussources",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.AzureServiceBusSource { return &v1alpha1.AzureServiceBusSource{} },
-			func() *v1alpha1.AzureServiceBusSourceList { return &v1alpha1.AzureServiceBusSourceList{} }),
+			func() *sourcesv1alpha1.AzureServiceBusSource { return &sourcesv1alpha1.AzureServiceBusSource{} },
+			func() *sourcesv1alpha1.AzureServiceBusSourceList { return &sourcesv1alpha1.AzureServiceBusSourceList{} },
+		),
 	}
 }

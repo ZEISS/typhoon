@@ -3,10 +3,10 @@
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // KafkaTargetLister helps list KafkaTargets.
@@ -14,7 +14,7 @@ import (
 type KafkaTargetLister interface {
 	// List lists all KafkaTargets in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.KafkaTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.KafkaTarget, err error)
 	// KafkaTargets returns an object that can list and get KafkaTargets.
 	KafkaTargets(namespace string) KafkaTargetNamespaceLister
 	KafkaTargetListerExpansion
@@ -22,17 +22,17 @@ type KafkaTargetLister interface {
 
 // kafkaTargetLister implements the KafkaTargetLister interface.
 type kafkaTargetLister struct {
-	listers.ResourceIndexer[*v1alpha1.KafkaTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.KafkaTarget]
 }
 
 // NewKafkaTargetLister returns a new KafkaTargetLister.
 func NewKafkaTargetLister(indexer cache.Indexer) KafkaTargetLister {
-	return &kafkaTargetLister{listers.New[*v1alpha1.KafkaTarget](indexer, v1alpha1.Resource("kafkatarget"))}
+	return &kafkaTargetLister{listers.New[*targetsv1alpha1.KafkaTarget](indexer, targetsv1alpha1.Resource("kafkatarget"))}
 }
 
 // KafkaTargets returns an object that can list and get KafkaTargets.
 func (s *kafkaTargetLister) KafkaTargets(namespace string) KafkaTargetNamespaceLister {
-	return kafkaTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.KafkaTarget](s.ResourceIndexer, namespace)}
+	return kafkaTargetNamespaceLister{listers.NewNamespaced[*targetsv1alpha1.KafkaTarget](s.ResourceIndexer, namespace)}
 }
 
 // KafkaTargetNamespaceLister helps list and get KafkaTargets.
@@ -40,15 +40,15 @@ func (s *kafkaTargetLister) KafkaTargets(namespace string) KafkaTargetNamespaceL
 type KafkaTargetNamespaceLister interface {
 	// List lists all KafkaTargets in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.KafkaTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.KafkaTarget, err error)
 	// Get retrieves the KafkaTarget from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.KafkaTarget, error)
+	Get(name string) (*targetsv1alpha1.KafkaTarget, error)
 	KafkaTargetNamespaceListerExpansion
 }
 
 // kafkaTargetNamespaceLister implements the KafkaTargetNamespaceLister
 // interface.
 type kafkaTargetNamespaceLister struct {
-	listers.ResourceIndexer[*v1alpha1.KafkaTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.KafkaTarget]
 }

@@ -3,10 +3,10 @@
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	sourcesv1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // WebhookSourceLister helps list WebhookSources.
@@ -14,7 +14,7 @@ import (
 type WebhookSourceLister interface {
 	// List lists all WebhookSources in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.WebhookSource, err error)
+	List(selector labels.Selector) (ret []*sourcesv1alpha1.WebhookSource, err error)
 	// WebhookSources returns an object that can list and get WebhookSources.
 	WebhookSources(namespace string) WebhookSourceNamespaceLister
 	WebhookSourceListerExpansion
@@ -22,17 +22,17 @@ type WebhookSourceLister interface {
 
 // webhookSourceLister implements the WebhookSourceLister interface.
 type webhookSourceLister struct {
-	listers.ResourceIndexer[*v1alpha1.WebhookSource]
+	listers.ResourceIndexer[*sourcesv1alpha1.WebhookSource]
 }
 
 // NewWebhookSourceLister returns a new WebhookSourceLister.
 func NewWebhookSourceLister(indexer cache.Indexer) WebhookSourceLister {
-	return &webhookSourceLister{listers.New[*v1alpha1.WebhookSource](indexer, v1alpha1.Resource("webhooksource"))}
+	return &webhookSourceLister{listers.New[*sourcesv1alpha1.WebhookSource](indexer, sourcesv1alpha1.Resource("webhooksource"))}
 }
 
 // WebhookSources returns an object that can list and get WebhookSources.
 func (s *webhookSourceLister) WebhookSources(namespace string) WebhookSourceNamespaceLister {
-	return webhookSourceNamespaceLister{listers.NewNamespaced[*v1alpha1.WebhookSource](s.ResourceIndexer, namespace)}
+	return webhookSourceNamespaceLister{listers.NewNamespaced[*sourcesv1alpha1.WebhookSource](s.ResourceIndexer, namespace)}
 }
 
 // WebhookSourceNamespaceLister helps list and get WebhookSources.
@@ -40,15 +40,15 @@ func (s *webhookSourceLister) WebhookSources(namespace string) WebhookSourceName
 type WebhookSourceNamespaceLister interface {
 	// List lists all WebhookSources in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.WebhookSource, err error)
+	List(selector labels.Selector) (ret []*sourcesv1alpha1.WebhookSource, err error)
 	// Get retrieves the WebhookSource from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.WebhookSource, error)
+	Get(name string) (*sourcesv1alpha1.WebhookSource, error)
 	WebhookSourceNamespaceListerExpansion
 }
 
 // webhookSourceNamespaceLister implements the WebhookSourceNamespaceLister
 // interface.
 type webhookSourceNamespaceLister struct {
-	listers.ResourceIndexer[*v1alpha1.WebhookSource]
+	listers.ResourceIndexer[*sourcesv1alpha1.WebhookSource]
 }

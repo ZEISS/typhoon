@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
+	flowv1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type XMLToJSONTransformationsGetter interface {
 
 // XMLToJSONTransformationInterface has methods to work with XMLToJSONTransformation resources.
 type XMLToJSONTransformationInterface interface {
-	Create(ctx context.Context, xMLToJSONTransformation *v1alpha1.XMLToJSONTransformation, opts v1.CreateOptions) (*v1alpha1.XMLToJSONTransformation, error)
-	Update(ctx context.Context, xMLToJSONTransformation *v1alpha1.XMLToJSONTransformation, opts v1.UpdateOptions) (*v1alpha1.XMLToJSONTransformation, error)
+	Create(ctx context.Context, xMLToJSONTransformation *flowv1alpha1.XMLToJSONTransformation, opts v1.CreateOptions) (*flowv1alpha1.XMLToJSONTransformation, error)
+	Update(ctx context.Context, xMLToJSONTransformation *flowv1alpha1.XMLToJSONTransformation, opts v1.UpdateOptions) (*flowv1alpha1.XMLToJSONTransformation, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, xMLToJSONTransformation *v1alpha1.XMLToJSONTransformation, opts v1.UpdateOptions) (*v1alpha1.XMLToJSONTransformation, error)
+	UpdateStatus(ctx context.Context, xMLToJSONTransformation *flowv1alpha1.XMLToJSONTransformation, opts v1.UpdateOptions) (*flowv1alpha1.XMLToJSONTransformation, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.XMLToJSONTransformation, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.XMLToJSONTransformationList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*flowv1alpha1.XMLToJSONTransformation, error)
+	List(ctx context.Context, opts v1.ListOptions) (*flowv1alpha1.XMLToJSONTransformationList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.XMLToJSONTransformation, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *flowv1alpha1.XMLToJSONTransformation, err error)
 	XMLToJSONTransformationExpansion
 }
 
 // xMLToJSONTransformations implements XMLToJSONTransformationInterface
 type xMLToJSONTransformations struct {
-	*gentype.ClientWithList[*v1alpha1.XMLToJSONTransformation, *v1alpha1.XMLToJSONTransformationList]
+	*gentype.ClientWithList[*flowv1alpha1.XMLToJSONTransformation, *flowv1alpha1.XMLToJSONTransformationList]
 }
 
 // newXMLToJSONTransformations returns a XMLToJSONTransformations
 func newXMLToJSONTransformations(c *FlowV1alpha1Client, namespace string) *xMLToJSONTransformations {
 	return &xMLToJSONTransformations{
-		gentype.NewClientWithList[*v1alpha1.XMLToJSONTransformation, *v1alpha1.XMLToJSONTransformationList](
+		gentype.NewClientWithList[*flowv1alpha1.XMLToJSONTransformation, *flowv1alpha1.XMLToJSONTransformationList](
 			"xmltojsontransformations",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.XMLToJSONTransformation { return &v1alpha1.XMLToJSONTransformation{} },
-			func() *v1alpha1.XMLToJSONTransformationList { return &v1alpha1.XMLToJSONTransformationList{} }),
+			func() *flowv1alpha1.XMLToJSONTransformation { return &flowv1alpha1.XMLToJSONTransformation{} },
+			func() *flowv1alpha1.XMLToJSONTransformationList { return &flowv1alpha1.XMLToJSONTransformationList{} },
+		),
 	}
 }

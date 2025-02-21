@@ -3,10 +3,10 @@
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	sourcesv1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // OCIMetricsSourceLister helps list OCIMetricsSources.
@@ -14,7 +14,7 @@ import (
 type OCIMetricsSourceLister interface {
 	// List lists all OCIMetricsSources in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.OCIMetricsSource, err error)
+	List(selector labels.Selector) (ret []*sourcesv1alpha1.OCIMetricsSource, err error)
 	// OCIMetricsSources returns an object that can list and get OCIMetricsSources.
 	OCIMetricsSources(namespace string) OCIMetricsSourceNamespaceLister
 	OCIMetricsSourceListerExpansion
@@ -22,17 +22,17 @@ type OCIMetricsSourceLister interface {
 
 // oCIMetricsSourceLister implements the OCIMetricsSourceLister interface.
 type oCIMetricsSourceLister struct {
-	listers.ResourceIndexer[*v1alpha1.OCIMetricsSource]
+	listers.ResourceIndexer[*sourcesv1alpha1.OCIMetricsSource]
 }
 
 // NewOCIMetricsSourceLister returns a new OCIMetricsSourceLister.
 func NewOCIMetricsSourceLister(indexer cache.Indexer) OCIMetricsSourceLister {
-	return &oCIMetricsSourceLister{listers.New[*v1alpha1.OCIMetricsSource](indexer, v1alpha1.Resource("ocimetricssource"))}
+	return &oCIMetricsSourceLister{listers.New[*sourcesv1alpha1.OCIMetricsSource](indexer, sourcesv1alpha1.Resource("ocimetricssource"))}
 }
 
 // OCIMetricsSources returns an object that can list and get OCIMetricsSources.
 func (s *oCIMetricsSourceLister) OCIMetricsSources(namespace string) OCIMetricsSourceNamespaceLister {
-	return oCIMetricsSourceNamespaceLister{listers.NewNamespaced[*v1alpha1.OCIMetricsSource](s.ResourceIndexer, namespace)}
+	return oCIMetricsSourceNamespaceLister{listers.NewNamespaced[*sourcesv1alpha1.OCIMetricsSource](s.ResourceIndexer, namespace)}
 }
 
 // OCIMetricsSourceNamespaceLister helps list and get OCIMetricsSources.
@@ -40,15 +40,15 @@ func (s *oCIMetricsSourceLister) OCIMetricsSources(namespace string) OCIMetricsS
 type OCIMetricsSourceNamespaceLister interface {
 	// List lists all OCIMetricsSources in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.OCIMetricsSource, err error)
+	List(selector labels.Selector) (ret []*sourcesv1alpha1.OCIMetricsSource, err error)
 	// Get retrieves the OCIMetricsSource from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.OCIMetricsSource, error)
+	Get(name string) (*sourcesv1alpha1.OCIMetricsSource, error)
 	OCIMetricsSourceNamespaceListerExpansion
 }
 
 // oCIMetricsSourceNamespaceLister implements the OCIMetricsSourceNamespaceLister
 // interface.
 type oCIMetricsSourceNamespaceLister struct {
-	listers.ResourceIndexer[*v1alpha1.OCIMetricsSource]
+	listers.ResourceIndexer[*sourcesv1alpha1.OCIMetricsSource]
 }

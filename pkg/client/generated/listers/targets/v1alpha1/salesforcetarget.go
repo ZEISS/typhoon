@@ -3,10 +3,10 @@
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // SalesforceTargetLister helps list SalesforceTargets.
@@ -14,7 +14,7 @@ import (
 type SalesforceTargetLister interface {
 	// List lists all SalesforceTargets in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.SalesforceTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.SalesforceTarget, err error)
 	// SalesforceTargets returns an object that can list and get SalesforceTargets.
 	SalesforceTargets(namespace string) SalesforceTargetNamespaceLister
 	SalesforceTargetListerExpansion
@@ -22,17 +22,17 @@ type SalesforceTargetLister interface {
 
 // salesforceTargetLister implements the SalesforceTargetLister interface.
 type salesforceTargetLister struct {
-	listers.ResourceIndexer[*v1alpha1.SalesforceTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.SalesforceTarget]
 }
 
 // NewSalesforceTargetLister returns a new SalesforceTargetLister.
 func NewSalesforceTargetLister(indexer cache.Indexer) SalesforceTargetLister {
-	return &salesforceTargetLister{listers.New[*v1alpha1.SalesforceTarget](indexer, v1alpha1.Resource("salesforcetarget"))}
+	return &salesforceTargetLister{listers.New[*targetsv1alpha1.SalesforceTarget](indexer, targetsv1alpha1.Resource("salesforcetarget"))}
 }
 
 // SalesforceTargets returns an object that can list and get SalesforceTargets.
 func (s *salesforceTargetLister) SalesforceTargets(namespace string) SalesforceTargetNamespaceLister {
-	return salesforceTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.SalesforceTarget](s.ResourceIndexer, namespace)}
+	return salesforceTargetNamespaceLister{listers.NewNamespaced[*targetsv1alpha1.SalesforceTarget](s.ResourceIndexer, namespace)}
 }
 
 // SalesforceTargetNamespaceLister helps list and get SalesforceTargets.
@@ -40,15 +40,15 @@ func (s *salesforceTargetLister) SalesforceTargets(namespace string) SalesforceT
 type SalesforceTargetNamespaceLister interface {
 	// List lists all SalesforceTargets in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.SalesforceTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.SalesforceTarget, err error)
 	// Get retrieves the SalesforceTarget from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.SalesforceTarget, error)
+	Get(name string) (*targetsv1alpha1.SalesforceTarget, error)
 	SalesforceTargetNamespaceListerExpansion
 }
 
 // salesforceTargetNamespaceLister implements the SalesforceTargetNamespaceLister
 // interface.
 type salesforceTargetNamespaceLister struct {
-	listers.ResourceIndexer[*v1alpha1.SalesforceTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.SalesforceTarget]
 }

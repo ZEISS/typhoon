@@ -3,10 +3,10 @@
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // JiraTargetLister helps list JiraTargets.
@@ -14,7 +14,7 @@ import (
 type JiraTargetLister interface {
 	// List lists all JiraTargets in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.JiraTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.JiraTarget, err error)
 	// JiraTargets returns an object that can list and get JiraTargets.
 	JiraTargets(namespace string) JiraTargetNamespaceLister
 	JiraTargetListerExpansion
@@ -22,17 +22,17 @@ type JiraTargetLister interface {
 
 // jiraTargetLister implements the JiraTargetLister interface.
 type jiraTargetLister struct {
-	listers.ResourceIndexer[*v1alpha1.JiraTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.JiraTarget]
 }
 
 // NewJiraTargetLister returns a new JiraTargetLister.
 func NewJiraTargetLister(indexer cache.Indexer) JiraTargetLister {
-	return &jiraTargetLister{listers.New[*v1alpha1.JiraTarget](indexer, v1alpha1.Resource("jiratarget"))}
+	return &jiraTargetLister{listers.New[*targetsv1alpha1.JiraTarget](indexer, targetsv1alpha1.Resource("jiratarget"))}
 }
 
 // JiraTargets returns an object that can list and get JiraTargets.
 func (s *jiraTargetLister) JiraTargets(namespace string) JiraTargetNamespaceLister {
-	return jiraTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.JiraTarget](s.ResourceIndexer, namespace)}
+	return jiraTargetNamespaceLister{listers.NewNamespaced[*targetsv1alpha1.JiraTarget](s.ResourceIndexer, namespace)}
 }
 
 // JiraTargetNamespaceLister helps list and get JiraTargets.
@@ -40,15 +40,15 @@ func (s *jiraTargetLister) JiraTargets(namespace string) JiraTargetNamespaceList
 type JiraTargetNamespaceLister interface {
 	// List lists all JiraTargets in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.JiraTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.JiraTarget, err error)
 	// Get retrieves the JiraTarget from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.JiraTarget, error)
+	Get(name string) (*targetsv1alpha1.JiraTarget, error)
 	JiraTargetNamespaceListerExpansion
 }
 
 // jiraTargetNamespaceLister implements the JiraTargetNamespaceLister
 // interface.
 type jiraTargetNamespaceLister struct {
-	listers.ResourceIndexer[*v1alpha1.JiraTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.JiraTarget]
 }

@@ -61,5 +61,5 @@ type ServiceNowAuth struct {
 type ServiceNowTargetList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata"`
-	Items           []SalesforceTarget `json:"items"`
+	Items           []ServiceNowTarget `json:"items"`
 }

@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
+	flowv1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type SynchronizersGetter interface {
 
 // SynchronizerInterface has methods to work with Synchronizer resources.
 type SynchronizerInterface interface {
-	Create(ctx context.Context, synchronizer *v1alpha1.Synchronizer, opts v1.CreateOptions) (*v1alpha1.Synchronizer, error)
-	Update(ctx context.Context, synchronizer *v1alpha1.Synchronizer, opts v1.UpdateOptions) (*v1alpha1.Synchronizer, error)
+	Create(ctx context.Context, synchronizer *flowv1alpha1.Synchronizer, opts v1.CreateOptions) (*flowv1alpha1.Synchronizer, error)
+	Update(ctx context.Context, synchronizer *flowv1alpha1.Synchronizer, opts v1.UpdateOptions) (*flowv1alpha1.Synchronizer, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, synchronizer *v1alpha1.Synchronizer, opts v1.UpdateOptions) (*v1alpha1.Synchronizer, error)
+	UpdateStatus(ctx context.Context, synchronizer *flowv1alpha1.Synchronizer, opts v1.UpdateOptions) (*flowv1alpha1.Synchronizer, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.Synchronizer, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.SynchronizerList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*flowv1alpha1.Synchronizer, error)
+	List(ctx context.Context, opts v1.ListOptions) (*flowv1alpha1.SynchronizerList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Synchronizer, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *flowv1alpha1.Synchronizer, err error)
 	SynchronizerExpansion
 }
 
 // synchronizers implements SynchronizerInterface
 type synchronizers struct {
-	*gentype.ClientWithList[*v1alpha1.Synchronizer, *v1alpha1.SynchronizerList]
+	*gentype.ClientWithList[*flowv1alpha1.Synchronizer, *flowv1alpha1.SynchronizerList]
 }
 
 // newSynchronizers returns a Synchronizers
 func newSynchronizers(c *FlowV1alpha1Client, namespace string) *synchronizers {
 	return &synchronizers{
-		gentype.NewClientWithList[*v1alpha1.Synchronizer, *v1alpha1.SynchronizerList](
+		gentype.NewClientWithList[*flowv1alpha1.Synchronizer, *flowv1alpha1.SynchronizerList](
 			"synchronizers",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.Synchronizer { return &v1alpha1.Synchronizer{} },
-			func() *v1alpha1.SynchronizerList { return &v1alpha1.SynchronizerList{} }),
+			func() *flowv1alpha1.Synchronizer { return &flowv1alpha1.Synchronizer{} },
+			func() *flowv1alpha1.SynchronizerList { return &flowv1alpha1.SynchronizerList{} },
+		),
 	}
 }

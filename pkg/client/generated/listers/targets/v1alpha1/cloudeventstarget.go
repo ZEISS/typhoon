@@ -3,10 +3,10 @@
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // CloudEventsTargetLister helps list CloudEventsTargets.
@@ -14,7 +14,7 @@ import (
 type CloudEventsTargetLister interface {
 	// List lists all CloudEventsTargets in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.CloudEventsTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.CloudEventsTarget, err error)
 	// CloudEventsTargets returns an object that can list and get CloudEventsTargets.
 	CloudEventsTargets(namespace string) CloudEventsTargetNamespaceLister
 	CloudEventsTargetListerExpansion
@@ -22,17 +22,17 @@ type CloudEventsTargetLister interface {
 
 // cloudEventsTargetLister implements the CloudEventsTargetLister interface.
 type cloudEventsTargetLister struct {
-	listers.ResourceIndexer[*v1alpha1.CloudEventsTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.CloudEventsTarget]
 }
 
 // NewCloudEventsTargetLister returns a new CloudEventsTargetLister.
 func NewCloudEventsTargetLister(indexer cache.Indexer) CloudEventsTargetLister {
-	return &cloudEventsTargetLister{listers.New[*v1alpha1.CloudEventsTarget](indexer, v1alpha1.Resource("cloudeventstarget"))}
+	return &cloudEventsTargetLister{listers.New[*targetsv1alpha1.CloudEventsTarget](indexer, targetsv1alpha1.Resource("cloudeventstarget"))}
 }
 
 // CloudEventsTargets returns an object that can list and get CloudEventsTargets.
 func (s *cloudEventsTargetLister) CloudEventsTargets(namespace string) CloudEventsTargetNamespaceLister {
-	return cloudEventsTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.CloudEventsTarget](s.ResourceIndexer, namespace)}
+	return cloudEventsTargetNamespaceLister{listers.NewNamespaced[*targetsv1alpha1.CloudEventsTarget](s.ResourceIndexer, namespace)}
 }
 
 // CloudEventsTargetNamespaceLister helps list and get CloudEventsTargets.
@@ -40,15 +40,15 @@ func (s *cloudEventsTargetLister) CloudEventsTargets(namespace string) CloudEven
 type CloudEventsTargetNamespaceLister interface {
 	// List lists all CloudEventsTargets in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.CloudEventsTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.CloudEventsTarget, err error)
 	// Get retrieves the CloudEventsTarget from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.CloudEventsTarget, error)
+	Get(name string) (*targetsv1alpha1.CloudEventsTarget, error)
 	CloudEventsTargetNamespaceListerExpansion
 }
 
 // cloudEventsTargetNamespaceLister implements the CloudEventsTargetNamespaceLister
 // interface.
 type cloudEventsTargetNamespaceLister struct {
-	listers.ResourceIndexer[*v1alpha1.CloudEventsTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.CloudEventsTarget]
 }

@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type LogzTargetsGetter interface {
 
 // LogzTargetInterface has methods to work with LogzTarget resources.
 type LogzTargetInterface interface {
-	Create(ctx context.Context, logzTarget *v1alpha1.LogzTarget, opts v1.CreateOptions) (*v1alpha1.LogzTarget, error)
-	Update(ctx context.Context, logzTarget *v1alpha1.LogzTarget, opts v1.UpdateOptions) (*v1alpha1.LogzTarget, error)
+	Create(ctx context.Context, logzTarget *targetsv1alpha1.LogzTarget, opts v1.CreateOptions) (*targetsv1alpha1.LogzTarget, error)
+	Update(ctx context.Context, logzTarget *targetsv1alpha1.LogzTarget, opts v1.UpdateOptions) (*targetsv1alpha1.LogzTarget, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, logzTarget *v1alpha1.LogzTarget, opts v1.UpdateOptions) (*v1alpha1.LogzTarget, error)
+	UpdateStatus(ctx context.Context, logzTarget *targetsv1alpha1.LogzTarget, opts v1.UpdateOptions) (*targetsv1alpha1.LogzTarget, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.LogzTarget, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.LogzTargetList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*targetsv1alpha1.LogzTarget, error)
+	List(ctx context.Context, opts v1.ListOptions) (*targetsv1alpha1.LogzTargetList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.LogzTarget, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *targetsv1alpha1.LogzTarget, err error)
 	LogzTargetExpansion
 }
 
 // logzTargets implements LogzTargetInterface
 type logzTargets struct {
-	*gentype.ClientWithList[*v1alpha1.LogzTarget, *v1alpha1.LogzTargetList]
+	*gentype.ClientWithList[*targetsv1alpha1.LogzTarget, *targetsv1alpha1.LogzTargetList]
 }
 
 // newLogzTargets returns a LogzTargets
 func newLogzTargets(c *TargetsV1alpha1Client, namespace string) *logzTargets {
 	return &logzTargets{
-		gentype.NewClientWithList[*v1alpha1.LogzTarget, *v1alpha1.LogzTargetList](
+		gentype.NewClientWithList[*targetsv1alpha1.LogzTarget, *targetsv1alpha1.LogzTargetList](
 			"logztargets",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.LogzTarget { return &v1alpha1.LogzTarget{} },
-			func() *v1alpha1.LogzTargetList { return &v1alpha1.LogzTargetList{} }),
+			func() *targetsv1alpha1.LogzTarget { return &targetsv1alpha1.LogzTarget{} },
+			func() *targetsv1alpha1.LogzTargetList { return &targetsv1alpha1.LogzTargetList{} },
+		),
 	}
 }

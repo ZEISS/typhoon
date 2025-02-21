@@ -5,9 +5,9 @@ package fake
 import (
 	context "context"
 
-	externalversions "github.com/zeiss/typhoon/pkg/client/generated/informers/externalversions"
 	fake "github.com/zeiss/typhoon/pkg/client/generated/injection/client/fake"
 	factory "github.com/zeiss/typhoon/pkg/client/generated/injection/informers/factory"
+	externalversions "github.com/zeiss/typhoon/pkg/client/generated/listers/externalversions"
 	controller "knative.dev/pkg/controller"
 	injection "knative.dev/pkg/injection"
 )

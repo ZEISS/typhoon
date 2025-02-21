@@ -3,10 +3,10 @@
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // LogzTargetLister helps list LogzTargets.
@@ -14,7 +14,7 @@ import (
 type LogzTargetLister interface {
 	// List lists all LogzTargets in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.LogzTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.LogzTarget, err error)
 	// LogzTargets returns an object that can list and get LogzTargets.
 	LogzTargets(namespace string) LogzTargetNamespaceLister
 	LogzTargetListerExpansion
@@ -22,17 +22,17 @@ type LogzTargetLister interface {
 
 // logzTargetLister implements the LogzTargetLister interface.
 type logzTargetLister struct {
-	listers.ResourceIndexer[*v1alpha1.LogzTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.LogzTarget]
 }
 
 // NewLogzTargetLister returns a new LogzTargetLister.
 func NewLogzTargetLister(indexer cache.Indexer) LogzTargetLister {
-	return &logzTargetLister{listers.New[*v1alpha1.LogzTarget](indexer, v1alpha1.Resource("logztarget"))}
+	return &logzTargetLister{listers.New[*targetsv1alpha1.LogzTarget](indexer, targetsv1alpha1.Resource("logztarget"))}
 }
 
 // LogzTargets returns an object that can list and get LogzTargets.
 func (s *logzTargetLister) LogzTargets(namespace string) LogzTargetNamespaceLister {
-	return logzTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.LogzTarget](s.ResourceIndexer, namespace)}
+	return logzTargetNamespaceLister{listers.NewNamespaced[*targetsv1alpha1.LogzTarget](s.ResourceIndexer, namespace)}
 }
 
 // LogzTargetNamespaceLister helps list and get LogzTargets.
@@ -40,15 +40,15 @@ func (s *logzTargetLister) LogzTargets(namespace string) LogzTargetNamespaceList
 type LogzTargetNamespaceLister interface {
 	// List lists all LogzTargets in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.LogzTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.LogzTarget, err error)
 	// Get retrieves the LogzTarget from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.LogzTarget, error)
+	Get(name string) (*targetsv1alpha1.LogzTarget, error)
 	LogzTargetNamespaceListerExpansion
 }
 
 // logzTargetNamespaceLister implements the LogzTargetNamespaceLister
 // interface.
 type logzTargetNamespaceLister struct {
-	listers.ResourceIndexer[*v1alpha1.LogzTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.LogzTarget]
 }

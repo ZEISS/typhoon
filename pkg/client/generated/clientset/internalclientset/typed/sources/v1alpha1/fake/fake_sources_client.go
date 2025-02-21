@@ -13,39 +13,39 @@ type FakeSourcesV1alpha1 struct {
 }
 
 func (c *FakeSourcesV1alpha1) AzureServiceBusQueueSources(namespace string) v1alpha1.AzureServiceBusQueueSourceInterface {
-	return &FakeAzureServiceBusQueueSources{c, namespace}
+	return newFakeAzureServiceBusQueueSources(c, namespace)
 }
 
 func (c *FakeSourcesV1alpha1) AzureServiceBusSources(namespace string) v1alpha1.AzureServiceBusSourceInterface {
-	return &FakeAzureServiceBusSources{c, namespace}
+	return newFakeAzureServiceBusSources(c, namespace)
 }
 
 func (c *FakeSourcesV1alpha1) AzureServiceBusTopicSources(namespace string) v1alpha1.AzureServiceBusTopicSourceInterface {
-	return &FakeAzureServiceBusTopicSources{c, namespace}
+	return newFakeAzureServiceBusTopicSources(c, namespace)
 }
 
 func (c *FakeSourcesV1alpha1) CloudEventsSources(namespace string) v1alpha1.CloudEventsSourceInterface {
-	return &FakeCloudEventsSources{c, namespace}
+	return newFakeCloudEventsSources(c, namespace)
 }
 
 func (c *FakeSourcesV1alpha1) HTTPPollerSources(namespace string) v1alpha1.HTTPPollerSourceInterface {
-	return &FakeHTTPPollerSources{c, namespace}
+	return newFakeHTTPPollerSources(c, namespace)
 }
 
 func (c *FakeSourcesV1alpha1) KafkaSources(namespace string) v1alpha1.KafkaSourceInterface {
-	return &FakeKafkaSources{c, namespace}
+	return newFakeKafkaSources(c, namespace)
 }
 
 func (c *FakeSourcesV1alpha1) OCIMetricsSources(namespace string) v1alpha1.OCIMetricsSourceInterface {
-	return &FakeOCIMetricsSources{c, namespace}
+	return newFakeOCIMetricsSources(c, namespace)
 }
 
 func (c *FakeSourcesV1alpha1) SalesforceSources(namespace string) v1alpha1.SalesforceSourceInterface {
-	return &FakeSalesforceSources{c, namespace}
+	return newFakeSalesforceSources(c, namespace)
 }
 
 func (c *FakeSourcesV1alpha1) WebhookSources(namespace string) v1alpha1.WebhookSourceInterface {
-	return &FakeWebhookSources{c, namespace}
+	return newFakeWebhookSources(c, namespace)
 }
 
 // RESTClient returns a RESTClient that is used to communicate

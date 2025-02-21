@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
+	sourcesv1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type SalesforceSourcesGetter interface {
 
 // SalesforceSourceInterface has methods to work with SalesforceSource resources.
 type SalesforceSourceInterface interface {
-	Create(ctx context.Context, salesforceSource *v1alpha1.SalesforceSource, opts v1.CreateOptions) (*v1alpha1.SalesforceSource, error)
-	Update(ctx context.Context, salesforceSource *v1alpha1.SalesforceSource, opts v1.UpdateOptions) (*v1alpha1.SalesforceSource, error)
+	Create(ctx context.Context, salesforceSource *sourcesv1alpha1.SalesforceSource, opts v1.CreateOptions) (*sourcesv1alpha1.SalesforceSource, error)
+	Update(ctx context.Context, salesforceSource *sourcesv1alpha1.SalesforceSource, opts v1.UpdateOptions) (*sourcesv1alpha1.SalesforceSource, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, salesforceSource *v1alpha1.SalesforceSource, opts v1.UpdateOptions) (*v1alpha1.SalesforceSource, error)
+	UpdateStatus(ctx context.Context, salesforceSource *sourcesv1alpha1.SalesforceSource, opts v1.UpdateOptions) (*sourcesv1alpha1.SalesforceSource, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.SalesforceSource, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.SalesforceSourceList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*sourcesv1alpha1.SalesforceSource, error)
+	List(ctx context.Context, opts v1.ListOptions) (*sourcesv1alpha1.SalesforceSourceList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.SalesforceSource, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *sourcesv1alpha1.SalesforceSource, err error)
 	SalesforceSourceExpansion
 }
 
 // salesforceSources implements SalesforceSourceInterface
 type salesforceSources struct {
-	*gentype.ClientWithList[*v1alpha1.SalesforceSource, *v1alpha1.SalesforceSourceList]
+	*gentype.ClientWithList[*sourcesv1alpha1.SalesforceSource, *sourcesv1alpha1.SalesforceSourceList]
 }
 
 // newSalesforceSources returns a SalesforceSources
 func newSalesforceSources(c *SourcesV1alpha1Client, namespace string) *salesforceSources {
 	return &salesforceSources{
-		gentype.NewClientWithList[*v1alpha1.SalesforceSource, *v1alpha1.SalesforceSourceList](
+		gentype.NewClientWithList[*sourcesv1alpha1.SalesforceSource, *sourcesv1alpha1.SalesforceSourceList](
 			"salesforcesources",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.SalesforceSource { return &v1alpha1.SalesforceSource{} },
-			func() *v1alpha1.SalesforceSourceList { return &v1alpha1.SalesforceSourceList{} }),
+			func() *sourcesv1alpha1.SalesforceSource { return &sourcesv1alpha1.SalesforceSource{} },
+			func() *sourcesv1alpha1.SalesforceSourceList { return &sourcesv1alpha1.SalesforceSourceList{} },
+		),
 	}
 }

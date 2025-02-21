@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
+	flowv1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type JQTransformationsGetter interface {
 
 // JQTransformationInterface has methods to work with JQTransformation resources.
 type JQTransformationInterface interface {
-	Create(ctx context.Context, jQTransformation *v1alpha1.JQTransformation, opts v1.CreateOptions) (*v1alpha1.JQTransformation, error)
-	Update(ctx context.Context, jQTransformation *v1alpha1.JQTransformation, opts v1.UpdateOptions) (*v1alpha1.JQTransformation, error)
+	Create(ctx context.Context, jQTransformation *flowv1alpha1.JQTransformation, opts v1.CreateOptions) (*flowv1alpha1.JQTransformation, error)
+	Update(ctx context.Context, jQTransformation *flowv1alpha1.JQTransformation, opts v1.UpdateOptions) (*flowv1alpha1.JQTransformation, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, jQTransformation *v1alpha1.JQTransformation, opts v1.UpdateOptions) (*v1alpha1.JQTransformation, error)
+	UpdateStatus(ctx context.Context, jQTransformation *flowv1alpha1.JQTransformation, opts v1.UpdateOptions) (*flowv1alpha1.JQTransformation, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.JQTransformation, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.JQTransformationList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*flowv1alpha1.JQTransformation, error)
+	List(ctx context.Context, opts v1.ListOptions) (*flowv1alpha1.JQTransformationList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.JQTransformation, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *flowv1alpha1.JQTransformation, err error)
 	JQTransformationExpansion
 }
 
 // jQTransformations implements JQTransformationInterface
 type jQTransformations struct {
-	*gentype.ClientWithList[*v1alpha1.JQTransformation, *v1alpha1.JQTransformationList]
+	*gentype.ClientWithList[*flowv1alpha1.JQTransformation, *flowv1alpha1.JQTransformationList]
 }
 
 // newJQTransformations returns a JQTransformations
 func newJQTransformations(c *FlowV1alpha1Client, namespace string) *jQTransformations {
 	return &jQTransformations{
-		gentype.NewClientWithList[*v1alpha1.JQTransformation, *v1alpha1.JQTransformationList](
+		gentype.NewClientWithList[*flowv1alpha1.JQTransformation, *flowv1alpha1.JQTransformationList](
 			"jqtransformations",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.JQTransformation { return &v1alpha1.JQTransformation{} },
-			func() *v1alpha1.JQTransformationList { return &v1alpha1.JQTransformationList{} }),
+			func() *flowv1alpha1.JQTransformation { return &flowv1alpha1.JQTransformation{} },
+			func() *flowv1alpha1.JQTransformationList { return &flowv1alpha1.JQTransformationList{} },
+		),
 	}
 }

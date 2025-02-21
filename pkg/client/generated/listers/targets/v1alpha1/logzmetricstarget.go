@@ -3,10 +3,10 @@
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // LogzMetricsTargetLister helps list LogzMetricsTargets.
@@ -14,7 +14,7 @@ import (
 type LogzMetricsTargetLister interface {
 	// List lists all LogzMetricsTargets in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.LogzMetricsTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.LogzMetricsTarget, err error)
 	// LogzMetricsTargets returns an object that can list and get LogzMetricsTargets.
 	LogzMetricsTargets(namespace string) LogzMetricsTargetNamespaceLister
 	LogzMetricsTargetListerExpansion
@@ -22,17 +22,17 @@ type LogzMetricsTargetLister interface {
 
 // logzMetricsTargetLister implements the LogzMetricsTargetLister interface.
 type logzMetricsTargetLister struct {
-	listers.ResourceIndexer[*v1alpha1.LogzMetricsTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.LogzMetricsTarget]
 }
 
 // NewLogzMetricsTargetLister returns a new LogzMetricsTargetLister.
 func NewLogzMetricsTargetLister(indexer cache.Indexer) LogzMetricsTargetLister {
-	return &logzMetricsTargetLister{listers.New[*v1alpha1.LogzMetricsTarget](indexer, v1alpha1.Resource("logzmetricstarget"))}
+	return &logzMetricsTargetLister{listers.New[*targetsv1alpha1.LogzMetricsTarget](indexer, targetsv1alpha1.Resource("logzmetricstarget"))}
 }
 
 // LogzMetricsTargets returns an object that can list and get LogzMetricsTargets.
 func (s *logzMetricsTargetLister) LogzMetricsTargets(namespace string) LogzMetricsTargetNamespaceLister {
-	return logzMetricsTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.LogzMetricsTarget](s.ResourceIndexer, namespace)}
+	return logzMetricsTargetNamespaceLister{listers.NewNamespaced[*targetsv1alpha1.LogzMetricsTarget](s.ResourceIndexer, namespace)}
 }
 
 // LogzMetricsTargetNamespaceLister helps list and get LogzMetricsTargets.
@@ -40,15 +40,15 @@ func (s *logzMetricsTargetLister) LogzMetricsTargets(namespace string) LogzMetri
 type LogzMetricsTargetNamespaceLister interface {
 	// List lists all LogzMetricsTargets in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.LogzMetricsTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.LogzMetricsTarget, err error)
 	// Get retrieves the LogzMetricsTarget from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.LogzMetricsTarget, error)
+	Get(name string) (*targetsv1alpha1.LogzMetricsTarget, error)
 	LogzMetricsTargetNamespaceListerExpansion
 }
 
 // logzMetricsTargetNamespaceLister implements the LogzMetricsTargetNamespaceLister
 // interface.
 type logzMetricsTargetNamespaceLister struct {
-	listers.ResourceIndexer[*v1alpha1.LogzMetricsTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.LogzMetricsTarget]
 }

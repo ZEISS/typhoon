@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type KafkaTargetsGetter interface {
 
 // KafkaTargetInterface has methods to work with KafkaTarget resources.
 type KafkaTargetInterface interface {
-	Create(ctx context.Context, kafkaTarget *v1alpha1.KafkaTarget, opts v1.CreateOptions) (*v1alpha1.KafkaTarget, error)
-	Update(ctx context.Context, kafkaTarget *v1alpha1.KafkaTarget, opts v1.UpdateOptions) (*v1alpha1.KafkaTarget, error)
+	Create(ctx context.Context, kafkaTarget *targetsv1alpha1.KafkaTarget, opts v1.CreateOptions) (*targetsv1alpha1.KafkaTarget, error)
+	Update(ctx context.Context, kafkaTarget *targetsv1alpha1.KafkaTarget, opts v1.UpdateOptions) (*targetsv1alpha1.KafkaTarget, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, kafkaTarget *v1alpha1.KafkaTarget, opts v1.UpdateOptions) (*v1alpha1.KafkaTarget, error)
+	UpdateStatus(ctx context.Context, kafkaTarget *targetsv1alpha1.KafkaTarget, opts v1.UpdateOptions) (*targetsv1alpha1.KafkaTarget, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.KafkaTarget, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.KafkaTargetList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*targetsv1alpha1.KafkaTarget, error)
+	List(ctx context.Context, opts v1.ListOptions) (*targetsv1alpha1.KafkaTargetList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.KafkaTarget, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *targetsv1alpha1.KafkaTarget, err error)
 	KafkaTargetExpansion
 }
 
 // kafkaTargets implements KafkaTargetInterface
 type kafkaTargets struct {
-	*gentype.ClientWithList[*v1alpha1.KafkaTarget, *v1alpha1.KafkaTargetList]
+	*gentype.ClientWithList[*targetsv1alpha1.KafkaTarget, *targetsv1alpha1.KafkaTargetList]
 }
 
 // newKafkaTargets returns a KafkaTargets
 func newKafkaTargets(c *TargetsV1alpha1Client, namespace string) *kafkaTargets {
 	return &kafkaTargets{
-		gentype.NewClientWithList[*v1alpha1.KafkaTarget, *v1alpha1.KafkaTargetList](
+		gentype.NewClientWithList[*targetsv1alpha1.KafkaTarget, *targetsv1alpha1.KafkaTargetList](
 			"kafkatargets",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.KafkaTarget { return &v1alpha1.KafkaTarget{} },
-			func() *v1alpha1.KafkaTargetList { return &v1alpha1.KafkaTargetList{} }),
+			func() *targetsv1alpha1.KafkaTarget { return &targetsv1alpha1.KafkaTarget{} },
+			func() *targetsv1alpha1.KafkaTargetList { return &targetsv1alpha1.KafkaTargetList{} },
+		),
 	}
 }

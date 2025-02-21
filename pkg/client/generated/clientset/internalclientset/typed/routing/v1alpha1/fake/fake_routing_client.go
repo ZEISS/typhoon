@@ -13,11 +13,11 @@ type FakeRoutingV1alpha1 struct {
 }
 
 func (c *FakeRoutingV1alpha1) Filters(namespace string) v1alpha1.FilterInterface {
-	return &FakeFilters{c, namespace}
+	return newFakeFilters(c, namespace)
 }
 
 func (c *FakeRoutingV1alpha1) Splitters(namespace string) v1alpha1.SplitterInterface {
-	return &FakeSplitters{c, namespace}
+	return newFakeSplitters(c, namespace)
 }
 
 // RESTClient returns a RESTClient that is used to communicate

@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/routing/v1alpha1"
+	routingv1alpha1 "github.com/zeiss/typhoon/pkg/apis/routing/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type FiltersGetter interface {
 
 // FilterInterface has methods to work with Filter resources.
 type FilterInterface interface {
-	Create(ctx context.Context, filter *v1alpha1.Filter, opts v1.CreateOptions) (*v1alpha1.Filter, error)
-	Update(ctx context.Context, filter *v1alpha1.Filter, opts v1.UpdateOptions) (*v1alpha1.Filter, error)
+	Create(ctx context.Context, filter *routingv1alpha1.Filter, opts v1.CreateOptions) (*routingv1alpha1.Filter, error)
+	Update(ctx context.Context, filter *routingv1alpha1.Filter, opts v1.UpdateOptions) (*routingv1alpha1.Filter, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, filter *v1alpha1.Filter, opts v1.UpdateOptions) (*v1alpha1.Filter, error)
+	UpdateStatus(ctx context.Context, filter *routingv1alpha1.Filter, opts v1.UpdateOptions) (*routingv1alpha1.Filter, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.Filter, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.FilterList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*routingv1alpha1.Filter, error)
+	List(ctx context.Context, opts v1.ListOptions) (*routingv1alpha1.FilterList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Filter, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *routingv1alpha1.Filter, err error)
 	FilterExpansion
 }
 
 // filters implements FilterInterface
 type filters struct {
-	*gentype.ClientWithList[*v1alpha1.Filter, *v1alpha1.FilterList]
+	*gentype.ClientWithList[*routingv1alpha1.Filter, *routingv1alpha1.FilterList]
 }
 
 // newFilters returns a Filters
 func newFilters(c *RoutingV1alpha1Client, namespace string) *filters {
 	return &filters{
-		gentype.NewClientWithList[*v1alpha1.Filter, *v1alpha1.FilterList](
+		gentype.NewClientWithList[*routingv1alpha1.Filter, *routingv1alpha1.FilterList](
 			"filters",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.Filter { return &v1alpha1.Filter{} },
-			func() *v1alpha1.FilterList { return &v1alpha1.FilterList{} }),
+			func() *routingv1alpha1.Filter { return &routingv1alpha1.Filter{} },
+			func() *routingv1alpha1.FilterList { return &routingv1alpha1.FilterList{} },
+		),
 	}
 }

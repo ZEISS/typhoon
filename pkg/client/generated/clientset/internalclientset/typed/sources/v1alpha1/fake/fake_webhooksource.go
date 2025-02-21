@@ -3,129 +3,34 @@
 package fake
 
 import (
-	"context"
-
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	labels "k8s.io/apimachinery/pkg/labels"
-	types "k8s.io/apimachinery/pkg/types"
-	watch "k8s.io/apimachinery/pkg/watch"
-	testing "k8s.io/client-go/testing"
+	sourcesv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/sources/v1alpha1"
+	gentype "k8s.io/client-go/gentype"
 )
 
-// FakeWebhookSources implements WebhookSourceInterface
-type FakeWebhookSources struct {
+// fakeWebhookSources implements WebhookSourceInterface
+type fakeWebhookSources struct {
+	*gentype.FakeClientWithList[*v1alpha1.WebhookSource, *v1alpha1.WebhookSourceList]
 	Fake *FakeSourcesV1alpha1
-	ns   string
 }
 
-var webhooksourcesResource = v1alpha1.SchemeGroupVersion.WithResource("webhooksources")
-
-var webhooksourcesKind = v1alpha1.SchemeGroupVersion.WithKind("WebhookSource")
-
-// Get takes name of the webhookSource, and returns the corresponding webhookSource object, and an error if there is any.
-func (c *FakeWebhookSources) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.WebhookSource, err error) {
-	emptyResult := &v1alpha1.WebhookSource{}
-	obj, err := c.Fake.
-		Invokes(testing.NewGetActionWithOptions(webhooksourcesResource, c.ns, name, options), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
+func newFakeWebhookSources(fake *FakeSourcesV1alpha1, namespace string) sourcesv1alpha1.WebhookSourceInterface {
+	return &fakeWebhookSources{
+		gentype.NewFakeClientWithList[*v1alpha1.WebhookSource, *v1alpha1.WebhookSourceList](
+			fake.Fake,
+			namespace,
+			v1alpha1.SchemeGroupVersion.WithResource("webhooksources"),
+			v1alpha1.SchemeGroupVersion.WithKind("WebhookSource"),
+			func() *v1alpha1.WebhookSource { return &v1alpha1.WebhookSource{} },
+			func() *v1alpha1.WebhookSourceList { return &v1alpha1.WebhookSourceList{} },
+			func(dst, src *v1alpha1.WebhookSourceList) { dst.ListMeta = src.ListMeta },
+			func(list *v1alpha1.WebhookSourceList) []*v1alpha1.WebhookSource {
+				return gentype.ToPointerSlice(list.Items)
+			},
+			func(list *v1alpha1.WebhookSourceList, items []*v1alpha1.WebhookSource) {
+				list.Items = gentype.FromPointerSlice(items)
+			},
+		),
+		fake,
 	}
-	return obj.(*v1alpha1.WebhookSource), err
-}
-
-// List takes label and field selectors, and returns the list of WebhookSources that match those selectors.
-func (c *FakeWebhookSources) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.WebhookSourceList, err error) {
-	emptyResult := &v1alpha1.WebhookSourceList{}
-	obj, err := c.Fake.
-		Invokes(testing.NewListActionWithOptions(webhooksourcesResource, webhooksourcesKind, c.ns, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-
-	label, _, _ := testing.ExtractFromListOptions(opts)
-	if label == nil {
-		label = labels.Everything()
-	}
-	list := &v1alpha1.WebhookSourceList{ListMeta: obj.(*v1alpha1.WebhookSourceList).ListMeta}
-	for _, item := range obj.(*v1alpha1.WebhookSourceList).Items {
-		if label.Matches(labels.Set(item.Labels)) {
-			list.Items = append(list.Items, item)
-		}
-	}
-	return list, err
-}
-
-// Watch returns a watch.Interface that watches the requested webhookSources.
-func (c *FakeWebhookSources) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
-	return c.Fake.
-		InvokesWatch(testing.NewWatchActionWithOptions(webhooksourcesResource, c.ns, opts))
-
-}
-
-// Create takes the representation of a webhookSource and creates it.  Returns the server's representation of the webhookSource, and an error, if there is any.
-func (c *FakeWebhookSources) Create(ctx context.Context, webhookSource *v1alpha1.WebhookSource, opts v1.CreateOptions) (result *v1alpha1.WebhookSource, err error) {
-	emptyResult := &v1alpha1.WebhookSource{}
-	obj, err := c.Fake.
-		Invokes(testing.NewCreateActionWithOptions(webhooksourcesResource, c.ns, webhookSource, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.WebhookSource), err
-}
-
-// Update takes the representation of a webhookSource and updates it. Returns the server's representation of the webhookSource, and an error, if there is any.
-func (c *FakeWebhookSources) Update(ctx context.Context, webhookSource *v1alpha1.WebhookSource, opts v1.UpdateOptions) (result *v1alpha1.WebhookSource, err error) {
-	emptyResult := &v1alpha1.WebhookSource{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateActionWithOptions(webhooksourcesResource, c.ns, webhookSource, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.WebhookSource), err
-}
-
-// UpdateStatus was generated because the type contains a Status member.
-// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeWebhookSources) UpdateStatus(ctx context.Context, webhookSource *v1alpha1.WebhookSource, opts v1.UpdateOptions) (result *v1alpha1.WebhookSource, err error) {
-	emptyResult := &v1alpha1.WebhookSource{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceActionWithOptions(webhooksourcesResource, "status", c.ns, webhookSource, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.WebhookSource), err
-}
-
-// Delete takes name of the webhookSource and deletes it. Returns an error if one occurs.
-func (c *FakeWebhookSources) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
-	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(webhooksourcesResource, c.ns, name, opts), &v1alpha1.WebhookSource{})
-
-	return err
-}
-
-// DeleteCollection deletes a collection of objects.
-func (c *FakeWebhookSources) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionActionWithOptions(webhooksourcesResource, c.ns, opts, listOpts)
-
-	_, err := c.Fake.Invokes(action, &v1alpha1.WebhookSourceList{})
-	return err
-}
-
-// Patch applies the patch and returns the patched webhookSource.
-func (c *FakeWebhookSources) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.WebhookSource, err error) {
-	emptyResult := &v1alpha1.WebhookSource{}
-	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceActionWithOptions(webhooksourcesResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.WebhookSource), err
 }

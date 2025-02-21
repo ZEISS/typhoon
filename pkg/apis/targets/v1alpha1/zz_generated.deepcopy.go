@@ -1226,7 +1226,7 @@ func (in *ServiceNowTargetList) DeepCopyInto(out *ServiceNowTargetList) {
 	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
-		*out = make([]SalesforceTarget, len(*in))
+		*out = make([]ServiceNowTarget, len(*in))
 		for i := range *in {
 			(*in)[i].DeepCopyInto(&(*out)[i])
 		}

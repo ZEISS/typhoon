@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
+	sourcesv1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type CloudEventsSourcesGetter interface {
 
 // CloudEventsSourceInterface has methods to work with CloudEventsSource resources.
 type CloudEventsSourceInterface interface {
-	Create(ctx context.Context, cloudEventsSource *v1alpha1.CloudEventsSource, opts v1.CreateOptions) (*v1alpha1.CloudEventsSource, error)
-	Update(ctx context.Context, cloudEventsSource *v1alpha1.CloudEventsSource, opts v1.UpdateOptions) (*v1alpha1.CloudEventsSource, error)
+	Create(ctx context.Context, cloudEventsSource *sourcesv1alpha1.CloudEventsSource, opts v1.CreateOptions) (*sourcesv1alpha1.CloudEventsSource, error)
+	Update(ctx context.Context, cloudEventsSource *sourcesv1alpha1.CloudEventsSource, opts v1.UpdateOptions) (*sourcesv1alpha1.CloudEventsSource, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, cloudEventsSource *v1alpha1.CloudEventsSource, opts v1.UpdateOptions) (*v1alpha1.CloudEventsSource, error)
+	UpdateStatus(ctx context.Context, cloudEventsSource *sourcesv1alpha1.CloudEventsSource, opts v1.UpdateOptions) (*sourcesv1alpha1.CloudEventsSource, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.CloudEventsSource, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.CloudEventsSourceList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*sourcesv1alpha1.CloudEventsSource, error)
+	List(ctx context.Context, opts v1.ListOptions) (*sourcesv1alpha1.CloudEventsSourceList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.CloudEventsSource, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *sourcesv1alpha1.CloudEventsSource, err error)
 	CloudEventsSourceExpansion
 }
 
 // cloudEventsSources implements CloudEventsSourceInterface
 type cloudEventsSources struct {
-	*gentype.ClientWithList[*v1alpha1.CloudEventsSource, *v1alpha1.CloudEventsSourceList]
+	*gentype.ClientWithList[*sourcesv1alpha1.CloudEventsSource, *sourcesv1alpha1.CloudEventsSourceList]
 }
 
 // newCloudEventsSources returns a CloudEventsSources
 func newCloudEventsSources(c *SourcesV1alpha1Client, namespace string) *cloudEventsSources {
 	return &cloudEventsSources{
-		gentype.NewClientWithList[*v1alpha1.CloudEventsSource, *v1alpha1.CloudEventsSourceList](
+		gentype.NewClientWithList[*sourcesv1alpha1.CloudEventsSource, *sourcesv1alpha1.CloudEventsSourceList](
 			"cloudeventssources",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.CloudEventsSource { return &v1alpha1.CloudEventsSource{} },
-			func() *v1alpha1.CloudEventsSourceList { return &v1alpha1.CloudEventsSourceList{} }),
+			func() *sourcesv1alpha1.CloudEventsSource { return &sourcesv1alpha1.CloudEventsSource{} },
+			func() *sourcesv1alpha1.CloudEventsSourceList { return &sourcesv1alpha1.CloudEventsSourceList{} },
+		),
 	}
 }

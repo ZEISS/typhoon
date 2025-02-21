@@ -3,10 +3,10 @@
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // DatadogTargetLister helps list DatadogTargets.
@@ -14,7 +14,7 @@ import (
 type DatadogTargetLister interface {
 	// List lists all DatadogTargets in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.DatadogTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.DatadogTarget, err error)
 	// DatadogTargets returns an object that can list and get DatadogTargets.
 	DatadogTargets(namespace string) DatadogTargetNamespaceLister
 	DatadogTargetListerExpansion
@@ -22,17 +22,17 @@ type DatadogTargetLister interface {
 
 // datadogTargetLister implements the DatadogTargetLister interface.
 type datadogTargetLister struct {
-	listers.ResourceIndexer[*v1alpha1.DatadogTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.DatadogTarget]
 }
 
 // NewDatadogTargetLister returns a new DatadogTargetLister.
 func NewDatadogTargetLister(indexer cache.Indexer) DatadogTargetLister {
-	return &datadogTargetLister{listers.New[*v1alpha1.DatadogTarget](indexer, v1alpha1.Resource("datadogtarget"))}
+	return &datadogTargetLister{listers.New[*targetsv1alpha1.DatadogTarget](indexer, targetsv1alpha1.Resource("datadogtarget"))}
 }
 
 // DatadogTargets returns an object that can list and get DatadogTargets.
 func (s *datadogTargetLister) DatadogTargets(namespace string) DatadogTargetNamespaceLister {
-	return datadogTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.DatadogTarget](s.ResourceIndexer, namespace)}
+	return datadogTargetNamespaceLister{listers.NewNamespaced[*targetsv1alpha1.DatadogTarget](s.ResourceIndexer, namespace)}
 }
 
 // DatadogTargetNamespaceLister helps list and get DatadogTargets.
@@ -40,15 +40,15 @@ func (s *datadogTargetLister) DatadogTargets(namespace string) DatadogTargetName
 type DatadogTargetNamespaceLister interface {
 	// List lists all DatadogTargets in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.DatadogTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.DatadogTarget, err error)
 	// Get retrieves the DatadogTarget from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.DatadogTarget, error)
+	Get(name string) (*targetsv1alpha1.DatadogTarget, error)
 	DatadogTargetNamespaceListerExpansion
 }
 
 // datadogTargetNamespaceLister implements the DatadogTargetNamespaceLister
 // interface.
 type datadogTargetNamespaceLister struct {
-	listers.ResourceIndexer[*v1alpha1.DatadogTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.DatadogTarget]
 }

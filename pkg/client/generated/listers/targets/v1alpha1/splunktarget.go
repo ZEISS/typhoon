@@ -3,10 +3,10 @@
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // SplunkTargetLister helps list SplunkTargets.
@@ -14,7 +14,7 @@ import (
 type SplunkTargetLister interface {
 	// List lists all SplunkTargets in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.SplunkTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.SplunkTarget, err error)
 	// SplunkTargets returns an object that can list and get SplunkTargets.
 	SplunkTargets(namespace string) SplunkTargetNamespaceLister
 	SplunkTargetListerExpansion
@@ -22,17 +22,17 @@ type SplunkTargetLister interface {
 
 // splunkTargetLister implements the SplunkTargetLister interface.
 type splunkTargetLister struct {
-	listers.ResourceIndexer[*v1alpha1.SplunkTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.SplunkTarget]
 }
 
 // NewSplunkTargetLister returns a new SplunkTargetLister.
 func NewSplunkTargetLister(indexer cache.Indexer) SplunkTargetLister {
-	return &splunkTargetLister{listers.New[*v1alpha1.SplunkTarget](indexer, v1alpha1.Resource("splunktarget"))}
+	return &splunkTargetLister{listers.New[*targetsv1alpha1.SplunkTarget](indexer, targetsv1alpha1.Resource("splunktarget"))}
 }
 
 // SplunkTargets returns an object that can list and get SplunkTargets.
 func (s *splunkTargetLister) SplunkTargets(namespace string) SplunkTargetNamespaceLister {
-	return splunkTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.SplunkTarget](s.ResourceIndexer, namespace)}
+	return splunkTargetNamespaceLister{listers.NewNamespaced[*targetsv1alpha1.SplunkTarget](s.ResourceIndexer, namespace)}
 }
 
 // SplunkTargetNamespaceLister helps list and get SplunkTargets.
@@ -40,15 +40,15 @@ func (s *splunkTargetLister) SplunkTargets(namespace string) SplunkTargetNamespa
 type SplunkTargetNamespaceLister interface {
 	// List lists all SplunkTargets in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.SplunkTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.SplunkTarget, err error)
 	// Get retrieves the SplunkTarget from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.SplunkTarget, error)
+	Get(name string) (*targetsv1alpha1.SplunkTarget, error)
 	SplunkTargetNamespaceListerExpansion
 }
 
 // splunkTargetNamespaceLister implements the SplunkTargetNamespaceLister
 // interface.
 type splunkTargetNamespaceLister struct {
-	listers.ResourceIndexer[*v1alpha1.SplunkTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.SplunkTarget]
 }

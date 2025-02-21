@@ -3,129 +3,32 @@
 package fake
 
 import (
-	"context"
-
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/extensions/v1alpha1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	labels "k8s.io/apimachinery/pkg/labels"
-	types "k8s.io/apimachinery/pkg/types"
-	watch "k8s.io/apimachinery/pkg/watch"
-	testing "k8s.io/client-go/testing"
+	extensionsv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/extensions/v1alpha1"
+	gentype "k8s.io/client-go/gentype"
 )
 
-// FakeFunctions implements FunctionInterface
-type FakeFunctions struct {
+// fakeFunctions implements FunctionInterface
+type fakeFunctions struct {
+	*gentype.FakeClientWithList[*v1alpha1.Function, *v1alpha1.FunctionList]
 	Fake *FakeExtensionsV1alpha1
-	ns   string
 }
 
-var functionsResource = v1alpha1.SchemeGroupVersion.WithResource("functions")
-
-var functionsKind = v1alpha1.SchemeGroupVersion.WithKind("Function")
-
-// Get takes name of the function, and returns the corresponding function object, and an error if there is any.
-func (c *FakeFunctions) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.Function, err error) {
-	emptyResult := &v1alpha1.Function{}
-	obj, err := c.Fake.
-		Invokes(testing.NewGetActionWithOptions(functionsResource, c.ns, name, options), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
+func newFakeFunctions(fake *FakeExtensionsV1alpha1, namespace string) extensionsv1alpha1.FunctionInterface {
+	return &fakeFunctions{
+		gentype.NewFakeClientWithList[*v1alpha1.Function, *v1alpha1.FunctionList](
+			fake.Fake,
+			namespace,
+			v1alpha1.SchemeGroupVersion.WithResource("functions"),
+			v1alpha1.SchemeGroupVersion.WithKind("Function"),
+			func() *v1alpha1.Function { return &v1alpha1.Function{} },
+			func() *v1alpha1.FunctionList { return &v1alpha1.FunctionList{} },
+			func(dst, src *v1alpha1.FunctionList) { dst.ListMeta = src.ListMeta },
+			func(list *v1alpha1.FunctionList) []*v1alpha1.Function { return gentype.ToPointerSlice(list.Items) },
+			func(list *v1alpha1.FunctionList, items []*v1alpha1.Function) {
+				list.Items = gentype.FromPointerSlice(items)
+			},
+		),
+		fake,
 	}
-	return obj.(*v1alpha1.Function), err
-}
-
-// List takes label and field selectors, and returns the list of Functions that match those selectors.
-func (c *FakeFunctions) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.FunctionList, err error) {
-	emptyResult := &v1alpha1.FunctionList{}
-	obj, err := c.Fake.
-		Invokes(testing.NewListActionWithOptions(functionsResource, functionsKind, c.ns, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-
-	label, _, _ := testing.ExtractFromListOptions(opts)
-	if label == nil {
-		label = labels.Everything()
-	}
-	list := &v1alpha1.FunctionList{ListMeta: obj.(*v1alpha1.FunctionList).ListMeta}
-	for _, item := range obj.(*v1alpha1.FunctionList).Items {
-		if label.Matches(labels.Set(item.Labels)) {
-			list.Items = append(list.Items, item)
-		}
-	}
-	return list, err
-}
-
-// Watch returns a watch.Interface that watches the requested functions.
-func (c *FakeFunctions) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
-	return c.Fake.
-		InvokesWatch(testing.NewWatchActionWithOptions(functionsResource, c.ns, opts))
-
-}
-
-// Create takes the representation of a function and creates it.  Returns the server's representation of the function, and an error, if there is any.
-func (c *FakeFunctions) Create(ctx context.Context, function *v1alpha1.Function, opts v1.CreateOptions) (result *v1alpha1.Function, err error) {
-	emptyResult := &v1alpha1.Function{}
-	obj, err := c.Fake.
-		Invokes(testing.NewCreateActionWithOptions(functionsResource, c.ns, function, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.Function), err
-}
-
-// Update takes the representation of a function and updates it. Returns the server's representation of the function, and an error, if there is any.
-func (c *FakeFunctions) Update(ctx context.Context, function *v1alpha1.Function, opts v1.UpdateOptions) (result *v1alpha1.Function, err error) {
-	emptyResult := &v1alpha1.Function{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateActionWithOptions(functionsResource, c.ns, function, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.Function), err
-}
-
-// UpdateStatus was generated because the type contains a Status member.
-// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeFunctions) UpdateStatus(ctx context.Context, function *v1alpha1.Function, opts v1.UpdateOptions) (result *v1alpha1.Function, err error) {
-	emptyResult := &v1alpha1.Function{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceActionWithOptions(functionsResource, "status", c.ns, function, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.Function), err
-}
-
-// Delete takes name of the function and deletes it. Returns an error if one occurs.
-func (c *FakeFunctions) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
-	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(functionsResource, c.ns, name, opts), &v1alpha1.Function{})
-
-	return err
-}
-
-// DeleteCollection deletes a collection of objects.
-func (c *FakeFunctions) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionActionWithOptions(functionsResource, c.ns, opts, listOpts)
-
-	_, err := c.Fake.Invokes(action, &v1alpha1.FunctionList{})
-	return err
-}
-
-// Patch applies the patch and returns the patched function.
-func (c *FakeFunctions) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Function, err error) {
-	emptyResult := &v1alpha1.Function{}
-	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceActionWithOptions(functionsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.Function), err
 }

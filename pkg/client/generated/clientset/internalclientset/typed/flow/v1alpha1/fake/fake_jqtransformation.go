@@ -3,129 +3,34 @@
 package fake
 
 import (
-	"context"
-
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	labels "k8s.io/apimachinery/pkg/labels"
-	types "k8s.io/apimachinery/pkg/types"
-	watch "k8s.io/apimachinery/pkg/watch"
-	testing "k8s.io/client-go/testing"
+	flowv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/flow/v1alpha1"
+	gentype "k8s.io/client-go/gentype"
 )
 
-// FakeJQTransformations implements JQTransformationInterface
-type FakeJQTransformations struct {
+// fakeJQTransformations implements JQTransformationInterface
+type fakeJQTransformations struct {
+	*gentype.FakeClientWithList[*v1alpha1.JQTransformation, *v1alpha1.JQTransformationList]
 	Fake *FakeFlowV1alpha1
-	ns   string
 }
 
-var jqtransformationsResource = v1alpha1.SchemeGroupVersion.WithResource("jqtransformations")
-
-var jqtransformationsKind = v1alpha1.SchemeGroupVersion.WithKind("JQTransformation")
-
-// Get takes name of the jQTransformation, and returns the corresponding jQTransformation object, and an error if there is any.
-func (c *FakeJQTransformations) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.JQTransformation, err error) {
-	emptyResult := &v1alpha1.JQTransformation{}
-	obj, err := c.Fake.
-		Invokes(testing.NewGetActionWithOptions(jqtransformationsResource, c.ns, name, options), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
+func newFakeJQTransformations(fake *FakeFlowV1alpha1, namespace string) flowv1alpha1.JQTransformationInterface {
+	return &fakeJQTransformations{
+		gentype.NewFakeClientWithList[*v1alpha1.JQTransformation, *v1alpha1.JQTransformationList](
+			fake.Fake,
+			namespace,
+			v1alpha1.SchemeGroupVersion.WithResource("jqtransformations"),
+			v1alpha1.SchemeGroupVersion.WithKind("JQTransformation"),
+			func() *v1alpha1.JQTransformation { return &v1alpha1.JQTransformation{} },
+			func() *v1alpha1.JQTransformationList { return &v1alpha1.JQTransformationList{} },
+			func(dst, src *v1alpha1.JQTransformationList) { dst.ListMeta = src.ListMeta },
+			func(list *v1alpha1.JQTransformationList) []*v1alpha1.JQTransformation {
+				return gentype.ToPointerSlice(list.Items)
+			},
+			func(list *v1alpha1.JQTransformationList, items []*v1alpha1.JQTransformation) {
+				list.Items = gentype.FromPointerSlice(items)
+			},
+		),
+		fake,
 	}
-	return obj.(*v1alpha1.JQTransformation), err
-}
-
-// List takes label and field selectors, and returns the list of JQTransformations that match those selectors.
-func (c *FakeJQTransformations) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.JQTransformationList, err error) {
-	emptyResult := &v1alpha1.JQTransformationList{}
-	obj, err := c.Fake.
-		Invokes(testing.NewListActionWithOptions(jqtransformationsResource, jqtransformationsKind, c.ns, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-
-	label, _, _ := testing.ExtractFromListOptions(opts)
-	if label == nil {
-		label = labels.Everything()
-	}
-	list := &v1alpha1.JQTransformationList{ListMeta: obj.(*v1alpha1.JQTransformationList).ListMeta}
-	for _, item := range obj.(*v1alpha1.JQTransformationList).Items {
-		if label.Matches(labels.Set(item.Labels)) {
-			list.Items = append(list.Items, item)
-		}
-	}
-	return list, err
-}
-
-// Watch returns a watch.Interface that watches the requested jQTransformations.
-func (c *FakeJQTransformations) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
-	return c.Fake.
-		InvokesWatch(testing.NewWatchActionWithOptions(jqtransformationsResource, c.ns, opts))
-
-}
-
-// Create takes the representation of a jQTransformation and creates it.  Returns the server's representation of the jQTransformation, and an error, if there is any.
-func (c *FakeJQTransformations) Create(ctx context.Context, jQTransformation *v1alpha1.JQTransformation, opts v1.CreateOptions) (result *v1alpha1.JQTransformation, err error) {
-	emptyResult := &v1alpha1.JQTransformation{}
-	obj, err := c.Fake.
-		Invokes(testing.NewCreateActionWithOptions(jqtransformationsResource, c.ns, jQTransformation, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.JQTransformation), err
-}
-
-// Update takes the representation of a jQTransformation and updates it. Returns the server's representation of the jQTransformation, and an error, if there is any.
-func (c *FakeJQTransformations) Update(ctx context.Context, jQTransformation *v1alpha1.JQTransformation, opts v1.UpdateOptions) (result *v1alpha1.JQTransformation, err error) {
-	emptyResult := &v1alpha1.JQTransformation{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateActionWithOptions(jqtransformationsResource, c.ns, jQTransformation, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.JQTransformation), err
-}
-
-// UpdateStatus was generated because the type contains a Status member.
-// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeJQTransformations) UpdateStatus(ctx context.Context, jQTransformation *v1alpha1.JQTransformation, opts v1.UpdateOptions) (result *v1alpha1.JQTransformation, err error) {
-	emptyResult := &v1alpha1.JQTransformation{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceActionWithOptions(jqtransformationsResource, "status", c.ns, jQTransformation, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.JQTransformation), err
-}
-
-// Delete takes name of the jQTransformation and deletes it. Returns an error if one occurs.
-func (c *FakeJQTransformations) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
-	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(jqtransformationsResource, c.ns, name, opts), &v1alpha1.JQTransformation{})
-
-	return err
-}
-
-// DeleteCollection deletes a collection of objects.
-func (c *FakeJQTransformations) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionActionWithOptions(jqtransformationsResource, c.ns, opts, listOpts)
-
-	_, err := c.Fake.Invokes(action, &v1alpha1.JQTransformationList{})
-	return err
-}
-
-// Patch applies the patch and returns the patched jQTransformation.
-func (c *FakeJQTransformations) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.JQTransformation, err error) {
-	emptyResult := &v1alpha1.JQTransformation{}
-	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceActionWithOptions(jqtransformationsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.JQTransformation), err
 }

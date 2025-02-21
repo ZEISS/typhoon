@@ -3,10 +3,10 @@
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	flowv1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // TransformationLister helps list Transformations.
@@ -14,7 +14,7 @@ import (
 type TransformationLister interface {
 	// List lists all Transformations in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.Transformation, err error)
+	List(selector labels.Selector) (ret []*flowv1alpha1.Transformation, err error)
 	// Transformations returns an object that can list and get Transformations.
 	Transformations(namespace string) TransformationNamespaceLister
 	TransformationListerExpansion
@@ -22,17 +22,17 @@ type TransformationLister interface {
 
 // transformationLister implements the TransformationLister interface.
 type transformationLister struct {
-	listers.ResourceIndexer[*v1alpha1.Transformation]
+	listers.ResourceIndexer[*flowv1alpha1.Transformation]
 }
 
 // NewTransformationLister returns a new TransformationLister.
 func NewTransformationLister(indexer cache.Indexer) TransformationLister {
-	return &transformationLister{listers.New[*v1alpha1.Transformation](indexer, v1alpha1.Resource("transformation"))}
+	return &transformationLister{listers.New[*flowv1alpha1.Transformation](indexer, flowv1alpha1.Resource("transformation"))}
 }
 
 // Transformations returns an object that can list and get Transformations.
 func (s *transformationLister) Transformations(namespace string) TransformationNamespaceLister {
-	return transformationNamespaceLister{listers.NewNamespaced[*v1alpha1.Transformation](s.ResourceIndexer, namespace)}
+	return transformationNamespaceLister{listers.NewNamespaced[*flowv1alpha1.Transformation](s.ResourceIndexer, namespace)}
 }
 
 // TransformationNamespaceLister helps list and get Transformations.
@@ -40,15 +40,15 @@ func (s *transformationLister) Transformations(namespace string) TransformationN
 type TransformationNamespaceLister interface {
 	// List lists all Transformations in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.Transformation, err error)
+	List(selector labels.Selector) (ret []*flowv1alpha1.Transformation, err error)
 	// Get retrieves the Transformation from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.Transformation, error)
+	Get(name string) (*flowv1alpha1.Transformation, error)
 	TransformationNamespaceListerExpansion
 }
 
 // transformationNamespaceLister implements the TransformationNamespaceLister
 // interface.
 type transformationNamespaceLister struct {
-	listers.ResourceIndexer[*v1alpha1.Transformation]
+	listers.ResourceIndexer[*flowv1alpha1.Transformation]
 }

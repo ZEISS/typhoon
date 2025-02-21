@@ -5,9 +5,9 @@ package fakeFilteredFactory
 import (
 	context "context"
 
-	externalversions "github.com/zeiss/typhoon/pkg/client/generated/informers/externalversions"
 	fake "github.com/zeiss/typhoon/pkg/client/generated/injection/client/fake"
 	filtered "github.com/zeiss/typhoon/pkg/client/generated/injection/informers/factory/filtered"
+	externalversions "github.com/zeiss/typhoon/pkg/client/generated/listers/externalversions"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	controller "knative.dev/pkg/controller"
 	injection "knative.dev/pkg/injection"

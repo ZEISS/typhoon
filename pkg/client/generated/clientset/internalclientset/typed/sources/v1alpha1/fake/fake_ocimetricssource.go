@@ -3,129 +3,34 @@
 package fake
 
 import (
-	"context"
-
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/sources/v1alpha1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	labels "k8s.io/apimachinery/pkg/labels"
-	types "k8s.io/apimachinery/pkg/types"
-	watch "k8s.io/apimachinery/pkg/watch"
-	testing "k8s.io/client-go/testing"
+	sourcesv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/sources/v1alpha1"
+	gentype "k8s.io/client-go/gentype"
 )
 
-// FakeOCIMetricsSources implements OCIMetricsSourceInterface
-type FakeOCIMetricsSources struct {
+// fakeOCIMetricsSources implements OCIMetricsSourceInterface
+type fakeOCIMetricsSources struct {
+	*gentype.FakeClientWithList[*v1alpha1.OCIMetricsSource, *v1alpha1.OCIMetricsSourceList]
 	Fake *FakeSourcesV1alpha1
-	ns   string
 }
 
-var ocimetricssourcesResource = v1alpha1.SchemeGroupVersion.WithResource("ocimetricssources")
-
-var ocimetricssourcesKind = v1alpha1.SchemeGroupVersion.WithKind("OCIMetricsSource")
-
-// Get takes name of the oCIMetricsSource, and returns the corresponding oCIMetricsSource object, and an error if there is any.
-func (c *FakeOCIMetricsSources) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.OCIMetricsSource, err error) {
-	emptyResult := &v1alpha1.OCIMetricsSource{}
-	obj, err := c.Fake.
-		Invokes(testing.NewGetActionWithOptions(ocimetricssourcesResource, c.ns, name, options), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
+func newFakeOCIMetricsSources(fake *FakeSourcesV1alpha1, namespace string) sourcesv1alpha1.OCIMetricsSourceInterface {
+	return &fakeOCIMetricsSources{
+		gentype.NewFakeClientWithList[*v1alpha1.OCIMetricsSource, *v1alpha1.OCIMetricsSourceList](
+			fake.Fake,
+			namespace,
+			v1alpha1.SchemeGroupVersion.WithResource("ocimetricssources"),
+			v1alpha1.SchemeGroupVersion.WithKind("OCIMetricsSource"),
+			func() *v1alpha1.OCIMetricsSource { return &v1alpha1.OCIMetricsSource{} },
+			func() *v1alpha1.OCIMetricsSourceList { return &v1alpha1.OCIMetricsSourceList{} },
+			func(dst, src *v1alpha1.OCIMetricsSourceList) { dst.ListMeta = src.ListMeta },
+			func(list *v1alpha1.OCIMetricsSourceList) []*v1alpha1.OCIMetricsSource {
+				return gentype.ToPointerSlice(list.Items)
+			},
+			func(list *v1alpha1.OCIMetricsSourceList, items []*v1alpha1.OCIMetricsSource) {
+				list.Items = gentype.FromPointerSlice(items)
+			},
+		),
+		fake,
 	}
-	return obj.(*v1alpha1.OCIMetricsSource), err
-}
-
-// List takes label and field selectors, and returns the list of OCIMetricsSources that match those selectors.
-func (c *FakeOCIMetricsSources) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.OCIMetricsSourceList, err error) {
-	emptyResult := &v1alpha1.OCIMetricsSourceList{}
-	obj, err := c.Fake.
-		Invokes(testing.NewListActionWithOptions(ocimetricssourcesResource, ocimetricssourcesKind, c.ns, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-
-	label, _, _ := testing.ExtractFromListOptions(opts)
-	if label == nil {
-		label = labels.Everything()
-	}
-	list := &v1alpha1.OCIMetricsSourceList{ListMeta: obj.(*v1alpha1.OCIMetricsSourceList).ListMeta}
-	for _, item := range obj.(*v1alpha1.OCIMetricsSourceList).Items {
-		if label.Matches(labels.Set(item.Labels)) {
-			list.Items = append(list.Items, item)
-		}
-	}
-	return list, err
-}
-
-// Watch returns a watch.Interface that watches the requested oCIMetricsSources.
-func (c *FakeOCIMetricsSources) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
-	return c.Fake.
-		InvokesWatch(testing.NewWatchActionWithOptions(ocimetricssourcesResource, c.ns, opts))
-
-}
-
-// Create takes the representation of a oCIMetricsSource and creates it.  Returns the server's representation of the oCIMetricsSource, and an error, if there is any.
-func (c *FakeOCIMetricsSources) Create(ctx context.Context, oCIMetricsSource *v1alpha1.OCIMetricsSource, opts v1.CreateOptions) (result *v1alpha1.OCIMetricsSource, err error) {
-	emptyResult := &v1alpha1.OCIMetricsSource{}
-	obj, err := c.Fake.
-		Invokes(testing.NewCreateActionWithOptions(ocimetricssourcesResource, c.ns, oCIMetricsSource, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.OCIMetricsSource), err
-}
-
-// Update takes the representation of a oCIMetricsSource and updates it. Returns the server's representation of the oCIMetricsSource, and an error, if there is any.
-func (c *FakeOCIMetricsSources) Update(ctx context.Context, oCIMetricsSource *v1alpha1.OCIMetricsSource, opts v1.UpdateOptions) (result *v1alpha1.OCIMetricsSource, err error) {
-	emptyResult := &v1alpha1.OCIMetricsSource{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateActionWithOptions(ocimetricssourcesResource, c.ns, oCIMetricsSource, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.OCIMetricsSource), err
-}
-
-// UpdateStatus was generated because the type contains a Status member.
-// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeOCIMetricsSources) UpdateStatus(ctx context.Context, oCIMetricsSource *v1alpha1.OCIMetricsSource, opts v1.UpdateOptions) (result *v1alpha1.OCIMetricsSource, err error) {
-	emptyResult := &v1alpha1.OCIMetricsSource{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceActionWithOptions(ocimetricssourcesResource, "status", c.ns, oCIMetricsSource, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.OCIMetricsSource), err
-}
-
-// Delete takes name of the oCIMetricsSource and deletes it. Returns an error if one occurs.
-func (c *FakeOCIMetricsSources) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
-	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(ocimetricssourcesResource, c.ns, name, opts), &v1alpha1.OCIMetricsSource{})
-
-	return err
-}
-
-// DeleteCollection deletes a collection of objects.
-func (c *FakeOCIMetricsSources) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionActionWithOptions(ocimetricssourcesResource, c.ns, opts, listOpts)
-
-	_, err := c.Fake.Invokes(action, &v1alpha1.OCIMetricsSourceList{})
-	return err
-}
-
-// Patch applies the patch and returns the patched oCIMetricsSource.
-func (c *FakeOCIMetricsSources) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.OCIMetricsSource, err error) {
-	emptyResult := &v1alpha1.OCIMetricsSource{}
-	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceActionWithOptions(ocimetricssourcesResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.OCIMetricsSource), err
 }

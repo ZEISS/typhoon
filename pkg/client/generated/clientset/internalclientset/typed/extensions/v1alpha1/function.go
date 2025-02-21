@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/extensions/v1alpha1"
+	extensionsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/extensions/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type FunctionsGetter interface {
 
 // FunctionInterface has methods to work with Function resources.
 type FunctionInterface interface {
-	Create(ctx context.Context, function *v1alpha1.Function, opts v1.CreateOptions) (*v1alpha1.Function, error)
-	Update(ctx context.Context, function *v1alpha1.Function, opts v1.UpdateOptions) (*v1alpha1.Function, error)
+	Create(ctx context.Context, function *extensionsv1alpha1.Function, opts v1.CreateOptions) (*extensionsv1alpha1.Function, error)
+	Update(ctx context.Context, function *extensionsv1alpha1.Function, opts v1.UpdateOptions) (*extensionsv1alpha1.Function, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, function *v1alpha1.Function, opts v1.UpdateOptions) (*v1alpha1.Function, error)
+	UpdateStatus(ctx context.Context, function *extensionsv1alpha1.Function, opts v1.UpdateOptions) (*extensionsv1alpha1.Function, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.Function, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.FunctionList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*extensionsv1alpha1.Function, error)
+	List(ctx context.Context, opts v1.ListOptions) (*extensionsv1alpha1.FunctionList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Function, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *extensionsv1alpha1.Function, err error)
 	FunctionExpansion
 }
 
 // functions implements FunctionInterface
 type functions struct {
-	*gentype.ClientWithList[*v1alpha1.Function, *v1alpha1.FunctionList]
+	*gentype.ClientWithList[*extensionsv1alpha1.Function, *extensionsv1alpha1.FunctionList]
 }
 
 // newFunctions returns a Functions
 func newFunctions(c *ExtensionsV1alpha1Client, namespace string) *functions {
 	return &functions{
-		gentype.NewClientWithList[*v1alpha1.Function, *v1alpha1.FunctionList](
+		gentype.NewClientWithList[*extensionsv1alpha1.Function, *extensionsv1alpha1.FunctionList](
 			"functions",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.Function { return &v1alpha1.Function{} },
-			func() *v1alpha1.FunctionList { return &v1alpha1.FunctionList{} }),
+			func() *extensionsv1alpha1.Function { return &extensionsv1alpha1.Function{} },
+			func() *extensionsv1alpha1.FunctionList { return &extensionsv1alpha1.FunctionList{} },
+		),
 	}
 }

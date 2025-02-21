@@ -3,10 +3,10 @@
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	flowv1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // BridgeLister helps list Bridges.
@@ -14,7 +14,7 @@ import (
 type BridgeLister interface {
 	// List lists all Bridges in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.Bridge, err error)
+	List(selector labels.Selector) (ret []*flowv1alpha1.Bridge, err error)
 	// Bridges returns an object that can list and get Bridges.
 	Bridges(namespace string) BridgeNamespaceLister
 	BridgeListerExpansion
@@ -22,17 +22,17 @@ type BridgeLister interface {
 
 // bridgeLister implements the BridgeLister interface.
 type bridgeLister struct {
-	listers.ResourceIndexer[*v1alpha1.Bridge]
+	listers.ResourceIndexer[*flowv1alpha1.Bridge]
 }
 
 // NewBridgeLister returns a new BridgeLister.
 func NewBridgeLister(indexer cache.Indexer) BridgeLister {
-	return &bridgeLister{listers.New[*v1alpha1.Bridge](indexer, v1alpha1.Resource("bridge"))}
+	return &bridgeLister{listers.New[*flowv1alpha1.Bridge](indexer, flowv1alpha1.Resource("bridge"))}
 }
 
 // Bridges returns an object that can list and get Bridges.
 func (s *bridgeLister) Bridges(namespace string) BridgeNamespaceLister {
-	return bridgeNamespaceLister{listers.NewNamespaced[*v1alpha1.Bridge](s.ResourceIndexer, namespace)}
+	return bridgeNamespaceLister{listers.NewNamespaced[*flowv1alpha1.Bridge](s.ResourceIndexer, namespace)}
 }
 
 // BridgeNamespaceLister helps list and get Bridges.
@@ -40,15 +40,15 @@ func (s *bridgeLister) Bridges(namespace string) BridgeNamespaceLister {
 type BridgeNamespaceLister interface {
 	// List lists all Bridges in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.Bridge, err error)
+	List(selector labels.Selector) (ret []*flowv1alpha1.Bridge, err error)
 	// Get retrieves the Bridge from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.Bridge, error)
+	Get(name string) (*flowv1alpha1.Bridge, error)
 	BridgeNamespaceListerExpansion
 }
 
 // bridgeNamespaceLister implements the BridgeNamespaceLister
 // interface.
 type bridgeNamespaceLister struct {
-	listers.ResourceIndexer[*v1alpha1.Bridge]
+	listers.ResourceIndexer[*flowv1alpha1.Bridge]
 }

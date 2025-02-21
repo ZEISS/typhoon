@@ -5,8 +5,8 @@ package filtered
 import (
 	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/informers/externalversions/sources/v1alpha1"
 	filtered "github.com/zeiss/typhoon/pkg/client/generated/injection/informers/factory/filtered"
+	v1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/listers/externalversions/sources/v1alpha1"
 	controller "knative.dev/pkg/controller"
 	injection "knative.dev/pkg/injection"
 	logging "knative.dev/pkg/logging"
@@ -43,7 +43,7 @@ func Get(ctx context.Context, selector string) v1alpha1.OCIMetricsSourceInformer
 	untyped := ctx.Value(Key{Selector: selector})
 	if untyped == nil {
 		logging.FromContext(ctx).Panicf(
-			"Unable to fetch github.com/zeiss/typhoon/pkg/client/generated/informers/externalversions/sources/v1alpha1.OCIMetricsSourceInformer with selector %s from context.", selector)
+			"Unable to fetch github.com/zeiss/typhoon/pkg/client/generated/listers/externalversions/sources/v1alpha1.OCIMetricsSourceInformer with selector %s from context.", selector)
 	}
 	return untyped.(v1alpha1.OCIMetricsSourceInformer)
 }

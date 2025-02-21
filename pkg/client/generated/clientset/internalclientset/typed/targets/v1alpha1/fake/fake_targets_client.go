@@ -13,47 +13,47 @@ type FakeTargetsV1alpha1 struct {
 }
 
 func (c *FakeTargetsV1alpha1) CloudEventsTargets(namespace string) v1alpha1.CloudEventsTargetInterface {
-	return &FakeCloudEventsTargets{c, namespace}
+	return newFakeCloudEventsTargets(c, namespace)
 }
 
 func (c *FakeTargetsV1alpha1) DatadogTargets(namespace string) v1alpha1.DatadogTargetInterface {
-	return &FakeDatadogTargets{c, namespace}
+	return newFakeDatadogTargets(c, namespace)
 }
 
 func (c *FakeTargetsV1alpha1) HTTPTargets(namespace string) v1alpha1.HTTPTargetInterface {
-	return &FakeHTTPTargets{c, namespace}
+	return newFakeHTTPTargets(c, namespace)
 }
 
 func (c *FakeTargetsV1alpha1) JiraTargets(namespace string) v1alpha1.JiraTargetInterface {
-	return &FakeJiraTargets{c, namespace}
+	return newFakeJiraTargets(c, namespace)
 }
 
 func (c *FakeTargetsV1alpha1) KafkaTargets(namespace string) v1alpha1.KafkaTargetInterface {
-	return &FakeKafkaTargets{c, namespace}
+	return newFakeKafkaTargets(c, namespace)
 }
 
 func (c *FakeTargetsV1alpha1) LogzMetricsTargets(namespace string) v1alpha1.LogzMetricsTargetInterface {
-	return &FakeLogzMetricsTargets{c, namespace}
+	return newFakeLogzMetricsTargets(c, namespace)
 }
 
 func (c *FakeTargetsV1alpha1) LogzTargets(namespace string) v1alpha1.LogzTargetInterface {
-	return &FakeLogzTargets{c, namespace}
+	return newFakeLogzTargets(c, namespace)
 }
 
 func (c *FakeTargetsV1alpha1) NatsTargets(namespace string) v1alpha1.NatsTargetInterface {
-	return &FakeNatsTargets{c, namespace}
+	return newFakeNatsTargets(c, namespace)
 }
 
 func (c *FakeTargetsV1alpha1) SalesforceTargets(namespace string) v1alpha1.SalesforceTargetInterface {
-	return &FakeSalesforceTargets{c, namespace}
+	return newFakeSalesforceTargets(c, namespace)
 }
 
 func (c *FakeTargetsV1alpha1) ServiceNowTargets(namespace string) v1alpha1.ServiceNowTargetInterface {
-	return &FakeServiceNowTargets{c, namespace}
+	return newFakeServiceNowTargets(c, namespace)
 }
 
 func (c *FakeTargetsV1alpha1) SplunkTargets(namespace string) v1alpha1.SplunkTargetInterface {
-	return &FakeSplunkTargets{c, namespace}
+	return newFakeSplunkTargets(c, namespace)
 }
 
 // RESTClient returns a RESTClient that is used to communicate

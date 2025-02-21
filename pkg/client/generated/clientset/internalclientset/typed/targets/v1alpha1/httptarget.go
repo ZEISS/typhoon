@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type HTTPTargetsGetter interface {
 
 // HTTPTargetInterface has methods to work with HTTPTarget resources.
 type HTTPTargetInterface interface {
-	Create(ctx context.Context, hTTPTarget *v1alpha1.HTTPTarget, opts v1.CreateOptions) (*v1alpha1.HTTPTarget, error)
-	Update(ctx context.Context, hTTPTarget *v1alpha1.HTTPTarget, opts v1.UpdateOptions) (*v1alpha1.HTTPTarget, error)
+	Create(ctx context.Context, hTTPTarget *targetsv1alpha1.HTTPTarget, opts v1.CreateOptions) (*targetsv1alpha1.HTTPTarget, error)
+	Update(ctx context.Context, hTTPTarget *targetsv1alpha1.HTTPTarget, opts v1.UpdateOptions) (*targetsv1alpha1.HTTPTarget, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, hTTPTarget *v1alpha1.HTTPTarget, opts v1.UpdateOptions) (*v1alpha1.HTTPTarget, error)
+	UpdateStatus(ctx context.Context, hTTPTarget *targetsv1alpha1.HTTPTarget, opts v1.UpdateOptions) (*targetsv1alpha1.HTTPTarget, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.HTTPTarget, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.HTTPTargetList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*targetsv1alpha1.HTTPTarget, error)
+	List(ctx context.Context, opts v1.ListOptions) (*targetsv1alpha1.HTTPTargetList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.HTTPTarget, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *targetsv1alpha1.HTTPTarget, err error)
 	HTTPTargetExpansion
 }
 
 // hTTPTargets implements HTTPTargetInterface
 type hTTPTargets struct {
-	*gentype.ClientWithList[*v1alpha1.HTTPTarget, *v1alpha1.HTTPTargetList]
+	*gentype.ClientWithList[*targetsv1alpha1.HTTPTarget, *targetsv1alpha1.HTTPTargetList]
 }
 
 // newHTTPTargets returns a HTTPTargets
 func newHTTPTargets(c *TargetsV1alpha1Client, namespace string) *hTTPTargets {
 	return &hTTPTargets{
-		gentype.NewClientWithList[*v1alpha1.HTTPTarget, *v1alpha1.HTTPTargetList](
+		gentype.NewClientWithList[*targetsv1alpha1.HTTPTarget, *targetsv1alpha1.HTTPTargetList](
 			"httptargets",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.HTTPTarget { return &v1alpha1.HTTPTarget{} },
-			func() *v1alpha1.HTTPTargetList { return &v1alpha1.HTTPTargetList{} }),
+			func() *targetsv1alpha1.HTTPTarget { return &targetsv1alpha1.HTTPTarget{} },
+			func() *targetsv1alpha1.HTTPTargetList { return &targetsv1alpha1.HTTPTargetList{} },
+		),
 	}
 }

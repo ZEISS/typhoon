@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type DatadogTargetsGetter interface {
 
 // DatadogTargetInterface has methods to work with DatadogTarget resources.
 type DatadogTargetInterface interface {
-	Create(ctx context.Context, datadogTarget *v1alpha1.DatadogTarget, opts v1.CreateOptions) (*v1alpha1.DatadogTarget, error)
-	Update(ctx context.Context, datadogTarget *v1alpha1.DatadogTarget, opts v1.UpdateOptions) (*v1alpha1.DatadogTarget, error)
+	Create(ctx context.Context, datadogTarget *targetsv1alpha1.DatadogTarget, opts v1.CreateOptions) (*targetsv1alpha1.DatadogTarget, error)
+	Update(ctx context.Context, datadogTarget *targetsv1alpha1.DatadogTarget, opts v1.UpdateOptions) (*targetsv1alpha1.DatadogTarget, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, datadogTarget *v1alpha1.DatadogTarget, opts v1.UpdateOptions) (*v1alpha1.DatadogTarget, error)
+	UpdateStatus(ctx context.Context, datadogTarget *targetsv1alpha1.DatadogTarget, opts v1.UpdateOptions) (*targetsv1alpha1.DatadogTarget, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.DatadogTarget, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.DatadogTargetList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*targetsv1alpha1.DatadogTarget, error)
+	List(ctx context.Context, opts v1.ListOptions) (*targetsv1alpha1.DatadogTargetList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.DatadogTarget, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *targetsv1alpha1.DatadogTarget, err error)
 	DatadogTargetExpansion
 }
 
 // datadogTargets implements DatadogTargetInterface
 type datadogTargets struct {
-	*gentype.ClientWithList[*v1alpha1.DatadogTarget, *v1alpha1.DatadogTargetList]
+	*gentype.ClientWithList[*targetsv1alpha1.DatadogTarget, *targetsv1alpha1.DatadogTargetList]
 }
 
 // newDatadogTargets returns a DatadogTargets
 func newDatadogTargets(c *TargetsV1alpha1Client, namespace string) *datadogTargets {
 	return &datadogTargets{
-		gentype.NewClientWithList[*v1alpha1.DatadogTarget, *v1alpha1.DatadogTargetList](
+		gentype.NewClientWithList[*targetsv1alpha1.DatadogTarget, *targetsv1alpha1.DatadogTargetList](
 			"datadogtargets",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.DatadogTarget { return &v1alpha1.DatadogTarget{} },
-			func() *v1alpha1.DatadogTargetList { return &v1alpha1.DatadogTargetList{} }),
+			func() *targetsv1alpha1.DatadogTarget { return &targetsv1alpha1.DatadogTarget{} },
+			func() *targetsv1alpha1.DatadogTargetList { return &targetsv1alpha1.DatadogTargetList{} },
+		),
 	}
 }

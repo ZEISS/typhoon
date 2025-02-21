@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type SalesforceTargetsGetter interface {
 
 // SalesforceTargetInterface has methods to work with SalesforceTarget resources.
 type SalesforceTargetInterface interface {
-	Create(ctx context.Context, salesforceTarget *v1alpha1.SalesforceTarget, opts v1.CreateOptions) (*v1alpha1.SalesforceTarget, error)
-	Update(ctx context.Context, salesforceTarget *v1alpha1.SalesforceTarget, opts v1.UpdateOptions) (*v1alpha1.SalesforceTarget, error)
+	Create(ctx context.Context, salesforceTarget *targetsv1alpha1.SalesforceTarget, opts v1.CreateOptions) (*targetsv1alpha1.SalesforceTarget, error)
+	Update(ctx context.Context, salesforceTarget *targetsv1alpha1.SalesforceTarget, opts v1.UpdateOptions) (*targetsv1alpha1.SalesforceTarget, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, salesforceTarget *v1alpha1.SalesforceTarget, opts v1.UpdateOptions) (*v1alpha1.SalesforceTarget, error)
+	UpdateStatus(ctx context.Context, salesforceTarget *targetsv1alpha1.SalesforceTarget, opts v1.UpdateOptions) (*targetsv1alpha1.SalesforceTarget, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.SalesforceTarget, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.SalesforceTargetList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*targetsv1alpha1.SalesforceTarget, error)
+	List(ctx context.Context, opts v1.ListOptions) (*targetsv1alpha1.SalesforceTargetList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.SalesforceTarget, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *targetsv1alpha1.SalesforceTarget, err error)
 	SalesforceTargetExpansion
 }
 
 // salesforceTargets implements SalesforceTargetInterface
 type salesforceTargets struct {
-	*gentype.ClientWithList[*v1alpha1.SalesforceTarget, *v1alpha1.SalesforceTargetList]
+	*gentype.ClientWithList[*targetsv1alpha1.SalesforceTarget, *targetsv1alpha1.SalesforceTargetList]
 }
 
 // newSalesforceTargets returns a SalesforceTargets
 func newSalesforceTargets(c *TargetsV1alpha1Client, namespace string) *salesforceTargets {
 	return &salesforceTargets{
-		gentype.NewClientWithList[*v1alpha1.SalesforceTarget, *v1alpha1.SalesforceTargetList](
+		gentype.NewClientWithList[*targetsv1alpha1.SalesforceTarget, *targetsv1alpha1.SalesforceTargetList](
 			"salesforcetargets",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.SalesforceTarget { return &v1alpha1.SalesforceTarget{} },
-			func() *v1alpha1.SalesforceTargetList { return &v1alpha1.SalesforceTargetList{} }),
+			func() *targetsv1alpha1.SalesforceTarget { return &targetsv1alpha1.SalesforceTarget{} },
+			func() *targetsv1alpha1.SalesforceTargetList { return &targetsv1alpha1.SalesforceTargetList{} },
+		),
 	}
 }

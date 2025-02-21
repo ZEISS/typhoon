@@ -3,129 +3,34 @@
 package fake
 
 import (
-	"context"
-
 	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	labels "k8s.io/apimachinery/pkg/labels"
-	types "k8s.io/apimachinery/pkg/types"
-	watch "k8s.io/apimachinery/pkg/watch"
-	testing "k8s.io/client-go/testing"
+	flowv1alpha1 "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/typed/flow/v1alpha1"
+	gentype "k8s.io/client-go/gentype"
 )
 
-// FakeWorkerTransformations implements WorkerTransformationInterface
-type FakeWorkerTransformations struct {
+// fakeWorkerTransformations implements WorkerTransformationInterface
+type fakeWorkerTransformations struct {
+	*gentype.FakeClientWithList[*v1alpha1.WorkerTransformation, *v1alpha1.WorkerTransformationList]
 	Fake *FakeFlowV1alpha1
-	ns   string
 }
 
-var workertransformationsResource = v1alpha1.SchemeGroupVersion.WithResource("workertransformations")
-
-var workertransformationsKind = v1alpha1.SchemeGroupVersion.WithKind("WorkerTransformation")
-
-// Get takes name of the workerTransformation, and returns the corresponding workerTransformation object, and an error if there is any.
-func (c *FakeWorkerTransformations) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.WorkerTransformation, err error) {
-	emptyResult := &v1alpha1.WorkerTransformation{}
-	obj, err := c.Fake.
-		Invokes(testing.NewGetActionWithOptions(workertransformationsResource, c.ns, name, options), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
+func newFakeWorkerTransformations(fake *FakeFlowV1alpha1, namespace string) flowv1alpha1.WorkerTransformationInterface {
+	return &fakeWorkerTransformations{
+		gentype.NewFakeClientWithList[*v1alpha1.WorkerTransformation, *v1alpha1.WorkerTransformationList](
+			fake.Fake,
+			namespace,
+			v1alpha1.SchemeGroupVersion.WithResource("workertransformations"),
+			v1alpha1.SchemeGroupVersion.WithKind("WorkerTransformation"),
+			func() *v1alpha1.WorkerTransformation { return &v1alpha1.WorkerTransformation{} },
+			func() *v1alpha1.WorkerTransformationList { return &v1alpha1.WorkerTransformationList{} },
+			func(dst, src *v1alpha1.WorkerTransformationList) { dst.ListMeta = src.ListMeta },
+			func(list *v1alpha1.WorkerTransformationList) []*v1alpha1.WorkerTransformation {
+				return gentype.ToPointerSlice(list.Items)
+			},
+			func(list *v1alpha1.WorkerTransformationList, items []*v1alpha1.WorkerTransformation) {
+				list.Items = gentype.FromPointerSlice(items)
+			},
+		),
+		fake,
 	}
-	return obj.(*v1alpha1.WorkerTransformation), err
-}
-
-// List takes label and field selectors, and returns the list of WorkerTransformations that match those selectors.
-func (c *FakeWorkerTransformations) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.WorkerTransformationList, err error) {
-	emptyResult := &v1alpha1.WorkerTransformationList{}
-	obj, err := c.Fake.
-		Invokes(testing.NewListActionWithOptions(workertransformationsResource, workertransformationsKind, c.ns, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-
-	label, _, _ := testing.ExtractFromListOptions(opts)
-	if label == nil {
-		label = labels.Everything()
-	}
-	list := &v1alpha1.WorkerTransformationList{ListMeta: obj.(*v1alpha1.WorkerTransformationList).ListMeta}
-	for _, item := range obj.(*v1alpha1.WorkerTransformationList).Items {
-		if label.Matches(labels.Set(item.Labels)) {
-			list.Items = append(list.Items, item)
-		}
-	}
-	return list, err
-}
-
-// Watch returns a watch.Interface that watches the requested workerTransformations.
-func (c *FakeWorkerTransformations) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
-	return c.Fake.
-		InvokesWatch(testing.NewWatchActionWithOptions(workertransformationsResource, c.ns, opts))
-
-}
-
-// Create takes the representation of a workerTransformation and creates it.  Returns the server's representation of the workerTransformation, and an error, if there is any.
-func (c *FakeWorkerTransformations) Create(ctx context.Context, workerTransformation *v1alpha1.WorkerTransformation, opts v1.CreateOptions) (result *v1alpha1.WorkerTransformation, err error) {
-	emptyResult := &v1alpha1.WorkerTransformation{}
-	obj, err := c.Fake.
-		Invokes(testing.NewCreateActionWithOptions(workertransformationsResource, c.ns, workerTransformation, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.WorkerTransformation), err
-}
-
-// Update takes the representation of a workerTransformation and updates it. Returns the server's representation of the workerTransformation, and an error, if there is any.
-func (c *FakeWorkerTransformations) Update(ctx context.Context, workerTransformation *v1alpha1.WorkerTransformation, opts v1.UpdateOptions) (result *v1alpha1.WorkerTransformation, err error) {
-	emptyResult := &v1alpha1.WorkerTransformation{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateActionWithOptions(workertransformationsResource, c.ns, workerTransformation, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.WorkerTransformation), err
-}
-
-// UpdateStatus was generated because the type contains a Status member.
-// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeWorkerTransformations) UpdateStatus(ctx context.Context, workerTransformation *v1alpha1.WorkerTransformation, opts v1.UpdateOptions) (result *v1alpha1.WorkerTransformation, err error) {
-	emptyResult := &v1alpha1.WorkerTransformation{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceActionWithOptions(workertransformationsResource, "status", c.ns, workerTransformation, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.WorkerTransformation), err
-}
-
-// Delete takes name of the workerTransformation and deletes it. Returns an error if one occurs.
-func (c *FakeWorkerTransformations) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
-	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(workertransformationsResource, c.ns, name, opts), &v1alpha1.WorkerTransformation{})
-
-	return err
-}
-
-// DeleteCollection deletes a collection of objects.
-func (c *FakeWorkerTransformations) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionActionWithOptions(workertransformationsResource, c.ns, opts, listOpts)
-
-	_, err := c.Fake.Invokes(action, &v1alpha1.WorkerTransformationList{})
-	return err
-}
-
-// Patch applies the patch and returns the patched workerTransformation.
-func (c *FakeWorkerTransformations) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.WorkerTransformation, err error) {
-	emptyResult := &v1alpha1.WorkerTransformation{}
-	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceActionWithOptions(workertransformationsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.WorkerTransformation), err
 }

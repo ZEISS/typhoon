@@ -3,10 +3,10 @@
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/routing/v1alpha1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	routingv1alpha1 "github.com/zeiss/typhoon/pkg/apis/routing/v1alpha1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // SplitterLister helps list Splitters.
@@ -14,7 +14,7 @@ import (
 type SplitterLister interface {
 	// List lists all Splitters in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.Splitter, err error)
+	List(selector labels.Selector) (ret []*routingv1alpha1.Splitter, err error)
 	// Splitters returns an object that can list and get Splitters.
 	Splitters(namespace string) SplitterNamespaceLister
 	SplitterListerExpansion
@@ -22,17 +22,17 @@ type SplitterLister interface {
 
 // splitterLister implements the SplitterLister interface.
 type splitterLister struct {
-	listers.ResourceIndexer[*v1alpha1.Splitter]
+	listers.ResourceIndexer[*routingv1alpha1.Splitter]
 }
 
 // NewSplitterLister returns a new SplitterLister.
 func NewSplitterLister(indexer cache.Indexer) SplitterLister {
-	return &splitterLister{listers.New[*v1alpha1.Splitter](indexer, v1alpha1.Resource("splitter"))}
+	return &splitterLister{listers.New[*routingv1alpha1.Splitter](indexer, routingv1alpha1.Resource("splitter"))}
 }
 
 // Splitters returns an object that can list and get Splitters.
 func (s *splitterLister) Splitters(namespace string) SplitterNamespaceLister {
-	return splitterNamespaceLister{listers.NewNamespaced[*v1alpha1.Splitter](s.ResourceIndexer, namespace)}
+	return splitterNamespaceLister{listers.NewNamespaced[*routingv1alpha1.Splitter](s.ResourceIndexer, namespace)}
 }
 
 // SplitterNamespaceLister helps list and get Splitters.
@@ -40,15 +40,15 @@ func (s *splitterLister) Splitters(namespace string) SplitterNamespaceLister {
 type SplitterNamespaceLister interface {
 	// List lists all Splitters in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.Splitter, err error)
+	List(selector labels.Selector) (ret []*routingv1alpha1.Splitter, err error)
 	// Get retrieves the Splitter from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.Splitter, error)
+	Get(name string) (*routingv1alpha1.Splitter, error)
 	SplitterNamespaceListerExpansion
 }
 
 // splitterNamespaceLister implements the SplitterNamespaceLister
 // interface.
 type splitterNamespaceLister struct {
-	listers.ResourceIndexer[*v1alpha1.Splitter]
+	listers.ResourceIndexer[*routingv1alpha1.Splitter]
 }

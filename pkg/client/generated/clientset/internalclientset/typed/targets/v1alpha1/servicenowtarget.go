@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type ServiceNowTargetsGetter interface {
 
 // ServiceNowTargetInterface has methods to work with ServiceNowTarget resources.
 type ServiceNowTargetInterface interface {
-	Create(ctx context.Context, serviceNowTarget *v1alpha1.ServiceNowTarget, opts v1.CreateOptions) (*v1alpha1.ServiceNowTarget, error)
-	Update(ctx context.Context, serviceNowTarget *v1alpha1.ServiceNowTarget, opts v1.UpdateOptions) (*v1alpha1.ServiceNowTarget, error)
+	Create(ctx context.Context, serviceNowTarget *targetsv1alpha1.ServiceNowTarget, opts v1.CreateOptions) (*targetsv1alpha1.ServiceNowTarget, error)
+	Update(ctx context.Context, serviceNowTarget *targetsv1alpha1.ServiceNowTarget, opts v1.UpdateOptions) (*targetsv1alpha1.ServiceNowTarget, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, serviceNowTarget *v1alpha1.ServiceNowTarget, opts v1.UpdateOptions) (*v1alpha1.ServiceNowTarget, error)
+	UpdateStatus(ctx context.Context, serviceNowTarget *targetsv1alpha1.ServiceNowTarget, opts v1.UpdateOptions) (*targetsv1alpha1.ServiceNowTarget, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.ServiceNowTarget, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.ServiceNowTargetList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*targetsv1alpha1.ServiceNowTarget, error)
+	List(ctx context.Context, opts v1.ListOptions) (*targetsv1alpha1.ServiceNowTargetList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.ServiceNowTarget, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *targetsv1alpha1.ServiceNowTarget, err error)
 	ServiceNowTargetExpansion
 }
 
 // serviceNowTargets implements ServiceNowTargetInterface
 type serviceNowTargets struct {
-	*gentype.ClientWithList[*v1alpha1.ServiceNowTarget, *v1alpha1.ServiceNowTargetList]
+	*gentype.ClientWithList[*targetsv1alpha1.ServiceNowTarget, *targetsv1alpha1.ServiceNowTargetList]
 }
 
 // newServiceNowTargets returns a ServiceNowTargets
 func newServiceNowTargets(c *TargetsV1alpha1Client, namespace string) *serviceNowTargets {
 	return &serviceNowTargets{
-		gentype.NewClientWithList[*v1alpha1.ServiceNowTarget, *v1alpha1.ServiceNowTargetList](
+		gentype.NewClientWithList[*targetsv1alpha1.ServiceNowTarget, *targetsv1alpha1.ServiceNowTargetList](
 			"servicenowtargets",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.ServiceNowTarget { return &v1alpha1.ServiceNowTarget{} },
-			func() *v1alpha1.ServiceNowTargetList { return &v1alpha1.ServiceNowTargetList{} }),
+			func() *targetsv1alpha1.ServiceNowTarget { return &targetsv1alpha1.ServiceNowTarget{} },
+			func() *targetsv1alpha1.ServiceNowTargetList { return &targetsv1alpha1.ServiceNowTargetList{} },
+		),
 	}
 }

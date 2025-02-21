@@ -3,10 +3,10 @@
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // HTTPTargetLister helps list HTTPTargets.
@@ -14,7 +14,7 @@ import (
 type HTTPTargetLister interface {
 	// List lists all HTTPTargets in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.HTTPTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.HTTPTarget, err error)
 	// HTTPTargets returns an object that can list and get HTTPTargets.
 	HTTPTargets(namespace string) HTTPTargetNamespaceLister
 	HTTPTargetListerExpansion
@@ -22,17 +22,17 @@ type HTTPTargetLister interface {
 
 // hTTPTargetLister implements the HTTPTargetLister interface.
 type hTTPTargetLister struct {
-	listers.ResourceIndexer[*v1alpha1.HTTPTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.HTTPTarget]
 }
 
 // NewHTTPTargetLister returns a new HTTPTargetLister.
 func NewHTTPTargetLister(indexer cache.Indexer) HTTPTargetLister {
-	return &hTTPTargetLister{listers.New[*v1alpha1.HTTPTarget](indexer, v1alpha1.Resource("httptarget"))}
+	return &hTTPTargetLister{listers.New[*targetsv1alpha1.HTTPTarget](indexer, targetsv1alpha1.Resource("httptarget"))}
 }
 
 // HTTPTargets returns an object that can list and get HTTPTargets.
 func (s *hTTPTargetLister) HTTPTargets(namespace string) HTTPTargetNamespaceLister {
-	return hTTPTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.HTTPTarget](s.ResourceIndexer, namespace)}
+	return hTTPTargetNamespaceLister{listers.NewNamespaced[*targetsv1alpha1.HTTPTarget](s.ResourceIndexer, namespace)}
 }
 
 // HTTPTargetNamespaceLister helps list and get HTTPTargets.
@@ -40,15 +40,15 @@ func (s *hTTPTargetLister) HTTPTargets(namespace string) HTTPTargetNamespaceList
 type HTTPTargetNamespaceLister interface {
 	// List lists all HTTPTargets in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.HTTPTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.HTTPTarget, err error)
 	// Get retrieves the HTTPTarget from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.HTTPTarget, error)
+	Get(name string) (*targetsv1alpha1.HTTPTarget, error)
 	HTTPTargetNamespaceListerExpansion
 }
 
 // hTTPTargetNamespaceLister implements the HTTPTargetNamespaceLister
 // interface.
 type hTTPTargetNamespaceLister struct {
-	listers.ResourceIndexer[*v1alpha1.HTTPTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.HTTPTarget]
 }

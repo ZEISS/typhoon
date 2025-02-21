@@ -3,10 +3,10 @@
 package v1alpha1
 
 import (
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	targetsv1alpha1 "github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // NatsTargetLister helps list NatsTargets.
@@ -14,7 +14,7 @@ import (
 type NatsTargetLister interface {
 	// List lists all NatsTargets in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.NatsTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.NatsTarget, err error)
 	// NatsTargets returns an object that can list and get NatsTargets.
 	NatsTargets(namespace string) NatsTargetNamespaceLister
 	NatsTargetListerExpansion
@@ -22,17 +22,17 @@ type NatsTargetLister interface {
 
 // natsTargetLister implements the NatsTargetLister interface.
 type natsTargetLister struct {
-	listers.ResourceIndexer[*v1alpha1.NatsTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.NatsTarget]
 }
 
 // NewNatsTargetLister returns a new NatsTargetLister.
 func NewNatsTargetLister(indexer cache.Indexer) NatsTargetLister {
-	return &natsTargetLister{listers.New[*v1alpha1.NatsTarget](indexer, v1alpha1.Resource("natstarget"))}
+	return &natsTargetLister{listers.New[*targetsv1alpha1.NatsTarget](indexer, targetsv1alpha1.Resource("natstarget"))}
 }
 
 // NatsTargets returns an object that can list and get NatsTargets.
 func (s *natsTargetLister) NatsTargets(namespace string) NatsTargetNamespaceLister {
-	return natsTargetNamespaceLister{listers.NewNamespaced[*v1alpha1.NatsTarget](s.ResourceIndexer, namespace)}
+	return natsTargetNamespaceLister{listers.NewNamespaced[*targetsv1alpha1.NatsTarget](s.ResourceIndexer, namespace)}
 }
 
 // NatsTargetNamespaceLister helps list and get NatsTargets.
@@ -40,15 +40,15 @@ func (s *natsTargetLister) NatsTargets(namespace string) NatsTargetNamespaceList
 type NatsTargetNamespaceLister interface {
 	// List lists all NatsTargets in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1alpha1.NatsTarget, err error)
+	List(selector labels.Selector) (ret []*targetsv1alpha1.NatsTarget, err error)
 	// Get retrieves the NatsTarget from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1alpha1.NatsTarget, error)
+	Get(name string) (*targetsv1alpha1.NatsTarget, error)
 	NatsTargetNamespaceListerExpansion
 }
 
 // natsTargetNamespaceLister implements the NatsTargetNamespaceLister
 // interface.
 type natsTargetNamespaceLister struct {
-	listers.ResourceIndexer[*v1alpha1.NatsTarget]
+	listers.ResourceIndexer[*targetsv1alpha1.NatsTarget]
 }

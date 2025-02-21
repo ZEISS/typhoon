@@ -26,6 +26,7 @@ deepcopy: private api-import-paths += $(PKG)/pkg/apis/common/v1alpha1
 deepcopy:
 	@echo "+ Generating deepcopy funcs for $(API_GROUPS)"
 	$(GO_RUN_TOOLS) k8s.io/code-generator/cmd/deepcopy-gen \
+		${api-import-paths} \
 		--go-header-file hack/copyright.go.txt \
 		--output-file zz_generated.deepcopy.go \
 		$(find_dirs_containing_comment_tags "+k8s:deepcopy-gen=")
@@ -40,40 +41,42 @@ client:
 			--input-base $(PKG)/pkg/apis \
 			--go-header-file hack/copyright.go.txt \
 			--output-pkg $(PKG)/pkg/client/generated/clientset \
-			--output-dir pkg/client/generated/clientset; \
+			--output-dir pkg/client/generated/clientset;
 
 lister:
 	@echo "+ Generating listers for $(API_GROUPS)"
 	@rm -rf pkg/client/generated/listers
-	$(GO_RUN_TOOLS) k8s.io/code-generator/cmd/lister-gen \
-		--go-header-file hack/copyright.go.txt \
-		--output-pkg $(PKG)/pkg/client/generated/listers \
-		--output-dir pkg/client/generated/listers \
-		${api-import-paths}
+		echo "+ Generating listers for $$apigrp" ; \
+		$(GO_RUN_TOOLS) k8s.io/code-generator/cmd/lister-gen \
+			${api-import-paths} \
+			--go-header-file hack/copyright.go.txt \
+			--output-pkg $(PKG)/pkg/client/generated/listers \
+			--output-dir pkg/client/generated/listers;
 
 informer:
 	@echo "+ Generating informers for $(API_GROUPS)"
 	@rm -rf pkg/client/generated/informers
-	$(GO_RUN_TOOLS) k8s.io/code-generator/cmd/informer-gen \
-		--go-header-file hack/copyright.go.txt \
-		--output-pkg $(PKG)/pkg/client/generated/informers \
-		--output-dir pkg/client/generated/informers \
-		--versioned-clientset-package $(PKG)/pkg/client/generated/clientset/internalclientset \
-		--listers-package $(PKG)/pkg/client/generated/listers \
-		${api-import-paths}
+		echo "+ Generating informers for $$apigrp" ; \
+		$(GO_RUN_TOOLS) k8s.io/code-generator/cmd/informer-gen \
+			${api-import-paths} \
+			--go-header-file hack/copyright.go.txt \
+			--output-pkg $(PKG)/pkg/client/generated/listers \
+			--listers-package $(PKG)/pkg/client/generated/listers \
+			--versioned-clientset-package $(PKG)/pkg/client/generated/clientset/internalclientset \
+			--output-dir pkg/client/generated/listers;
 
 injection:
 	@echo "+ Generating injection for $(API_GROUPS)"
 	@rm -rf pkg/client/generated/injection
 	$(GO_RUN_TOOLS) knative.dev/pkg/codegen/cmd/injection-gen \
+		${api-import-paths} \
 		--go-header-file hack/copyright.go.txt \
 		--input-dirs $(subst $(space),$(comma),$(api-import-paths)) \
 		--output-package $(PKG)/pkg/client/generated/injection \
-		--trim-path-prefix $(PKG)/ \
-		--output-base . \
 		--versioned-clientset-package $(PKG)/pkg/client/generated/clientset/internalclientset \
 		--listers-package $(PKG)/pkg/client/generated/listers \
-		--external-versions-informers-package $(PKG)/pkg/client/generated/informers/externalversions
+		--output-dir pkg/client/generated/injection \
+		--external-versions-informers-package $(PKG)/pkg/client/generated/listers/externalversions;
 
 # Cleanup codegen
 .PHONY: codegen-cleanup

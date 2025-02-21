@@ -3,9 +3,9 @@
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
+	flowv1alpha1 "github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
 	scheme "github.com/zeiss/typhoon/pkg/client/generated/clientset/internalclientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -21,33 +21,34 @@ type TransformationsGetter interface {
 
 // TransformationInterface has methods to work with Transformation resources.
 type TransformationInterface interface {
-	Create(ctx context.Context, transformation *v1alpha1.Transformation, opts v1.CreateOptions) (*v1alpha1.Transformation, error)
-	Update(ctx context.Context, transformation *v1alpha1.Transformation, opts v1.UpdateOptions) (*v1alpha1.Transformation, error)
+	Create(ctx context.Context, transformation *flowv1alpha1.Transformation, opts v1.CreateOptions) (*flowv1alpha1.Transformation, error)
+	Update(ctx context.Context, transformation *flowv1alpha1.Transformation, opts v1.UpdateOptions) (*flowv1alpha1.Transformation, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, transformation *v1alpha1.Transformation, opts v1.UpdateOptions) (*v1alpha1.Transformation, error)
+	UpdateStatus(ctx context.Context, transformation *flowv1alpha1.Transformation, opts v1.UpdateOptions) (*flowv1alpha1.Transformation, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.Transformation, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.TransformationList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*flowv1alpha1.Transformation, error)
+	List(ctx context.Context, opts v1.ListOptions) (*flowv1alpha1.TransformationList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.Transformation, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *flowv1alpha1.Transformation, err error)
 	TransformationExpansion
 }
 
 // transformations implements TransformationInterface
 type transformations struct {
-	*gentype.ClientWithList[*v1alpha1.Transformation, *v1alpha1.TransformationList]
+	*gentype.ClientWithList[*flowv1alpha1.Transformation, *flowv1alpha1.TransformationList]
 }
 
 // newTransformations returns a Transformations
 func newTransformations(c *FlowV1alpha1Client, namespace string) *transformations {
 	return &transformations{
-		gentype.NewClientWithList[*v1alpha1.Transformation, *v1alpha1.TransformationList](
+		gentype.NewClientWithList[*flowv1alpha1.Transformation, *flowv1alpha1.TransformationList](
 			"transformations",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.Transformation { return &v1alpha1.Transformation{} },
-			func() *v1alpha1.TransformationList { return &v1alpha1.TransformationList{} }),
+			func() *flowv1alpha1.Transformation { return &flowv1alpha1.Transformation{} },
+			func() *flowv1alpha1.TransformationList { return &flowv1alpha1.TransformationList{} },
+		),
 	}
 }
