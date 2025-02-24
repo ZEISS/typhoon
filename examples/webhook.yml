@@ -17,7 +17,6 @@ spec:
 
   sink:
     ref:
-      apiVersion: eventing.knative.dev/v1
-      kind: Broker
-      name:
-      imc-broker:
+      apiVersion: messaging.knative.dev/v1alpha1
+      kind: NatsJetStreamChannel
+      name: my-default-channel
