@@ -52,8 +52,7 @@ lint: ## Run lint.
 
 .PHONY: deploy
 deploy: ## Deploy the application.
-	@eval $$(minikube -p minikube docker-env) ;\
-	$(GO_KO) resolve -f $(BASE_DIR)/config > $(BASE_DIR)/typhoon.yaml
+	$(GO_KO) -j 1 resolve -f $(BASE_DIR)/config > $(BASE_DIR)/typhoon.yaml
 	@kubectl create namespace typhoon --dry-run=client -o yaml | kubectl apply -f -
 	@kubectl apply -f $(BASE_DIR)/typhoon.yaml
 	@rm $(BASE_DIR)/typhoon.yaml
