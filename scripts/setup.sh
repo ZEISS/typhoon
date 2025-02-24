@@ -21,17 +21,13 @@ helm repo add nats https://nats-io.github.io/k8s/helm/charts
 helm repo update
 
 docker pull docker.io/envoyproxy/envoy:v1.31-latest
-docker pull ghcr.io/zeiss/natz-operator/account-server:latest
 docker pull natsio/nats-box:0.16.0
 docker pull nats:2.10.25-alpine
 docker pull natsio/nats-server-config-reloader:0.16.1
-docker pull ghcr.io/zeiss/natz-operator/operator:latest
 kind load docker-image docker.io/envoyproxy/envoy:v1.31-latest --name typhoon
-kind load docker-image ghcr.io/zeiss/natz-operator/account-server:latest --name typhoon
 kind load docker-image natsio/nats-box:0.16.0 --name typhoon
 kind load docker-image nats:2.10.25-alpine --name typhoon
 kind load docker-image natsio/nats-server-config-reloader:0.16.1 --name typhoon
-kind load docker-image ghcr.io/zeiss/natz-operator/operator:latest --name typhoon
 
 # # Install the Knative Serving and Eventing components on Minikube
 helm install knative zeiss-staging/knative --wait
