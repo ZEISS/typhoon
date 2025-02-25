@@ -8,7 +8,7 @@ require (
 	github.com/google/ko v0.17.1
 	github.com/goreleaser/goreleaser/v2 v2.7.0
 	github.com/oapi-codegen/oapi-codegen/v2 v2.4.1
-	github.com/zeiss/natz-operator v0.9.4-0.20250220141034-d134dd94daa9
+	github.com/zeiss/natz-operator v0.9.5
 	github.com/zeiss/pkg v0.1.23
 	gotest.tools/gotestsum v1.12.0
 	k8s.io/code-generator v0.32.2

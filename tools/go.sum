@@ -1174,6 +1174,8 @@ github.com/yuin/goldmark v1.4.1/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 github.com/zeiss/natz-operator v0.9.4-0.20250220141034-d134dd94daa9 h1:/RFuvGAnVw9eeUD2pjNc4jdUg9XSiVGlBA08IXta6xM=
 github.com/zeiss/natz-operator v0.9.4-0.20250220141034-d134dd94daa9/go.mod h1:VI/+biTWwVlvLZ5hbmP8pY1h4/i3dIC+8Hqgh0qphaI=
+github.com/zeiss/natz-operator v0.9.5 h1:+16oylf1YUaLihZtJdcsrdscPf4NZPxECL9g0nrY5uo=
+github.com/zeiss/natz-operator v0.9.5/go.mod h1:VI/+biTWwVlvLZ5hbmP8pY1h4/i3dIC+8Hqgh0qphaI=
 github.com/zeiss/pkg v0.1.23 h1:y7Tv1j2ZdD1bNWbPYtIPHUl5FGD2tuyVPe0a7sIDJgQ=
 github.com/zeiss/pkg v0.1.23/go.mod h1:8yoQpqhbbpcBKdmWRfQ+P9GSccC6CjNGPq4WcZZVGSc=
 gitlab.com/bosi/decorder v0.4.2 h1:qbQaV3zgwnBZ4zPMhGLW4KZe7A7NwxEhJx39R3shffo=
