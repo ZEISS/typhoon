@@ -12,11 +12,5 @@ const (
 )
 
 func main() {
-	sctx := signals.NewContext()
-
-	ctx := adapter.WithController(sctx, webhooksource.NewController)
-	ctx = adapter.WithHAEnabled(ctx)
-	ctx = adapter.WithConfigWatcherEnabled(ctx)
-
-	adapter.MainWithContext(ctx, component, webhooksource.NewEnvConfig, webhooksource.NewAdapter)
+	adapter.MainWithContext(signals.NewContext(), component, webhooksource.NewEnvConfig, webhooksource.NewAdapter)
 }
