@@ -1,3 +1,9 @@
+apiVersion: messaging.knative.dev/v1alpha1
+kind: NatsJetStreamChannel
+metadata:
+  name: my-default-channel
+  namespace: default
+---
 apiVersion: sources.typhoon.zeiss.com/v1alpha1
 kind: WebhookSource
 metadata:

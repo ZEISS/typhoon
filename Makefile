@@ -17,9 +17,10 @@ COMMANDS		:= $(notdir $(wildcard cmd/*))
 IMAGE_TAG       ?= $(shell git rev-parse HEAD)
 TAG_REGEX       := ^v([0-9]{1,}\.){2}[0-9]{1,}$
 KOFLAGS         ?=
-KO_DOCKER_REPO 	?= ko.local
 
-export KO_DOCKER_REPO
+# Inlcude the .env file to configure ko
+-include .env
+export
 
 .PHONY: build
 build: ## Build the binary file.
@@ -52,10 +53,7 @@ lint: ## Run lint.
 
 .PHONY: deploy
 deploy: ## Deploy the application.
-	$(GO_KO) -j 1 resolve -f $(BASE_DIR)/config > $(BASE_DIR)/typhoon.yaml
-	@kubectl create namespace typhoon --dry-run=client -o yaml | kubectl apply -f -
-	@kubectl apply -f $(BASE_DIR)/typhoon.yaml
-	@rm $(BASE_DIR)/typhoon.yaml
+	$(GO_KO) -j 1 apply -Bf $(BASE_DIR)/config
 
 .PHONY: helm/update
 helm/update: ## Update helm dependencies.
@@ -65,7 +63,6 @@ helm/update: ## Update helm dependencies.
 release: ## Release the application.
 	@mkdir -p $(OUTPUT_DIR)
 	$(GO_KO) resolve -f $(BASE_DIR)/config/ -l 'typhoon.zeiss.com/crd-install' > $(OUTPUT_DIR)/typhoon-crds.yaml
-	@cp config/namespace/100-namespace.yaml $(OUTPUT_DIR)/typhoon.yaml
 	@cp $(OUTPUT_DIR)/*.yaml $(BASE_DIR)/helm/charts/typhoon/crds
 
 ifeq ($(shell echo ${IMAGE_TAG} | egrep "${TAG_REGEX}"),${IMAGE_TAG})
@@ -74,10 +71,6 @@ endif
 	$(GO_KO) resolve $(KOFLAGS) -B -t $(IMAGE_TAG) --tag-only -f config/ -l '!typhoon.zeiss.com/crd-install' >> $(OUTPUT_DIR)/typhoon-crds.yaml
 
 	$(GO_RELEASER) release --clean
-
-.PHONY: web/up
-web/up: ## Start the web server.
-	air -c cmd/web/.air.toml
 
 .PHONY: setup
 setup: ## Setup the project.

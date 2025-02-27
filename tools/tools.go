@@ -15,4 +15,5 @@ import (
 	_ "k8s.io/code-generator"
 	_ "knative.dev/pkg/codegen/cmd/injection-gen"
 	_ "mvdan.cc/gofumpt"
+	_ "sigs.k8s.io/kustomize/kustomize/v5"
 )

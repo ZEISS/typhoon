@@ -81,10 +81,12 @@ Typhoon depends on [Knative Eventing](https://knative.dev/docs/) and [NATS](http
 
 ## Development
 
-You can use [minikube](https://minikube.sigs.k8s.io/docs/) to run a local Kubernetes cluster.
+You can use [kind](https://kind.sigs.k8s.io/) to run a local Kubernetes cluster. You can use the provided [Makefile](/Makefile) to setup a local Kubernetes cluster.
+
+Please copy the `.env.example` to a `.env` file and adjust the values to your needs.
 
 ```shell
-sh scripts/setup-minikube.sh
+make setup
 ```
 
 Run the following Makefile target to deploy Typhoon to your local Kubernetes cluster.

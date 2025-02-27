@@ -4,6 +4,7 @@ metadata:
   name: typhoon-webhook
   labels:
     app.kubernetes.io/part-of: typhoon
+    typhoon.zeiss.com/release: devel
 
 rules:
 # Routing admin
