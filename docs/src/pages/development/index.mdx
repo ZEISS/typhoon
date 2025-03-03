@@ -1,0 +1,27 @@
+---
+title: Quickstart
+---
+
+> The repository contains a [Development Container](https://containers.dev/) specification
+that can be used with [OrbStack](https://orbos.io/) or [GitHub Codesspaces](https://github.com/codespaces).
+
+It is assumed that you use the development container to create your development environment.
+Because Typhoon is based on [Knative](https://knative.dev/), you need a local [Kubernetes](https://kubernetes.io/) cluster.
+There are many options but we recommend to use [kind](https://kind.sigs.k8s.io/).
+
+If you have created the development container in [Visual Studio Code](https://code.visualstudio.com/docs/devcontainers/containers#:~:text=Start%20VS%20Code%20and%20run,that%20appears%20and%20press%20Enter.)
+or any other code editor that supports execute the following command.
+
+```bash
+make setup
+```
+
+This will setup a local [kind](https://kind.sigs.k8s.io/) cluster and install [Knative](https://knative.dev/) and also [NATS.io](https://nats.io/).
+
+After the setup is done you can start the development server with the following command.
+
+```bash
+make deploy
+```
+
+This creates the needed containers of the controllers and adapters using [ko](https://github.com/ko-build/ko).
