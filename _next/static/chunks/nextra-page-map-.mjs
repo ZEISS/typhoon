@@ -1,7 +1,20 @@
 import meta from "../../../src/pages/_meta.ts";
+import development_meta from "../../../src/pages/development/_meta.ts";
 import getting_started_meta from "../../../src/pages/getting_started/_meta.ts";
 export const pageMap = [{
   data: meta
+}, {
+  name: "development",
+  route: "/development",
+  children: [{
+    data: development_meta
+  }, {
+    name: "index",
+    route: "/development",
+    frontMatter: {
+      "title": "Quickstart"
+    }
+  }]
 }, {
   name: "getting_started",
   route: "/getting_started",
