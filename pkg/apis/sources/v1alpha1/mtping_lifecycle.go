@@ -61,10 +61,6 @@ func (s *PingSource) GetAdapterOverrides() *v1alpha1.AdapterOverrides {
 	return s.Spec.AdapterOverrides
 }
 
-// SetDefaults implements apis.Defaultable
-func (s *PingSource) SetDefaults(ctx context.Context) {
-}
-
 // Validate implements apis.Validatable
 func (s *PingSource) Validate(ctx context.Context) *apis.FieldError {
 	return nil
