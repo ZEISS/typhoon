@@ -26,6 +26,10 @@ var AllTypes = []v1alpha1.GroupObject{
 	{Single: &OCIMetricsSource{}, List: &OCIMetricsSourceList{}},
 	{Single: &WebhookSource{}, List: &WebhookSourceList{}},
 	{Single: &SalesforceSource{}, List: &SalesforceSourceList{}},
+	{Single: &PingSource{}, List: &PingSourceList{}},
+	{Single: &AzureServiceBusSource{}, List: &AzureServiceBusSourceList{}},
+	{Single: &AzureServiceBusQueueSource{}, List: &AzureServiceBusQueueSourceList{}},
+	{Single: &AzureServiceBusTopicSource{}, List: &AzureServiceBusTopicSourceList{}},
 }
 
 // addKnownTypes adds all this custom API's types to Scheme.

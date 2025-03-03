@@ -22,6 +22,8 @@ type Interface interface {
 	KafkaSources() KafkaSourceInformer
 	// OCIMetricsSources returns a OCIMetricsSourceInformer.
 	OCIMetricsSources() OCIMetricsSourceInformer
+	// PingSources returns a PingSourceInformer.
+	PingSources() PingSourceInformer
 	// SalesforceSources returns a SalesforceSourceInformer.
 	SalesforceSources() SalesforceSourceInformer
 	// WebhookSources returns a WebhookSourceInformer.
@@ -72,6 +74,11 @@ func (v *version) KafkaSources() KafkaSourceInformer {
 // OCIMetricsSources returns a OCIMetricsSourceInformer.
 func (v *version) OCIMetricsSources() OCIMetricsSourceInformer {
 	return &oCIMetricsSourceInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+}
+
+// PingSources returns a PingSourceInformer.
+func (v *version) PingSources() PingSourceInformer {
+	return &pingSourceInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
 
 // SalesforceSources returns a SalesforceSourceInformer.
