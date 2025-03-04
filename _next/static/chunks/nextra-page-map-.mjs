@@ -39,4 +39,36 @@ export const pageMap = [{
   frontMatter: {
     "title": "Home"
   }
+}, {
+  name: "sources",
+  route: "/sources",
+  children: [{
+    name: "index",
+    route: "/sources",
+    frontMatter: {
+      "title": "Quickstart"
+    }
+  }, {
+    name: "webhook",
+    route: "/sources/webhook",
+    frontMatter: {
+      "title": "Webhook Source (HTTP)"
+    }
+  }]
+}, {
+  name: "targets",
+  route: "/targets",
+  children: [{
+    name: "http",
+    route: "/targets/http",
+    frontMatter: {
+      "title": "HTTP Target"
+    }
+  }, {
+    name: "index",
+    route: "/targets",
+    frontMatter: {
+      "title": "Quickstart"
+    }
+  }]
 }];
