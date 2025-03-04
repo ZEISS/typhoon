@@ -1,0 +1,47 @@
+---
+title: HTTP Target
+---
+
+Sends event over HTTP to other service. This is the most general target,
+as it can be used to send events to any service that can accept HTTP requests.
+
+```yaml
+apiVersion: targets.typhoon.zeiss.com/v1alpha1
+kind: HTTPTarget
+metadata:
+  name: typhoon-http
+  namespace: default
+spec:
+  response:
+    eventType: typhoon.http.type
+    eventSource: my.service.com
+  endpoint: 'https://my.service.com/my/path?some_key=<SOME-KEY>'
+  method: 'GET'
+  skipVerify: false
+  caCertificate: |-
+    -----BEGIN CERTIFICATE-----
+    MIIE0zCCA7ugAwIBAgIJANu+mC2Jt3uTMA0GCSqGSIb3DQEBCwUAMIGhMQswCQYD
+    VQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTERMA8GA1UEBxMIU2FuIEpvc2Ux
+    ...
+    xFNjavxrHmsH8jPHVvgc1VD0Opja0l/BRVauTrUaoW6tE+wFG5rEcPGS80jjHK4S
+    pB5iDj2mUZH1T8lzYtuZy0ZPirxmtsk3135+CKNa2OCAhhFjE0xd
+    -----END CERTIFICATE-----
+  basicAuthUsername: myuser
+  basicAuthPassword:
+    secretKeyRef:
+      name: myservice
+      key: password
+  headers:
+    User-Agent: Typhoon-HTTP
+    Some-header: some-value
+```
+
+* `response.eventType` event type for the response message.
+* `response.eventSource` event source for the response message.
+* `endpoint URL` including path and querystring for the remote HTTP service.
+* `method` verb for the HTTP rquest.
+* `skipVerify` to skip remote server TLS certificate verification. Optional
+* `caCertificate` CA certificate configured for TLS connection. Optional
+* `basicAuthUsername` basic authentication user name. Optional
+* `basicAuthPassword` secret reference to basic authentication password. Optional
+* `headers` string map of key/value pairs as HTTP headers. Optional

@@ -1,0 +1,52 @@
+---
+title: Webhook Source (HTTP)
+---
+
+The source exposes an HTTP endpoint. This endpoint can be used to virtually
+integrate with any 3rd-party system. It is a generic way to ingest events via HTTP.
+
+Every request will create an event.
+
+The webhook can receive arbitrary data that is wrapped in a [CloudEvent](https://cloudevents.io/) envelope.
+
+## Configuration
+
+```yaml
+apiVersion: sources.typhoon.zeiss.com/v1alpha1
+kind: WebhookSource
+metadata:
+  name: sample
+spec:
+  eventType: com.zeiss.typhoon.sample.event
+  eventSource: hungry-hypatia
+
+  eventExtensionAttributes:
+    from:
+    - path
+    - queries
+
+  basicAuthUsername: webhook
+  basicAuthPassword:
+    value: supersecret
+
+  sink:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: event-display
+```
+
+Parameters:
+
+* Name: Unique name of the `WebhookSource` in the namespaces.
+* EventType: Type of the event that will be produced by the source.
+* EventSource: Source of the event that will be produced by the source.
+* Basic Auth Username (optional): Username for basic authentication.
+* Basic Auth Password (optional): Password for basic authentication.
+
+Events produced have the following attributes:
+
+* Type of the event is defined the `WebhookSource` configuration, e.g. `com.zeiss.typhoon.sample.event`
+* Source is defined in the `WebhookSource` configuration, e.g. `hungry-hypatia`
+* Schema of the `data` attribite depends on the client side send data to the `WebhookSource`
+* `datacontenttype` is set to the `Content-Type` received at the incoming request
