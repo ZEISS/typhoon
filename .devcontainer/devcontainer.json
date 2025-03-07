@@ -1,5 +1,4 @@
 {
-  "name": "zeiss/typhoon",
   "build": {
     "dockerfile": "Dockerfile",
     // Update 'VARIANT' to pick an Ubuntu version: jammy / ubuntu-22.04, focal / ubuntu-20.04, bionic /ubuntu-18.04
