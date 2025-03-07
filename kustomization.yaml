@@ -1,4 +1,5 @@
 resources:
+- config/100-namespace.yaml
 - config/200-clusterrole-webhook.yaml
 - config/200-clusterroles.yaml
 - config/201-serviceaccounts.yaml

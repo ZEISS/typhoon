@@ -4,6 +4,7 @@ metadata:
   name: typhoon-controller
   labels:
     app.kubernetes.io/part-of: typhoon
+    typhoon.zeiss.com/release: devel
 
 rules:
 
@@ -48,6 +49,9 @@ rules:
 - apiGroups:
   - sources.typhoon.zeiss.com
   resources:
+  - azureservicebusqueuesources
+  - azureservicebussources
+  - azureservicebustopicsources
   - cloudeventssources
   - httppollersources
   - kafkasources
@@ -536,12 +540,6 @@ rules:
   - azureservicebustargets
   - cloudeventstargets
   - datadogtargets
-  - elasticsearchtargets
-  - googlecloudfirestoretargets
-  - googlecloudpubsubtargets
-  - googlecloudstoragetargets
-  - googlecloudworkflowstargets
-  - googlesheettargets
   - httptargets
   - ibmmqtargets
   - jiratargets
@@ -550,12 +548,7 @@ rules:
   - mongodbtargets
   - oracletargets
   - salesforcetargets
-  - sendgridtargets
-  - slacktargets
-  - solacetargets
   - splunktargets
-  - twiliotargets
-  - zendesktargets
   verbs:
   - get
   - list

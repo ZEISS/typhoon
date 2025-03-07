@@ -3,7 +3,6 @@ kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/part-of: typhoon
-
   name: typhoon-webhook-config
 
 rules:

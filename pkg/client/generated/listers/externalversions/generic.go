@@ -81,6 +81,8 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Sources().V1alpha1().KafkaSources().Informer()}, nil
 	case sourcesv1alpha1.SchemeGroupVersion.WithResource("ocimetricssources"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Sources().V1alpha1().OCIMetricsSources().Informer()}, nil
+	case sourcesv1alpha1.SchemeGroupVersion.WithResource("pingsources"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Sources().V1alpha1().PingSources().Informer()}, nil
 	case sourcesv1alpha1.SchemeGroupVersion.WithResource("salesforcesources"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Sources().V1alpha1().SalesforceSources().Informer()}, nil
 	case sourcesv1alpha1.SchemeGroupVersion.WithResource("webhooksources"):

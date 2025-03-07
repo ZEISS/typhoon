@@ -6,7 +6,7 @@ set -x
 dir=$(pwd)
 
 # Create kind cluster
-kind create cluster --config $dir/cluster.yaml
+kind create cluster --config $dir/.cluster.yaml
 
 # Knative serving version
 knative_serving="1.17.0"

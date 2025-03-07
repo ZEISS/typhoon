@@ -40,6 +40,10 @@ func (c *FakeSourcesV1alpha1) OCIMetricsSources(namespace string) v1alpha1.OCIMe
 	return newFakeOCIMetricsSources(c, namespace)
 }
 
+func (c *FakeSourcesV1alpha1) PingSources(namespace string) v1alpha1.PingSourceInterface {
+	return newFakePingSources(c, namespace)
+}
+
 func (c *FakeSourcesV1alpha1) SalesforceSources(namespace string) v1alpha1.SalesforceSourceInterface {
 	return newFakeSalesforceSources(c, namespace)
 }

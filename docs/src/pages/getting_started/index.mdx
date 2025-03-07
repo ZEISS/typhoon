@@ -1,3 +1,59 @@
 ---
 title: Quickstart
 ---
+
+# How it works
+
+Typhoon is a cloud-native technology that help you to receive, filter, transform, route and deliver events
+across a wide-range of sources and targets.
+
+```mermaid
+graph TD
+
+subgraph SRC [Event Sources]
+    A[SaaS apps]
+    B[Microservices]
+    C[Custom apps]
+end
+
+subgraph DEST [Targets]
+    direction RL
+    E[Webhook]
+    F[API destination]
+    G[Service targets]
+end
+
+subgraph Z [Typhoon]
+    direction RL
+    subgraph X [Event Bus]
+         direction RL
+        H[Default event bus]
+        I[Custom event bus]
+    end
+    R[Rules]
+end
+
+H --> R;
+A --> H;
+B --> H;
+C --> H;
+R --> E;
+R --> F;
+R --> G;
+```
+
+# Use cases
+
+## Application integration
+
+Send events from on-premises applications to the cloud and back and use the events to build new applications.
+
+## IT Automation
+
+Use events to automate your infrastructure for validating configurations, monitoring, and alerting.
+Audit user behavior, or remediate security incidents.
+
+## SaaS Integrations
+
+Receive events from your SaaS applications, like Salesforce or ServiceNow, enrich your data,
+and send the results back or to other destinations.

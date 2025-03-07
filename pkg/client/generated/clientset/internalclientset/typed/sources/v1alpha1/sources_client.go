@@ -19,6 +19,7 @@ type SourcesV1alpha1Interface interface {
 	HTTPPollerSourcesGetter
 	KafkaSourcesGetter
 	OCIMetricsSourcesGetter
+	PingSourcesGetter
 	SalesforceSourcesGetter
 	WebhookSourcesGetter
 }
@@ -54,6 +55,10 @@ func (c *SourcesV1alpha1Client) KafkaSources(namespace string) KafkaSourceInterf
 
 func (c *SourcesV1alpha1Client) OCIMetricsSources(namespace string) OCIMetricsSourceInterface {
 	return newOCIMetricsSources(c, namespace)
+}
+
+func (c *SourcesV1alpha1Client) PingSources(namespace string) PingSourceInterface {
+	return newPingSources(c, namespace)
 }
 
 func (c *SourcesV1alpha1Client) SalesforceSources(namespace string) SalesforceSourceInterface {

@@ -58,6 +58,14 @@ type OCIMetricsSourceListerExpansion interface{}
 // OCIMetricsSourceNamespaceLister.
 type OCIMetricsSourceNamespaceListerExpansion interface{}
 
+// PingSourceListerExpansion allows custom methods to be added to
+// PingSourceLister.
+type PingSourceListerExpansion interface{}
+
+// PingSourceNamespaceListerExpansion allows custom methods to be added to
+// PingSourceNamespaceLister.
+type PingSourceNamespaceListerExpansion interface{}
+
 // SalesforceSourceListerExpansion allows custom methods to be added to
 // SalesforceSourceLister.
 type SalesforceSourceListerExpansion interface{}

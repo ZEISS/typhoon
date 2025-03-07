@@ -17,6 +17,25 @@ spec:
 
   sink:
     ref:
-      apiVersion: messaging.knative.dev/v1alpha1
-      kind: NatsJetStreamChannel
-      name: my-default-channel
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: event-display
+
+---
+
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: event-display
+  namespace: default
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/min-scale: "1"
+    spec:
+      containers:
+        - name: display
+          image: gcr.io/knative-releases/knative.dev/eventing/cmd/event_display
+          ports:
+            - containerPort: 8080

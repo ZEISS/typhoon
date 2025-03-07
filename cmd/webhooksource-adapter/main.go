@@ -1,10 +1,9 @@
 package main
 
 import (
+	"github.com/zeiss/typhoon/pkg/sources/adapter/webhooksource"
 	"knative.dev/eventing/pkg/adapter/v2"
 	"knative.dev/pkg/signals"
-
-	"github.com/zeiss/typhoon/pkg/sources/adapter/webhooksource"
 )
 
 const (
@@ -12,5 +11,8 @@ const (
 )
 
 func main() {
-	adapter.MainWithContext(signals.NewContext(), component, webhooksource.NewEnvConfig, webhooksource.NewAdapter)
+	ctx := signals.NewContext()
+	ctx = adapter.WithInjectorEnabled(ctx)
+
+	adapter.MainWithContext(ctx, component, webhooksource.NewEnvConfig, webhooksource.NewAdapter)
 }
