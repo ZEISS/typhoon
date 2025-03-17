@@ -27,7 +27,7 @@ jobs:
           tools/go.sum
     - run: sudo apt-get update && sudo apt install -y libxml2-dev libxslt1-dev liblzma-dev zlib1g-dev
     - run: make test
-    - uses: dorny/test-reporter@v1
+    - uses: dorny/test-reporter@v2
       if: success() || failure()
       with:
         name: Go Test Results
