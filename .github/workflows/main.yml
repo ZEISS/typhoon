@@ -25,7 +25,9 @@ jobs:
         cache-dependency-path: |
           go.sum
           tools/go.sum
-    - run: sudo apt-get update && sudo apt install -y libxml2-dev libxslt1-dev liblzma-dev zlib1g-dev
+    - run: |
+        sudo apt-get update && \
+        sudo apt install -y libxml2-dev libxslt1-dev liblzma-dev zlib1g-dev
     - run: make test
     - uses: dorny/test-reporter@v2
       if: success() || failure()
@@ -52,5 +54,6 @@ jobs:
             go.sum
             tools/go.sum
       - run: |
-          sudo apt-get install libxml2-dev libxslt1-dev
+          sudo apt-get update && \
+          sudo apt install -y libxml2-dev libxslt1-dev liblzma-dev zlib1g-dev
       - run: make lint
