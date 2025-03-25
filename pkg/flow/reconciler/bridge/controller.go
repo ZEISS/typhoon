@@ -24,7 +24,7 @@ func NewController(
 	r := &Reconciler{}
 	impl := reconcilerv1alpha1.NewImpl(ctx, r)
 
-	r.base = common.NewGenericServiceReconciler[*v1alpha1.Bridge](
+	r.base = common.NewGenericServiceReconciler(
 		ctx,
 		typ.GetGroupVersionKind(),
 		impl.Tracker,
