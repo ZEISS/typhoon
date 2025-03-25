@@ -51,7 +51,7 @@ require (
 	golang.org/x/oauth2 v0.28.0
 	golang.org/x/sync v0.12.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20241202173237-19429a94021a
-	google.golang.org/protobuf v1.36.5
+	google.golang.org/protobuf v1.36.6
 	gorm.io/gorm v1.25.12
 	helm.sh/helm v2.17.0+incompatible
 	k8s.io/api v0.32.3
