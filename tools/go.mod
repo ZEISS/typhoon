@@ -11,7 +11,7 @@ require (
 	github.com/zeiss/natz-operator v0.9.5
 	github.com/zeiss/pkg v0.1.23
 	gotest.tools/gotestsum v1.12.1
-	k8s.io/code-generator v0.32.2
+	k8s.io/code-generator v0.32.3
 	knative.dev/pkg v0.0.0-20250219013713-9e265611c097
 	mvdan.cc/gofumpt v0.7.0
 	sigs.k8s.io/kustomize/kustomize/v5 v5.6.0
@@ -505,7 +505,7 @@ require (
 	helm.sh/helm v2.17.0+incompatible // indirect
 	honnef.co/go/tools v0.6.1 // indirect
 	k8s.io/api v0.32.2 // indirect
-	k8s.io/apimachinery v0.32.2 // indirect
+	k8s.io/apimachinery v0.32.3 // indirect
 	k8s.io/client-go v0.32.2 // indirect
 	k8s.io/gengo/v2 v2.0.0-20240911193312-2b36238f13e9 // indirect
 	k8s.io/helm v2.17.0+incompatible // indirect
