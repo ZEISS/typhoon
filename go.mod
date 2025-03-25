@@ -29,7 +29,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/logzio/logzio-go v1.0.9
 	github.com/nats-io/jwt/v2 v2.7.3
-	github.com/nats-io/nats.go v1.39.1
+	github.com/nats-io/nats.go v1.40.0
 	github.com/nats-io/nkeys v0.4.10
 	github.com/oapi-codegen/fiber-middleware v1.0.2
 	github.com/oapi-codegen/runtime v1.1.1
@@ -151,7 +151,7 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/compress v1.17.11 // indirect
+	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/lestrrat-go/backoff/v2 v2.0.8 // indirect
