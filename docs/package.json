@@ -8,7 +8,7 @@
     "start": "npx -y serve@latest out"
   },
   "dependencies": {
-    "next": "^14.2.22",
+    "next": "^15.2.4",
     "nextra": "^3.2.4",
     "nextra-theme-docs": "^3.2.4",
     "react": "^18.3.1",
