@@ -2,11 +2,68 @@
 title: Concepts
 ---
 
-Typhoon is a cloud-native eventing platform that enables you bridge events between sources and targets.
+Typhoon is a cloud-native eventing platform that enables you to
+bridge events between sources and targets and in-between transform
+these events.
 
 There are various needed concepts to achieve this bridging.
 
-* Sources
-* Targets
-* Transformations
-* Flows
+* [Events](#events)
+* [Sources](#sources)
+* [Targets](#targets)
+* [Transformations](#transformations)
+* [Flow](#flow)
+
+## Events
+
+An event is a common format of data that can be exchanged between sources and targets.
+
+Typhoon is using [CloudEvents](https://cloudevents.io) as the event format.
+Typhoon supports the JSON format of CloudEvents and uses the[HTTP protocol binding](https://github.com/cloudevents/spec/blob/main/cloudevents/bindings/http-protocol-binding.md)
+
+The format of a CloudEvent is as follows:
+
+```json
+{
+    "specversion" : "1.0",
+    "type" : "com.github.pull_request.opened",
+    "source" : "https://github.com/cloudevents/spec/pull",
+    "subject" : "123",
+    "id" : "A234-1234-1234",
+    "time" : "2018-04-05T17:31:00Z",
+    "comexampleextension1" : "value",
+    "comexampleothervalue" : 5,
+    "datacontenttype" : "text/xml",
+    "data" : "<much wow=\"xml\"/>"
+}
+```
+
+The data can be processed via the availble [CloudEvents SDKs](https://cloudevents.io/).
+Because this is an agnostic format, it can be used to transport all kind of data without
+the need to preemtively define the data structure.
+
+## Sources 
+
+Sources are the origin of events. These maybe created in any environment in which
+Typhoon is deployed in. This can be on-premise on in the public cloud.
+[NATS.io](https://nats.io) can be run in any of these environments.
+
+All sources are listed and documented in the [Sources](/sources) section.
+
+## Targets
+
+Targets are the destination of events. Usually any source is also a target or vise versa.
+
+Not all targets behave the same way. Some targets only acknowledge to receive the event,
+but only later process the event data. Others provide additional information about the
+event processing, which actually creates a response event.
+
+All targets are listed and documented in the [Targets](/targets) section.
+
+## Transformations
+
+Transformations are the in-between processing of events. This can be a simple Transformations
+like adding annotations to the event or a more complex transformation like changing the event
+structure or format.
+
+All transformations are listed and documented in the [Transformations](/transformations) section.

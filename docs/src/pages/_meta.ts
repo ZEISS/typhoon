@@ -3,7 +3,8 @@ const meta = {
   getting_started: 'Getting Started',
   development: 'Development',
   sources: 'Sources',
-  targets: 'Targets'
+  targets: 'Targets',
+  transformations: 'Transformations'
 }
 
 export default meta
