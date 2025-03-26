@@ -71,4 +71,14 @@ export const pageMap = [{
       "title": "Quickstart"
     }
   }]
+}, {
+  name: "transformations",
+  route: "/transformations",
+  children: [{
+    name: "index",
+    route: "/transformations",
+    frontMatter: {
+      "title": "Quickstart"
+    }
+  }]
 }];
