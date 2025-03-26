@@ -5,7 +5,7 @@ go 1.24
 require (
 	github.com/Azure/azure-amqp-common-go/v3 v3.2.3
 	github.com/Azure/azure-sdk-for-go v68.0.0+incompatible
-	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.17.0
+	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.17.1
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.8.2
 	github.com/Azure/azure-sdk-for-go/sdk/messaging/azservicebus v1.8.0
 	github.com/Azure/go-autorest/autorest v0.11.30
@@ -15,7 +15,7 @@ require (
 	github.com/ZachtimusPrime/Go-Splunk-HTTP/splunk/v2 v2.0.2
 	github.com/andygrunwald/go-jira v1.16.0
 	github.com/basgys/goxml2json v1.1.0
-	github.com/cloudevents/sdk-go/v2 v2.15.2
+	github.com/cloudevents/sdk-go/v2 v2.16.0
 	github.com/devigned/tab v0.1.1
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/getkin/kin-openapi v0.131.0
@@ -29,7 +29,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/logzio/logzio-go v1.0.9
 	github.com/nats-io/jwt/v2 v2.7.3
-	github.com/nats-io/nats.go v1.40.0
+	github.com/nats-io/nats.go v1.40.1
 	github.com/nats-io/nkeys v0.4.10
 	github.com/oapi-codegen/fiber-middleware v1.0.2
 	github.com/oapi-codegen/runtime v1.1.1
@@ -51,14 +51,14 @@ require (
 	golang.org/x/oauth2 v0.28.0
 	golang.org/x/sync v0.12.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20241202173237-19429a94021a
-	google.golang.org/protobuf v1.36.5
+	google.golang.org/protobuf v1.36.6
 	gorm.io/gorm v1.25.12
 	helm.sh/helm v2.17.0+incompatible
 	k8s.io/api v0.32.3
 	k8s.io/apimachinery v0.32.3
 	k8s.io/client-go v0.32.3
 	k8s.io/utils v0.0.0-20241104100929-3ea5e8cea738
-	knative.dev/eventing v0.44.3
+	knative.dev/eventing v0.44.4
 	knative.dev/networking v0.0.0-20250117155906-67d1c274ba6a
 	knative.dev/pkg v0.0.0-20250117084104-c43477f0052b
 	knative.dev/serving v0.44.0
@@ -127,7 +127,7 @@ require (
 	github.com/goccy/go-json v0.10.3 // indirect
 	github.com/gofiber/contrib/websocket v1.3.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
+	github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v0.0.4 // indirect

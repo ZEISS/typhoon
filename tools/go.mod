@@ -4,14 +4,14 @@ go 1.24
 
 require (
 	github.com/golang/mock v1.6.0
-	github.com/golangci/golangci-lint v1.64.7
+	github.com/golangci/golangci-lint v1.64.8
 	github.com/google/ko v0.17.1
 	github.com/goreleaser/goreleaser/v2 v2.8.1
 	github.com/oapi-codegen/oapi-codegen/v2 v2.4.1
 	github.com/zeiss/natz-operator v0.9.5
 	github.com/zeiss/pkg v0.1.23
 	gotest.tools/gotestsum v1.12.1
-	k8s.io/code-generator v0.32.2
+	k8s.io/code-generator v0.32.3
 	knative.dev/pkg v0.0.0-20250219013713-9e265611c097
 	mvdan.cc/gofumpt v0.7.0
 	sigs.k8s.io/kustomize/kustomize/v5 v5.6.0
@@ -228,7 +228,7 @@ require (
 	github.com/gofrs/flock v0.12.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
-	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
+	github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golangci/dupl v0.0.0-20250308024227-f665c8d69b32 // indirect
@@ -505,7 +505,7 @@ require (
 	helm.sh/helm v2.17.0+incompatible // indirect
 	honnef.co/go/tools v0.6.1 // indirect
 	k8s.io/api v0.32.2 // indirect
-	k8s.io/apimachinery v0.32.2 // indirect
+	k8s.io/apimachinery v0.32.3 // indirect
 	k8s.io/client-go v0.32.2 // indirect
 	k8s.io/gengo/v2 v2.0.0-20240911193312-2b36238f13e9 // indirect
 	k8s.io/helm v2.17.0+incompatible // indirect
