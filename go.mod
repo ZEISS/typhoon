@@ -17,7 +17,7 @@ require (
 	github.com/basgys/goxml2json v1.1.0
 	github.com/cloudevents/sdk-go/v2 v2.16.0
 	github.com/devigned/tab v0.1.1
-	github.com/fsnotify/fsnotify v1.8.0
+	github.com/fsnotify/fsnotify v1.9.0
 	github.com/getkin/kin-openapi v0.131.0
 	github.com/go-playground/validator/v10 v10.25.0
 	github.com/gofiber/fiber/v2 v2.52.6
