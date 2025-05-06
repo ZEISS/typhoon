@@ -10,7 +10,7 @@ require (
 	github.com/oapi-codegen/oapi-codegen/v2 v2.4.1
 	github.com/zeiss/natz-operator v0.9.5
 	github.com/zeiss/pkg v0.1.23
-	gotest.tools/gotestsum v1.12.1
+	gotest.tools/gotestsum v1.12.2
 	k8s.io/code-generator v0.32.3
 	knative.dev/pkg v0.0.0-20250219013713-9e265611c097
 	mvdan.cc/gofumpt v0.7.0
