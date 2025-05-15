@@ -5,8 +5,8 @@ go 1.24
 require (
 	github.com/Azure/azure-amqp-common-go/v3 v3.2.3
 	github.com/Azure/azure-sdk-for-go v68.0.0+incompatible
-	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.17.1
-	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.8.2
+	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.18.0
+	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.10.0
 	github.com/Azure/azure-sdk-for-go/sdk/messaging/azservicebus v1.8.0
 	github.com/Azure/go-autorest/autorest v0.11.30
 	github.com/Azure/go-autorest/autorest/adal v0.9.24
@@ -47,9 +47,9 @@ require (
 	go.opencensus.io v0.24.0
 	go.uber.org/zap v1.27.0
 	golang.org/x/mod v0.24.0
-	golang.org/x/net v0.37.0
+	golang.org/x/net v0.40.0
 	golang.org/x/oauth2 v0.28.0
-	golang.org/x/sync v0.12.0
+	golang.org/x/sync v0.14.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20241202173237-19429a94021a
 	google.golang.org/protobuf v1.36.6
 	gorm.io/gorm v1.25.12
@@ -70,7 +70,7 @@ require (
 	contrib.go.opencensus.io/exporter/ocagent v0.7.1-0.20200907061046-05415f1de66d // indirect
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2 // indirect
 	contrib.go.opencensus.io/exporter/zipkin v0.1.2 // indirect
-	github.com/Azure/azure-sdk-for-go/sdk/internal v1.10.0 // indirect
+	github.com/Azure/azure-sdk-for-go/sdk/internal v1.11.1 // indirect
 	github.com/Azure/go-amqp v1.3.0 // indirect
 	github.com/Azure/go-autorest v14.2.0+incompatible // indirect
 	github.com/Azure/go-autorest/autorest/azure/cli v0.4.6 // indirect
@@ -79,7 +79,7 @@ require (
 	github.com/Azure/go-autorest/autorest/validation v0.3.1 // indirect
 	github.com/Azure/go-autorest/logger v0.2.1 // indirect
 	github.com/Azure/go-autorest/tracing v0.6.0 // indirect
-	github.com/AzureAD/microsoft-authentication-library-for-go v1.3.3 // indirect
+	github.com/AzureAD/microsoft-authentication-library-for-go v1.4.2 // indirect
 	github.com/BurntSushi/toml v1.4.1-0.20240526193622-a339e1f7089c // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/andybalholm/brotli v1.1.1 // indirect
@@ -214,11 +214,11 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/automaxprocs v1.6.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/crypto v0.36.0 // indirect
+	golang.org/x/crypto v0.38.0 // indirect
 	golang.org/x/exp v0.0.0-20240904232852-e7e105dedf7e // indirect
-	golang.org/x/sys v0.31.0 // indirect
-	golang.org/x/term v0.30.0 // indirect
-	golang.org/x/text v0.23.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/term v0.32.0 // indirect
+	golang.org/x/text v0.25.0 // indirect
 	golang.org/x/time v0.10.0 // indirect
 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
 	google.golang.org/api v0.221.0 // indirect
