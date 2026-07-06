@@ -18,9 +18,9 @@ var _ = htmx.Controller(&ListAccountsController{})
 
 // ListAccountsController ...
 type ListAccountsController struct {
-	accounts tables.Results[models.Account]
-	store    ports.Datastore
+	store ports.Datastore
 	htmx.DefaultController
+	accounts tables.Results[models.Account]
 }
 
 // NewListAccountsController ...

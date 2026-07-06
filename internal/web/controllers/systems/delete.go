@@ -18,9 +18,9 @@ type DeleteSystemControllerParams struct {
 
 // DeleteSystemControllerImpl ...
 type DeleteSystemControllerImpl struct {
-	Params DeleteSystemControllerParams
-	store  ports.Datastore
+	store ports.Datastore
 	htmx.DefaultController
+	Params DeleteSystemControllerParams
 }
 
 // NewDeleteSystemController ...

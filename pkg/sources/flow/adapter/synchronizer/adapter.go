@@ -12,39 +12,24 @@ import (
 	pkgadapter "knative.dev/eventing/pkg/adapter/v2"
 	"knative.dev/pkg/logging"
 
-	"github.com/zeiss/typhoon/pkg/apis/flow"
-	"github.com/zeiss/typhoon/pkg/metrics"
 	targetce "github.com/zeiss/typhoon/pkg/targets/adapter/cloudevents"
 )
 
 var _ pkgadapter.Adapter = (*adapter)(nil)
 
 type adapter struct {
-	ceClient cloudevents.Client
-	logger   *zap.SugaredLogger
-
-	mt *pkgadapter.MetricTag
-	sr *metrics.EventProcessingStatsReporter
-
+	ceClient        cloudevents.Client
+	logger          *zap.SugaredLogger
 	correlationKey  *correlationKey
+	sessions        *storage
+	sinkURL         string
+	bridgeID        string
 	responseTimeout time.Duration
-
-	sessions *storage
-	sinkURL  string
-	bridgeID string
 }
 
 // NewAdapter returns adapter implementation.
 func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClient cloudevents.Client) pkgadapter.Adapter {
 	logger := logging.FromContext(ctx)
-
-	mt := &pkgadapter.MetricTag{
-		ResourceGroup: flow.SynchronizerResource.String(),
-		Namespace:     envAcc.GetNamespace(),
-		Name:          envAcc.GetName(),
-	}
-
-	metrics.MustRegisterEventProcessingStatsView()
 
 	env := envAcc.(*envAccessor)
 
@@ -56,9 +41,6 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 	return &adapter{
 		ceClient: ceClient,
 		logger:   logger,
-
-		mt: mt,
-		sr: metrics.MustNewEventProcessingStatsReporter(mt),
 
 		correlationKey:  key,
 		responseTimeout: env.ResponseWaitTimeout,
@@ -72,7 +54,7 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 // Returns if stopCh is closed or Send() returns an error.
 func (a *adapter) Start(ctx context.Context) error {
 	a.logger.Info("Starting Synchronizer Adapter")
-	ctx = pkgadapter.ContextWithMetricTag(ctx, a.mt)
+	ctx = pkgadapter.ContextWithMetricTag(ctx, nil)
 	return a.ceClient.StartReceiver(ctx, a.dispatch)
 }
 

@@ -41,25 +41,19 @@ type Bayeux interface {
 // and the subset needed for Salesforce Streaming API.
 // See: https://docs.cometd.org/current3/reference/
 type bayeux struct {
+	dispatcher     EventDispatcher
+	ctx            context.Context
+	msgCh          chan *ConnectResponse
+	errCh          chan error
+	stopCh         chan struct{}
+	subsReplays    map[string]*int64
+	logger         *zap.SugaredLogger
+	client         *http.Client
+	apiVersion     string
+	url            string
+	clientID       string
+	mutex          sync.RWMutex
 	needsHandshake bool
-
-	client     *http.Client
-	clientID   string
-	apiVersion string
-	url        string
-
-	errCh  chan error
-	msgCh  chan *ConnectResponse
-	stopCh chan struct{}
-
-	// store replayID per subscription
-	subsReplays map[string]*int64
-
-	dispatcher EventDispatcher
-
-	logger *zap.SugaredLogger
-	ctx    context.Context
-	mutex  sync.RWMutex
 }
 
 // NewBayeux creates a Bayeux client for Salesforce Streaming API consumption.
@@ -119,7 +113,8 @@ func (b *bayeux) init() error {
 // autheticating, handshaking, subscripting, and then connecting and
 // sending data to the dispatcher until the connection is no longer valid.
 // The process is stopped by cancelling the passed context.
-// nolint:gocyclo
+//
+//nolint:gocyclo
 func (b *bayeux) Start(ctx context.Context) error {
 	// Received context is used for all HTTP calls and
 	// at the connect loop to cancel processing.
@@ -128,7 +123,7 @@ func (b *bayeux) Start(ctx context.Context) error {
 
 	b.mutex.Unlock()
 
-	// nolint:staticcheck
+	//nolint:staticcheck
 	bom := wait.NewExponentialBackoffManager(time.Second, time.Second*60, time.Second*100, 2, 0, &clock.RealClock{})
 
 	// Connect loop will run until context is done

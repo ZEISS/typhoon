@@ -31,11 +31,10 @@ var _ pkgadapter.Adapter = (*snowAdapter)(nil)
 
 type snowAdapter struct {
 	client   cloudevents.Client
-	instance string
 	sc       *snowgo.Client
-
-	logger *zap.SugaredLogger
-	mt     *pkgadapter.MetricTag
+	logger   *zap.SugaredLogger
+	mt       *pkgadapter.MetricTag
+	instance string
 }
 
 // NewTarget adapter implementation

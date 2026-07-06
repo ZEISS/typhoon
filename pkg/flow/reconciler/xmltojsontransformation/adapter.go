@@ -33,7 +33,8 @@ var _ common.AdapterBuilder[*servingv1.Service] = (*Reconciler)(nil)
 func (r *Reconciler) BuildAdapter(trg commonv1alpha1.Reconcilable, sinkURI *apis.URL) (*servingv1.Service, error) {
 	typedTrg := trg.(*v1alpha1.XMLToJSONTransformation)
 
-	return common.NewAdapterKnService(trg, sinkURI,
+	return common.NewAdapterKnService(
+		trg, sinkURI,
 		resource.Image(r.adapterCfg.Image),
 		resource.EnvVars(MakeAppEnv(typedTrg)...),
 		resource.EnvVars(r.adapterCfg.obsConfig.ToEnvVars()...),

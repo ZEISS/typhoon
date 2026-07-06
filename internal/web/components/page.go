@@ -8,9 +8,9 @@ import (
 type PageProps struct {
 	Title    string
 	Path     string
-	Boost    bool
 	Children []htmx.Node
 	Head     []htmx.Node
+	Boost    bool
 }
 
 // Page is a whole document to output.

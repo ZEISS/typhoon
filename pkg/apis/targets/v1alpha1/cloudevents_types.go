@@ -28,20 +28,10 @@ var (
 
 // CloudEventsTargetSpec defines the desired state of the event target.
 type CloudEventsTargetSpec struct {
-	// Credentials to connect to the remote endpoint.
-	// +optional
-	Credentials *CloudEventsCredentials `json:"credentials,omitempty"`
-
-	// Path at the remote endpoint under which requests are accepted.
-	// +optional
-	Path *string `json:"path,omitempty"`
-
-	// Endpoint that accept CloudEvents.
-	Endpoint apis.URL `json:"endpoint"`
-
-	// AdapterOverrides sets runtime parameters to the adapter instance.
-	// +optional
+	Credentials      *CloudEventsCredentials    `json:"credentials,omitempty"`
+	Path             *string                    `json:"path,omitempty"`
 	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	Endpoint         apis.URL                   `json:"endpoint"`
 }
 
 // CloudEventsCredentials to be used when sending requests.
@@ -51,8 +41,8 @@ type CloudEventsCredentials struct {
 
 // HTTPBasicAuth credentials.
 type HTTPBasicAuth struct {
-	Username string                  `json:"username"`
 	Password v1alpha1.ValueFromField `json:"password"`
+	Username string                  `json:"username"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

@@ -27,14 +27,12 @@ type envAccessor struct {
 var _ pkgadapter.Adapter = (*natsAdapter)(nil)
 
 type natsAdapter struct {
-	client cloudevents.Client
-	js     jetstream.JetStream
-	conn   *nats.Conn
-
+	client  cloudevents.Client
+	js      jetstream.JetStream
+	conn    *nats.Conn
+	logger  *zap.SugaredLogger
+	mt      *pkgadapter.MetricTag
 	subject string
-
-	logger *zap.SugaredLogger
-	mt     *pkgadapter.MetricTag
 }
 
 // NewTarget adapter implementation
@@ -92,6 +90,5 @@ func (a *natsAdapter) dispatch(event cloudevents.Event) cloudevents.Result {
 		return err
 	case <-f.Ok():
 		return cloudevents.ResultACK
-
 	}
 }

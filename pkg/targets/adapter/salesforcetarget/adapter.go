@@ -13,9 +13,7 @@ import (
 	pkgadapter "knative.dev/eventing/pkg/adapter/v2"
 	"knative.dev/pkg/logging"
 
-	"github.com/zeiss/typhoon/pkg/apis/targets"
 	"github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"github.com/zeiss/typhoon/pkg/metrics"
 	targetce "github.com/zeiss/typhoon/pkg/targets/adapter/cloudevents"
 	"github.com/zeiss/typhoon/pkg/targets/adapter/salesforcetarget/auth"
 	"github.com/zeiss/typhoon/pkg/targets/adapter/salesforcetarget/client"
@@ -28,14 +26,6 @@ const (
 // NewTarget creates a new Salesforce Target adapter
 func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClient cloudevents.Client) pkgadapter.Adapter {
 	logger := logging.FromContext(ctx)
-
-	mt := &pkgadapter.MetricTag{
-		ResourceGroup: targets.SalesforceTargetResource.String(),
-		Namespace:     envAcc.GetNamespace(),
-		Name:          envAcc.GetName(),
-	}
-
-	metrics.MustRegisterEventProcessingStatsView()
 
 	env := envAcc.(*envAccessor)
 
@@ -60,8 +50,6 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 		replier:  replier,
 		ceClient: ceClient,
 		logger:   logger,
-
-		sr: metrics.MustNewEventProcessingStatsReporter(mt),
 	}
 }
 
@@ -73,8 +61,6 @@ type salesforceTarget struct {
 	replier  *targetce.Replier
 	ceClient cloudevents.Client
 	logger   *zap.SugaredLogger
-
-	sr *metrics.EventProcessingStatsReporter
 }
 
 func (a *salesforceTarget) Start(ctx context.Context) error {

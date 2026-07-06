@@ -27,12 +27,11 @@ const (
 // JWTAuthenticator is the JWT OAuth implementation.
 // See: https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm
 type JWTAuthenticator struct {
-	authURL string
 	signKey *rsa.PrivateKey
 	claims  *claims
-
-	client *http.Client
-	logger *zap.SugaredLogger
+	client  *http.Client
+	logger  *zap.SugaredLogger
+	authURL string
 }
 
 type claims struct {

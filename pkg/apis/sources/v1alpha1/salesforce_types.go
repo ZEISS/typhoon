@@ -31,29 +31,17 @@ var (
 // SalesforceSourceSpec defines the desired state of the event source.
 type SalesforceSourceSpec struct {
 	duckv1.SourceSpec `json:",inline"`
-
-	// Authentication method to interact with the Salesforce API.
-	Auth SalesforceAuth `json:"auth"`
-
-	// InstanceURL of the Salesforce instance.
-	InstanceURL string `json:"instanceURL"`
-
-	// APIVersion at Salesforce.
-	// +optional
-	APIVersion *string `json:"apiVersion"`
-
-	// Subscription to a Salesforce channel
-	Subscription SalesforceSubscription `json:"subscription"`
-
-	// Adapter spec overrides parameters.
-	// +optional
-	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	Subscription      SalesforceSubscription     `json:"subscription"`
+	APIVersion        *string                    `json:"apiVersion"`
+	AdapterOverrides  *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	Auth              SalesforceAuth             `json:"auth"`
+	InstanceURL       string                     `json:"instanceURL"`
 }
 
 // SalesforceSubscription to connect to.
 type SalesforceSubscription struct {
-	Channel  string `json:"channel"`
 	ReplayID *int   `json:"replayID,omitempty"`
+	Channel  string `json:"channel"`
 }
 
 // SalesforceAuth contains Salesforce credentials.

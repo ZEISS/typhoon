@@ -27,11 +27,8 @@ const (
 // adapterConfig contains properties used to configure the adapter.
 // These are automatically populated by envconfig.
 type adapterConfig struct {
-	// Container image
-	Image string `default:"ghcr.io/zeiss/typhoon/webhook-adapter"`
-
-	// Configuration accessor for logging/metrics/tracing
 	configs source.ConfigAccessor
+	Image   string `default:"ghcr.io/zeiss/typhoon/webhook-adapter"`
 }
 
 // Verify that Reconciler implements common.AdapterBuilder.
@@ -55,7 +52,8 @@ func (r *Reconciler) BuildAdapter(src commonv1alpha1.Reconcilable, sinkURI *apis
 		typedSrc.Spec.AdapterOverrides.Public = &t
 	}
 
-	return common.NewAdapterKnService(src, sinkURI,
+	return common.NewAdapterKnService(
+		src, sinkURI,
 		resource.Image(r.adapterCfg.Image),
 
 		resource.EnvVars(MakeAppEnv(typedSrc)...),
@@ -98,7 +96,8 @@ func MakeAppEnv(src *v1alpha1.WebhookSource) []corev1.EnvVar {
 	}
 
 	if passw := src.Spec.BasicAuthPassword; passw != nil {
-		envs = common.MaybeAppendValueFromEnvVar(envs,
+		envs = common.MaybeAppendValueFromEnvVar(
+			envs,
 			envWebhookBasicAuthPassword, *passw,
 		)
 	}

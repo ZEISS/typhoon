@@ -13,10 +13,9 @@ import (
 
 // IndexOperatorTokenControllerImpl ...
 type IndexOperatorTokenControllerImpl struct {
-	ID uuid.UUID `json:"id" form:"id" params:"id" validate:"required:uuid"`
-
 	store ports.Datastore
 	htmx.DefaultController
+	ID uuid.UUID `json:"id" form:"id" params:"id" validate:"required:uuid"`
 }
 
 // NewIndexOperatorTokenController ...

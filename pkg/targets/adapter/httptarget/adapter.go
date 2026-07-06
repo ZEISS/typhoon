@@ -21,22 +21,12 @@ import (
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
 
-	"github.com/zeiss/typhoon/pkg/apis/targets"
 	"github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"github.com/zeiss/typhoon/pkg/metrics"
 )
 
 // NewTarget adapter implementation
 func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClient cloudevents.Client) pkgadapter.Adapter {
 	logger := logging.FromContext(ctx)
-
-	mt := &pkgadapter.MetricTag{
-		ResourceGroup: targets.HTTPTargetResource.String(),
-		Namespace:     envAcc.GetNamespace(),
-		Name:          envAcc.GetName(),
-	}
-
-	metrics.MustRegisterEventProcessingStatsView()
 
 	env := envAcc.(*envAccessor)
 
@@ -47,7 +37,7 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 
 	t := &http.Transport{
 		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: env.SkipVerify, // nolint:gosec
+			InsecureSkipVerify: env.SkipVerify, //nolint:gosec
 		},
 	}
 
@@ -95,40 +85,34 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 
 		ceClient: ceClient,
 		logger:   logger,
-
-		sr: metrics.MustNewEventProcessingStatsReporter(mt),
 	}
 }
 
 var _ pkgadapter.Adapter = (*httpAdapter)(nil)
 
 type httpAdapter struct {
-	eventType   string
-	eventSource string
-
+	ceClient          cloudevents.Client
 	url               *url.URL
-	method            string
 	headers           map[string]string
+	client            *http.Client
+	logger            *zap.SugaredLogger
+	eventType         string
+	eventSource       string
+	method            string
 	basicAuthUsername string
 	basicAuthPassword string
-
-	client *http.Client
-
-	ceClient cloudevents.Client
-	logger   *zap.SugaredLogger
-
-	sr *metrics.EventProcessingStatsReporter
 }
 
 // Returns if stopCh is closed or Send() returns an error.
-// nolint:gocyclo
+//
+//nolint:gocyclo
 func (a *httpAdapter) Start(ctx context.Context) error {
 	a.logger.Info("Starting HTTP adapter")
 
 	return a.ceClient.StartReceiver(ctx, a.dispatch)
 }
 
-// nolint:gocyclo
+//nolint:gocyclo
 func (a *httpAdapter) dispatch(ctx context.Context, event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
 	rd := &RequestData{}
 	if event.Type() != v1alpha1.EventTypeHTTPTargetRequest {

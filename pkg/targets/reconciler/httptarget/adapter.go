@@ -49,7 +49,8 @@ var _ common.AdapterBuilder[*servingv1.Service] = (*Reconciler)(nil)
 func (r *Reconciler) BuildAdapter(trg commonv1alpha1.Reconcilable, _ *apis.URL) (*servingv1.Service, error) {
 	typedTrg := trg.(*v1alpha1.HTTPTarget)
 
-	return common.NewAdapterKnService(trg, nil,
+	return common.NewAdapterKnService(
+		trg, nil,
 		resource.Image(r.adapterCfg.Image),
 		resource.EnvVars(MakeAppEnv(typedTrg)...),
 		resource.EnvVars(r.adapterCfg.obsConfig.ToEnvVars()...),
@@ -58,7 +59,8 @@ func (r *Reconciler) BuildAdapter(trg commonv1alpha1.Reconcilable, _ *apis.URL) 
 
 // MakeAppEnv extracts environment variables from the object.
 // Exported to be used in external tools for local test environments.
-// nolint:gocyclo
+//
+//nolint:gocyclo
 func MakeAppEnv(o *v1alpha1.HTTPTarget) []corev1.EnvVar {
 	skipVerify := false
 	if o.Spec.SkipVerify != nil {

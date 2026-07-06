@@ -12,9 +12,9 @@ import (
 
 // TeamsOptionsImpl ...
 type TeamsOptionsImpl struct {
-	teams tables.Results[models.Team]
 	store ports.Datastore
 	htmx.DefaultController
+	teams tables.Results[models.Team]
 }
 
 // NewTeamsOptions ...

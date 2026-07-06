@@ -34,7 +34,8 @@ var (
 
 // NewDefaultingAdmissionController returns defaulting webhook controller implementation.
 func NewDefaultingAdmissionController(ctx context.Context, cmw configmap.Watcher) *controller.Impl {
-	return defaulting.NewAdmissionController(ctx,
+	return defaulting.NewAdmissionController(
+		ctx,
 		// Name of the resource webhook.
 		"defaulting.webhook.typhoon.zeiss.com",
 
@@ -56,7 +57,8 @@ func NewDefaultingAdmissionController(ctx context.Context, cmw configmap.Watcher
 
 // NewValidationAdmissionController returns validation webhook controller implementation.
 func NewValidationAdmissionController(ctx context.Context, cmw configmap.Watcher) *controller.Impl {
-	return validation.NewAdmissionController(ctx,
+	return validation.NewAdmissionController(
+		ctx,
 		// Name of the resource webhook.
 		"validation.webhook.typhoon.zeiss.com",
 
@@ -92,7 +94,8 @@ func main() {
 	registerValidationType(extensionsv1alpha1.SchemeGroupVersion, extensionsv1alpha1.AllTypes)
 	registerValidationType(routingv1alpha1.SchemeGroupVersion, routingv1alpha1.AllTypes)
 
-	sharedmain.MainWithContext(ctx, webhookName,
+	sharedmain.MainWithContext(
+		ctx, webhookName,
 		certificates.NewController,
 		NewDefaultingAdmissionController,
 		NewValidationAdmissionController,

@@ -17,9 +17,9 @@ var _ = htmx.Controller(&ListUsersController{})
 
 // ListUsersController ...
 type ListUsersController struct {
-	users tables.Results[models.User]
 	store ports.Datastore
 	htmx.DefaultController
+	users tables.Results[models.User]
 }
 
 // NewListUsersController ...

@@ -56,7 +56,8 @@ func (r *Reconciler) BuildAdapter(trg commonv1alpha1.Reconcilable, _ *apis.URL) 
 				typedTrg.Spec.Credentials.BasicAuth.Password.ValueFromSecret.Key,
 			)
 
-			options = append(options,
+			options = append(
+				options,
 				resource.Volumes(v),
 				resource.VolumeMounts(vm),
 				resource.EnvVar(envCloudEventsBasicAuthPasswordPath, path.Join(secretPath, secretFileName)),
@@ -64,7 +65,8 @@ func (r *Reconciler) BuildAdapter(trg commonv1alpha1.Reconcilable, _ *apis.URL) 
 		}
 	}
 
-	options = append(options,
+	options = append(
+		options,
 		resource.EnvVars(MakeAppEnv(typedTrg)...),
 		// make sure that a non optional parameter is located as the last element
 		// to avoid derivative comparison issues when the environment variables

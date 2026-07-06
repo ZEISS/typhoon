@@ -15,9 +15,9 @@ var validate *validator.Validate
 
 // CreateSystemControllerImpl ...
 type CreateSystemControllerImpl struct {
-	System models.System
-	store  ports.Datastore
+	store ports.Datastore
 	htmx.DefaultController
+	System models.System
 }
 
 // NewCreateSystemController ...

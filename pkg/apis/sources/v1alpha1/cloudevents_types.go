@@ -58,8 +58,8 @@ type HTTPCredentials struct {
 
 // HTTPBasicAuth credentials.
 type HTTPBasicAuth struct {
-	Username string                  `json:"username"`
 	Password v1alpha1.ValueFromField `json:"password"`
+	Username string                  `json:"username"`
 }
 
 // RateLimiter parameters.

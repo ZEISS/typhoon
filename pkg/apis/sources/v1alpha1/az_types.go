@@ -84,7 +84,8 @@ const (
 )
 
 // UnmarshalJSON implements json.Unmarshaler
-// nolint:gocyclo
+//
+//nolint:gocyclo
 func (rID *AzureResourceID) UnmarshalJSON(data []byte) error {
 	var dataStr string
 	if err := json.Unmarshal(data, &dataStr); err != nil {
@@ -97,7 +98,6 @@ func (rID *AzureResourceID) UnmarshalJSON(data []byte) error {
 		n != azureResourceResourceIDSplitElements &&
 		n != azureSubResourceResourceIDSplitElements &&
 		n != azureNamespacedSubResourceResourceIDSplitElements {
-
 		return newParseAzureResourceIDError(dataStr)
 	}
 
@@ -186,7 +186,8 @@ func (rID *AzureResourceID) UnmarshalJSON(data []byte) error {
 }
 
 // MarshalJSON implements json.Marshaler
-// nolint:gocyclo
+//
+//nolint:gocyclo
 func (rID *AzureResourceID) MarshalJSON() ([]byte, error) {
 	if rID.SubscriptionID == "" {
 		return nil, errAzureResourceIDEmptyAttrs
@@ -209,7 +210,6 @@ func (rID *AzureResourceID) MarshalJSON() ([]byte, error) {
 			rID.ResourceProvider == "" ||
 			rID.ResourceType == "" ||
 			rID.ResourceName == "" {
-
 			return nil, errAzureResourceIDEmptyAttrs
 		}
 
@@ -229,7 +229,6 @@ func (rID *AzureResourceID) MarshalJSON() ([]byte, error) {
 		// entering this condition means _all_ fields should be set
 		if rID.SubResourceType == "" ||
 			rID.SubResourceName == "" {
-
 			return nil, errAzureResourceIDEmptyAttrs
 		}
 

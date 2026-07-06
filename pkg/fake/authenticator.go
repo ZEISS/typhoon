@@ -41,7 +41,7 @@ func Authenticate(ctx context.Context, input *openapi3filter.AuthenticationInput
 	usrCtx := c.UserContext()
 	authCtx := context.WithValue(usrCtx, AuthCtx, key)
 
-	// nolint:contextcheck
+	//nolint:contextcheck
 	c.SetUserContext(authCtx)
 
 	return nil

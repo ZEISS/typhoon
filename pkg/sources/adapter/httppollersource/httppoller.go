@@ -14,16 +14,14 @@ import (
 )
 
 type httpPoller struct {
-	eventType   string
-	eventSource string
-	interval    time.Duration
-
-	ceClient cloudevents.Client
-
+	ceClient    cloudevents.Client
 	httpClient  *http.Client
 	httpRequest *http.Request
 	logger      *zap.SugaredLogger
 	mt          *pkgadapter.MetricTag
+	eventType   string
+	eventSource string
+	interval    time.Duration
 }
 
 var _ pkgadapter.Adapter = (*httpPoller)(nil)
@@ -45,7 +43,6 @@ func (h *httpPoller) Start(ctx context.Context) error {
 
 	for {
 		select {
-
 		case <-ctx.Done():
 			h.logger.Debug("Shutting down HTTP poller")
 			return nil
@@ -73,7 +70,8 @@ func (h *httpPoller) dispatch(ctx context.Context) {
 	}
 
 	if res.StatusCode >= 300 {
-		h.logger.Error("Received non supported HTTP code from remote endpoint",
+		h.logger.Error(
+			"Received non supported HTTP code from remote endpoint",
 			zap.Int("code", res.StatusCode),
 			zap.String("response", string(resb)),
 		)

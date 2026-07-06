@@ -18,7 +18,6 @@ import (
 
 	"github.com/zeiss/typhoon/pkg/apis/flow"
 	"github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
-	"github.com/zeiss/typhoon/pkg/metrics"
 	targetce "github.com/zeiss/typhoon/pkg/targets/adapter/cloudevents"
 )
 
@@ -49,8 +48,6 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 		Name:          envAcc.GetName(),
 	}
 
-	metrics.MustRegisterEventProcessingStatsView()
-
 	env := envAcc.(*envAccessor)
 
 	replier, err := targetce.New(env.Component, logger.Named("replier"),
@@ -68,20 +65,17 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 		logger:   logger,
 
 		mt: mt,
-		sr: metrics.MustNewEventProcessingStatsReporter(mt),
 	}
 }
 
 var _ pkgadapter.Adapter = (*Adapter)(nil)
 
 type Adapter struct {
-	sink     string
-	replier  *targetce.Replier
 	ceClient cloudevents.Client
+	replier  *targetce.Replier
 	logger   *zap.SugaredLogger
-
-	mt *pkgadapter.MetricTag
-	sr *metrics.EventProcessingStatsReporter
+	mt       *pkgadapter.MetricTag
+	sink     string
 }
 
 // Start is a blocking function and will return if an error occurs

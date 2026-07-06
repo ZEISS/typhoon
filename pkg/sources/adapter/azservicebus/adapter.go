@@ -14,7 +14,7 @@ import (
 	"github.com/devigned/tab"
 	"go.uber.org/zap"
 
-	// nolint:staticcheck
+	//nolint:staticcheck
 	"nhooyr.io/websocket"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
@@ -51,32 +51,16 @@ const (
 // adapter.
 type envConfig struct {
 	pkgadapter.EnvConfig
-
-	// Resource ID of the Service Bus entity (Queue or Topic subscription).
 	EntityResourceID string `envconfig:"SERVICEBUS_ENTITY_RESOURCE_ID" required:"true"`
-
-	// Name of a message processor which takes care of converting Service
-	// Bus messages to CloudEvents.
-	//
-	// Supported values: [ default ]
 	MessageProcessor string `envconfig:"SERVICEBUS_MESSAGE_PROCESSOR" default:"default"`
-
-	// WebSocketsEnable.
-	WebSocketsEnable bool `envconfig:"SERVICEBUS_WEBSOCKETS_ENABLE" default:"false"`
-
-	// MaxConcurrent is the maximum number of goroutines that
-	// will be used to process messages.
-	MaxConcurrent int `envconfig:"SERVICEBUS_MAX_CONCURRENT" default:"10"`
-
-	// The environment variables below aren't read from the envConfig struct
-	// by the Service Bus SDK, but rather directly using os.Getenv().
-	// They are nevertheless listed here for documentation purposes.
-	_ string `envconfig:"AZURE_TENANT_ID"`
-	_ string `envconfig:"AZURE_CLIENT_ID"`
-	_ string `envconfig:"AZURE_CLIENT_SECRET"`
-	_ string `envconfig:"SERVICEBUS_KEY_NAME"`
-	_ string `envconfig:"SERVICEBUS_KEY_VALUE"`
-	_ string `envconfig:"SERVICEBUS_CONNECTION_STRING"`
+	_                string `envconfig:"AZURE_TENANT_ID"`
+	_                string `envconfig:"AZURE_CLIENT_ID"`
+	_                string `envconfig:"AZURE_CLIENT_SECRET"`
+	_                string `envconfig:"SERVICEBUS_KEY_NAME"`
+	_                string `envconfig:"SERVICEBUS_KEY_VALUE"`
+	_                string `envconfig:"SERVICEBUS_CONNECTION_STRING"`
+	MaxConcurrent    int    `envconfig:"SERVICEBUS_MAX_CONCURRENT" default:"10"`
+	WebSocketsEnable bool   `envconfig:"SERVICEBUS_WEBSOCKETS_ENABLE" default:"false"`
 }
 
 // adapter implements the source's adapter.
@@ -113,7 +97,8 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 	}
 
 	client, err := clientFromEnvironment(entityID, newAzureServiceBusClientOptions(
-		webSocketsClientOption(env.WebSocketsEnable)))
+		webSocketsClientOption(env.WebSocketsEnable),
+	))
 	if err != nil {
 		logger.Panic("Unable to obtain interface for Service Bus Namespace", zap.Error(err))
 	}
@@ -178,7 +163,6 @@ func parseServiceBusResourceID(resIDStr string) (*v1alpha1.AzureResourceID, erro
 		resID.ResourceType != resourceTypeQueues && resID.ResourceType != resourceTypeTopics ||
 		resID.ResourceType == resourceTypeQueues && resID.SubResourceType != "" ||
 		resID.ResourceType == resourceTypeTopics && resID.SubResourceType != resourceTypeSubscriptions {
-
 		return nil, errors.New("resource ID does not refer to a Service Bus entity")
 	}
 
@@ -300,7 +284,6 @@ func (a *adapter) Start(ctx context.Context) error {
 		// will
 		// errs = append(errs, err)
 		errs = append(errs, err.Error())
-
 	}
 
 	// cancel the context to bring all routines to an end.
@@ -386,7 +369,7 @@ func (a *adapter) handleMessage(ctx context.Context, msg *Message) error {
 
 	events, err := a.msgPrcsr.Process(msg)
 	if err != nil {
-		return fmt.Errorf("processing Service Bus message with ID %s: %w", msg.ReceivedMessage.MessageID, err)
+		return fmt.Errorf("processing Service Bus message with ID %s: %w", msg.MessageID, err)
 	}
 
 	var sendErrs errList
@@ -398,7 +381,8 @@ func (a *adapter) handleMessage(ctx context.Context, msg *Message) error {
 		}
 
 		if err := sendCloudEvent(ctx, a.ceClient, ev); err != nil {
-			sendErrs.errs = append(sendErrs.errs,
+			sendErrs.errs = append(
+				sendErrs.errs,
 				fmt.Errorf("failed to send event with ID %s: %w", ev.ID(), err),
 			)
 			continue
@@ -466,15 +450,15 @@ func webSocketsClientOption(webSocketsEnable bool) clientOption {
 	return func(opts *azservicebus.ClientOptions) {
 		if webSocketsEnable {
 			opts.NewWebSocketConn = func(ctx context.Context, args azservicebus.NewWebSocketConnArgs) (net.Conn, error) {
-				// nolint:staticcheck
+				//nolint:staticcheck
 				opts := &websocket.DialOptions{Subprotocols: []string{"amqp"}}
-				// nolint:staticcheck
+				//nolint:staticcheck
 				wssConn, _, err := websocket.Dial(ctx, args.Host, opts)
 				if err != nil {
 					return nil, fmt.Errorf("creating client: %w", err)
 				}
 
-				// nolint:contextcheck,staticcheck
+				//nolint:contextcheck,staticcheck
 				return websocket.NetConn(context.Background(), wssConn, websocket.MessageBinary), nil
 			}
 		}

@@ -27,7 +27,8 @@ func (c *HTTPCredentials) Validate(ctx context.Context) *apis.FieldError {
 	if len(c.BasicAuths) != 0 {
 		if _, err := json.Marshal(c.BasicAuths); err != nil {
 			errs = errs.Also(apis.ErrInvalidValue(
-				"basic authentication parameter cannot be marshaled into JSON", "basicAuths", err.Error()))
+				"basic authentication parameter cannot be marshaled into JSON", "basicAuths", err.Error(),
+			))
 		}
 	}
 

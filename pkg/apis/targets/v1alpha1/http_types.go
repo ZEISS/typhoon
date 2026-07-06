@@ -30,54 +30,19 @@ var (
 
 // HTTPTargetSpec defines the desired state of the event target.
 type HTTPTargetSpec struct {
-	// Response data to be used at replies.
-	Response HTTPEventResponse `json:"response"`
-
-	// Endpoint to connect to.
-	Endpoint apis.URL `json:"endpoint"`
-
-	// Method to use at requests.
-	Method string `json:"method"`
-
-	// Headers to be included at HTTP requests
-	// +optional
-	Headers map[string]string `json:"headers,omitempty"`
-
-	// SkipVerify disables server certificate validation.
-	// +optional
-	SkipVerify *bool `json:"skipVerify"`
-
-	// CACertificate uses the CA certificate to verify the remote server certificate.
-	// +optional
-	CACertificate *string `json:"caCertificate"`
-
-	// BasicAuthUsername used for basic authentication.
-	// +optional
-	BasicAuthUsername *string `json:"basicAuthUsername,omitempty"`
-
-	// BasicAuthPassword used for basic authentication.
-	// +optional
-	BasicAuthPassword SecretValueFromSource `json:"basicAuthPassword,omitempty"`
-
-	// OAuthClientID used for OAuth2 authentication.
-	// +optional
-	OAuthClientID *string `json:"oauthClientID,omitempty"`
-
-	// OAuthClientSecret used for OAuth2 authentication.
-	// +optional
-	OAuthClientSecret SecretValueFromSource `json:"oauthClientSecret,omitempty"`
-
-	// OAuthTokenURL used for OAuth2 authentication.
-	// +optional
-	OAuthTokenURL *string `json:"oauthTokenURL,omitempty"`
-
-	// OAuthScopes used for OAuth2 authentication.
-	// +optional
-	OAuthScopes *[]string `json:"oauthScopes,omitempty"`
-
-	// Adapter spec overrides parameters.
-	// +optional
-	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	BasicAuthUsername *string                    `json:"basicAuthUsername,omitempty"`
+	Headers           map[string]string          `json:"headers,omitempty"`
+	SkipVerify        *bool                      `json:"skipVerify"`
+	CACertificate     *string                    `json:"caCertificate"`
+	BasicAuthPassword SecretValueFromSource      `json:"basicAuthPassword,omitempty"`
+	OAuthClientID     *string                    `json:"oauthClientID,omitempty"`
+	OAuthClientSecret SecretValueFromSource      `json:"oauthClientSecret,omitempty"`
+	OAuthTokenURL     *string                    `json:"oauthTokenURL,omitempty"`
+	OAuthScopes       *[]string                  `json:"oauthScopes,omitempty"`
+	AdapterOverrides  *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	Response          HTTPEventResponse          `json:"response"`
+	Method            string                     `json:"method"`
+	Endpoint          apis.URL                   `json:"endpoint"`
 }
 
 // HTTPEventResponse for reply events context.

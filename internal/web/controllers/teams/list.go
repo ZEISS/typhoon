@@ -18,9 +18,9 @@ var _ = htmx.Controller(&ListTeamsControllerImpl{})
 
 // ListTeamsControllerImpl ...
 type ListTeamsControllerImpl struct {
-	teams tables.Results[models.Team]
 	store ports.Datastore
 	htmx.DefaultController
+	teams tables.Results[models.Team]
 }
 
 // NewTeamsListOperatorController ...

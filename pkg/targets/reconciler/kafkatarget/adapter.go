@@ -87,7 +87,8 @@ func (r *Reconciler) BuildAdapter(trg commonv1alpha1.Reconcilable, _ *apis.URL) 
 		}
 	}
 
-	return common.NewAdapterKnService(trg, nil,
+	return common.NewAdapterKnService(
+		trg, nil,
 		resource.Image(r.adapterCfg.Image),
 		resource.EnvVars(MakeAppEnv(typedTrg)...),
 		resource.EnvVars(r.adapterCfg.obsConfig.ToEnvVars()...),
@@ -98,7 +99,8 @@ func (r *Reconciler) BuildAdapter(trg commonv1alpha1.Reconcilable, _ *apis.URL) 
 
 // MakeAppEnv extracts environment variables from the object.
 // Exported to be used in external tools for local test environments.
-// nolint:gocyclo
+//
+//nolint:gocyclo
 func MakeAppEnv(o *v1alpha1.KafkaTarget) []corev1.EnvVar {
 	env := []corev1.EnvVar{
 		{
@@ -116,7 +118,6 @@ func MakeAppEnv(o *v1alpha1.KafkaTarget) []corev1.EnvVar {
 	}
 
 	if o.Spec.Auth != nil {
-
 		if o.Spec.Auth.SASLEnable {
 			env = append(env, corev1.EnvVar{
 				Name:  envSaslEnable,

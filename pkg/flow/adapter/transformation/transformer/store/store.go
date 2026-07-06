@@ -14,11 +14,10 @@ var _ transformer.Transformer = (*Store)(nil)
 
 // Store object implements Transformer interface.
 type Store struct {
+	variables *storage.Storage
 	Path      string
 	Value     string
 	Separator string
-
-	variables *storage.Storage
 }
 
 // InitStep is used to figure out if this operation should

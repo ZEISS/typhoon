@@ -16,10 +16,9 @@ import (
 
 // NewUserControllerImpl ...
 type NewUserControllerImpl struct {
-	Results tables.Results[models.Account]
-
 	store ports.Datastore
 	htmx.DefaultController
+	Results tables.Results[models.Account]
 }
 
 // NewUserController ...

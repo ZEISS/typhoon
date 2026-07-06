@@ -18,9 +18,7 @@ import (
 
 	"github.com/andygrunwald/go-jira"
 
-	"github.com/zeiss/typhoon/pkg/apis/targets"
 	"github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"github.com/zeiss/typhoon/pkg/metrics"
 )
 
 // Method performed on the API URI
@@ -54,14 +52,6 @@ type IssueGetRequest struct {
 func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClient cloudevents.Client) pkgadapter.Adapter {
 	logger := logging.FromContext(ctx)
 
-	mt := &pkgadapter.MetricTag{
-		ResourceGroup: targets.JiraTargetResource.String(),
-		Namespace:     envAcc.GetNamespace(),
-		Name:          envAcc.GetName(),
-	}
-
-	metrics.MustRegisterEventProcessingStatsView()
-
 	env := envAcc.(*envAccessor)
 
 	basicAuth := jira.BasicAuthTransport{
@@ -81,8 +71,6 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 		jiraClient: jiraClient,
 		baseURL:    env.JiraURL,
 		resSource:  env.Namespace + "/" + env.Name + ": " + env.JiraURL,
-
-		sr: metrics.MustNewEventProcessingStatsReporter(mt),
 	}
 }
 
@@ -93,8 +81,6 @@ type jiraAdapter struct {
 	baseURL    string
 	jiraClient *jira.Client
 	resSource  string
-
-	sr *metrics.EventProcessingStatsReporter
 }
 
 var _ pkgadapter.Adapter = (*jiraAdapter)(nil)

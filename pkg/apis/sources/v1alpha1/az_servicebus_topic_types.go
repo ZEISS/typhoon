@@ -13,11 +13,10 @@ import (
 
 // AzureServiceBusTopicSource is the Schema for the event source.
 type AzureServiceBusTopicSource struct {
+	Spec              AzureServiceBusTopicSourceSpec   `json:"spec,omitempty"`
+	Status            AzureServiceBusTopicSourceStatus `json:"status,omitempty"`
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-
-	Spec   AzureServiceBusTopicSourceSpec   `json:"spec,omitempty"`
-	Status AzureServiceBusTopicSourceStatus `json:"status,omitempty"`
 }
 
 // Check the interfaces the event source should be implementing.
@@ -31,35 +30,16 @@ var (
 // AzureServiceBusTopicSourceSpec defines the desired state of the event source.
 type AzureServiceBusTopicSourceSpec struct {
 	duckv1.SourceSpec `json:",inline"`
-
-	// The resource ID the Service Bus Topic to subscribe to.
-	//
-	// Expected format:
-	// - /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}
-	TopicID AzureResourceID `json:"topicID"`
-
-	// Authentication method to interact with the Azure REST API.
-	// This event source only supports the ServicePrincipal authentication.
-	// If it not present, it will try to use Azure AKS Managed Identity
-	Auth AzureAuth `json:"auth"`
-
-	// WebSocketsEnable
-	// +optional
-	WebSocketsEnable *bool `json:"webSocketsEnable,omitempty"`
-
-	// Adapter spec overrides parameters.
-	// +optional
-	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	Auth              AzureAuth                  `json:"auth"`
+	WebSocketsEnable  *bool                      `json:"webSocketsEnable,omitempty"`
+	AdapterOverrides  *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	TopicID           AzureResourceID            `json:"topicID"`
 }
 
 // AzureServiceBusTopicSourceStatus defines the observed state of the event source.
 type AzureServiceBusTopicSourceStatus struct {
+	SubscriptionID  *AzureResourceID `json:"subscriptionID,omitempty"`
 	v1alpha1.Status `json:",inline"`
-
-	// Resource ID of the Service Bus Subscription that is currently used
-	// by the event source for consuming events from the configured Service
-	// Bus Topic.
-	SubscriptionID *AzureResourceID `json:"subscriptionID,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

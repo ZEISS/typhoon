@@ -28,18 +28,10 @@ var (
 
 // LogzTargetSpec defines the desired state of the event target.
 type LogzTargetSpec struct {
-	// ShippingToken defines the API token.
-	ShippingToken SecretValueFromSource `json:"shippingToken"`
-
-	// LogsListenerURL Defines the Log listener URL
-	LogsListenerURL string `json:"logsListenerURL"`
-
-	// EventOptions for targets
-	EventOptions *EventOptions `json:"eventOptions,omitempty"`
-
-	// Adapter spec overrides parameters.
-	// +optional
+	ShippingToken    SecretValueFromSource      `json:"shippingToken"`
+	EventOptions     *EventOptions              `json:"eventOptions,omitempty"`
 	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	LogsListenerURL  string                     `json:"logsListenerURL"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

@@ -21,9 +21,9 @@ import (
 
 // TeamEditControllerImpl ...
 type TeamEditControllerImpl struct {
-	team  models.Team
 	store ports.Datastore
 	htmx.DefaultController
+	team models.Team
 }
 
 // NewTeamEditController ...

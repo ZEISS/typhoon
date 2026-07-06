@@ -69,7 +69,7 @@ func (g *ClientGetterWithSecretGetter) Get(src *v1alpha1.AzureServiceBusSource) 
 type ClientGetterFunc func(*v1alpha1.AzureServiceBusSource) (SubscriptionsClient, error)
 
 // ClientGetterFunc implements ClientGetter.
-var _ ClientGetter = (ClientGetterFunc)(nil)
+var _ ClientGetter = ClientGetterFunc(nil)
 
 // Get implements ClientGetter.
 func (f ClientGetterFunc) Get(src *v1alpha1.AzureServiceBusSource) (SubscriptionsClient, error) {

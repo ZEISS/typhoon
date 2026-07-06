@@ -14,10 +14,9 @@ import (
 
 // ShowSystemControllerImpl ...
 type ShowSystemControllerImpl struct {
-	System models.System
-
 	store ports.Datastore
 	htmx.DefaultController
+	System models.System
 }
 
 // NewShowSystemController ...

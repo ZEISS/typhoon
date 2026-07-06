@@ -13,10 +13,9 @@ import (
 
 // AccountSkgsOptionsImpl ...
 type AccountSkgsOptionsImpl struct {
-	AccountID uuid.UUID `json:"account_id" form:"account_id" query:"account_id" validate:"required,uuid"`
-
 	store ports.Datastore
 	htmx.DefaultController
+	AccountID uuid.UUID `json:"account_id" form:"account_id" query:"account_id" validate:"required,uuid"`
 }
 
 // NewAccountSkgsOptions ...

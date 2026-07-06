@@ -15,11 +15,10 @@ var _ transformer.Transformer = (*Parse)(nil)
 
 // Parse object implements Transformer interface.
 type Parse struct {
+	variables *storage.Storage
 	Path      string
 	Value     string
 	Separator string
-
-	variables *storage.Storage
 }
 
 // InitStep is used to figure out if this operation should

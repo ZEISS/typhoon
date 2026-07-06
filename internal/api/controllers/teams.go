@@ -26,10 +26,10 @@ type GetTeamQuery struct {
 
 // ListTeamsQuery ...
 type ListTeamsQuery struct {
-	Offset int    `json:"offset" validate:"required"`
-	Limit  int    `json:"limit" validate:"required"`
 	Sort   string `json:"sort" validate:"required"`
 	Search string `json:"search" validate:"required"`
+	Offset int    `json:"offset" validate:"required"`
+	Limit  int    `json:"limit" validate:"required"`
 }
 
 var _ TeamsController = (*teamsController)(nil)

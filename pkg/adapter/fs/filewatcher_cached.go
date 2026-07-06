@@ -24,9 +24,8 @@ type CachedFileWatcher interface {
 type cachedFileWatcher struct {
 	cw           FileWatcher
 	watchedFiles map[string][]byte
-
-	m      sync.RWMutex
-	logger *zap.SugaredLogger
+	logger       *zap.SugaredLogger
+	m            sync.RWMutex
 }
 
 // NewCachedFileWatcher creates a new FileWatcher object that register files
@@ -51,7 +50,8 @@ func (ccw *cachedFileWatcher) Start(ctx context.Context) {
 
 // updateContentFromFile does not locks the watchedFiles map, it is up
 // to the caller to do so.
-// nolint:gocyclo
+//
+//nolint:gocyclo
 func (ccw *cachedFileWatcher) updateContentFromFile(path string) error {
 	content, err := os.ReadFile(filepath.Clean(path))
 	if err != nil {

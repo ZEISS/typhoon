@@ -10,37 +10,22 @@ import (
 //
 // +k8s:deepcopy-gen=true
 type ValueFromField struct {
-	// Optional: no more than one of the following may be specified.
-
-	// Field value.
-	// +optional
-	Value string `json:"value,omitempty"`
-	// Field value from a Kubernetes Secret.
-	// +optional
 	ValueFromSecret *corev1.SecretKeySelector `json:"valueFromSecret,omitempty"`
+	Value           string                    `json:"value,omitempty"`
 }
 
 // AdapterOverrides are applied on top of the default adapter parameters.
 //
 // +k8s:deepcopy-gen=true
 type AdapterOverrides struct {
-	// Public value indicates if the adapter backed by a Kn Service should have
-	// its network visibility scope set to public. Default scope is cluster-local.
-	Public *bool `json:"public,omitempty"`
-	// Resources limits and requirements applied on adapter container.
-	Resources *corev1.ResourceRequirements `json:"resources,omitempty"`
-	// Pod tolerations.
-	Tolerations []corev1.Toleration `json:"tolerations,omitempty"`
-	// NodeSelector to control which nodes the pod can be scheduled on.
-	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
-	// Pod affinity.
-	Affinity *corev1.Affinity `json:"affinity,omitempty"`
-	// Environment variables applied on adapter container.
-	Env []corev1.EnvVar `json:"env,omitempty"`
-	// Labels applied on adapter container.
-	Labels map[string]string `json:"labels,omitempty"`
-	// Annotations applied on adapter container.
-	Annotations map[string]string `json:"annotations,omitempty"`
+	Public       *bool                        `json:"public,omitempty"`
+	Resources    *corev1.ResourceRequirements `json:"resources,omitempty"`
+	NodeSelector map[string]string            `json:"nodeSelector,omitempty"`
+	Affinity     *corev1.Affinity             `json:"affinity,omitempty"`
+	Labels       map[string]string            `json:"labels,omitempty"`
+	Annotations  map[string]string            `json:"annotations,omitempty"`
+	Tolerations  []corev1.Toleration          `json:"tolerations,omitempty"`
+	Env          []corev1.EnvVar              `json:"env,omitempty"`
 }
 
 // GroupObject holds the API group object types.

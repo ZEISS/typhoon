@@ -118,7 +118,8 @@ func isBadImageError(reason, msg string) bool {
 // regular expressions.
 // The expected format comes from the standard Kubernetes API errors:
 // https://github.com/kubernetes/kubernetes/blob/release-1.18/staging/src/k8s.io/apimachinery/pkg/api/errors/errors.go#L139
-// nolint:gocyclo
+//
+//nolint:gocyclo
 func isResourceMissingError(reason, msg string) (bool, string /*resource type*/) {
 	const quoteNotFound = `" not found`
 
@@ -161,7 +162,6 @@ func isResourceMissingError(reason, msg string) (bool, string /*resource type*/)
 		(closingResNameQuoteIdx-openingResNameQuoteIdx)+1 > maxK8sNameLength ||
 		// the preceding char is not a space
 		msg[openingResNameQuoteIdx-1] != ' ' {
-
 		return false, ""
 	}
 

@@ -36,20 +36,17 @@ var (
 
 // SplitterSpec defines the desired state of the component.
 type SplitterSpec struct {
-	Path      string              `json:"path"`
-	CEContext CloudEventContext   `json:"ceContext"`
-	Sink      *duckv1.Destination `json:"sink"`
-
-	// Adapter spec overrides parameters.
-	// +optional
+	CEContext        CloudEventContext          `json:"ceContext"`
+	Sink             *duckv1.Destination        `json:"sink"`
 	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	Path             string                     `json:"path"`
 }
 
 // CloudEventContext declares context attributes that will be propagated to resulting events.
 type CloudEventContext struct {
+	Extensions map[string]string `json:"extensions"`
 	Type       string            `json:"type"`
 	Source     string            `json:"source"`
-	Extensions map[string]string `json:"extensions"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

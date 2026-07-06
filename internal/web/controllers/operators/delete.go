@@ -13,10 +13,9 @@ var _ = htmx.Controller(&DeleteOperatorController{})
 
 // DeleteOperatorsController ...
 type DeleteOperatorController struct {
-	ID uuid.UUID `json:"name" form:"name" validate:"required:uuid"`
-
 	store ports.Datastore
 	htmx.DefaultController
+	ID uuid.UUID `json:"name" form:"name" validate:"required:uuid"`
 }
 
 // NewDeleteOperatorController ...

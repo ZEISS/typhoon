@@ -20,9 +20,9 @@ type CreateOperatorCommand struct {
 
 // CreateOperatorSigningKeyGroupCommand ...
 type CreateOperatorSigningKeyGroupCommand struct {
-	OperatorID  uuid.UUID `json:"operator_id" validate:"required"`
 	Name        string    `json:"name" validate:"required,min=3,max=255"`
 	Description string    `json:"description" validate:"max=1024"`
+	OperatorID  uuid.UUID `json:"operator_id" validate:"required"`
 }
 
 // GetOperatorQuery ...
@@ -42,10 +42,10 @@ type DeleteOperatorCommand struct {
 
 // ListOperatorsQuery ...
 type ListOperatorsQuery struct {
-	Limit  int    `json:"limit" validate:"required"`
-	Offset int    `json:"offset" validate:"required"`
 	Search string `json:"search"`
 	Sort   string `json:"sort"`
+	Limit  int    `json:"limit" validate:"required"`
+	Offset int    `json:"offset" validate:"required"`
 }
 
 // UpdateOperatorSystemAccountCommand ..,

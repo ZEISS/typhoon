@@ -49,14 +49,10 @@ type SalesforceTargetSpec struct {
 // Salesforce API. See:
 // https://help.salesforce.com/s/articleView?id=sf.remoteaccess_oauth_jwt_flow.htm
 type SalesforceAuth struct {
-	// ClientID for the Salesforce connected app.
-	ClientID string `json:"clientID"`
-	// Server points to the authorization URL.
-	Server string `json:"server"`
-	// User configuring the connected app.
-	User string `json:"user"`
-	// CertKey is the private key used to sign requests from the target.
-	CertKey SecretValueFromSource `json:"certKey"`
+	CertKey  SecretValueFromSource `json:"certKey"`
+	ClientID string                `json:"clientID"`
+	Server   string                `json:"server"`
+	User     string                `json:"user"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

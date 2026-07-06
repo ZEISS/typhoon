@@ -28,18 +28,10 @@ var (
 
 // JQTransformationSpec defines the desired state of the component.
 type JQTransformationSpec struct {
-	// The query that gets passed to the JQ library
-	Query string `json:"query"`
-
-	// EventOptions for targets
-	EventOptions *EventOptions `json:"eventOptions,omitempty"`
-
-	// Support sending to an event sink instead of replying.
 	duckv1.SourceSpec `json:",inline"`
-
-	// Adapter spec overrides parameters.
-	// +optional
-	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	EventOptions      *EventOptions              `json:"eventOptions,omitempty"`
+	AdapterOverrides  *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	Query             string                     `json:"query"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

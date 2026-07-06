@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
-	"time"
 
 	"go.uber.org/zap"
 
@@ -19,21 +18,11 @@ import (
 	"knative.dev/pkg/logging"
 
 	"github.com/zeiss/typhoon/pkg/adapter/fs"
-	"github.com/zeiss/typhoon/pkg/apis/targets"
-	"github.com/zeiss/typhoon/pkg/metrics"
 )
 
 // NewTarget adapter implementation
 func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, listenClient cloudevents.Client) pkgadapter.Adapter {
 	logger := logging.FromContext(ctx)
-
-	mt := &pkgadapter.MetricTag{
-		ResourceGroup: targets.CloudEventsTargetResource.String(),
-		Namespace:     envAcc.GetNamespace(),
-		Name:          envAcc.GetName(),
-	}
-
-	metrics.MustRegisterEventProcessingStatsView()
 
 	env := envAcc.(*envAccessor)
 
@@ -50,16 +39,15 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, listenC
 		listenClient: listenClient,
 		logger:       logger,
 		m:            sync.RWMutex{},
-		sr:           metrics.MustNewEventProcessingStatsReporter(mt),
 	}
 
 	ceClientUpdater := ceAdapter.senderClientUpdater(env.URL, env.BasicAuthPasswordPath, env.BasicAuthUsername)
 	if env.BasicAuthUsername != "" {
-
 		if err := fw.Add(env.BasicAuthPasswordPath, ceClientUpdater); err != nil {
 			logger.Panic(
 				"Authentication secret could not be watched at the specific path",
-				zap.Error(err))
+				zap.Error(err),
+			)
 		}
 		ceAdapter.fileWatcher = fw
 	}
@@ -79,7 +67,6 @@ type ceAdapter struct {
 
 	logger *zap.SugaredLogger
 	m      sync.RWMutex
-	sr     *metrics.EventProcessingStatsReporter
 }
 
 func (a *ceAdapter) senderClientUpdater(url, path, username string) fs.WatchCallback {
@@ -105,7 +92,8 @@ func (a *ceAdapter) senderClientUpdater(url, path, username string) fs.WatchCall
 			opts = append(opts, cehttp.WithHeader(
 				"Authorization",
 				"Basic "+base64.StdEncoding.EncodeToString(
-					append([]byte(username+":"), password...)),
+					append([]byte(username+":"), password...),
+				),
 			))
 		}
 
@@ -132,34 +120,18 @@ func (a *ceAdapter) Start(ctx context.Context) error {
 }
 
 func (a *ceAdapter) dispatch(ctx context.Context, event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
-	ceTypeTag := metrics.TagEventType(event.Type())
-	ceSrcTag := metrics.TagEventSource(event.Source())
-
-	start := time.Now()
-	// nolint:contextcheck
-	defer func() {
-		a.sr.ReportProcessingLatency(time.Since(start), ceTypeTag, ceSrcTag)
-	}()
-
 	// When using authentication sender client is initialized using the file watcher.
 	// This check fails if the authentication secrets are not yet present and the
 	// client has not been built.
 	if a.senderClient == nil {
 		err := fmt.Errorf("CloudEvents client not intialized. Please, make sure that authentication secret is available")
 		a.logger.Error("Failed to send event", zap.Error(err))
-		// nolint:contextcheck
-		a.sr.ReportProcessingError(true, ceTypeTag, ceSrcTag)
 		return nil, err
 	}
 
 	re, r := a.senderClient.Request(ctx, event)
 	if cloudevents.IsNACK(r) {
-		// nolint:contextcheck
-		a.sr.ReportProcessingError(true, ceTypeTag, ceSrcTag)
 		a.logger.Error("Could not send event to destination", zap.Error(r))
-	} else {
-		// nolint:contextcheck
-		a.sr.ReportProcessingSuccess(ceTypeTag, ceSrcTag)
 	}
 
 	return re, r

@@ -13,11 +13,10 @@ import (
 
 // AzureServiceBusSource is the Schema for the event source.
 type AzureServiceBusSource struct {
+	Status            AzureServiceBusSourceStatus `json:"status,omitempty"`
+	Spec              AzureServiceBusSourceSpec   `json:"spec,omitempty"`
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-
-	Spec   AzureServiceBusSourceSpec   `json:"spec,omitempty"`
-	Status AzureServiceBusSourceStatus `json:"status,omitempty"`
 }
 
 // Check the interfaces the event source should be implementing.
@@ -66,12 +65,8 @@ type AzureServiceBusSourceSpec struct {
 
 // AzureServiceBusSourceStatus defines the observed state of the event source.
 type AzureServiceBusSourceStatus struct {
+	SubscriptionID  *AzureResourceID `json:"subscriptionID,omitempty"`
 	v1alpha1.Status `json:",inline"`
-
-	// Resource ID of the Service Bus Subscription that is currently used
-	// by the event source for consuming events from the configured Service
-	// Bus.
-	SubscriptionID *AzureResourceID `json:"subscriptionID,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

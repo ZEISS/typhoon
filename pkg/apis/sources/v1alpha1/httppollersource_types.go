@@ -33,58 +33,18 @@ var (
 
 // HTTPPollerSourceSpec defines the desired state of the event source.
 type HTTPPollerSourceSpec struct {
-	// inherits duck/v1 SourceSpec, which currently provides:
-	// * Sink - a reference to an object that will resolve to a domain name or
-	//   a URI directly to use as the sink.
-	// * CloudEventOverrides - defines overrides to control the output format
-	//   and modifications of the event sent to the sink.
 	duckv1.SourceSpec `json:",inline"`
-
-	// Value of the CloudEvents 'type' attribute to set on ingested events.
-	// https://github.com/cloudevents/spec/blob/v1.0.1/spec.md#type
-	EventType string `json:"eventType"`
-
-	// Value of the CloudEvents 'source' attribute to set on ingested events.
-	// https://github.com/cloudevents/spec/blob/v1.0.1/spec.md#source-1
-	// +optional
-	EventSource *string `json:"eventSource,omitempty"`
-
-	// HTTP/S URL of the endpoint to poll data from.
-	Endpoint pkgapis.URL `json:"endpoint"`
-
-	// HTTP request method to use in requests to the specified 'endpoint'.
-	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
-	Method string `json:"method"`
-
-	// Controls whether the HTTP client verifies the server's certificate
-	// chain and host name when communicating over TLS.
-	// +optional
-	SkipVerify *bool `json:"skipVerify,omitempty"`
-
-	// CA certificate in X.509 format the HTTP client should use to verify
-	// the identity of remote servers when communicating over TLS.
-	// +optional
-	CACertificate *string `json:"caCertificate,omitempty"`
-
-	// User name to set in HTTP requests that require HTTP Basic authentication.
-	// +optional
-	BasicAuthUsername *string `json:"basicAuthUsername,omitempty"`
-
-	// Password to set in HTTP requests that require HTTP Basic authentication.
-	// +optional
-	BasicAuthPassword *v1alpha1.ValueFromField `json:"basicAuthPassword,omitempty"`
-
-	// HTTP headers to include in HTTP requests.
-	// +optional
-	Headers map[string]string `json:"headers,omitempty"`
-
-	// Duration which defines how often the HTTP/S endpoint should be polled.
-	// Expressed as a duration string, which format is documented at https://pkg.go.dev/time#ParseDuration.
-	Interval apis.Duration `json:"interval"`
-
-	// Adapter spec overrides parameters.
-	// +optional
-	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	EventSource       *string                    `json:"eventSource,omitempty"`
+	SkipVerify        *bool                      `json:"skipVerify,omitempty"`
+	CACertificate     *string                    `json:"caCertificate,omitempty"`
+	BasicAuthUsername *string                    `json:"basicAuthUsername,omitempty"`
+	BasicAuthPassword *v1alpha1.ValueFromField   `json:"basicAuthPassword,omitempty"`
+	Headers           map[string]string          `json:"headers,omitempty"`
+	AdapterOverrides  *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	EventType         string                     `json:"eventType"`
+	Method            string                     `json:"method"`
+	Endpoint          pkgapis.URL                `json:"endpoint"`
+	Interval          apis.Duration              `json:"interval"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

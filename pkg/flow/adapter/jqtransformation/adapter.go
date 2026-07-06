@@ -14,7 +14,6 @@ import (
 	"github.com/zeiss/pkg/conv"
 	"github.com/zeiss/pkg/utilx"
 	"github.com/zeiss/typhoon/pkg/apis/flow"
-	"github.com/zeiss/typhoon/pkg/metrics"
 	targetce "github.com/zeiss/typhoon/pkg/targets/adapter/cloudevents"
 )
 
@@ -29,8 +28,6 @@ func NewAdapter(ctx context.Context, envAcc adapter.EnvConfigAccessor, ceClient 
 		Namespace:     envAcc.GetNamespace(),
 		Name:          envAcc.GetName(),
 	}
-
-	metrics.MustRegisterEventProcessingStatsView()
 
 	env := envAcc.(*envAccessor)
 
@@ -59,20 +56,16 @@ func NewAdapter(ctx context.Context, envAcc adapter.EnvConfigAccessor, ceClient 
 		logger:   logger,
 
 		mt: mt,
-		sr: metrics.MustNewEventProcessingStatsReporter(mt),
 	}
 }
 
 type jqadapter struct {
-	query *gojq.Query
-
-	sink     string
-	replier  *targetce.Replier
 	ceClient cloudevents.Client
+	query    *gojq.Query
+	replier  *targetce.Replier
 	logger   *zap.SugaredLogger
-
-	mt *adapter.MetricTag
-	sr *metrics.EventProcessingStatsReporter
+	mt       *adapter.MetricTag
+	sink     string
 }
 
 // Start is a blocking function and will return if an error occurs

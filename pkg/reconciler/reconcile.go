@@ -451,7 +451,6 @@ func (r *GenericRBACReconciler[T, L]) syncAdapterRoleBinding(ctx context.Context
 	if reflect.DeepEqual(desiredRB.OwnerReferences, currentRB.OwnerReferences) &&
 		reflect.DeepEqual(desiredRB.RoleRef, currentRB.RoleRef) &&
 		reflect.DeepEqual(desiredRB.Subjects, currentRB.Subjects) {
-
 		return currentRB, nil
 	}
 
@@ -485,7 +484,8 @@ func initStatus(rcl v1alpha1.Reconcilable) {
 	rcl.GetStatusManager().CloudEventAttributes = nil
 	if src, isEventSource := rcl.(v1alpha1.EventSource); isEventSource {
 		rcl.GetStatusManager().CloudEventAttributes = CreateCloudEventAttributes(
-			src.AsEventSource(), src.GetEventTypes())
+			src.AsEventSource(), src.GetEventTypes(),
+		)
 	}
 
 	rcl.GetStatusManager().AcceptedEventTypes = nil

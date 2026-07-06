@@ -28,23 +28,15 @@ var (
 
 // JiraTargetSpec defines the desired state of the event target.
 type JiraTargetSpec struct {
-	// Authentication to interact with the JIRA REST API.
-	Auth JiraAuth `json:"auth"`
-
-	// URL for Jira service.
-	URL string `json:"url"`
-
-	// Adapter spec overrides parameters.
-	// +optional
+	Auth             JiraAuth                   `json:"auth"`
 	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	URL              string                     `json:"url"`
 }
 
 // JiraAuth contains Jira credentials.
 type JiraAuth struct {
-	// Jira username to connect to the instance as.
-	User string `json:"user"`
-	// Jira API token bound to the user.
 	Token SecretValueFromSource `json:"token"`
+	User  string                `json:"user"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

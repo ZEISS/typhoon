@@ -22,21 +22,13 @@ const (
 
 // Token is a model for storing the the JWT token used to authenticate the user.
 type Token struct {
-	// ID is the unique identifier for the token.
-	// This is the public key portion of the NKey.
-	ID string `json:"token_id" gorm:"primaryKey"`
-	// Token is the JWT token used to authenticate the account.
-	Token string `json:"token"`
-	// OwnerID is the owner of the token.
-	OwnerID uuid.UUID `json:"owner_id"`
-	// OwnerType is the type of the owner.
-	OwnerType OwnerType `json:"owner_type"`
-	// CreatedAt is the time the token was created.
-	CreatedAt time.Time `json:"created_at"`
-	// UpdatedAt is the time the token was updated.
-	UpdatedAt time.Time `json:"updated_at"`
-	// DeletedAt is the time the token was deleted.
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
+	ID        string         `json:"token_id" gorm:"primaryKey"`
+	Token     string         `json:"token"`
+	OwnerType OwnerType      `json:"owner_type"`
+	OwnerID   uuid.UUID      `json:"owner_id"`
 }
 
 // Bytes returns the token as a byte slice.

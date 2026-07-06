@@ -10,15 +10,15 @@ type Database struct {
 	Addr     string
 	Database string
 	Password string
-	Port     int
 	Prefix   string
 	Username string
+	Port     int
 }
 
 // Flags contains the command line flags.
 type Flags struct {
-	Addr     string
 	Database *Database
+	Addr     string
 }
 
 // DSN for PostgreSQL.

@@ -28,31 +28,12 @@ var (
 
 // SplunkTargetSpec defines the desired state of the event target.
 type SplunkTargetSpec struct {
-	// URL of the HTTP Event Collector (HEC).
-	// Only the scheme, hostname, and port (optionally) are evaluated, the URL path is trimmed if present.
-	// see https://docs.splunk.com/Documentation/Splunk/latest/Data/UsetheHTTPEventCollector#Enable_HTTP_Event_Collector
-	Endpoint apis.URL `json:"endpoint"`
-	// Token for authenticating requests against the HEC.
-	// see https://docs.splunk.com/Documentation/Splunk/latest/Data/UsetheHTTPEventCollector#About_Event_Collector_tokens
-	Token v1alpha1.ValueFromField `json:"token"`
-	// Name of the index to send events to.
-	// When undefined, events are sent to the default index defined in the HEC token's configuration.
-	// +optional
-	Index *string `json:"index,omitempty"`
-
-	// Controls whether the Splunk client verifies the server's certificate
-	// chain and host name when communicating over TLS.
-	// +optional
-	SkipTLSVerify *bool `json:"skipTLSVerify,omitempty"`
-
-	// Adapter spec overrides parameters.
-	// +optional
+	Token            v1alpha1.ValueFromField    `json:"token"`
+	Index            *string                    `json:"index,omitempty"`
+	SkipTLSVerify    *bool                      `json:"skipTLSVerify,omitempty"`
 	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
-
-	// Whether to omit CloudEvent context attributes in messages sent to Splunk.
-	// When this property is false (default), the entire CloudEvent payload is included.
-	// When this property is true, only the CloudEvent data is included.
-	DiscardCEContext bool `json:"discardCloudEventContext"`
+	Endpoint         apis.URL                   `json:"endpoint"`
+	DiscardCEContext bool                       `json:"discardCloudEventContext"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

@@ -13,12 +13,11 @@ var _ transformer.Transformer = (*Delete)(nil)
 
 // Delete object implements Transformer interface.
 type Delete struct {
+	variables *storage.Storage
 	Path      string
 	Value     string
 	Type      string
 	Separator string
-
-	variables *storage.Storage
 }
 
 // InitStep is used to figure out if this operation should
@@ -84,8 +83,8 @@ func (d *Delete) retrieveString(eventID, key string) string {
 	return key
 }
 
-// nolint:gocyclo
-func (d *Delete) parse(data interface{}, key, path string) (interface{}, error) { // nolint:unparam
+//nolint:gocyclo
+func (d *Delete) parse(data interface{}, key, path string) (interface{}, error) { //nolint:unparam
 	output := make(map[string]interface{})
 	// TODO: keep only one filter call
 	if d.filter(path, data) {

@@ -7,7 +7,8 @@ import (
 )
 
 // Validate makes sure that only one of the choices is properly informed.
-// nolint:gocyclo
+//
+//nolint:gocyclo
 func (v *ValueFromField) Validate(_ context.Context) *apis.FieldError {
 	if v == nil {
 		return nil

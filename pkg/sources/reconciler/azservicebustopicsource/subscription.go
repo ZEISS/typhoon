@@ -34,7 +34,7 @@ const crudTimeout = time.Second * 15
 //   - Microsoft.ServiceBus/namespaces/topics/subscriptions/read
 //   - Microsoft.ServiceBus/namespaces/topics/subscriptions/write
 //
-// nolint:gocyclo
+//nolint:gocyclo
 func EnsureSubscription(ctx context.Context, cli servicebustopics.SubscriptionsClient) error {
 	if skip.Skip(ctx) {
 		return nil
@@ -176,13 +176,13 @@ func recursErrMsg(errMsg string, err error) string {
 		errMsg += ": "
 	}
 
-	// nolint:errorlint
+	//nolint:errorlint
 	switch tErr := err.(type) {
 	case autorest.DetailedError:
 		return recursErrMsg(errMsg+tErr.Message, tErr.Original)
 	case *azure.RequestError:
-		if tErr.DetailedError.Original != nil {
-			return recursErrMsg(errMsg+tErr.DetailedError.Message, tErr.DetailedError.Original)
+		if tErr.Original != nil {
+			return recursErrMsg(errMsg+tErr.Message, tErr.Original)
 		}
 		if tErr.ServiceError != nil {
 			return errMsg + tErr.ServiceError.Message

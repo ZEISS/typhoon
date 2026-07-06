@@ -30,29 +30,11 @@ var (
 
 // PingSourceSpec defines the desired state of the event source.
 type PingSourceSpec struct {
-	// inherits duck/v1 SourceSpec, which currently provides:
-	// * Sink - a reference to an object that will resolve to a domain name or
-	//   a URI directly to use as the sink.
-	// * CloudEventOverrides - defines overrides to control the output format
-	//   and modifications of the event sent to the sink.
 	duckv1.SourceSpec `json:",inline"`
-
-	// Schedule is the cron schedule. Defaults to `* * * * *`.
-	// +optional
-	Schedule string `json:"schedule,omitempty"`
-
-	// Data is data used as the body of the event posted to the sink. Default is empty.
-	// Mutually exclusive with DataBase64.
-	// +optional
-	Data string `json:"data,omitempty"`
-
-	// Value of the CloudEvents 'type' attribute to set on ingested events.
-	// https://github.com/cloudevents/spec/blob/v1.0.1/spec.md#type
-	EventType string `json:"eventType"`
-
-	// Adapter spec overrides parameters.
-	// +optional
-	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	AdapterOverrides  *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	Schedule          string                     `json:"schedule,omitempty"`
+	Data              string                     `json:"data,omitempty"`
+	EventType         string                     `json:"eventType"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

@@ -78,7 +78,7 @@ func Start(ctx context.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), gracefulHandlerShutdown)
 		defer cancel()
 
-		// nolint:contextcheck
+		//nolint:contextcheck
 		if err := server.Shutdown(ctx); err != nil {
 			logging.FromContext(ctx).Error("Error during shutdown of health server", zap.Error(err))
 		}

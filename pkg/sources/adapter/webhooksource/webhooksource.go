@@ -27,16 +27,15 @@ const (
 var _ adapter.Adapter = (*webhookHandler)(nil)
 
 type webhookHandler struct {
+	ceClient                cloudevents.Client
+	extensionAttributesFrom *ExtensionAttributesFrom
+	logger                  *zap.SugaredLogger
+	mt                      *adapter.MetricTag
 	eventType               string
 	eventSource             string
-	extensionAttributesFrom *ExtensionAttributesFrom
 	username                string
 	password                string
 	corsAllowOrigin         string
-
-	ceClient cloudevents.Client
-	logger   *zap.SugaredLogger
-	mt       *adapter.MetricTag
 }
 
 // Start runs the HTTP event handler.
@@ -86,7 +85,7 @@ func runHandler(ctx context.Context, s *http.Server) error {
 		ctx, cancel := context.WithTimeout(context.Background(), serverShutdownGracePeriod)
 		defer cancel()
 
-		// nolint:contextcheck
+		//nolint:contextcheck
 		if err := s.Shutdown(ctx); err != nil {
 			return fmt.Errorf("during server shutdown: %w", err)
 		}
@@ -100,7 +99,8 @@ func runHandler(ctx context.Context, s *http.Server) error {
 
 // handleAll receives all webhook events at a single resource, it
 // is up to this function to parse event wrapper and dispatch.
-// nolint:gocyclo
+//
+//nolint:gocyclo
 func (h *webhookHandler) handleAll(ctx context.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if utilx.NotEmpty(h.corsAllowOrigin) {
@@ -154,7 +154,8 @@ func (h *webhookHandler) handleAll(ctx context.Context) http.HandlerFunc {
 					} else {
 						for i := range v {
 							event.SetExtension(sanitizeCloudEventAttributeName(
-								fmt.Sprintf("%s%s%d", queryPrefix, k, i)), v[i])
+								fmt.Sprintf("%s%s%d", queryPrefix, k, i),
+							), v[i])
 						}
 					}
 				}
@@ -186,7 +187,8 @@ func (h *webhookHandler) handleAll(ctx context.Context) http.HandlerFunc {
 					} else {
 						for i := range v {
 							event.SetExtension(sanitizeCloudEventAttributeName(
-								fmt.Sprintf("%s%s%d", headerPrefix, k, i)), v[i])
+								fmt.Sprintf("%s%s%d", headerPrefix, k, i),
+							), v[i])
 						}
 					}
 				}
@@ -222,7 +224,7 @@ func healthCheckHandler(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-// nolint:gocyclo
+//nolint:gocyclo
 func sanitizeCloudEventAttributeName(name string) string {
 	// only lowercase accepted
 	name = strings.ToLower(name)

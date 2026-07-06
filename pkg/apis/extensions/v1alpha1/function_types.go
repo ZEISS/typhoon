@@ -13,11 +13,10 @@ import (
 
 // Function is an addressable object that executes function code.
 type Function struct {
+	Status            FunctionStatus `json:"status,omitempty"`
+	Spec              FunctionSpec   `json:"spec,omitempty"`
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-
-	Spec   FunctionSpec   `json:"spec,omitempty"`
-	Status FunctionStatus `json:"status,omitempty"`
 }
 
 var (
@@ -29,20 +28,13 @@ var (
 
 // FunctionSpec holds the desired state of the Function Specification
 type FunctionSpec struct {
-	Runtime         string               `json:"runtime"`
-	Entrypoint      string               `json:"entrypoint"`
-	Code            string               `json:"code"`
-	ResponseIsEvent bool                 `json:"responseIsEvent,omitempty"`
-	EventStore      EventStoreConnection `json:"eventStore,omitempty"`
-
-	// Support sending to an event sink instead of replying,
-	// as well as setting the CloudEvents 'type' and 'source' attributes
-	// using CloudEventOverrides (hack).
 	duckv1.SourceSpec `json:",inline"`
-
-	// Adapter spec overrides parameters.
-	// +optional
-	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	AdapterOverrides  *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	Runtime           string                     `json:"runtime"`
+	Entrypoint        string                     `json:"entrypoint"`
+	Code              string                     `json:"code"`
+	EventStore        EventStoreConnection       `json:"eventStore,omitempty"`
+	ResponseIsEvent   bool                       `json:"responseIsEvent,omitempty"`
 }
 
 // EventStoreConnection contains the data to connect to
@@ -54,8 +46,8 @@ type EventStoreConnection struct {
 
 // FunctionStatus defines the observed state of the Function.
 type FunctionStatus struct {
-	v1alpha1.Status `json:",inline"`
 	ConfigMap       *FunctionConfigMapIdentity `json:"configMap,omitempty"`
+	v1alpha1.Status `json:",inline"`
 }
 
 // FunctionConfigMapIdentity represents the identity of the ConfigMap

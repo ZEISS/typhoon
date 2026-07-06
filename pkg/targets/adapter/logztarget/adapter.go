@@ -12,23 +12,13 @@ import (
 
 	"github.com/logzio/logzio-go"
 
-	"github.com/zeiss/typhoon/pkg/apis/targets"
 	"github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"github.com/zeiss/typhoon/pkg/metrics"
 	targetce "github.com/zeiss/typhoon/pkg/targets/adapter/cloudevents"
 )
 
 // NewTarget adapter implementation
 func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClient cloudevents.Client) pkgadapter.Adapter {
 	logger := logging.FromContext(ctx)
-
-	mt := &pkgadapter.MetricTag{
-		ResourceGroup: targets.LogzTargetResource.String(),
-		Namespace:     envAcc.GetNamespace(),
-		Name:          envAcc.GetName(),
-	}
-
-	metrics.MustRegisterEventProcessingStatsView()
 
 	env := envAcc.(*envAccessor)
 
@@ -54,8 +44,6 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 		replier:  replier,
 		ceClient: ceClient,
 		logger:   logger,
-
-		sr: metrics.MustNewEventProcessingStatsReporter(mt),
 	}
 }
 
@@ -67,8 +55,6 @@ type logzAdapter struct {
 	replier  *targetce.Replier
 	ceClient cloudevents.Client
 	logger   *zap.SugaredLogger
-
-	sr *metrics.EventProcessingStatsReporter
 }
 
 // Returns if stopCh is closed or Send() returns an error.

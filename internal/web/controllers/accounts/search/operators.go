@@ -16,9 +16,9 @@ var _ = htmx.Controller(&SearchOperatorsControllerImpl{})
 
 // Search ...
 type SearchOperatorsControllerImpl struct {
-	operators tables.Results[models.Operator]
-	store     ports.Datastore
+	store ports.Datastore
 	htmx.DefaultController
+	operators tables.Results[models.Operator]
 }
 
 // NewSearchOperatorsController ...

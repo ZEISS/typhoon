@@ -8,20 +8,13 @@ import (
 
 // Pagination is a struct that contains the pagination information.
 type Pagination[R any] struct {
-	// Limit is the number of items to return.
-	Limit int `json:"limit" xml:"limit" form:"limit" query:"limit"`
-	// Offset is the number of items to skip.
-	Offset int `json:"offset" xml:"offset" form:"offset" query:"limit"`
-	// Search is the search term to filter the results.
-	Search string `json:"search" xml:"search" form:"search" query:"limit"`
-	// Sort is the sorting order.
-	Sort string `json:"sort,omitempty" xml:"sort" form:"sort" query:"limit"`
-	// TotalRows is the total number of rows.
-	TotalRows int `json:"total_rows"`
-	// TotalPages is the total number of pages.
-	TotalPages int `json:"total_pages"`
-	// Rows is the items to return.
-	Rows []R `json:"rows"`
+	Search     string `json:"search" xml:"search" form:"search" query:"limit"`
+	Sort       string `json:"sort,omitempty" xml:"sort" form:"sort" query:"limit"`
+	Rows       []R    `json:"rows"`
+	Limit      int    `json:"limit" xml:"limit" form:"limit" query:"limit"`
+	Offset     int    `json:"offset" xml:"offset" form:"offset" query:"limit"`
+	TotalRows  int    `json:"total_rows"`
+	TotalPages int    `json:"total_pages"`
 }
 
 // NewPagination returns a new pagination.

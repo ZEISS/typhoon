@@ -17,9 +17,9 @@ var _ = htmx.Controller(&ListSystemsController{})
 
 // ListSystemsController ...
 type ListSystemsController struct {
-	systems tables.Results[models.System]
-	store   ports.Datastore
+	store ports.Datastore
 	htmx.DefaultController
+	systems tables.Results[models.System]
 }
 
 // NewListSystemsController ...

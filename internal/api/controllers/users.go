@@ -13,9 +13,9 @@ import (
 
 // CreateUserCommand ...
 type CreateUserCommand struct {
-	AccountID   uuid.UUID `json:"account_id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
+	AccountID   uuid.UUID `json:"account_id"`
 }
 
 // DeleteUserCommand ...

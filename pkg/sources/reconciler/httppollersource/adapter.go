@@ -34,18 +34,16 @@ const (
 // adapterConfig contains properties used to configure the source's adapter.
 // These are automatically populated by envconfig.
 type adapterConfig struct {
-	// Container image
-	Image string `default:"ghcr.io/zeiss/typhoon/httppollersource-adapter"`
-
-	// Configuration accessor for logging/metrics/tracing
 	configs source.ConfigAccessor
+	Image   string `default:"ghcr.io/zeiss/typhoon/httppollersource-adapter"`
 }
 
 // BuildAdapter implements common.AdapterBuilder.
 func (r *Reconciler) BuildAdapter(src commonv1alpha1.Reconcilable, sinkURI *apis.URL) (*appsv1.Deployment, error) {
 	typedSrc := src.(*v1alpha1.HTTPPollerSource)
 
-	return common.NewAdapterDeployment(src, sinkURI,
+	return common.NewAdapterDeployment(
+		src, sinkURI,
 		resource.Image(r.adapterCfg.Image),
 
 		resource.EnvVars(MakeAppEnv(typedSrc)...),
@@ -102,7 +100,8 @@ func MakeAppEnv(src *v1alpha1.HTTPPollerSource) []corev1.EnvVar {
 	}
 
 	if passw := src.Spec.BasicAuthPassword; passw != nil {
-		envs = common.MaybeAppendValueFromEnvVar(envs,
+		envs = common.MaybeAppendValueFromEnvVar(
+			envs,
 			envHTTPPollerBasicAuthPassword, *passw,
 		)
 	}

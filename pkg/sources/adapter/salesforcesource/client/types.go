@@ -10,8 +10,8 @@ import (
 type CommonResponse struct {
 	Channel    string `json:"channel"`
 	ClientID   string `json:"clientId"`
-	Successful bool   `json:"successful"`
 	Error      string `json:"error,omitempty"`
+	Successful bool   `json:"successful"`
 }
 
 // HandshakeResponse for Bayeux protocol.
@@ -20,8 +20,8 @@ type HandshakeResponse struct {
 	Version                  string          `json:"version,omitempty"`
 	MinimumVersion           string          `json:"minimumVersion,omitempty"`
 	SupportedConnectionTypes []string        `json:"supportedConnectionTypes,omitempty"`
-	Advice                   Advice          `json:"advice,omitempty"`
 	Extension                json.RawMessage `json:"ext,omitempty"`
+	Advice                   Advice          `json:"advice,omitempty"`
 }
 
 // ConnectResponse for Bayeux protocol
@@ -30,8 +30,8 @@ type ConnectResponse struct {
 	Data           struct {
 		Event struct {
 			CreatedDate time.Time `json:"createdDate,omitempty"`
-			ReplayID    int64     `json:"replayId,omitempty"`
 			Type        string    `json:"type,omitempty"`
+			ReplayID    int64     `json:"replayId,omitempty"`
 		} `json:"event,omitempty"`
 		Schema  string          `json:"schema,omitempty"`
 		SObject json.RawMessage `json:"sobject,omitempty"`

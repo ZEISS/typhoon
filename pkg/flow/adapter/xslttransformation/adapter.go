@@ -17,23 +17,19 @@ import (
 
 	"github.com/zeiss/typhoon/pkg/apis/flow"
 	"github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
-	"github.com/zeiss/typhoon/pkg/metrics"
 	targetce "github.com/zeiss/typhoon/pkg/targets/adapter/cloudevents"
 )
 
 var _ pkgadapter.Adapter = (*xsltTransformAdapter)(nil)
 
 type xsltTransformAdapter struct {
+	ceClient     cloudevents.Client
 	defaultXSLT  *xslt.Stylesheet
+	replier      *targetce.Replier
+	logger       *zap.SugaredLogger
+	mt           *pkgadapter.MetricTag
+	sink         string
 	xsltOverride bool
-
-	replier  *targetce.Replier
-	ceClient cloudevents.Client
-	logger   *zap.SugaredLogger
-	sink     string
-
-	mt *pkgadapter.MetricTag
-	sr *metrics.EventProcessingStatsReporter
 }
 
 // NewTarget adapter implementation
@@ -45,8 +41,6 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 		Namespace:     envAcc.GetNamespace(),
 		Name:          envAcc.GetName(),
 	}
-
-	metrics.MustRegisterEventProcessingStatsView()
 
 	env := envAcc.(*envAccessor)
 
@@ -72,7 +66,6 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 		sink:     env.Sink,
 
 		mt: mt,
-		sr: metrics.MustNewEventProcessingStatsReporter(mt),
 	}
 
 	if env.XSLT != "" {
@@ -95,7 +88,7 @@ func (a *xsltTransformAdapter) Start(ctx context.Context) error {
 	return a.ceClient.StartReceiver(ctx, a.dispatch)
 }
 
-// nolint:gocyclo
+//nolint:gocyclo
 func (a *xsltTransformAdapter) dispatch(ctx context.Context, event cloudevents.Event) (*cloudevents.Event, cloudevents.Result) {
 	isStructuredTransform := event.Type() == v1alpha1.EventTypeXSLTTransformation
 	if isStructuredTransform && !a.xsltOverride {

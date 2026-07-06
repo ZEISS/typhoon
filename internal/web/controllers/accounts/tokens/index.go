@@ -12,9 +12,9 @@ import (
 
 // GetAccountTokenControllerImpl ...
 type GetAccountTokenControllerImpl struct {
-	account models.Account
-	store   ports.Datastore
+	store ports.Datastore
 	htmx.DefaultController
+	account models.Account
 }
 
 // NewGetAccountTokenController ...

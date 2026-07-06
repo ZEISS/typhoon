@@ -31,20 +31,9 @@ var (
 // AzureServiceBusQueueSourceSpec defines the desired state of the event source.
 type AzureServiceBusQueueSourceSpec struct {
 	duckv1.SourceSpec `json:",inline"`
-
-	// The resource ID the Service Bus Queue to subscribe to.
-	//
-	// Expected format:
-	// - /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}
-	QueueID AzureResourceID `json:"queueID"`
-
-	// Authentication method to interact with Azure Service Bus.
-	// If it not present, it will try to use Azure AKS Managed Identity
-	Auth AzureAuth `json:"auth"`
-
-	// Adapter spec overrides parameters.
-	// +optional
-	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	Auth              AzureAuth                  `json:"auth"`
+	AdapterOverrides  *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	QueueID           AzureResourceID            `json:"queueID"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

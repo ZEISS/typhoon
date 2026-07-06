@@ -14,9 +14,9 @@ import (
 
 // OperatorSkgsOptionsImpl ...
 type OperatorSkgsOptionsImpl struct {
-	operator models.Operator
-	store    ports.Datastore
+	store ports.Datastore
 	htmx.DefaultController
+	operator models.Operator
 }
 
 // NewOperatorSkgsOptions ...

@@ -27,15 +27,9 @@ var (
 
 // NatsTargetSpec defines the desired state of the event target.
 type NatsTargetSpec struct {
-	// Subject where messages are produced.
-	Subject string `json:"subject"`
-
-	// URL of the Nats server.
-	URL string `json:"url"`
-
-	// Adapter spec overrides parameters.
-	// +optional
 	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	Subject          string                     `json:"subject"`
+	URL              string                     `json:"url"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

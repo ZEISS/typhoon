@@ -27,57 +27,24 @@ var (
 
 // KafkaTargetSpec defines the desired state of the event target.
 type KafkaTargetSpec struct {
-	// Topic where messages are produced.
-	Topic string `json:"topic"`
-
-	// TopicReplicationFactor is the number of replicas for the topic.
-	// +optional
-	TopicReplicationFactor *int16 `json:"topicReplicationFactor,omitempty"`
-
-	// TopicPartitions is the number of partitions for the topic.
-	// +optional
-	TopicPartitions *int32 `json:"topicPartitions,omitempty"`
-
-	// BootstrapServers holds the name of the Kafka Bootstrap server.
-	BootstrapServers []string `json:"bootstrapServers"`
-
-	// Auth contains Authentication method used to interact with Kafka.
-	// +optional
-	Auth *KafkaTargetAuth `json:"auth"`
-
-	// Whether to omit CloudEvent context attributes in messages sent to Kafka.
-	// When this property is false (default), the entire CloudEvent payload is included.
-	// When this property is true, only the CloudEvent data is included.
-	DiscardCEContext bool `json:"discardCloudEventContext"`
-
-	// Adapter spec overrides parameters.
-	// +optional
-	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	TopicReplicationFactor *int16                     `json:"topicReplicationFactor,omitempty"`
+	TopicPartitions        *int32                     `json:"topicPartitions,omitempty"`
+	Auth                   *KafkaTargetAuth           `json:"auth"`
+	AdapterOverrides       *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	Topic                  string                     `json:"topic"`
+	BootstrapServers       []string                   `json:"bootstrapServers"`
+	DiscardCEContext       bool                       `json:"discardCloudEventContext"`
 }
 
 // KafkaTargetAuth contains Authentication method used to interact with Kafka.
 type KafkaTargetAuth struct {
-	Kerberos *KafkaTargetKerberos `json:"kerberos,omitempty"`
-	TLS      *KafkaTargetTLSAuth  `json:"tls,omitempty"`
-
-	// SASL Enable
-	SASLEnable bool `json:"saslEnable"`
-
-	// TLS Enable
-	// +optional
-	TLSEnable *bool `json:"tlsEnable,omitempty"`
-
-	// SecurityMechanisms holds the assignment of the specific SASL mechanisms.
-	// +optional
-	SecurityMechanisms *string `json:"securityMechanism,omitempty"`
-
-	// Username Kafka account User
-	// +optional
-	Username *string `json:"username,omitempty"`
-
-	// Password Kafka account Password
-	// +optional
-	Password *v1alpha1.ValueFromField `json:"password,omitempty"`
+	Kerberos           *KafkaTargetKerberos     `json:"kerberos,omitempty"`
+	TLS                *KafkaTargetTLSAuth      `json:"tls,omitempty"`
+	TLSEnable          *bool                    `json:"tlsEnable,omitempty"`
+	SecurityMechanisms *string                  `json:"securityMechanism,omitempty"`
+	Username           *string                  `json:"username,omitempty"`
+	Password           *v1alpha1.ValueFromField `json:"password,omitempty"`
+	SASLEnable         bool                     `json:"saslEnable"`
 }
 
 // KafkaTargetTLSAuth contains kerberos credentials.

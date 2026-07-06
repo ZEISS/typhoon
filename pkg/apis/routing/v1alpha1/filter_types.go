@@ -36,14 +36,9 @@ var (
 
 // FilterSpec defines the desired state of the component.
 type FilterSpec struct {
-	Expression string `json:"expression"`
-
-	// Sink is a reference to an object that will resolve to a domain name to use as the sink.
-	Sink *duckv1.Destination `json:"sink"`
-
-	// Adapter spec overrides parameters.
-	// +optional
+	Sink             *duckv1.Destination        `json:"sink"`
 	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	Expression       string                     `json:"expression"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

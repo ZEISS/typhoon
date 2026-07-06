@@ -13,11 +13,8 @@ import (
 // adapterConfig contains properties used to configure the router's adapter.
 // These are automatically populated by envconfig.
 type adapterConfig struct {
-	// Container image
-	Image string `default:"ghcr.io/zeiss/typhoon/splitter-adapter"`
-
-	// Configuration accessor for logging/metrics/tracing
 	configs source.ConfigAccessor
+	Image   string `default:"ghcr.io/zeiss/typhoon/splitter-adapter"`
 }
 
 // Verify that Reconciler implements common.AdapterBuilder.
@@ -25,7 +22,8 @@ var _ common.AdapterBuilder[*servingv1.Service] = (*Reconciler)(nil)
 
 // BuildAdapter implements common.AdapterBuilder.
 func (r *Reconciler) BuildAdapter(rtr commonv1alpha1.Reconcilable, _ *apis.URL) (*servingv1.Service, error) {
-	return common.NewMTAdapterKnService(rtr,
+	return common.NewMTAdapterKnService(
+		rtr,
 		resource.Image(r.adapterCfg.Image),
 		resource.EnvVars(r.adapterCfg.configs.ToEnvVars()...),
 	), nil

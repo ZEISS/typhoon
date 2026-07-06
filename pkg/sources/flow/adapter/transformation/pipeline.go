@@ -21,8 +21,8 @@ const (
 // Pipeline is a set of Transformations that are
 // sequentially applied to JSON data.
 type Pipeline struct {
-	Transformers []transformer.Transformer
 	Storage      *storage.Storage
+	Transformers []transformer.Transformer
 }
 
 // register loads available Transformation into a named map.

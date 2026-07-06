@@ -31,15 +31,10 @@ var (
 
 // SynchronizerSpec defines the desired state of the component.
 type SynchronizerSpec struct {
-	CorrelationKey Correlation `json:"correlationKey"`
-	Response       Response    `json:"response"`
-
-	// Support sending to an event sink instead of replying.
 	duckv1.SourceSpec `json:",inline"`
-
-	// Adapter spec overrides parameters.
-	// +optional
-	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	AdapterOverrides  *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	CorrelationKey    Correlation                `json:"correlationKey"`
+	Response          Response                   `json:"response"`
 }
 
 // Correlation holds the request-response matching parameters.

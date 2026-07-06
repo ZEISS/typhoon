@@ -16,11 +16,8 @@ import (
 // adapterConfig contains properties used to configure the adapter.
 // These are automatically populated by envconfig.
 type adapterConfig struct {
-	// Container image
-	// Uses a common adapter for both Azure Service Bus sources instead of a source-specific image.
-	Image string `envconfig:"AZURESERVICEBUSSOURCE_IMAGE" default:"gcr.io/zeiss/typhoon/azservicebussource-adapter"`
-	// Configuration accessor for logging/metrics/tracing
 	configs source.ConfigAccessor
+	Image   string `envconfig:"AZURESERVICEBUSSOURCE_IMAGE" default:"gcr.io/zeiss/typhoon/azservicebussource-adapter"`
 }
 
 // Verify that Reconciler implements common.AdapterBuilder.
@@ -30,7 +27,8 @@ var _ common.AdapterBuilder[*appsv1.Deployment] = (*Reconciler)(nil)
 func (r *Reconciler) BuildAdapter(src commonv1alpha1.Reconcilable, sinkURI *apis.URL) (*appsv1.Deployment, error) {
 	typedSrc := src.(*v1alpha1.AzureServiceBusQueueSource)
 
-	return common.NewAdapterDeployment(src, sinkURI,
+	return common.NewAdapterDeployment(
+		src, sinkURI,
 		resource.Image(r.adapterCfg.Image),
 
 		resource.EnvVars(MakeAppEnv(typedSrc)...),
@@ -52,9 +50,10 @@ func MakeAppEnv(o *v1alpha1.AzureServiceBusQueueSource) []corev1.EnvVar {
 		authEnvs = common.MaybeAppendValueFromEnvVar(authEnvs, common.EnvAADClientID, spAuth.ClientID)
 		authEnvs = common.MaybeAppendValueFromEnvVar(authEnvs, common.EnvAADClientSecret, spAuth.ClientSecret)
 	}
-	return append(authEnvs, corev1.EnvVar{
-		Name:  common.EnvServiceBusEntityResourceID,
-		Value: o.Spec.QueueID.String(),
-	},
+	return append(
+		authEnvs, corev1.EnvVar{
+			Name:  common.EnvServiceBusEntityResourceID,
+			Value: o.Spec.QueueID.String(),
+		},
 	)
 }

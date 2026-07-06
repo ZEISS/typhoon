@@ -33,17 +33,10 @@ var (
 
 // TransformationSpec defines the desired state of the component.
 type TransformationSpec struct {
-	// Context contains Transformations that must be applied on CE Context
-	Context []Transform `json:"context,omitempty"`
-	// Data contains Transformations that must be applied on CE Data
-	Data []Transform `json:"data,omitempty"`
-
-	// Support sending to an event sink instead of replying.
 	duckv1.SourceSpec `json:",inline"`
-
-	// Adapter spec overrides parameters.
-	// +optional
-	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	AdapterOverrides  *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	Context           []Transform                `json:"context,omitempty"`
+	Data              []Transform                `json:"data,omitempty"`
 }
 
 // Transform describes transformation schemes for different CE types.

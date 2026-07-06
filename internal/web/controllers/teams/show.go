@@ -17,9 +17,9 @@ import (
 
 // TeamShowControllerImpl ...
 type TeamShowControllerImpl struct {
-	team  models.Team
 	store ports.Datastore
 	htmx.DefaultController
+	team models.Team
 }
 
 // NewTeamShowController ...

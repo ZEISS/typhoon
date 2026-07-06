@@ -9,8 +9,8 @@ import (
 
 // storage holds the map of open connections and corresponding channels.
 type storage struct {
-	sync.Mutex
 	sessions map[string]chan *cloudevents.Event
+	sync.Mutex
 }
 
 // newStorage returns an instance of the sessions storage.

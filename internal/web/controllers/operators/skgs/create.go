@@ -14,12 +14,11 @@ import (
 
 // CreateSkgsControllerImpl ...
 type CreateSkgsControllerImpl struct {
-	ID          uuid.UUID `json:"id" params:"id" validate:"required:uuid"`
-	Name        string    `json:"name" form:"name" validate:"required"`
-	Description string    `json:"description" form:"description" validate:"required"`
-
 	store ports.Datastore
 	htmx.DefaultController
+	Name        string    `json:"name" form:"name" validate:"required"`
+	Description string    `json:"description" form:"description" validate:"required"`
+	ID          uuid.UUID `json:"id" params:"id" validate:"required:uuid"`
 }
 
 // NewCreateSkgsController ...

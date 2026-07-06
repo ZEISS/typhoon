@@ -31,13 +31,12 @@ type salesforceVersion struct {
 
 // SalesforceClient is the implementation of the Salesforce client
 type SalesforceClient struct {
-	auth  *auth.JWTAuthenticator
-	creds *auth.Credentials
-
-	apiVersion       string
-	servicesDataPath string
+	auth             *auth.JWTAuthenticator
+	creds            *auth.Credentials
 	client           *http.Client
 	logger           *zap.SugaredLogger
+	apiVersion       string
+	servicesDataPath string
 	mutex            sync.RWMutex
 }
 
@@ -111,7 +110,7 @@ func (c *SalesforceClient) Authenticate(ctx context.Context) error {
 	}
 
 	var versions []salesforceVersion
-	// nolint:musttag
+	//nolint:musttag
 	err = json.NewDecoder(res.Body).Decode(&versions)
 	if err != nil {
 		return fmt.Errorf("cannot decode Salesforce versions: %w", err)
@@ -196,9 +195,9 @@ func (c *SalesforceClient) doCall(ctx context.Context, method, urlPath string, q
 }
 
 type salesforceError struct {
-	Fields    []string `json:"fields"`
 	Message   string   `json:"message"`
 	ErrorCode string   `json:"errorCode"`
+	Fields    []string `json:"fields"`
 }
 
 // doNonLockingCall is not thread safe and should only be used if the client lock has been previously acquired.

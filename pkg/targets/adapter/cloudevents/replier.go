@@ -42,23 +42,14 @@ const (
 
 // Replier helps normalizing CloudEvent responses.
 type Replier struct {
-	// Functions that create standard header values.
-	responseType        ResponseHeaderValue
-	responseSource      ResponseHeaderValue
-	responseContentType ResponseHeaderValue
-
-	// Functions that create standard header
-	// values for errors.
+	responseType             ResponseHeaderValue
+	responseSource           ResponseHeaderValue
+	responseContentType      ResponseHeaderValue
 	responseErrorType        ResponseHeaderValue
 	responseErrorContentType ResponseHeaderValue
-
-	// Optional functions that modify output events.
-	responseOptions []EventResponseOption
-
-	// When to return payloads with the response.
-	payloadPolicy PayloadPolicy
-
-	logger *zap.SugaredLogger
+	logger                   *zap.SugaredLogger
+	payloadPolicy            PayloadPolicy
+	responseOptions          []EventResponseOption
 }
 
 // New returns a replier instance.
@@ -101,7 +92,8 @@ func (r *Replier) ErrorKnativeManaged(event *cloudevents.Event, err error) (*clo
 }
 
 // Ok when returning a payload upon success.
-// nolint:gocyclo
+//
+//nolint:gocyclo
 func (r *Replier) Ok(in *cloudevents.Event, payload interface{}, opts ...EventResponseOption) (*cloudevents.Event, cloudevents.Result) {
 	// Skip responses if not configured to send
 	// them on success.
@@ -162,20 +154,20 @@ func (r *Replier) Ok(in *cloudevents.Event, payload interface{}, opts ...EventRe
 
 // EventError is returned as the payload when an error occurs.
 type EventError struct {
-	// Code is an identifiable moniker that classifies the error.
+	Details     interface{}
 	Code        string
 	Description string
-	// Details that contain arbitrary data about the error.
-	Details interface{}
 }
 
 // Error replies with an error payload but dismisses the knative channel error management
 // (retries and dead letter queues). This should be used when retrying would result in the
 // same outcome, and when we want users to explicitly manage this error instead of relying on
 // dead letter queue channel.
-// nolint:gocyclo
+//
+//nolint:gocyclo
 func (r *Replier) Error(in *cloudevents.Event, code string, reportedErr error, details interface{}, opts ...EventResponseOption) (*cloudevents.Event, cloudevents.Result) {
-	r.logger.Error("Processing error",
+	r.logger.Error(
+		"Processing error",
 		zap.Error(reportedErr),
 		zap.Any("in-event", *in),
 		zap.Any("details", details),

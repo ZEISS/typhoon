@@ -36,7 +36,8 @@ var _ common.AdapterBuilder[*servingv1.Service] = (*Reconciler)(nil)
 func (r *Reconciler) BuildAdapter(trg commonv1alpha1.Reconcilable, _ *apis.URL) (*servingv1.Service, error) {
 	typedTrg := trg.(*v1alpha1.JiraTarget)
 
-	return common.NewAdapterKnService(trg, nil,
+	return common.NewAdapterKnService(
+		trg, nil,
 		resource.Image(r.adapterCfg.Image),
 		resource.EnvVars(MakeAppEnv(typedTrg)...),
 		resource.EnvVars(r.adapterCfg.obsConfig.ToEnvVars()...),

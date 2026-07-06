@@ -1,14 +1,15 @@
 .DEFAULT_GOAL := build
 
-BASE_DIR		?= $(CURDIR)
-OUTPUT_DIR    	?= $(BASE_DIR)/dist
+BASE_DIR			?= $(CURDIR)
+OUTPUT_DIR    		?= $(BASE_DIR)/dist
 
-GO 				?= go
-GO_RUN_TOOLS	?= $(GO) run -modfile ./tools/go.mod
-GO_TEST 		?= $(GO_RUN_TOOLS) gotest.tools/gotestsum --format pkgname
-GO_RELEASER 	?= $(GO_RUN_TOOLS) github.com/goreleaser/goreleaser/v2
-GO_KO 			?= $(GO_RUN_TOOLS) github.com/google/ko
-GO_MOD 			?= $(shell ${GO} list -m)
+GO 					?= go
+GO_RELEASER 		?= $(GO_TOOL) github.com/goreleaser/goreleaser/v2
+GO_LINT 			?= $(GO_TOOL) github.com/golangci/golangci-lint/v2/cmd/golangci-lint
+GO_TOOL 			?= $(GO) tool
+GO_TEST 			?= $(GO_TOOL) gotest.tools/gotestsum --format pkgname
+GO_MOD 				?= $(shell ${GO} list -m)
+GO_KO 				?= $(GO_TOOL) github.com/google/ko
 
 HELM_UPDATE 	?= $(GO_RUN_TOOLS) github.com/zeiss/pkg/cmd/helm/update
 
@@ -36,7 +37,11 @@ generate: ## Generate code.
 
 .PHONY: fmt
 fmt: ## Run go fmt against code.
-	$(GO_RUN_TOOLS) mvdan.cc/gofumpt -w .
+	$(GO_TOOL) mvdan.cc/gofumpt -w .
+
+.PHONY: fix
+fix: ## Run go fix against code.
+	$(GO_LINT) run --fix ./...
 
 .PHONY: vet
 vet: ## Run go vet against code.
@@ -49,7 +54,7 @@ test: fmt vet ## Run tests.
 
 .PHONY: lint
 lint: ## Run lint.
-	$(GO_RUN_TOOLS) github.com/golangci/golangci-lint/cmd/golangci-lint run --timeout 10m -c .golangci.yml
+	$(GO_LINT) run --timeout 10m -c .golangci.yml
 
 .PHONY: deploy
 deploy: ## Deploy the application.

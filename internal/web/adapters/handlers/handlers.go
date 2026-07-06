@@ -152,7 +152,8 @@ func (h *handlers) CreateOperatorSkg() fiber.Handler {
 	return htmx.NewHxControllerHandler(
 		func() htmx.Controller {
 			return oskgs.NewCreateSkgsController(h.store)
-		})
+		},
+	)
 }
 
 // OperatorSkgsOptions ...

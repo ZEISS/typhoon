@@ -49,10 +49,9 @@ type BridgeList struct {
 	Items           []Bridge `json:"items"`
 }
 
-// nolint:unused,deadcode
-type isBridgeObject_BridgeObject interface {
-	isBridgeObject_BridgeObject()
-}
+// type isBridgeObject_BridgeObject interface {
+// 	isBridgeObject_BridgeObject()
+// }
 
 // BridgeObject_Transformation is a component of a bridge.
 type BridgeObject_Transformation struct {
@@ -60,4 +59,4 @@ type BridgeObject_Transformation struct {
 }
 
 // Check the interfaces BridgeObject_Transformation should be implementing.
-func (*BridgeObject_Transformation) isBridgeObject_BridgeObject() {}
+// func (*BridgeObject_Transformation) isBridgeObject_BridgeObject() {}

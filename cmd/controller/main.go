@@ -37,7 +37,8 @@ func main() {
 		ctx = injection.WithNamespaceScope(ctx, namespace)
 	}
 
-	sharedmain.MainWithContext(ctx,
+	sharedmain.MainWithContext(
+		ctx,
 		component,
 		cloudeventssource.NewController,
 		cloudeventstarget.NewController,

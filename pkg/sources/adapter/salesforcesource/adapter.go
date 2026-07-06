@@ -21,23 +21,20 @@ import (
 const eventType = "com.salesforce.stream.message"
 
 type salesforceAdapter struct {
+	client            *http.Client
+	dispatcher        *eventDispatcher
+	logger            *zap.SugaredLogger
+	mt                *pkgadapter.MetricTag
 	sfVersion         string
 	sfChannel         string
 	sfInstanceURL     string
 	sfInitialReplayID int
-
-	client *http.Client
-
-	dispatcher *eventDispatcher
-	logger     *zap.SugaredLogger
-	mt         *pkgadapter.MetricTag
 }
 
 type eventDispatcher struct {
+	ceClient    cloudevents.Client
+	logger      *zap.SugaredLogger
 	eventSource string
-
-	ceClient cloudevents.Client
-	logger   *zap.SugaredLogger
 }
 
 var (

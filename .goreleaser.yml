@@ -26,7 +26,7 @@ builds:
       - arm
       - arm64
     ldflags:
-        - -s -w
+      - -s -w
   - id: web
     skip: true
     binary: typhoon-web
@@ -41,7 +41,7 @@ builds:
       - arm
       - arm64
     ldflags:
-        - -s -w
+      - -s -w
 
 archives:
   - id: accounts

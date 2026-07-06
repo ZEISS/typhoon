@@ -28,20 +28,10 @@ var (
 
 // LogzMetricsTargetSpec defines the desired state of the event target.
 type LogzMetricsTargetSpec struct {
-	// Connection information for LogzMetrics.
-	Connection LogzMetricsConnection `json:"connection"`
-
-	// Instruments configured for pushing metrics. It is mandatory that all metrics
-	// pushed by using this target are pre-registered using this list.
-	Instruments []Instrument `json:"instruments"`
-
-	// EventOptions for targets
-	// +optional
-	EventOptions *EventOptions `json:"eventOptions,omitempty"`
-
-	// Adapter spec overrides parameters.
-	// +optional
+	EventOptions     *EventOptions              `json:"eventOptions,omitempty"`
 	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	Connection       LogzMetricsConnection      `json:"connection"`
+	Instruments      []Instrument               `json:"instruments"`
 }
 
 // LogzMetricsConnection contains the information to connect to a Logz tenant to push metrics.

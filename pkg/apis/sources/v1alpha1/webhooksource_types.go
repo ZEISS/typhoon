@@ -30,42 +30,14 @@ var (
 
 // WebhookSourceSpec defines the desired state of the event source.
 type WebhookSourceSpec struct {
-	// inherits duck/v1 SourceSpec, which currently provides:
-	// * Sink - a reference to an object that will resolve to a domain name or
-	//   a URI directly to use as the sink.
-	// * CloudEventOverrides - defines overrides to control the output format
-	//   and modifications of the event sent to the sink.
-	duckv1.SourceSpec `json:",inline"`
-
-	// Value of the CloudEvents 'type' attribute to set on ingested events.
-	// https://github.com/cloudevents/spec/blob/v1.0.1/spec.md#type
-	EventType string `json:"eventType"`
-
-	// Value of the CloudEvents 'source' attribute to set on ingested events.
-	// https://github.com/cloudevents/spec/blob/v1.0.1/spec.md#source-1
-	// +optional
-	EventSource *string `json:"eventSource,omitempty"`
-
-	// Options to transform HTTP request data into CloudEvent extensions.
-	// https://github.com/cloudevents/spec/blob/main/cloudevents/spec.md#extension-context-attributes
-	// +optional
+	duckv1.SourceSpec        `json:",inline"`
+	EventSource              *string                          `json:"eventSource,omitempty"`
 	EventExtensionAttributes *WebhookEventExtensionAttributes `json:"eventExtensionAttributes,omitempty"`
-
-	// User name HTTP clients must set to authenticate with the webhook using HTTP Basic authentication.
-	// +optional
-	BasicAuthUsername *string `json:"basicAuthUsername,omitempty"`
-
-	// Password HTTP clients must set to authenticate with the webhook using HTTP Basic authentication.
-	// +optional
-	BasicAuthPassword *v1alpha1.ValueFromField `json:"basicAuthPassword,omitempty"`
-
-	// Specifies the CORS Origin to use in pre-flight headers.
-	// +optional
-	CORSAllowOrigin *string `json:"corsAllowOrigin,omitempty"`
-
-	// Adapter spec overrides parameters.
-	// +optional
-	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	BasicAuthUsername        *string                          `json:"basicAuthUsername,omitempty"`
+	BasicAuthPassword        *v1alpha1.ValueFromField         `json:"basicAuthPassword,omitempty"`
+	CORSAllowOrigin          *string                          `json:"corsAllowOrigin,omitempty"`
+	AdapterOverrides         *v1alpha1.AdapterOverrides       `json:"adapterOverrides,omitempty"`
+	EventType                string                           `json:"eventType"`
 }
 
 // WebhookEventExtensionAttributes sets the policy for converting HTTP data into.

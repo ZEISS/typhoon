@@ -10,7 +10,7 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 
 	pkgadapter "knative.dev/eventing/pkg/adapter/v2"
@@ -44,7 +44,8 @@ type kafkasourceAdapter struct {
 }
 
 // NewAdapter satisfies pkgadapter.AdapterConstructor.
-// nolint:gocyclo
+//
+//nolint:gocyclo
 func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClient cloudevents.Client) pkgadapter.Adapter {
 	logger := logging.FromContext(ctx)
 	sarama.Logger = zap.NewStdLog(logger.Named("sarama").Desugar())
@@ -125,7 +126,8 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 
 	kc, err := sarama.NewConsumerGroup(
 		env.BootstrapServers,
-		env.GroupID, config)
+		env.GroupID, config,
+	)
 	if err != nil {
 		logger.Panic("Error creating Kafka Consumer Group", zap.Error(err))
 	}

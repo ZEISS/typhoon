@@ -47,13 +47,15 @@ func (r *Reconciler) reconcileConfigmap(ctx context.Context) error {
 	currentCmap, err := r.getOrCreateCodeConfigMap(ctx, desiredCmap)
 	if err != nil {
 		status.MarkConfigMapUnavailable(v1alpha1.FunctionReasonFailedSync, fmt.Sprintf(
-			"Failed to get or create code ConfigMap: %s", err))
+			"Failed to get or create code ConfigMap: %s", err,
+		))
 		return err
 	}
 
 	if currentCmap, err = r.syncCodeConfigMap(ctx, currentCmap, desiredCmap); err != nil {
 		status.MarkConfigMapUnavailable(v1alpha1.FunctionReasonFailedSync, fmt.Sprintf(
-			"Failed to synchronize code ConfigMap: %s", err))
+			"Failed to synchronize code ConfigMap: %s", err,
+		))
 		return fmt.Errorf("synchronizing code ConfigMap: %w", err)
 	}
 
@@ -165,7 +167,8 @@ func newCodeConfigMap(f *v1alpha1.Function) *corev1.ConfigMap {
 	ns := f.Namespace
 	name := f.Name
 
-	return resource.NewConfigMap(ns, kmeta.ChildName(common.ComponentName(f)+"-code-", name),
+	return resource.NewConfigMap(
+		ns, kmeta.ChildName(common.ComponentName(f)+"-code-", name),
 		resource.Controller(f),
 
 		resource.Labels(common.CommonObjectLabels(f)),

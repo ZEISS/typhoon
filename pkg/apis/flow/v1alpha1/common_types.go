@@ -11,17 +11,9 @@ import (
 // ValueFromField is a struct field that can have its value either defined
 // explicitly or sourced from another entity.
 type ValueFromField struct {
-	// Optional: no more than one of the following may be specified.
-
-	// Field value.
-	// +optional
-	Value string `json:"value,omitempty"`
-	// Field value from a Kubernetes Secret.
-	// +optional
-	ValueFromSecret *corev1.SecretKeySelector `json:"valueFromSecret,omitempty"`
-	// Field value from a Kubernetes ConfigMap.
-	// +optional
+	ValueFromSecret    *corev1.SecretKeySelector    `json:"valueFromSecret,omitempty"`
 	ValueFromConfigMap *corev1.ConfigMapKeySelector `json:"valueFromConfigMap,omitempty"`
+	Value              string                       `json:"value,omitempty"`
 }
 
 // EventOptions modifies CloudEvents management at Targets.

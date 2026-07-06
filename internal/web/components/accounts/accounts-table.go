@@ -15,11 +15,11 @@ import (
 
 // AccountsTableProps ...
 type AccountsTableProps struct {
+	URL      string
 	Accounts []*models.Account
 	Offset   int
 	Limit    int
 	Total    int
-	URL      string
 }
 
 // AccountsTable ...

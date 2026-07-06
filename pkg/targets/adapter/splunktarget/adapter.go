@@ -13,13 +13,9 @@ import (
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 
+	"github.com/ZachtimusPrime/Go-Splunk-HTTP/splunk/v2"
 	pkgadapter "knative.dev/eventing/pkg/adapter/v2"
 	"knative.dev/pkg/logging"
-
-	"github.com/ZachtimusPrime/Go-Splunk-HTTP/splunk/v2"
-
-	"github.com/zeiss/typhoon/pkg/apis/targets"
-	"github.com/zeiss/typhoon/pkg/metrics"
 )
 
 // SplunkClient is the interface that must be implemented by Splunk HEC
@@ -36,10 +32,7 @@ type adapter struct {
 	ceClient cloudevents.Client
 	spClient SplunkClient
 
-	defaultIndex string
-
-	sr *metrics.EventProcessingStatsReporter
-
+	defaultIndex     string
 	discardCEContext bool
 }
 
@@ -71,14 +64,6 @@ const httpTimeout = time.Second * 20
 func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClient cloudevents.Client) pkgadapter.Adapter {
 	logger := logging.FromContext(ctx)
 
-	mt := &pkgadapter.MetricTag{
-		ResourceGroup: targets.SplunkTargetResource.String(),
-		Namespace:     envAcc.GetNamespace(),
-		Name:          envAcc.GetName(),
-	}
-
-	metrics.MustRegisterEventProcessingStatsView()
-
 	env := envAcc.(*envConfig)
 
 	hecURL, err := url.Parse(env.HECEndpoint)
@@ -94,8 +79,6 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 
 		defaultIndex: env.Index,
 
-		sr: metrics.MustNewEventProcessingStatsReporter(mt),
-
 		discardCEContext: env.DiscardCEContext,
 	}
 }
@@ -104,7 +87,7 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 func newClient(hecURL url.URL, hecToken, index, hostname string, skipTLSVerify bool) *splunk.Client {
 	httpTransport := &http.Transport{
 		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: skipTLSVerify, // nolint:gosec
+			InsecureSkipVerify: skipTLSVerify, //nolint:gosec
 		},
 	}
 	httpClient := &http.Client{

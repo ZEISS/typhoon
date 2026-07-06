@@ -18,13 +18,12 @@ var validate *validator.Validate
 
 // CreateUserControllerImpl ...
 type CreateUserControllerImpl struct {
-	AccountID                uuid.UUID `json:"account_id" form:"account_id" validate:"required,uuid"`
-	AccountSigningKeyGroupID uuid.UUID `json:"account_skgs_id" form:"account_skgs_id" validate:"required,uuid"`
-	Name                     string    `json:"name" form:"name" validate:"required,min=3,max=100"`
-	Description              string    `json:"description" form:"description" validate:"required,min=3,max=1024"`
-
 	store ports.Datastore
 	htmx.DefaultController
+	Name                     string    `json:"name" form:"name" validate:"required,min=3,max=100"`
+	Description              string    `json:"description" form:"description" validate:"required,min=3,max=1024"`
+	AccountID                uuid.UUID `json:"account_id" form:"account_id" validate:"required,uuid"`
+	AccountSigningKeyGroupID uuid.UUID `json:"account_skgs_id" form:"account_skgs_id" validate:"required,uuid"`
 }
 
 // NewCreateUserController ...
@@ -58,7 +57,8 @@ func (l *CreateUserControllerImpl) Error(err error) error {
 }
 
 // Post ...
-// nolint:gocyclo
+//
+//nolint:gocyclo
 func (l *CreateUserControllerImpl) Post() error {
 	user := models.User{
 		Name:        l.Name,

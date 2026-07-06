@@ -33,56 +33,24 @@ var (
 
 // OCIMetricsSourceSpec defines the desired state of the event source.
 type OCIMetricsSourceSpec struct {
-	// inherits duck/v1 SourceSpec, which currently provides:
-	// * Sink - a reference to an object that will resolve to a domain name or
-	//   a URI directly to use as the sink.
-	// * CloudEventOverrides - defines overrides to control the output format
-	//   and modifications of the event sent to the sink.
-	duckv1.SourceSpec `json:",inline"`
-
-	// Oracle User API private key
-	OracleAPIPrivateKey v1alpha1.ValueFromField `json:"oracleApiPrivateKey"`
-
-	// Oracle User API private key passphrase
-	OracleAPIPrivateKeyPassphrase v1alpha1.ValueFromField `json:"oracleApiPrivateKeyPassphrase"`
-
-	// Oracle User API cert fingerprint
-	OracleAPIPrivateKeyFingerprint v1alpha1.ValueFromField `json:"oracleApiPrivateKeyFingerprint"`
-
-	// Oracle Tenancy OCID
-	Tenancy string `json:"oracleTenancy"`
-
-	// Oracle User OCID associated with the API key
-	User string `json:"oracleUser"`
-
-	// Oracle Cloud Region
-	Region string `json:"oracleRegion"`
-
-	// OCI Metrics Polling Frequency
-	// +optional
-	PollingFrequency *string `json:"metricsPollingFrequency,omitempty"`
-
-	// Array of metrics
-	Metrics []OCIMetrics `json:"metrics"`
-
-	// Adapter spec overrides parameters.
-	// +optional
-	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	duckv1.SourceSpec              `json:",inline"`
+	OracleAPIPrivateKey            v1alpha1.ValueFromField    `json:"oracleApiPrivateKey"`
+	OracleAPIPrivateKeyPassphrase  v1alpha1.ValueFromField    `json:"oracleApiPrivateKeyPassphrase"`
+	OracleAPIPrivateKeyFingerprint v1alpha1.ValueFromField    `json:"oracleApiPrivateKeyFingerprint"`
+	PollingFrequency               *string                    `json:"metricsPollingFrequency,omitempty"`
+	AdapterOverrides               *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	Tenancy                        string                     `json:"oracleTenancy"`
+	User                           string                     `json:"oracleUser"`
+	Region                         string                     `json:"oracleRegion"`
+	Metrics                        []OCIMetrics               `json:"metrics"`
 }
 
 // OCIMetrics represents OCI metrics structure.
 type OCIMetrics struct {
-	// Human description for the metrics entry
-	Name string `json:"name"`
-
-	// Namespace for the query metric to use
-	MetricsNamespace string `json:"metricsNamespace"`
-
-	// OCI Metrics Query See https://docs.cloud.oracle.com/en-us/iaas/api/#/en/monitoring/20180401/MetricData
-	MetricsQuery string `json:"metricsQuery"`
-
-	// Oracle Compartment OCID
-	Compartment *string `json:"oracleCompartment,omitempty"`
+	Compartment      *string `json:"oracleCompartment,omitempty"`
+	Name             string  `json:"name"`
+	MetricsNamespace string  `json:"metricsNamespace"`
+	MetricsQuery     string  `json:"metricsQuery"`
 }
 
 // OCIMetricsDecodedList is a list of OCI metrics.

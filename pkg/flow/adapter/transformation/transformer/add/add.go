@@ -14,11 +14,10 @@ var _ transformer.Transformer = (*Add)(nil)
 
 // Add object implements Transformer interface.
 type Add struct {
+	variables *storage.Storage
 	Path      string
 	Value     string
 	Separator string
-
-	variables *storage.Storage
 }
 
 // InitStep is used to figure out if this operation should
@@ -82,7 +81,7 @@ func (a *Add) retrieveVariable(eventID, key string) interface{} {
 	return key
 }
 
-// nolint:gocyclo
+//nolint:gocyclo
 func (a *Add) composeValue(eventID string) interface{} {
 	result := a.Value
 	for _, key := range a.variables.ListEventVariables(eventID) {
@@ -122,7 +121,7 @@ func (a *Add) composeValue(eventID string) interface{} {
 				((openingBracketIndex > 0 && string(result[openingBracketIndex-1]) == "\\") ||
 					string(result[closingBracketIndex-1]) == "\\") ||
 				// brackets are not surrounding the key
-				!(openingBracketIndex < keyIndex && closingBracketIndex >= keyIndex+len(key)) {
+				(openingBracketIndex >= keyIndex || closingBracketIndex < keyIndex+len(key)) {
 				result = fmt.Sprintf("%s%v%s", result[:keyIndex], storedValue, result[keyIndex+len(key):])
 				continue
 			}

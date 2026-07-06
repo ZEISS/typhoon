@@ -20,28 +20,27 @@ var validate *validator.Validate
 
 // CreateControllerBody ...
 type CreateControllerBody struct {
-	OperatorID                  uuid.UUID `json:"operator_id" form:"operator_id" validate:"required,uuid"`
+	JetStreamMaxDiskStorageUnit string    `json:"jetstream_max_disk_storage_unit" form:"jetstream_max_disk_storage_unit"`
 	OperatorSigningKeyGroupID   string    `json:"operator_signing_key_group_id" form:"operator_skgs_id"`
-	TeamID                      uuid.UUID `json:"team_id" form:"team_id" validate:"required,uuid"`
+	JetStreamMaxStreamSizeUnit  string    `json:"jetstream_max_stream_size_unit" form:"jetstream_max_stream_size_unit"`
 	Name                        string    `json:"name" form:"name" validate:"required,min=3,max=100"`
 	Description                 string    `json:"description" form:"description" validate:"required,min=3,max=1024"`
-	JetStreamEnable             bool      `json:"jetstream_enable" form:"jetstream_enable"`
 	JetStreamMaxDiskStorage     float64   `json:"jetstream_max_disk_storage" form:"jetstream_max_disk_storage"`
-	JetStreamMaxDiskStorageUnit string    `json:"jetstream_max_disk_storage_unit" form:"jetstream_max_disk_storage_unit"`
 	JetStreamMaxStreams         int64     `json:"jetstream_max_streams" form:"jetstream_max_streams"`
 	JetStreamMaxConsumers       int64     `json:"jetstream_max_consumers" form:"jetstream_max_consumers"`
 	JetStreamMaxStreamSize      float64   `json:"jetstream_max_stream_size" form:"jetstream_max_stream_size"`
-	JetStreamMaxStreamSizeUnit  string    `json:"jetstream_max_stream_size_unit" form:"jetstream_max_stream_size_unit"`
+	OperatorID                  uuid.UUID `json:"operator_id" form:"operator_id" validate:"required,uuid"`
+	TeamID                      uuid.UUID `json:"team_id" form:"team_id" validate:"required,uuid"`
+	JetStreamEnable             bool      `json:"jetstream_enable" form:"jetstream_enable"`
 	JetStreamMaxBytesRequired   bool      `json:"jetstream_max_bytes_required" form:"jetstream_max_bytes_required"`
 }
 
 // CreateControllerImpl ...
 type CreateControllerImpl struct {
-	Form CreateControllerBody
-
 	store ports.Datastore
 	htmx.TransactionController
 	htmx.DefaultController
+	Form CreateControllerBody
 }
 
 // NewCreateController ...
@@ -72,7 +71,8 @@ func (l *CreateControllerImpl) Error(err error) error {
 }
 
 // Post ...
-// nolint:gocyclo
+//
+//nolint:gocyclo
 func (l *CreateControllerImpl) Post() error {
 	account := models.Account{
 		Name:                           l.Form.Name,
@@ -140,13 +140,13 @@ func (l *CreateControllerImpl) Post() error {
 	ac.SigningKeys.Add(skg.Key.ID)
 
 	if l.Form.JetStreamEnable {
-		ac.Limits.JetStreamLimits.DiskStorage = -1
-		ac.Limits.JetStreamLimits.Streams = -1
+		ac.Limits.DiskStorage = -1
+		ac.Limits.Streams = -1
 
-		ac.Limits.JetStreamLimits.DiskStorage = account.LimitJetStreamMaxDiskStorage
-		ac.Limits.JetStreamLimits.Streams = account.LimitJetStreamMaxStreams
-		ac.Limits.JetStreamLimits.MaxAckPending = account.LimitJetStreamMaxAckPending
-		ac.Limits.JetStreamLimits.Consumer = account.LimitJetStreamMaxConsumers
+		ac.Limits.DiskStorage = account.LimitJetStreamMaxDiskStorage
+		ac.Limits.Streams = account.LimitJetStreamMaxStreams
+		ac.Limits.MaxAckPending = account.LimitJetStreamMaxAckPending
+		ac.Limits.Consumer = account.LimitJetStreamMaxConsumers
 	}
 
 	token, err := ac.Encode(osk)

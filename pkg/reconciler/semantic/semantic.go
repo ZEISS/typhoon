@@ -38,7 +38,7 @@ var eq = conversion.EqualitiesOrDie(
 		if a.IsZero() {
 			return true
 		}
-		return a.UTC() == b.UTC()
+		return a.UTC().Equal(b.UTC())
 	},
 	func(a, b int64) bool { // e.g. metadata.generation
 		if a == 0 {

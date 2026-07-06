@@ -18,10 +18,9 @@ import (
 
 // NewSystemControllerImpl ...
 type NewSystemControllerImpl struct {
-	Results tables.Results[models.Operator]
-
 	store ports.Datastore
 	htmx.DefaultController
+	Results tables.Results[models.Operator]
 }
 
 // NewSystemController ...

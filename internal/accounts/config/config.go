@@ -13,14 +13,14 @@ type DB struct {
 	Username string `envconfig:"TYPHOON_DB_USERNAME" default:"root"`
 	Password string `envconfig:"TYPHOON_DB_PASSWORD" default:""`
 	Database string `envconfig:"TYPHOON_DB_DATABASE" default:"defaultdb"`
-	Port     int    `envconfig:"TYPHOON_DB_PORT" default:"26257"`
 	SslMode  string `envconfig:"TYPHOON_DB_SSL_MODE" default:"disable"`
+	Port     int    `envconfig:"TYPHOON_DB_PORT" default:"26257"`
 }
 
 // Flags contains the command line flags.
 type Flags struct {
-	Addr string `envconfig:"TYPHOON_ADDR" default:":8084"`
 	DB   *DB
+	Addr string `envconfig:"TYPHOON_ADDR" default:":8084"`
 }
 
 // DSN for PostgreSQL.

@@ -29,22 +29,11 @@ var (
 
 // ServiceNowTargetSpec defines the desired state of the event target.
 type ServiceNowTargetSpec struct {
-	// Authentication information to interact with the Salesforce API.
-	Auth SalesforceAuth `json:"auth"`
-
-	// Instance is the ServiceNow instance to connect to.
-	Instance string `json:"instance"`
-
-	// Source is the source of the event.
-	Source string `json:"source"`
-
-	// EventOptions for targets
-	// +optional
-	EventOptions *EventOptions `json:"eventOptions,omitempty"`
-
-	// Adapter spec overrides parameters.
-	// +optional
+	Auth             SalesforceAuth             `json:"auth"`
+	EventOptions     *EventOptions              `json:"eventOptions,omitempty"`
 	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	Instance         string                     `json:"instance"`
+	Source           string                     `json:"source"`
 }
 
 // ServiceNowAuth contains the authentication information for the ServiceNow API.

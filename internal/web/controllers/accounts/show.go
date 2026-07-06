@@ -224,6 +224,7 @@ func (l *ShowAccountControllerImpl) Get() error {
 						),
 					),
 				)
-			}),
+			},
+		),
 	)
 }

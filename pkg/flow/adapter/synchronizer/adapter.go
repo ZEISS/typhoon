@@ -13,25 +13,20 @@ import (
 	"knative.dev/pkg/logging"
 
 	"github.com/zeiss/typhoon/pkg/apis/flow"
-	"github.com/zeiss/typhoon/pkg/metrics"
 	targetce "github.com/zeiss/typhoon/pkg/targets/adapter/cloudevents"
 )
 
 var _ pkgadapter.Adapter = (*adapter)(nil)
 
 type adapter struct {
-	ceClient cloudevents.Client
-	logger   *zap.SugaredLogger
-
-	mt *pkgadapter.MetricTag
-	sr *metrics.EventProcessingStatsReporter
-
+	ceClient        cloudevents.Client
+	logger          *zap.SugaredLogger
+	mt              *pkgadapter.MetricTag
 	correlationKey  *correlationKey
+	sessions        *storage
+	sinkURL         string
+	bridgeID        string
 	responseTimeout time.Duration
-
-	sessions *storage
-	sinkURL  string
-	bridgeID string
 }
 
 // NewAdapter returns adapter implementation.
@@ -43,8 +38,6 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 		Namespace:     envAcc.GetNamespace(),
 		Name:          envAcc.GetName(),
 	}
-
-	metrics.MustRegisterEventProcessingStatsView()
 
 	env := envAcc.(*envAccessor)
 
@@ -58,7 +51,6 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 		logger:   logger,
 
 		mt: mt,
-		sr: metrics.MustNewEventProcessingStatsReporter(mt),
 
 		correlationKey:  key,
 		responseTimeout: env.ResponseWaitTimeout,

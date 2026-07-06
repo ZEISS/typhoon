@@ -13,12 +13,11 @@ var _ transformer.Transformer = (*Shift)(nil)
 
 // Shift object implements Transformer interface.
 type Shift struct {
+	variables *storage.Storage
 	Path      string
 	NewPath   string
 	Value     string
 	Separator string
-
-	variables *storage.Storage
 }
 
 const delimeter string = ":"
@@ -102,7 +101,7 @@ func (s *Shift) retrieveInterface(eventID, key string) interface{} {
 	return key
 }
 
-// nolint:gocyclo
+//nolint:gocyclo
 func extractValue(source interface{}, path map[string]interface{}) (map[string]interface{}, interface{}) {
 	var ok bool
 	var result interface{}

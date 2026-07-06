@@ -18,9 +18,9 @@ var _ = htmx.Controller(&ListOperatorsController{})
 
 // ListOperatorsController ...
 type ListOperatorsController struct {
-	operators tables.Results[models.Operator]
-	store     ports.Datastore
+	store ports.Datastore
 	htmx.DefaultController
+	operators tables.Results[models.Operator]
 }
 
 // NewListOperatorsController ...

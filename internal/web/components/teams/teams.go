@@ -14,8 +14,8 @@ import (
 
 // TeamsTableProps ...
 type TeamsTableProps struct {
-	Teams  []*models.Team
 	URL    string
+	Teams  []*models.Team
 	Offset int
 	Limit  int
 	Total  int

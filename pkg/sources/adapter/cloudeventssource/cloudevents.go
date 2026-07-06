@@ -19,13 +19,12 @@ import (
 )
 
 type cloudEventsHandler struct {
+	cfw        fs.CachedFileWatcher
+	ceServer   cloudevents.Client
+	ceClient   cloudevents.Client
+	logger     *zap.SugaredLogger
+	mt         *pkgadapter.MetricTag
 	basicAuths KeyMountedValues
-
-	cfw      fs.CachedFileWatcher
-	ceServer cloudevents.Client
-	ceClient cloudevents.Client
-	logger   *zap.SugaredLogger
-	mt       *pkgadapter.MetricTag
 }
 
 // Start implements adapter.Adapter.
@@ -65,7 +64,8 @@ func (h *cloudEventsHandler) handleAuthentication(next http.Handler) http.Handle
 				if err != nil {
 					h.logger.Error(
 						fmt.Sprintf("Could not retrieve password for user %q", kv.Key),
-						zap.Error(err))
+						zap.Error(err),
+					)
 					continue
 				}
 

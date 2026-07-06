@@ -51,32 +51,19 @@ type OperatorPagination Pagination[Operator]
 
 // Operator is the operator that is used to manage the systems.
 type Operator struct {
-	// ID is the unique identifier for the operator.
-	ID uuid.UUID `json:"id" gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
-	// Name is the name of the operator.
-	Name string `json:"name" validate:"required,min=3,max=128"`
-	// Description is the description of the operator.
-	Description string `json:"description" validate:"max=1024"`
-	// Key is the issuer key identifier.
-	Key NKey `json:"key" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:operator"`
-	// Token is the JWT token used to authenticate the account.
-	Token Token `json:"token" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:operator"`
-	// SystemAccount is the account that is used to manage the systems.
-	SystemAccount Account `json:"system_account" gorm:"polymorphic:Owner;polymorphicValue:operator;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	// AccountServerURL is the URL of the account server.
-	AccountServerURL string `json:"account_server_url" form:"account_server_url" xml:"account_server_url" validate:"url"`
-	// Systems is the systems that are associated with the operator.
-	Systems []System `json:"systems" gorm:"foreignKey:OperatorID"`
-	// SigningKeyGroups is the list of signing key groups the account has.
+	CreatedAt        time.Time         `json:"created_at"`
+	UpdatedAt        time.Time         `json:"updated_at"`
+	SystemAccount    Account           `json:"system_account" gorm:"polymorphic:Owner;polymorphicValue:operator;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Key              NKey              `json:"key" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:operator"`
+	Token            Token             `json:"token" gorm:"foreignKey:ID;polymorphic:Owner;polymorphicValue:operator"`
+	DeletedAt        gorm.DeletedAt    `json:"deleted_at" gorm:"index"`
+	AccountServerURL string            `json:"account_server_url" form:"account_server_url" xml:"account_server_url" validate:"url"`
+	Description      string            `json:"description" validate:"max=1024"`
+	Name             string            `json:"name" validate:"required,min=3,max=128"`
+	Systems          []System          `json:"systems" gorm:"foreignKey:OperatorID"`
 	SigningKeyGroups []SigningKeyGroup `json:"signing_key_groups" gorm:"many2many:operator_signing_key_groups;foreignKey:ID;joinForeignKey:OperatorID;joinReferences:SigningKeyGroupID"`
-	// Tags are the tags associated with the environment
-	Tags []Tag `json:"tags" gorm:"many2many:operator_tags;"`
-	// CreatedAt is the time the operator was created.
-	CreatedAt time.Time `json:"created_at"`
-	// UpdatedAt is the time the operator was updated.
-	UpdatedAt time.Time `json:"updated_at"`
-	// DeletedAt is the time the operator was deleted.
-	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
+	Tags             []Tag             `json:"tags" gorm:"many2many:operator_tags;"`
+	ID               uuid.UUID         `json:"id" gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
 }
 
 // Compare ...

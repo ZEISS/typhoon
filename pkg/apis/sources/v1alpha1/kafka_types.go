@@ -30,49 +30,23 @@ var (
 
 // KafkaSourceSpec defines the desired state of the event source.
 type KafkaSourceSpec struct {
+	Auth              KafkaSourceAuth `json:"auth"`
 	duckv1.SourceSpec `json:",inline"`
-
-	// BootstrapServers holds the name of the Kafka Bootstrap server.
-	BootstrapServers []string `json:"bootstrapServers"`
-
-	// Topic holds the name of the Kafka Topic.
-	Topic string `json:"topic"`
-
-	// GroupID holds the name of the Kafka Group ID.
-	GroupID string `json:"groupID"`
-
-	// Auth contains Authentication method used to interact with Kafka.
-	// +optional
-	Auth KafkaSourceAuth `json:"auth"`
-
-	// Adapter spec overrides parameters.
-	// +optional
-	AdapterOverrides *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	AdapterOverrides  *v1alpha1.AdapterOverrides `json:"adapterOverrides,omitempty"`
+	Topic             string                     `json:"topic"`
+	GroupID           string                     `json:"groupID"`
+	BootstrapServers  []string                   `json:"bootstrapServers"`
 }
 
 // KafkaSourceAuth contains Authentication method used to interact with Kafka.
 type KafkaSourceAuth struct {
-	Kerberos *KafkaSourceKerberos `json:"kerberos,omitempty"`
-	TLS      *KafkaSourceTLSAuth  `json:"tls,omitempty"`
-
-	// SASL Enable
-	SASLEnable bool `json:"saslEnable"`
-
-	// TLS Enable
-	// +optional
-	TLSEnable *bool `json:"tlsEnable,omitempty"`
-
-	// SecurityMechanisms holds the assignment of the specific SASL mechanisms.
-	// +optional
-	SecurityMechanisms *string `json:"securityMechanism,omitempty"`
-
-	// Username Kafka account User
-	// +optional
-	Username *string `json:"username,omitempty"`
-
-	// Password Kafka account Password
-	// +optional
-	Password *v1alpha1.ValueFromField `json:"password,omitempty"`
+	Kerberos           *KafkaSourceKerberos     `json:"kerberos,omitempty"`
+	TLS                *KafkaSourceTLSAuth      `json:"tls,omitempty"`
+	TLSEnable          *bool                    `json:"tlsEnable,omitempty"`
+	SecurityMechanisms *string                  `json:"securityMechanism,omitempty"`
+	Username           *string                  `json:"username,omitempty"`
+	Password           *v1alpha1.ValueFromField `json:"password,omitempty"`
+	SASLEnable         bool                     `json:"saslEnable"`
 }
 
 // KafkaSourceTLSAuth contains kerberos credentials.

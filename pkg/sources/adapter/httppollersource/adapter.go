@@ -29,7 +29,7 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 
 	t := &http.Transport{
 		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: env.SkipVerify, // nolint:gosec
+			InsecureSkipVerify: env.SkipVerify, //nolint:gosec
 		},
 	}
 

@@ -27,10 +27,10 @@ type GetSystemQuery struct {
 
 // ListSystemsQuery ...
 type ListSystemsQuery struct {
-	Limit  int    `json:"limit" validate:"required"`
-	Offset int    `json:"offset" validate:"required"`
 	Search string `json:"search"`
 	Sort   string `json:"sort"`
+	Limit  int    `json:"limit" validate:"required"`
+	Offset int    `json:"offset" validate:"required"`
 }
 
 var _ SystemsController = (*SystemsControllerImpl)(nil)

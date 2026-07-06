@@ -88,8 +88,8 @@ type CloudEventStatus struct {
 
 // StatusManager manages the status of a component.
 type StatusManager struct {
-	apis.ConditionSet
 	*Status
+	apis.ConditionSet
 }
 
 // MarkSink sets the SinkProvided condition to True using the given URI.

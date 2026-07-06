@@ -77,7 +77,7 @@ func (g *GetterWithClientset) Get(refs ...v1alpha1.ValueFromField) (Secrets, err
 type GetterFunc func(...v1alpha1.ValueFromField) (Secrets, error)
 
 // GetterFunc implements Getter.
-var _ Getter = (GetterFunc)(nil)
+var _ Getter = GetterFunc(nil)
 
 // Get implements Getter.
 func (f GetterFunc) Get(refs ...v1alpha1.ValueFromField) (Secrets, error) {

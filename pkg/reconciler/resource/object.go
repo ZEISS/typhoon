@@ -16,7 +16,8 @@ func Controller(obj kmeta.OwnerRefable) ObjectOption {
 	return func(object interface{}) {
 		meta := object.(metav1.Object)
 
-		meta.SetOwnerReferences(append(meta.GetOwnerReferences(),
+		meta.SetOwnerReferences(append(
+			meta.GetOwnerReferences(),
 			*kmeta.NewControllerRef(obj),
 		))
 	}
@@ -33,7 +34,8 @@ func Owners(owners ...kmeta.OwnerRefable) ObjectOption {
 	return func(object interface{}) {
 		meta := object.(metav1.Object)
 
-		meta.SetOwnerReferences(append(meta.GetOwnerReferences(),
+		meta.SetOwnerReferences(append(
+			meta.GetOwnerReferences(),
 			ownerRefs...,
 		))
 	}

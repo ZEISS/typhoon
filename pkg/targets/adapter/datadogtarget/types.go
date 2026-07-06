@@ -13,10 +13,10 @@ type MetricData struct {
 type Series struct {
 	Host     *string    `json:"host,omitempty"`
 	Interval *int       `json:"interval,omitempty"`
+	Type     *string    `json:"type,omitempty"`
 	Metric   string     `json:"metric"`
 	Points   [][]string `json:"points"`
 	Tags     []string   `json:"tags,omitempty"`
-	Type     *string    `json:"type,omitempty"`
 }
 
 // EventData represents the body of a Datadog event
@@ -25,19 +25,19 @@ type Series struct {
 // The data of CloudEvents of type "com.zeiss.datadog.event.post" must satisfy
 // this schema.
 type EventData struct {
-	AlertType      *string  `json:"alert_type,omitempty"`
+	RelatedEventID *int     `json:"related_event_id,omitempty"`
 	DateHappened   *int     `json:"date_happened,omitempty"`
 	DeviceName     *string  `json:"device_name,omitempty"`
 	Host           *string  `json:"host,omitempty"`
 	ID             *int     `json:"id,omitempty"`
 	Priority       *string  `json:"priority,omitempty"`
-	RelatedEventID *int     `json:"related_event_id,omitempty"`
+	AlertType      *string  `json:"alert_type,omitempty"`
 	SourceTypeName *string  `json:"source_type_name,omitempty"`
 	Status         *string  `json:"status,omitempty"`
-	Tags           []string `json:"tags,omitempty"`
+	URL            *string  `json:"url,omitempty"`
 	Text           string   `json:"text"`
 	Title          string   `json:"title"`
-	URL            *string  `json:"url,omitempty"`
+	Tags           []string `json:"tags,omitempty"`
 }
 
 // LogData represents the body of a Datadog log entry

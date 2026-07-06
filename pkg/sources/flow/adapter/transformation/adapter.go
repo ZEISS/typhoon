@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
-	"time"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"go.uber.org/zap"
@@ -16,7 +15,6 @@ import (
 	"github.com/zeiss/typhoon/pkg/apis/flow"
 	"github.com/zeiss/typhoon/pkg/apis/flow/v1alpha1"
 	"github.com/zeiss/typhoon/pkg/flow/adapter/transformation/common/storage"
-	"github.com/zeiss/typhoon/pkg/metrics"
 )
 
 type envConfig struct {
@@ -32,16 +30,12 @@ type envConfig struct {
 
 // adapter contains Pipelines for CE transformations and CloudEvents client.
 type adapter struct {
+	client          cloudevents.Client
 	ContextPipeline *Pipeline
 	DataPipeline    *Pipeline
-
-	mt *pkgadapter.MetricTag
-	sr *metrics.EventProcessingStatsReporter
-
-	sink string
-
-	client cloudevents.Client
-	logger *zap.SugaredLogger
+	mt              *pkgadapter.MetricTag
+	logger          *zap.SugaredLogger
+	sink            string
 }
 
 // ceContext represents CloudEvents context structure but with exported Extensions.
@@ -63,8 +57,6 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 		Namespace:     envAcc.GetNamespace(),
 		Name:          envAcc.GetName(),
 	}
-
-	metrics.MustRegisterEventProcessingStatsView()
 
 	env := envAcc.(*envConfig)
 
@@ -95,7 +87,6 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 		DataPipeline:    dataPl,
 
 		mt: mt,
-		sr: metrics.MustNewEventProcessingStatsReporter(mt),
 
 		sink:   env.Sink,
 		client: ceClient,
@@ -121,53 +112,28 @@ func (t *adapter) Start(ctx context.Context) error {
 }
 
 func (t *adapter) receiveAndReply(event cloudevents.Event) (*cloudevents.Event, error) {
-	ceTypeTag := metrics.TagEventType(event.Type())
-	ceSrcTag := metrics.TagEventSource(event.Source())
-
-	start := time.Now()
-	defer func() {
-		t.sr.ReportProcessingLatency(time.Since(start), ceTypeTag, ceSrcTag)
-	}()
-
 	result, err := t.applyTransformations(event)
 	if err != nil {
-		t.sr.ReportProcessingError(false, ceTypeTag, ceSrcTag)
-	} else {
-		t.sr.ReportProcessingSuccess(ceTypeTag, ceSrcTag)
+		return nil, err
 	}
 
 	return result, err
 }
 
 func (t *adapter) receiveAndSend(ctx context.Context, event cloudevents.Event) error {
-	ceTypeTag := metrics.TagEventType(event.Type())
-	ceSrcTag := metrics.TagEventSource(event.Source())
-
-	start := time.Now()
-	// nolint:contextcheck
-	defer func() {
-		t.sr.ReportProcessingLatency(time.Since(start), ceTypeTag, ceSrcTag)
-	}()
-
 	result, err := t.applyTransformations(event)
 	if err != nil {
-		// nolint:contextcheck
-		t.sr.ReportProcessingError(false, ceTypeTag, ceSrcTag)
 		return err
 	}
 
 	if result := t.client.Send(ctx, *result); !cloudevents.IsACK(result) {
-		// nolint:contextcheck
-		t.sr.ReportProcessingError(false, ceTypeTag, ceSrcTag)
 		return result
 	}
 
-	// nolint:contextcheck
-	t.sr.ReportProcessingSuccess(ceTypeTag, ceSrcTag)
 	return nil
 }
 
-// nolint:gocyclo
+//nolint:gocyclo
 func (t *adapter) applyTransformations(event cloudevents.Event) (*cloudevents.Event, error) {
 	// HTTPTargets sets content type from HTTP headers, i.e.:
 	// "datacontenttype: application/json; charset=utf-8"

@@ -41,7 +41,7 @@ func makeServiceBusEvent(msg *Message, srcAttr string) (*cloudevents.Event, erro
 	ceData := toCloudEventData(msg)
 
 	event := cloudevents.NewEvent()
-	event.SetID(msg.ReceivedMessage.MessageID)
+	event.SetID(msg.MessageID)
 	event.SetSource(srcAttr)
 	event.SetType(v1alpha1.AzureEventType(sources.AzureServiceServiceBus, v1alpha1.AzureServiceBusGenericEventType))
 
@@ -86,14 +86,15 @@ type Message struct {
 
 // MessageWithRawJSONData is an ReceivedMessage with RawMessage-typed JSON data.
 type MessageWithRawJSONData struct {
-	Body json.RawMessage
 	*Message
+	Body json.RawMessage
 }
 
 // toMessage converts a azservicebus.ReceivedMessage into a Message
 // removing a new parameter (RawAMQPMessage) introduced in azservicebus v1.1.0
 // that breaks our serialization.
-// nolint:unparam
+//
+//nolint:unparam
 func toMessage(rcvMsg *azservicebus.ReceivedMessage) (*Message, error) {
 	return &Message{
 		ReceivedMessage: &azservicebus.ReceivedMessage{

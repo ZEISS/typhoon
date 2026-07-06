@@ -16,9 +16,9 @@ var _ = htmx.Controller(&SearchTeamsControllerImpl{})
 
 // Search ...
 type SearchTeamsControllerImpl struct {
-	teams tables.Results[models.Team]
 	store ports.Datastore
 	htmx.DefaultController
+	teams tables.Results[models.Team]
 }
 
 // NewSearchTeamsController ...

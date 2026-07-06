@@ -70,7 +70,8 @@ func NewAdapterDeployment(rcl v1alpha1.Reconcilable, sinkURI *apis.URL, opts ...
 		sinkURIStr = sinkURI.String()
 	}
 
-	return resource.NewDeployment(rclNs, kmeta.ChildName(ComponentName(rcl)+"-", rclName),
+	return resource.NewDeployment(
+		rclNs, kmeta.ChildName(ComponentName(rcl)+"-", rclName),
 		append(commonAdapterDeploymentOptions(rcl), append([]resource.ObjectOption{
 			resource.Controller(rcl),
 
@@ -93,7 +94,8 @@ func NewAdapterDeployment(rcl v1alpha1.Reconcilable, sinkURI *apis.URL, opts ...
 func NewMTAdapterDeployment(rcl v1alpha1.Reconcilable, opts ...resource.ObjectOption) *appsv1.Deployment {
 	rclNs := rcl.GetNamespace()
 
-	return resource.NewDeployment(rclNs, MTAdapterObjectName(rcl),
+	return resource.NewDeployment(
+		rclNs, MTAdapterObjectName(rcl),
 		append(commonAdapterDeploymentOptions(rcl), append([]resource.ObjectOption{
 			resource.EnvVar(EnvNamespace, rclNs),
 			resource.EnvVar(system.NamespaceEnvKey, rclNs),
@@ -155,7 +157,8 @@ func NewAdapterKnService(rcl v1alpha1.Reconcilable, sinkURI *apis.URL, opts ...r
 		sinkURIStr = sinkURI.String()
 	}
 
-	return resource.NewKnService(rclNs, kmeta.ChildName(ComponentName(rcl)+"-", rclName),
+	return resource.NewKnService(
+		rclNs, kmeta.ChildName(ComponentName(rcl)+"-", rclName),
 		append(commonAdapterKnServiceOptions(rcl), append([]resource.ObjectOption{
 			resource.Controller(rcl),
 
@@ -178,7 +181,8 @@ func NewAdapterKnService(rcl v1alpha1.Reconcilable, sinkURI *apis.URL, opts ...r
 func NewMTAdapterKnService(rcl v1alpha1.Reconcilable, opts ...resource.ObjectOption) *servingv1.Service {
 	rclNs := rcl.GetNamespace()
 
-	return resource.NewKnService(rclNs, MTAdapterObjectName(rcl),
+	return resource.NewKnService(
+		rclNs, MTAdapterObjectName(rcl),
 		append(commonAdapterKnServiceOptions(rcl), append([]resource.ObjectOption{
 			resource.EnvVar(EnvNamespace, rclNs),
 			resource.EnvVar(system.NamespaceEnvKey, rclNs),
@@ -230,7 +234,8 @@ func commonAdapterKnServiceOptions(rcl v1alpha1.Reconcilable) []resource.ObjectO
 // serviceAccount returns a ServiceAccount object with its OwnerReferences
 // metadata attribute populated from the given owners.
 func serviceAccount(rcl v1alpha1.Reconcilable, owners ...kmeta.OwnerRefable) *corev1.ServiceAccount {
-	sa := resource.NewServiceAccount(rcl.GetNamespace(), ServiceAccountName(rcl),
+	sa := resource.NewServiceAccount(
+		rcl.GetNamespace(), ServiceAccountName(rcl),
 		resource.Owners(owners...),
 		resource.Labels(CommonObjectLabels(rcl)),
 	)
@@ -339,7 +344,8 @@ func MaybeAppendValueFromEnvVar(envs []corev1.EnvVar, key string, valueFrom v1al
 
 // adapterOverrideOptions applies adapter override parameters depending on
 // deployment type.
-// nolint:gocyclo
+//
+//nolint:gocyclo
 func adapterOverrideOptions(overrides *v1alpha1.AdapterOverrides) []resource.ObjectOption {
 	opts := make([]resource.ObjectOption, 0)
 
@@ -385,7 +391,7 @@ func adapterOverrideOptions(overrides *v1alpha1.AdapterOverrides) []resource.Obj
 // toQuantity converts corev1.ResourceList to separate CPU and Memory quantities.
 func toQuantity(resources corev1.ResourceList) (cpu *kres.Quantity, mem *kres.Quantity) {
 	for k, v := range resources {
-		// nolint:exhaustive
+		//nolint:exhaustive
 		switch k {
 		case corev1.ResourceCPU:
 			v := v

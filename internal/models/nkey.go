@@ -19,20 +19,13 @@ const (
 
 // NKey holds a private key and its metadata.
 type NKey struct {
-	// ID is the public key portion of the NKey.
-	ID string `json:"id" gorm:"primaryKey"`
-	// Seed is the private key portion of the NKey.
-	Seed []byte `json:"seed"`
-	// OwnerID is the owner of the token.
-	OwnerID uuid.UUID `json:"owner_id"`
-	// OwnerType is the type of the owner.
-	OwnerType OwnerType `json:"owner_type"`
-	// CreatedAt is the timestamp the key was created
-	CreatedAt time.Time `json:"created_at"`
-	// UpdatedAt is the timestamp the key was last updated
-	UpdatedAt time.Time `json:"updated_at"`
-	// DeletedAt is the timestamp the key was deleted
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index"`
+	ID        string         `json:"id" gorm:"primaryKey"`
+	OwnerType OwnerType      `json:"owner_type"`
+	Seed      []byte         `json:"seed"`
+	OwnerID   uuid.UUID      `json:"owner_id"`
 }
 
 // KeyPair is a pair of NKeys.

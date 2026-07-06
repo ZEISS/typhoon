@@ -22,10 +22,10 @@ import (
 
 // NewAccountControllerImpl ...
 type NewAccountControllerImpl struct {
+	store ports.Datastore
+	htmx.DefaultController
 	Results tables.Results[models.Operator]
 	Teams   tables.Results[models.Team]
-	store   ports.Datastore
-	htmx.DefaultController
 }
 
 // NewAccountController ...

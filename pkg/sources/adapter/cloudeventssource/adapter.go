@@ -38,7 +38,8 @@ func NewAdapter(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClie
 		if err := cfw.Add(as.MountedValueFile); err != nil {
 			logger.Panic(
 				fmt.Sprintf("Authentication secret at %q could not be watched", as.MountedValueFile),
-				zap.Error(err))
+				zap.Error(err),
+			)
 		}
 	}
 

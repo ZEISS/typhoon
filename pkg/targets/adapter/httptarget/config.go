@@ -15,22 +15,19 @@ func EnvAccessorCtor() pkgadapter.EnvConfigAccessor {
 
 type envAccessor struct {
 	pkgadapter.EnvConfig
-
-	EventType   string `envconfig:"HTTP_EVENT_TYPE" required:"true"`
-	EventSource string `envconfig:"HTTP_EVENT_SOURCE" required:"true"`
-
+	Headers           map[string]string `envconfig:"HTTP_HEADERS"`
+	CACertificate     string            `envconfig:"HTTP_CA_CERTIFICATE"`
 	URL               string            `envconfig:"HTTP_URL" required:"true"`
 	Method            string            `envconfig:"HTTP_METHOD" required:"true"`
-	SkipVerify        bool              `envconfig:"HTTP_SKIP_VERIFY"`
-	CACertificate     string            `envconfig:"HTTP_CA_CERTIFICATE"`
-	Headers           map[string]string `envconfig:"HTTP_HEADERS"`
+	EventSource       string            `envconfig:"HTTP_EVENT_SOURCE" required:"true"`
+	EventType         string            `envconfig:"HTTP_EVENT_TYPE" required:"true"`
 	BasicAuthUsername string            `envconfig:"HTTP_BASICAUTH_USERNAME"`
 	BasicAuthPassword string            `envconfig:"HTTP_BASICAUTH_PASSWORD"`
-
-	OAuthClientID     string   `envconfig:"HTTP_OAUTH_CLIENT_ID"`
-	OAuthClientSecret string   `envconfig:"HTTP_OAUTH_CLIENT_SECRET"`
-	OAuthAuthTokenURL string   `envconfig:"HTTP_OAUTH_TOKEN_URL"`
-	OAuthScopes       []string `envconfig:"HTTP_OAUTH_SCOPE"`
+	OAuthClientID     string            `envconfig:"HTTP_OAUTH_CLIENT_ID"`
+	OAuthClientSecret string            `envconfig:"HTTP_OAUTH_CLIENT_SECRET"`
+	OAuthAuthTokenURL string            `envconfig:"HTTP_OAUTH_TOKEN_URL"`
+	OAuthScopes       []string          `envconfig:"HTTP_OAUTH_SCOPE"`
+	SkipVerify        bool              `envconfig:"HTTP_SKIP_VERIFY"`
 }
 
 func (e *envAccessor) validateAuth() error {

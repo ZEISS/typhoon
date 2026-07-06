@@ -55,7 +55,8 @@ func (r *Reconciler) BuildAdapter(rcl commonv1alpha1.Reconcilable, sinkURI *apis
 	srcCodePath := filepath.Join("/opt", "source."+fileExtension(f.Spec.Runtime))
 	srcCodeVol, srcCodeVolMount := sourceCodeVolumeAndMount(srcCodePath, cmapName)
 
-	return common.NewAdapterKnService(rcl, sinkURI,
+	return common.NewAdapterKnService(
+		rcl, sinkURI,
 		resource.Image(lookupRuntimeImage(f.Spec.Runtime)),
 
 		resource.Annotation(codeVersionAnnotation, cmapRev),

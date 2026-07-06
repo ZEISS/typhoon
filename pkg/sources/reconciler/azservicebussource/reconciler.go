@@ -106,7 +106,7 @@ func isNoCredentials(err error) bool {
 	if k8sErr := apierrors.APIStatus(nil); errors.As(err, &k8sErr) {
 		return k8sErr.Status().Reason == metav1.StatusReasonNotFound
 	}
-	if permErr := (auth.PermanentCredentialsError)(nil); errors.As(err, &permErr) {
+	if permErr := auth.PermanentCredentialsError(nil); errors.As(err, &permErr) {
 		return true
 	}
 	return false

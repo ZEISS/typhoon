@@ -14,9 +14,7 @@ import (
 	pkgadapter "knative.dev/eventing/pkg/adapter/v2"
 	"knative.dev/pkg/logging"
 
-	"github.com/zeiss/typhoon/pkg/apis/targets"
 	"github.com/zeiss/typhoon/pkg/apis/targets/v1alpha1"
-	"github.com/zeiss/typhoon/pkg/metrics"
 	targetce "github.com/zeiss/typhoon/pkg/targets/adapter/cloudevents"
 )
 
@@ -34,14 +32,6 @@ const (
 // NewTarget adapter implementation
 func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClient cloudevents.Client) pkgadapter.Adapter {
 	logger := logging.FromContext(ctx)
-
-	mt := &pkgadapter.MetricTag{
-		ResourceGroup: targets.DatadogTargetResource.String(),
-		Namespace:     envAcc.GetNamespace(),
-		Name:          envAcc.GetName(),
-	}
-
-	metrics.MustRegisterEventProcessingStatsView()
 
 	env := envAcc.(*envAccessor)
 
@@ -62,24 +52,19 @@ func NewTarget(ctx context.Context, envAcc pkgadapter.EnvConfigAccessor, ceClien
 		httpClient: http.DefaultClient,
 		ceClient:   ceClient,
 		logger:     logger,
-
-		sr: metrics.MustNewEventProcessingStatsReporter(mt),
 	}
 }
 
 var _ pkgadapter.Adapter = (*datadogAdapter)(nil)
 
 type datadogAdapter struct {
+	ceClient   cloudevents.Client
+	replier    *targetce.Replier
+	httpClient *http.Client
+	logger     *zap.SugaredLogger
 	apiKey     string
 	apiURL     string
 	apiLogsURL string
-
-	replier    *targetce.Replier
-	httpClient *http.Client
-	ceClient   cloudevents.Client
-	logger     *zap.SugaredLogger
-
-	sr *metrics.EventProcessingStatsReporter
 }
 
 // Returns if stopCh is closed or Send() returns an error.

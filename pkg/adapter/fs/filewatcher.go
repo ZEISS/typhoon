@@ -21,10 +21,9 @@ type FileWatcher interface {
 type fileWatcher struct {
 	watcher      *fsnotify.Watcher
 	watchedFiles map[string][]WatchCallback
-
-	m      sync.RWMutex
-	start  sync.Once
-	logger *zap.SugaredLogger
+	logger       *zap.SugaredLogger
+	m            sync.RWMutex
+	start        sync.Once
 }
 
 // NewWatcher creates a new FileWatcher object that register files

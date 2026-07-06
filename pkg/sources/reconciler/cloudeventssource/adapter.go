@@ -30,10 +30,8 @@ const (
 // adapterConfig contains properties used to configure the source's adapter.
 // These are automatically populated by envconfig.
 type adapterConfig struct {
-	// Container image
-	Image string `default:"ghcr.io/zeiss/typhoon/cloudeventssource-adapter"`
-	// Configuration accessor for logging/metrics/tracing
 	configs source.ConfigAccessor
+	Image   string `default:"ghcr.io/zeiss/typhoon/cloudeventssource-adapter"`
 }
 
 // Verify that Reconciler implements common.AdapterBuilder.
@@ -109,7 +107,8 @@ func (r *Reconciler) BuildAdapter(src commonv1alpha1.Reconcilable, sinkURI *apis
 		typedSrc.Spec.AdapterOverrides.Public = &t
 	}
 
-	return common.NewAdapterKnService(src, sinkURI,
+	return common.NewAdapterKnService(
+		src, sinkURI,
 		resource.Image(r.adapterCfg.Image),
 
 		resource.Volumes(authVolumes...),
