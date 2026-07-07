@@ -51,7 +51,7 @@ require (
 	github.com/sethvargo/go-limiter v1.1.0
 	github.com/spf13/pflag v1.0.10
 	github.com/stretchr/testify v1.11.1
-	github.com/tidwall/gjson v1.18.0
+	github.com/tidwall/gjson v1.19.0
 	github.com/wamuir/go-xslt v0.1.5
 	github.com/xdg-go/scram v1.2.0
 	github.com/zeiss/fiber-authz v1.0.33
