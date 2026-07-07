@@ -66,7 +66,7 @@ require (
 	golang.org/x/sync v0.21.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa
 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af
-	gorm.io/gorm v1.25.12
+	gorm.io/gorm v1.31.2
 	helm.sh/helm v2.17.0+incompatible
 	k8s.io/api v0.36.2
 	k8s.io/apimachinery v0.36.2
