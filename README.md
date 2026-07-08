@@ -1,4 +1,4 @@
-# typhoon
+# 🌊 typhoon
 
 [![Test & Lint](https://github.com/ZEISS/typhoon/actions/workflows/main.yml/badge.svg)](https://github.com/ZEISS/typhoon/actions/workflows/main.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/zeiss/typhoon)](https://goreportcard.com/report/github.com/zeiss/typhoon)

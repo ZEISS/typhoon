@@ -14,9 +14,7 @@
     "ghcr.io/devcontainers/features/go:1": {},
     "ghcr.io/devcontainers/features/node:2": {},
   },
-  "remoteUser": "root",
-  "containerUser": "root",
-  "forwardPorts": [3000, 5432],
+  "appPort": [3000],
   "customizations": {
     "vscode": {
       "extensions": [
