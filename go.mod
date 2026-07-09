@@ -60,7 +60,7 @@ require (
 	github.com/zeiss/pkg v0.2.0
 	github.com/zeiss/snow-go v0.1.0-beta.0
 	go.uber.org/zap v1.28.0
-	golang.org/x/mod v0.37.0
+	golang.org/x/mod v0.38.0
 	golang.org/x/net v0.57.0
 	golang.org/x/oauth2 v0.36.0
 	golang.org/x/sync v0.22.0
