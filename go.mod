@@ -48,7 +48,7 @@ require (
 	github.com/nats-io/nkeys v0.4.16
 	github.com/oapi-codegen/fiber-middleware v1.0.2
 	github.com/oapi-codegen/runtime v1.5.0
-	github.com/sethvargo/go-limiter v1.1.0
+	github.com/sethvargo/go-limiter v1.2.0
 	github.com/spf13/pflag v1.0.10
 	github.com/stretchr/testify v1.11.1
 	github.com/tidwall/gjson v1.19.0
