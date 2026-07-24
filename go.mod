@@ -33,7 +33,7 @@ require (
 	github.com/cloudevents/sdk-go/v2 v2.16.2
 	github.com/devigned/tab v0.1.1
 	github.com/fsnotify/fsnotify v1.10.1
-	github.com/getkin/kin-openapi v0.142.0
+	github.com/getkin/kin-openapi v0.144.0
 	github.com/go-playground/validator/v10 v10.30.3
 	github.com/gofiber/fiber/v2 v2.52.14
 	github.com/golang-jwt/jwt/v4 v4.5.2
