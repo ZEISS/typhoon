@@ -69,7 +69,7 @@ require (
 	gorm.io/gorm v1.31.2
 	helm.sh/helm v2.17.0+incompatible
 	k8s.io/api v0.36.2
-	k8s.io/apimachinery v0.36.2
+	k8s.io/apimachinery v0.36.3
 	k8s.io/client-go v0.36.2
 	k8s.io/utils v0.0.0-20260210185600-b8788abfbbc2
 	knative.dev/eventing v0.49.2
@@ -676,7 +676,7 @@ require (
 	sigs.k8s.io/kustomize/kustomize/v5 v5.8.1 // indirect
 	sigs.k8s.io/kustomize/kyaml v0.21.1 // indirect
 	sigs.k8s.io/randfill v1.0.0 // indirect
-	sigs.k8s.io/structured-merge-diff/v6 v6.3.2 // indirect
+	sigs.k8s.io/structured-merge-diff/v6 v6.3.3 // indirect
 	sigs.k8s.io/yaml v1.6.0 // indirect
 	software.sslmate.com/src/go-pkcs12 v0.7.3 // indirect
 )
