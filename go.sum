@@ -1511,8 +1511,8 @@ github.com/zeiss/fiber-reload v0.1.1 h1:ozSpAjXfCkHa4x2y+lY4cqBWiQ9ORbECMBsMruMe
 github.com/zeiss/fiber-reload v0.1.1/go.mod h1:n8KLvNS6qbfcmQhgHhUNrOfEkiQWxscweIvBBsHy2XI=
 github.com/zeiss/natz-operator v0.9.5 h1:+16oylf1YUaLihZtJdcsrdscPf4NZPxECL9g0nrY5uo=
 github.com/zeiss/natz-operator v0.9.5/go.mod h1:VI/+biTWwVlvLZ5hbmP8pY1h4/i3dIC+8Hqgh0qphaI=
-github.com/zeiss/pkg v0.2.0 h1:7AejcJjQWqbd0MVrnPFUg6XLh2EStlaWR+Z5nPKCECE=
-github.com/zeiss/pkg v0.2.0/go.mod h1:lQBmtY5JhMvHs/bZxWnvy3G54/vOZerfUMPH+se1YjY=
+github.com/zeiss/pkg v0.2.1 h1:hLcQcUQG4LBbaBLQd9TpqY1xCuUqEqfehRzCi94sxv8=
+github.com/zeiss/pkg v0.2.1/go.mod h1:VkqYcxdLO+jJWyE+0FiDvMe/aZzI4UXR8POabG9Nmuc=
 github.com/zeiss/snow-go v0.1.0-beta.0 h1:MjMg0gdzfuQ4BcMhjyNlQfw/J3tgDJ1ZWLpU4GVmsLc=
 github.com/zeiss/snow-go v0.1.0-beta.0/go.mod h1:peBGKj8O4+yk8M9c5koQvjTVzD+L39wkPe37ye7wLK4=
 gitlab.com/bosi/decorder v0.4.2 h1:qbQaV3zgwnBZ4zPMhGLW4KZe7A7NwxEhJx39R3shffo=
