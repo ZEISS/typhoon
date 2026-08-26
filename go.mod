@@ -20,7 +20,7 @@ tool (
 require (
 	github.com/Azure/azure-amqp-common-go/v3 v3.2.3
 	github.com/Azure/azure-sdk-for-go v68.0.0+incompatible
-	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.22.0
+	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.23.0
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.14.0
 	github.com/Azure/azure-sdk-for-go/sdk/messaging/azservicebus v1.10.0
 	github.com/Azure/go-autorest/autorest v0.11.30
@@ -35,16 +35,16 @@ require (
 	github.com/fsnotify/fsnotify v1.10.1
 	github.com/getkin/kin-openapi v0.146.0
 	github.com/go-playground/validator/v10 v10.30.3
-	github.com/gofiber/fiber/v2 v2.52.14
+	github.com/gofiber/fiber/v2 v2.52.15
 	github.com/golang-jwt/jwt/v4 v4.5.2
-	github.com/google/cel-go v0.30.0
+	github.com/google/cel-go v0.31.0
 	github.com/google/go-cmp v0.7.0
 	github.com/google/uuid v1.6.0
 	github.com/itchyny/gojq v0.12.19
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/logzio/logzio-go v1.0.10
 	github.com/nats-io/jwt/v2 v2.8.2
-	github.com/nats-io/nats.go v1.52.0
+	github.com/nats-io/nats.go v1.53.1
 	github.com/nats-io/nkeys v0.4.16
 	github.com/oapi-codegen/fiber-middleware v1.1.0
 	github.com/oapi-codegen/runtime v1.6.0
@@ -57,15 +57,15 @@ require (
 	github.com/zeiss/fiber-authz v1.0.33
 	github.com/zeiss/fiber-goth v1.2.15
 	github.com/zeiss/fiber-htmx v1.3.33
-	github.com/zeiss/pkg v0.2.0
+	github.com/zeiss/pkg v0.2.1
 	github.com/zeiss/snow-go v0.1.0-beta.0
 	go.uber.org/zap v1.28.0
-	golang.org/x/mod v0.38.0
-	golang.org/x/net v0.57.0
+	golang.org/x/mod v0.40.0
+	golang.org/x/net v0.58.0
 	golang.org/x/oauth2 v0.36.0
 	golang.org/x/sync v0.22.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa
-	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af
+	google.golang.org/protobuf v1.36.12
 	gorm.io/gorm v1.31.2
 	helm.sh/helm v2.17.0+incompatible
 	k8s.io/api v0.36.3
@@ -634,14 +634,14 @@ require (
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	go.yaml.in/yaml/v4 v4.0.0-rc.6 // indirect
 	gocloud.dev v0.46.0 // indirect
-	golang.org/x/crypto v0.54.0 // indirect
+	golang.org/x/crypto v0.55.0 // indirect
 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
 	golang.org/x/exp/typeparams v0.0.0-20260209203927-2842357ff358 // indirect
 	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/term v0.45.0 // indirect
-	golang.org/x/text v0.40.0 // indirect
+	golang.org/x/text v0.41.0 // indirect
 	golang.org/x/time v0.15.0 // indirect
-	golang.org/x/tools v0.48.0 // indirect
+	golang.org/x/tools v0.49.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 	gomodules.xyz/jsonpatch/v2 v2.5.0 // indirect
 	google.golang.org/api v0.283.0 // indirect
