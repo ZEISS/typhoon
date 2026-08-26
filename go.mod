@@ -57,7 +57,7 @@ require (
 	github.com/zeiss/fiber-authz v1.0.33
 	github.com/zeiss/fiber-goth v1.2.15
 	github.com/zeiss/fiber-htmx v1.3.33
-	github.com/zeiss/pkg v0.2.0
+	github.com/zeiss/pkg v0.2.1
 	github.com/zeiss/snow-go v0.1.0-beta.0
 	go.uber.org/zap v1.28.0
 	golang.org/x/mod v0.40.0
