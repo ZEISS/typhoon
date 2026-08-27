@@ -69,7 +69,7 @@ require (
 	gorm.io/gorm v1.31.2
 	helm.sh/helm v2.17.0+incompatible
 	k8s.io/api v0.36.3
-	k8s.io/apimachinery v0.36.3
+	k8s.io/apimachinery v0.36.4
 	k8s.io/client-go v0.36.3
 	k8s.io/utils v0.0.0-20260210185600-b8788abfbbc2
 	knative.dev/eventing v0.50.0
