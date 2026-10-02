@@ -68,9 +68,9 @@ require (
 	google.golang.org/protobuf v1.36.12
 	gorm.io/gorm v1.31.2
 	helm.sh/helm v2.17.0+incompatible
-	k8s.io/api v0.37.0
-	k8s.io/apimachinery v0.37.0
-	k8s.io/client-go v0.37.0
+	k8s.io/api v0.37.1
+	k8s.io/apimachinery v0.37.1
+	k8s.io/client-go v0.37.1
 	k8s.io/utils v0.0.0-20260626114624-be93311217bd
 	knative.dev/eventing v0.50.0
 	knative.dev/networking v0.0.0-20260727162500-c7a7b772cac9
